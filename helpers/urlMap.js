@@ -1,12 +1,74 @@
 const { DeliveryClient } = require('kentico-cloud-delivery');
 const { deliveryConfig } = require('../config');
 
-const getUrlMap = async (config) => {
-    deliveryConfig.projectId = (typeof config.projectid !== 'undefined' && config.projectid !== null) ? config.projectid : process.env['KC.ProjectId'];
-    const previewApiKey = (typeof config.previewapikey !== 'undefined' && config.previewapikey !== null) ? config.previewapikey : process.env['KC.PreviewApiKey'];
+const getMapItem = (data, fields) => {
+    let item = {};
 
-    if (previewApiKey) {
-        deliveryConfig.previewApiKey = previewApiKey;
+    fields.forEach(field => {
+        switch (field) {
+            case 'codename':
+                item.codename = data.codename;
+                break;
+            case 'url':
+                item.url = data.url;
+                break;
+            case 'date': 
+                item.date = data.date;
+                break;
+        }; 
+    });
+
+    return item;
+};
+
+const typeLevels = {
+    home: {
+        urlLength: 0
+    },
+    navigation_item: {
+        urlLength: 1
+    },
+    scenario: {
+        urlLength: 2
+    },
+    topic: {
+        urlLength: 3
+    },
+    article: {
+        urlLength: 4
+    }
+};
+
+const createUrlMap = (response, fields, url, urlMap = []) => {
+    let node = '';
+
+    if (response.items) node = 'items';
+    if (response.navigation) node = 'navigation';
+    if (response.children) node = 'children';
+
+    response[node].forEach(item => {
+        if (item.elements.url) {
+            url.length = typeLevels[item.system.type].urlLength;
+            url[url.length - 1] = item.elements.url.value;
+        }
+
+        urlMap.push(getMapItem({
+            codename: item.system.codename,
+            url: `/${url.join('/')}`,
+            date: item.system.last_modified
+        }, fields));
+
+        createUrlMap(item, fields, url, urlMap);         
+    });
+
+    return urlMap;
+};
+
+const getUrlMap = async (config) => {
+    deliveryConfig.projectId = config.projectid;
+
+    if (config.previewapikey) {
+        deliveryConfig.previewApiKey = config.previewapikey;
         deliveryConfig.enablePreviewMode = true;
     }
 
@@ -19,44 +81,13 @@ const getUrlMap = async (config) => {
     const response = await query
         .getPromise();
 
-    let urlMap = [];
+    let fields = ['codename', 'url'];
 
-    response.items.forEach(home => {
-        urlMap.push({
-            codename: home.system.codename,
-            url: `/`
-        });
+    if (config.isSitemap) {
+        fields = ['url', 'date'];
+    }
 
-        home.navigation.forEach(navigationItem => {
-            urlMap.push({
-                codename: navigationItem.system.codename,
-                url: `/${navigationItem.elements.url.value}`
-            });
-
-            navigationItem.children.forEach(scenario => {
-                urlMap.push({
-                    codename: scenario.system.codename,
-                    url: `/${navigationItem.elements.url.value}/${scenario.elements.url.value}`
-                });
-
-                scenario.children.forEach(topic => {
-                    urlMap.push({
-                        codename: topic.system.codename,
-                        url: `/${navigationItem.elements.url.value}/${scenario.elements.url.value}/${topic.elements.url.value}`
-                    });
-
-                    topic.children.forEach(article => {
-                        urlMap.push({
-                            codename: article.system.codename,
-                            url: `/${navigationItem.elements.url.value}/${scenario.elements.url.value}/${topic.elements.url.value}/${article.elements.url.value}`
-                        });
-                    });
-                });
-            });
-        });
-    });
-
-    return urlMap;
+    return createUrlMap(response, fields, []);
 };
 
 module.exports = getUrlMap;

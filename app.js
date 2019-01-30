@@ -12,6 +12,8 @@ const getUrlMap = require('./helpers/urlMap');
 
 const home = require('./routes/home');
 const tutorials = require('./routes/tutorials');
+const sitemap = require('./routes/sitemap');
+const robots = require('./routes/robots');
 
 const app = express();
 
@@ -40,14 +42,16 @@ app.use(express.static(path.join(__dirname, 'public'), {
 
 //Routes
 app.get('*', (req, res, next) => {
-  res.locals.projectid = typeof req.query.projectid !== 'undefined' ? req.query.projectid : null;
-  res.locals.previewapikey = typeof req.query.previewapikey !== 'undefined' ? req.query.previewapikey : null;
-  
+  res.locals.projectid = typeof req.query.projectid !== 'undefined' ? req.query.projectid : process.env['KC.ProjectId'];
+  res.locals.previewapikey = typeof req.query.previewapikey !== 'undefined' ? req.query.previewapikey : process.env['KC.PreviewApiKey'];
   return next();
 });
 
 app.use('/', home);
 app.use('/tutorials', tutorials);
+
+app.use('/sitemap.xml', sitemap);
+app.use('/robots.txt', robots);
 
 app.get('/urlmap', asyncHandler(async (req, res, next) => {
   const urlMap = await getUrlMap({

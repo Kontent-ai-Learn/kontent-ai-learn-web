@@ -9,7 +9,7 @@ nav.navigation
                 each item in navigation
                     li.navigation__item
                         a(href=`/${item.url.value}`, class=`navigation__link${req.originalUrl.startsWith(`/${item.url.value}`) ? ' navigation__link--active' : ''}`) !{item.title.value}
-        if(req.originalUrl !== '/')
+        if(req.originalUrl.split('?')[0] !== '/')
             .navigation__right(data-toggle-target='search')
                 form.navigation__search
                     .navigation__search-icon(aria-hidden='true')

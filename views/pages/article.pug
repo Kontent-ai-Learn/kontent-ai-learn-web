@@ -6,10 +6,13 @@ block content
                 include ../includes/sub-navigation.pug
             .article__right
                 .article__content
+                    if isPreview
+                        .align-right
+                            a(href=`https://app.kenticocloud.com/goto/edit-item/project/${projectId}/variant-codename/default/item/${content.system.id}`, target='_blank') Edit
                     h1 !{content.title.value}
                     .article__notes
                         time.article__date(datetime= moment(content.system.lastModified).format('YYYY-MM-DD')) !{moment(content.system.lastModified).format('MMMM D, YYYY')}
                         .article__author !{content.author[0].name.value}
                     include ../includes/table-of-contents.pug
-                    | !{content.content.value}
+                    | !{minify(content.content.value)}
                 

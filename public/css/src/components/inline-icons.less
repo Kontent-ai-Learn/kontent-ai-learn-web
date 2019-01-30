@@ -2134,3 +2134,16 @@
 .icon-two-way-arrows:before {
     content: @icon-arrows-h;
 }
+
+.article__content [target="_blank"] {
+    &:after {
+        content: @icon-arrow-right-top-square;
+        font-family: 'kentico-icons';
+        font-style: normal;
+        display: inline-block;
+        padding: 0 .375em 0 .125em;
+        font-size: .675em;
+        position: relative;
+        top: -.325em;
+    }
+}

@@ -1,7 +1,11 @@
 (() => {
     const initAlgoliaSearch = () => {
-        const client = algoliasearch('X1CQ8FTSIU', 'd9791ce948da2ec73fe36a62d7c9b7bd')
-        const tutorials = client.initIndex('ohp_articles');
+        searchAPI.appid = helper.getParameterByName('searchappid') || searchAPI.appid;
+        searchAPI.apikey = helper.getParameterByName('searchapikey') || searchAPI.apikey;
+        searchAPI.indexname = helper.getParameterByName('searchindexname') || searchAPI.indexname;
+
+        const client = algoliasearch(searchAPI.appid, searchAPI.apikey)
+        const tutorials = client.initIndex(searchAPI.indexname);
         const url = window.location;
         const projectIdUrl = helper.getParameterByName('projectid');
         const previewApiKeyUrl = helper.getParameterByName('previewapikey');
