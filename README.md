@@ -8,7 +8,7 @@ Kentico Cloud documentation portal, which utilizes [Kentico Cloud](https://app.k
 ## Overview
 1. The website is written in JavaScript.
 2. It uses [express.js](https://expressjs.com/) framework for server-side rendering and [Kentico Cloud Delivery SDK](https://github.com/Kentico/kentico-cloud-js/tree/master/packages/delivery) for content retrieval from Kentico Cloud project.
-3. Additionally, [Autocomplete.js](https://github.com/algolia/autocomplete.js) package supports the search box that is connected to the indexed data on Algolia.
+3. Additionally, [Autocomplete.js](https://github.com/algolia/autocomplete.js) package supports the search box that is connected to the indexed content on Algolia.
 
 ## Setup
 
@@ -25,7 +25,7 @@ Kentico Cloud documentation portal, which utilizes [Kentico Cloud](https://app.k
 
 #### Required Keys
 * `KC.ProjectId` - Kentico Cloud project ID
-* `KC.PreviewApiKey` - Kentico Cloud preview API key
+* `KC.PreviewApiKey` - Kentico Cloud preview API key (set this key to retrieve preview content from Kentico Cloud)
 * `Search.ApiKey` - Algolia search-only API key
 * `Search.AppId` - Algolia application ID
 * `Search.IndexName` - Index name in Algolia application
