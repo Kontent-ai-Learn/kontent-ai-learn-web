@@ -2,9 +2,15 @@ sudo: required
 language: node_js
 node_js:
   - "10"
-before_install:
-  - chmod +rx .travis/deploy.sh
-script:
-  - npm run eslint
-  - npm test
-  - .travis/deploy.sh
+jobs:
+  include:
+    - stage: "Tests"
+      name: "ESLint"
+      script: npm run eslint
+    - stage: "Tests"
+      name: "Test"
+      script: npm test
+    - stage: "Deployment"
+      if: branch = master OR branch = develop
+      before_install: chmod +rx .travis/deploy.sh
+      script: .travis/deploy.sh
