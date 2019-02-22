@@ -1,14 +1,14 @@
 .callout {
-    border-left: .25em solid;
+    border-left: .5em solid;
     padding: 1em 1.25em 1.25em;
     margin: 0 0 1em;
 
     &--tip {
-        background-color: #ebf9f1;
-        border-color: #22a361;
+        background-color: #C8E2C4;
+        border-color: #00A54B;
 
         .callout__title, & > p:first-child > strong {
-            color: #22a361;
+            color: #00A54B;
 
             &:before {
                 content: @icon-check-circle;
@@ -17,11 +17,11 @@
     }
 
     &--warning {
-        background-color: #fff4ed;
-        border-color: #f6843f;
+        background-color: #FACDBD;
+        border-color: #F16A38;
 
         .callout__title, & > p:first-child > strong {
-            color: #f6843f;
+            color: #F16A38;
 
             &:before {
                 content: @icon-times-circle;
@@ -30,11 +30,11 @@
     }
 
     &--note {
-        background-color: #fafafa;
-        border-color: #737373;
+        background-color: #E3E9EC;
+        border-color: #7C909B;
 
         .callout__title, & > p:first-child > strong {
-            color: #737373;
+            color: #7C909B;
 
             &:before {
                 content: @icon-exclamation-triangle;
@@ -43,11 +43,11 @@
     }
 
     &--info {
-        background-color: #edf6ff;
-        border-color: #3f97f5;
+        background-color: #C0EAFF;
+        border-color: #008AE1;
 
         .callout__title, & > p:first-child > strong {
-            color: #3f97f5;
+            color: #008AE1;
 
             &:before {
                 content: @icon-i-circle;
@@ -61,17 +61,21 @@
         &:before {
             font-family: 'kentico-icons';
             display: inline-block;
-            padding: 0 .5em 0 0;
+            padding: 0 .75em 0 0;
             width: 1em;
+            font-weight: normal;
+            position: relative;
+            top: 1px;
         }
     }
 
     & > p:first-child > strong {
-        margin-left: -1.5em;
+        margin-left: -1.75em;
+        padding: 0 0 .375em;
     }
 
     p, figure {
-        padding: 0 0 .5em 1.5em;
+        padding: 0 0 .5em 1.75em;
 
         &:first-child, &:last-child {
             padding-bottom: 0;

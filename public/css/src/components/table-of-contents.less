@@ -1,5 +1,5 @@
 .table-of-contents {
-    padding: 0 0 1em;
+    padding: 1em 0 1.5em;
     box-sizing: border-box;
     max-width: 320px;
     transition: all .25s ease 0s;
@@ -10,24 +10,24 @@
     }
 
     &::-webkit-scrollbar-track {
-        background-color: #e5e5e5;
+        background-color: #F3F6F7;
         border-radius: 4px;
     }
 
     &::-webkit-scrollbar {
         width: 8px;
         border-radius: 4px;
-        background-color: #F5F5F5;
+        background-color: #F3F6F7;
     }
 
     &::-webkit-scrollbar-thumb {
         border-radius: 4px;
-        background-color: #adadad;
+        background-color: #7C909B;
     }
 
     h2&__heading {
         text-transform: uppercase;
-        color: #6b6b6b;
+        color: #7C909B;
         font-size: 1em;
         background-color: #fff;
         cursor: pointer;
@@ -37,8 +37,6 @@
             content: @icon-list;
             display: inline-block;
             padding: 0 .675em 0 0;
-            position: relative;
-            top: 1px;
         }
 
         &[data-toggle-trigger] {
@@ -72,8 +70,14 @@
 
         li {
             list-style-type: none;
+            padding: 0;
+            
+            &:before {
+                display: none;
+            }
+
             a {
-                color: #6b6b6b;
+                color: #7C909B;
                 margin: 0 0 .125em;
                 display: block;
                 padding: .125em .675em;
@@ -81,8 +85,7 @@
 
                 &:hover,
                 &:active {
-                    background-color: #fafafa;
-                    color: #6b6b6b;
+                    color: #008AE1
                 }
             }
         }

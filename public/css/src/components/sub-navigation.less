@@ -1,22 +1,23 @@
 .sub-navigation {
     &.sub-navigation--level-1 {
+        padding-top: 1em;
         background-color: #fff;
         transition: top .25s ease 0s, bottom .25s ease 0s, opacity .25s ease 0s, max-height .25s ease 0s;
 
         &::-webkit-scrollbar-track {
-            background-color: #e5e5e5;
+            background-color: #F3F6F7;
             border-radius: 4px;
         }
     
         &::-webkit-scrollbar {
             width: 8px;
             border-radius: 4px;
-            background-color: #F5F5F5;
+            background-color: #F3F6F7;
         }
     
         &::-webkit-scrollbar-thumb {
             border-radius: 4px;
-            background-color: #adadad;
+            background-color: #7C909B;
         }
 
         @media screen and (min-width: 768px) {
@@ -32,13 +33,26 @@
             position: fixed;
             margin: 0;
             background-color: transparent;
+            padding-top: 0;
 
             &.sub-navigation--top {
-                top: 108px;
+                top: 96px;
             }
     
             &.sub-navigation--bottom {
                 bottom: 92px;
+            }
+        }
+
+        @media screen and (min-width: 1024px) {
+            width: 272px;
+
+            &.sub-navigation--top {
+                top: 136px;
+            }
+
+            &.sub-navigation--bottom {
+                bottom: 147px;
             }
         }
     }
@@ -59,17 +73,18 @@
 	}
 
 	&__link {
-        color: #3c3c3c;
-        font-size: 1.25em;
+        color: #6B7C85;
+        font-size: 1.125em;
         text-decoration: none;
-        line-height: 1.125em;
-        padding: .5em 0;
+        line-height: 1.25em;
+        padding: .375em 0;
         display: block;
         position: relative;
 
         &:hover,
         &:active {
-            color: #22a361;
+            color: #008AE1;
+            text-decoration: underline;
         }
 
         .sub-navigation--level-2 & {
@@ -86,14 +101,14 @@
                 position: absolute;
                 top: .75em;
                 left: 0;
+                color: #008AE1;
             }
         }
 
         .sub-navigation--level-3 & {
             font-size: 1em;
             margin: 0 0 .25em 1.5em;
-            padding: .375em .875em;
-            background-color: #fafafa;
+            padding: .25em .875em;
 
             &:before {
                 content: '';
@@ -106,7 +121,8 @@
 
             &:hover,
             &:active {
-                color: #3c3c3c;
+                color: #6B7C85;
+                text-decoration: none;
             }
 
             code, i {
@@ -121,7 +137,8 @@
             }
 
             .sub-navigation--level-3 & {    
-                color: #22a361;
+                color: #008AE1;
+                font-weight: 700;
 
                 &:before {
                     content: '';

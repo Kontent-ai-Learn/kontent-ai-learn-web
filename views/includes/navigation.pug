@@ -6,6 +6,7 @@ nav.navigation
         .navigation__left
             a.navigation__logo(href='/')
                 img(src='/img/kc-logo.svg', alt='Kentico Cloud logo')
+            a.navigation__title(href='/') Docs
             ul(class= `navigation__list${isNotHome ? '' : ' navigation__list--full'}`)
                 each item in navigation
                     li.navigation__item

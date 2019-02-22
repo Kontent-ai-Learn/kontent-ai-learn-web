@@ -1,7 +1,7 @@
 html,
 body {
     font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
-    color: #262524;
+    color: #2D373B;
     font-size: 14px;
     font-weight: 400;
     background-color: #fff; 
@@ -62,10 +62,10 @@ strong {
 }
 
 main {
-    margin: 1.5em auto 0;
+    margin: 2em auto 0;
     max-width: 1200px;
     padding: 0 1em;
-    min-height: ~"calc(100vh - 175px)";
+    min-height: ~"calc(100vh - 181px)";
     display: block;
 
     @media screen and (min-width: 480px) {
@@ -74,7 +74,13 @@ main {
     }
 
     @media screen and (min-width: 768px) {
-        min-height: ~"calc(100vh - 296px)";
+        min-height: ~"calc(100vh - 280px)";
+        margin: 2em auto 0;
+    }
+
+    @media screen and (min-width: 1024px) {
+        min-height: ~"calc(100vh - 379px)";
+        margin: 3.75em auto 0;
     }
 }
 
@@ -109,7 +115,7 @@ input[type="color"] {
 code {
     display: inline-block;
     padding: 0 0.375em;
-    background-color: #fafafa; 
+    background-color: #F3F6F7; 
     font-family: Inconsolata, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     font-size: .875em;
     line-height: 1.375em;
@@ -128,7 +134,7 @@ code {
 
 .aa-suggestion {
     padding: .375em .875em;
-    border: .125em solid #dfdfdf;
+    border: .125em solid #F3F6F7;
     border-top: none;
     cursor: pointer;
 
@@ -138,7 +144,7 @@ code {
 }
 
 .aa-suggestion:hover, .aa-suggestion.aa-cursor {
-    background-color: #fafafa;
+    background-color: #F3F6F7;
 }
 
 .kc-linked-item-wrapper {
