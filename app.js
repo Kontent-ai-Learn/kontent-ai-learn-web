@@ -25,6 +25,7 @@ const robots = require('./routes/robots');
 const kenticoIcons = require('./routes/kenticoIcons');
 const urlAliases = require('./routes/urlAliases');
 const redirectUrls = require('./routes/redirectUrls');
+const linkUrls = require('./routes/linkUrls');
 const previewUrls = require('./routes/previewUrls');
 const cacheInvalidate = require('./routes/cacheInvalidate');
 const reference = require('./routes/reference');
@@ -46,6 +47,7 @@ const urlWhitelist = [
   '/redirect-urls',
   '/cache-invalidate',
   '/robots.txt',
+  '/link-to',
   '/sitemap.xml',
   '/render-reference',
   '/serve-reference'
@@ -140,6 +142,8 @@ app.use(async (req, res, next) => {
 
   return next();
 });
+
+app.use('/link-to', linkUrls);
 
 app.use('/cache-invalidate', bodyParser.text({
   type: '*/*'

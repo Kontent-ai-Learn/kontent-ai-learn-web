@@ -7,7 +7,7 @@ const isPreview = require('../helpers/isPreview');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
 
-const getredirectUrls = (res) => {
+const getRedirectUrls = (res) => {
   const KCDetails = commonContent.getKCDetails(res);
 
   const articles = cache.get(`articles_${KCDetails.projectid}`);
@@ -28,14 +28,14 @@ const getredirectUrls = (res) => {
   });
 
   return redirectMap;
-}
+};
 
 router.get('/', async (req, res) => {
   const KCDetails = commonContent.getKCDetails(res);
   const footer = cache.get(`footer_${KCDetails.projectid}`);
   const UIMessages = cache.get(`UIMessages_${KCDetails.projectid}`);
   const home = cache.get(`home_${KCDetails.projectid}`);
-  const redirectMap = getredirectUrls(res);
+  const redirectMap = getRedirectUrls(res);
 
   return res.render('tutorials/pages/redirectUrls', {
     req: req,
