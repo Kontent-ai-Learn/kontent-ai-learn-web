@@ -3,11 +3,11 @@ block content
     .hero
         .hero__wrapper
             h1.hero__heading !{title}
-            form.hero__search
+            form.hero__search(data-search-container='')
                 .hero__search-icon(aria-hidden='true')
                 label.sr-only(for='nav-search') !{UIMessages && UIMessages.search___placeholder.value}
                 input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages && UIMessages.search___placeholder.value)
-            #searchbox
+                .autocomplete(data-search-autocomplete='')
             div.hero__note-link(href="#") !{introNote}
     main(id='main').presentation
         | !{minify(signposts)}

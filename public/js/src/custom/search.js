@@ -1,4 +1,5 @@
 /**
+ * Obsolete for this project
  * Initializes Algolia search with use of autocomplete.js
  */
 

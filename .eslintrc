@@ -28,6 +28,7 @@
         "Intercom": "writable",
         "basicLightbox": "writable",
         "algoliasearch": "writable",
+        "instantsearch": "writable",
         "renderReCaptcha": "writable"
     }
 }

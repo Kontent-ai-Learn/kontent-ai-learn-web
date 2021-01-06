@@ -14,11 +14,11 @@ nav.navigation
         .navigation__right(data-search-target='')
             if isNotHome
                 .navigation__search-wrapper
-                    form.navigation__search
+                    form.navigation__search(data-search-container='')
                         .navigation__search-icon(aria-hidden='true')
                         label.sr-only(for='nav-search') !{UIMessages ? UIMessages.search___placeholder.value : ''}
                         input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages ? UIMessages.search___placeholder.value : '')
-                    #searchbox
+                        .autocomplete(data-search-autocomplete='')
             a.navigation__app(href='https://app.kontent.ai', target='_blank', rel='noreferrer')
                 .navigation__app-tooltip !{UIMessages ? UIMessages.link_to_app_tooltip.value : ''}
         if isNotHome

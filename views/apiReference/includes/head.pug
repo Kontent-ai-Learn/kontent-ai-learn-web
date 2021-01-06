@@ -43,8 +43,8 @@ if (process.env['GTM.id'])
     script function initGTM(){(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','#{process.env['GTM.id']}');};
 else 
     script function initGTM(){return false;}
-script(src='https://cdn.jsdelivr.net/npm/algoliasearch@3.32.0/dist/algoliasearchLite.min.js', defer='')
-script(src='https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js', defer='')
+script(src='https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js', integrity='sha256-EXPXz4W6pQgfYY3yTpnDa3OH8/EPn16ciVsPQ/ypsjk=', crossorigin='anonymous', defer='')
+script(src='https://cdn.jsdelivr.net/npm/instantsearch.js@4.8.3/dist/instantsearch.production.min.js', integrity='sha256-LAGhRRdtVoD6RLo2qDQsU2mp+XVSciKRC8XPOBWmofM=', crossorigin='anonymous', defer='')
 script(src='/js/apireference.min.js?v=' + deployVersion, defer='', onload='initGTM()')
 if canonicalUrl && canonicalUrl !== req.originalUrl
     link(rel='canonical', href=`${canonicalUrl}`)
