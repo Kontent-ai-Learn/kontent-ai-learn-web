@@ -19,12 +19,21 @@ window.initSearch = (() => {
   let searchAutocomplete = null;
   let searchAutocompleteList = null;
   let searchAutocompleteHeader = null;
+  let searchQueryID = null;
 
   const searchClient = algoliasearch(searchAPI.appid, searchAPI.apikey);
   const search = instantsearch({
     indexName: searchAPI.indexname,
     searchClient
   });
+  window.aa('init', {
+    appId: searchAPI.appid,
+    apiKey: searchAPI.apikey
+  });
+  const insightsMiddleware = instantsearch.middlewares.createInsightsMiddleware({
+    insightsClient: window.aa,
+  });
+  search.use(insightsMiddleware);
 
   const removeInlineElements = (content) => {
     if (content) {
@@ -35,7 +44,7 @@ window.initSearch = (() => {
     return content;
   };
 
-  const formatSuggestion = (suggestion) => {
+  const formatSuggestion = (suggestion, position) => {
     // Get url from the urlMap
     const suggestionUrl = window.urlMap.filter(item => item.codename === suggestion.codename);
 
@@ -69,7 +78,11 @@ window.initSearch = (() => {
     }
 
     // Template for a single search result suggestion
-    return `<li class="autocomplete__suggestion">
+    return `<li class="autocomplete__suggestion"
+                data-insights-object-id="${suggestion.objectID}"
+                data-insights-position="${position + 1}"
+                data-insights-query-id="${searchQueryID}"
+            >
               <a href="${suggestion.resolvedUrl}" class="suggestion">
                 <div class="suggestion__left">
                   <span class="suggestion__heading">${removeInlineElements(suggestion._highlightResult.title.value)}</span>
@@ -97,10 +110,10 @@ window.initSearch = (() => {
   };
 
   // Helper for the render function
-  const renderIndexListItem = ({ hits }) => {
+  const renderIndexListItem = ({ hits, sendEvent }) => {
     return `
-      ${hits.map((hit) => {
-        return formatSuggestion(hit)
+      ${hits.map((hit, position) => {
+        return formatSuggestion(hit, position, sendEvent)
     }).join('')}`
   };
 
@@ -175,7 +188,10 @@ window.initSearch = (() => {
 
       if (!parent && !parentTrigger) {
         onAutocompleteClosed();
-        disableSearchTrigger();
+
+        if (searchTrigger && searchOverlay) {
+          disableSearchTrigger();
+        }
       }
     });
   }
@@ -212,6 +228,7 @@ window.initSearch = (() => {
     if (searchResultsNumber && searchTerm) {
       searchAutocompleteHeader.innerHTML = formatHeader();
       searchInput.value = searchTerm;
+      searchQueryID = indices.length ? indices[0].results.queryID : null;
       searchAutocompleteList.innerHTML = indices
         .map(renderIndexListItem)
         .join('');
