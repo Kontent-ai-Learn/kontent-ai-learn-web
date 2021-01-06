@@ -20,6 +20,7 @@ window.initSearch = (() => {
   let searchAutocompleteList = null;
   let searchAutocompleteHeader = null;
   let searchQueryID = null;
+  let searchIndice = null;
 
   const searchClient = algoliasearch(searchAPI.appid, searchAPI.apikey);
   const search = instantsearch({
@@ -113,7 +114,7 @@ window.initSearch = (() => {
   const renderIndexListItem = ({ hits, sendEvent }) => {
     return `
       ${hits.map((hit, position) => {
-        return formatSuggestion(hit, position, sendEvent)
+        return formatSuggestion(hit, position)
     }).join('')}`
   };
 
@@ -194,11 +195,27 @@ window.initSearch = (() => {
         }
       }
     });
-  }
+  };
+
+  const trackAlogiaEvent = (e) => {
+    e.preventDefault();
+    const parent = window.helper.findAncestor(e.target, '.autocomplete__suggestion');
+    const elem = !parent ? (e.target.matches('.autocomplete__suggestion') ? e.target : null) : parent;
+
+    if (elem) {
+      const hitItem = searchIndice.hits.find(item => item.objectID === elem.getAttribute('data-insights-object-id'));
+      if (hitItem) {
+        hitItem.__queryID = searchQueryID;
+        hitItem.__position = parseInt(elem.getAttribute('data-insights-position'))
+        searchIndice.sendEvent('click', hitItem, 'Search clicked');
+      }
+    }
+  };
 
   // Create the render function
   const renderAutocomplete = (renderOptions, isFirstRender) => {
     const { indices, currentRefinement, refine, widgetParams } = renderOptions;
+    searchIndice = indices[0];
 
     if (isFirstRender) {
       searchAutocomplete = document.createElement('div');
@@ -217,6 +234,10 @@ window.initSearch = (() => {
 
       widgetParams.container.appendChild(searchAutocomplete);
       searchInput.addEventListener('focus', onAutocompleteOpened);
+
+      body.addEventListener('click', function (e) {
+        trackAlogiaEvent(e);
+      });
     }
 
     searchResultsNumber = indices.length ? indices[0].hits.length : 0;
@@ -233,6 +254,7 @@ window.initSearch = (() => {
         .map(renderIndexListItem)
         .join('');
       searchAutocomplete.classList.add('autocomplete__dropdown--visible');
+
     } else if (!searchResultsNumber && searchTerm) {
       searchAutocompleteHeader.innerHTML = formatHeader();
       searchAutocompleteList.innerHTML = formatEmptySuggestion();
