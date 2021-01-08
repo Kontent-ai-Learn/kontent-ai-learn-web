@@ -7,6 +7,7 @@
 Kentico Kontent documentation portal, which utilizes [Kentico Kontent](https://app.kontent.ai/) as a source of its content.
 
 ## Overview
+
 1. The website is written in JavaScript.
 2. It uses [express.js](https://expressjs.com/) framework for server-side rendering and [Kentico Kontent Delivery SDK](https://github.com/Kentico/kontent-delivery-sdk-js) for content retrieval from Kentico Kontent project.
 3. Additionally, [Autocomplete.js](https://github.com/algolia/autocomplete.js) package supports the search box that is connected to the indexed content on Algolia.
@@ -14,17 +15,20 @@ Kentico Kontent documentation portal, which utilizes [Kentico Kontent](https://a
 ## Setup
 
 ### Prerequisites
+
 1. Node (+npm) installed
 2. Any JavaScript IDE installed
 2. Subscription on Kentico Kontent
 
 ### Instructions
+
 1. Clone the project repository.
 2. Run `npm install` in the terminal.
 3. Run `npm run debug` to start a development server.
 4. The website can be opened in your browser at http://localhost:3000.
 
 #### Recommended environmental variables
+
 * `KC.ProjectId` - Kentico Kontent project ID
 * `KC.PreviewApiKey` - Kentico Kontent preview API key (set this key to retrieve preview content from Kentico Kontent)
 * `KC.SecuredApiKey` - Kentico Kontent secured API key (set this key to retrieve published content from Kentico Kontent)
@@ -33,6 +37,7 @@ Kentico Kontent documentation portal, which utilizes [Kentico Kontent](https://a
 
 #### Optional environmental variables
 Without the following variables, related features will not work on the website.
+
 * `Search.ApiKey` - Algolia search-only API key (used for site search)
 * `Search.AppId` - Algolia application ID (used for site search)
 * `Search.IndexName` - Index name in Algolia application (used for site search)
@@ -52,6 +57,7 @@ Without the following variables, related features will not work on the website.
 * `ngrok` - ngrok tunnel URL (i.e. https://91a2c81a7f1f.ngrok.io) (useful for api2PDF service local development/testing)
 
 ## How To Contribute
+
 Feel free to open a new issue where you describe your proposed changes, or even create a new pull request from your branch with proposed changes.
 
 ## Licence
