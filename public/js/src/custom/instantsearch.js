@@ -3,12 +3,21 @@
  */
 
 window.initSearch = (() => {
+  // Get Algolia account and index info
   searchAPI.appid = window.helper.getParameterByName('searchappid') || searchAPI.appid;
   searchAPI.apikey = window.helper.getParameterByName('searchAPIkey') || searchAPI.apikey;
   searchAPI.indexname = window.helper.getParameterByName('searchindexname') || searchAPI.indexname;
 
+  // Define variables used throughout the search logic
   let searchTerm = '';
   let searchResultsNumber = 0;
+  let searchAutocomplete = null;
+  let searchAutocompleteList = null;
+  let searchAutocompleteHeader = null;
+  let searchQueryID = null;
+  let searchIndice = null;
+
+  // Get DOM elements used throughout the search logic
   const body = document.querySelector('body');
   const navigation = document.querySelector('.navigation');
   const searchWrapper = document.querySelector('.navigation__search-wrapper');
@@ -16,12 +25,8 @@ window.initSearch = (() => {
   const searchTrigger = document.querySelector('[data-search-trigger]');
   const searchTarget = document.querySelector('[data-search-target]');
   const searchInput = document.querySelector('#nav-search');
-  let searchAutocomplete = null;
-  let searchAutocompleteList = null;
-  let searchAutocompleteHeader = null;
-  let searchQueryID = null;
-  let searchIndice = null;
 
+  // Init Algolia IntantSearch and Algolia Analytics
   const searchClient = algoliasearch(searchAPI.appid, searchAPI.apikey);
   const search = instantsearch({
     indexName: searchAPI.indexname,
@@ -36,6 +41,7 @@ window.initSearch = (() => {
   });
   search.use(insightsMiddleware);
 
+  // Remove macros and newlines from a string
   const removeInlineElements = (content) => {
     if (content) {
       content = content.replace(/{@[a-z,0-9,-</>]+@}/g, '');
@@ -45,6 +51,7 @@ window.initSearch = (() => {
     return content;
   };
 
+  // Get markup for a hit
   const formatSuggestion = (suggestion, position) => {
     // Get url from the urlMap
     const suggestionUrl = window.urlMap.filter(item => item.codename === suggestion.codename);
@@ -65,17 +72,17 @@ window.initSearch = (() => {
 
     // Custom general label for tutorials
     if (suggestion.section === 'tutorials') {
-        section = 'Tutorial'
+        section = 'Tutorial';
     }
 
     // Custom label for terminology page
     if (suggestion.codename === 'terminology') {
-        section = 'Terminology'
+        section = 'Terminology';
     }
 
     // Custom label for product changelog
     if (suggestion.codename === 'product_changelog') {
-        section = 'Changelog'
+        section = 'Changelog';
     }
 
     // Template for a single search result suggestion
@@ -87,7 +94,7 @@ window.initSearch = (() => {
               <a href="${suggestion.resolvedUrl}" class="suggestion">
                 <div class="suggestion__left">
                   <span class="suggestion__heading">${removeInlineElements(suggestion._highlightResult.title.value)}</span>
-                  ${suggestion._highlightResult.heading.value ? '<span class="suggestion__sub-heading">'+ removeInlineElements(suggestion._highlightResult.heading.value) +'</span>' : ''}
+                  ${suggestion._highlightResult.heading.value ? `<span class="suggestion__sub-heading">${removeInlineElements(suggestion._highlightResult.heading.value)}</span>` : ''}
                   <p class="suggestion__text">${removeInlineElements(suggestion._snippetResult.content.value)}</p>
                 </div>
                 <div class="suggestion__right">
@@ -97,6 +104,7 @@ window.initSearch = (() => {
             </li>`;
   };
 
+  // Get markup when no hit is available
   const formatEmptySuggestion = () => {
     searchTerm = encodeURIComponent(searchInput.value);
 
@@ -106,18 +114,20 @@ window.initSearch = (() => {
             </div>`;
   };
 
+  // Get markup for autocomplete header
   const formatHeader = () => {
     return `Showing ${searchResultsNumber} results for <strong>'${searchTerm}'</strong>`;
   };
 
-  // Helper for the render function
-  const renderIndexListItem = ({ hits, sendEvent }) => {
+  // Render list of hits
+  const renderIndexListItem = ({ hits }) => {
     return `
       ${hits.map((hit, position) => {
         return formatSuggestion(hit, position)
-    }).join('')}`
+    }).join('')}`;
   };
 
+  // Show search panel
   const enableSearchTrigger = () => {
     searchTrigger.classList.add('trigger-active');
     searchTarget.classList.add('toggle-active');
@@ -131,6 +141,7 @@ window.initSearch = (() => {
     }
   };
 
+  // Hide search panel
   const disableSearchTrigger = () => {
     setTimeout(() => {
       searchTrigger.classList.remove('trigger-active');
@@ -139,6 +150,7 @@ window.initSearch = (() => {
     }, 100);
   };
 
+  // Toggle search panel
   const triggerSearchPanel = () => {
     if (searchTrigger && searchOverlay) {
       searchTrigger.addEventListener('click', () => {
@@ -151,6 +163,7 @@ window.initSearch = (() => {
     }
   };
 
+  // Hide autocomplete panel
   const onAutocompleteClosed = () => {
     if (searchWrapper && searchOverlay) {
       navigation.classList.remove('navigation--search-active');
@@ -161,6 +174,7 @@ window.initSearch = (() => {
     }
   };
 
+  // Show autocomplete panel
   const onAutocompleteOpened = () => {
     if (searchWrapper && searchOverlay) {
       navigation.classList.add('navigation--search-active');
@@ -172,6 +186,7 @@ window.initSearch = (() => {
     searchInput.focus();
   };
 
+  // Handle click for icon in the search input
   const setFocusOnMagnifier = (prefix) => {
     const search = document.querySelector(`.${prefix}__search`);
     if (search) {
@@ -182,7 +197,8 @@ window.initSearch = (() => {
     }
   };
 
-  const setSearchResultSelected = () => {
+  // Hide autocomplete when user clicks outside the search area
+  const onClickOutsideSearch = () => {
     body.addEventListener('click', function (e) {
       const parent = window.helper.findAncestor(e.target, '[data-search-container]');
       const parentTrigger = e.target.matches('[data-search-trigger]');
@@ -197,8 +213,8 @@ window.initSearch = (() => {
     });
   };
 
+  // Obtain data for event tracking and send them to Algolia
   const trackAlogiaEvent = (e) => {
-    e.preventDefault();
     const parent = window.helper.findAncestor(e.target, '.autocomplete__suggestion');
     const elem = !parent ? (e.target.matches('.autocomplete__suggestion') ? e.target : null) : parent;
 
@@ -212,11 +228,12 @@ window.initSearch = (() => {
     }
   };
 
-  // Create the render function
+  // Autocomplete render function
   const renderAutocomplete = (renderOptions, isFirstRender) => {
     const { indices, currentRefinement, refine, widgetParams } = renderOptions;
-    searchIndice = indices[0];
+    searchIndice = indices.length ? indices[0] : null;
 
+    // On first render create DOM elements and add listeners to events
     if (isFirstRender) {
       searchAutocomplete = document.createElement('div');
       searchAutocomplete.classList.add('autocomplete__dropdown');
@@ -240,21 +257,22 @@ window.initSearch = (() => {
       });
     }
 
-    searchResultsNumber = indices.length ? indices[0].hits.length : 0;
+    // Get data and DOM elements
+    searchResultsNumber = searchIndice ? searchIndice.hits.length : 0;
     searchTerm = window.filterXSS(decodeURIComponent(currentRefinement));
     searchAutocompleteHeader = widgetParams.container.querySelector('.autocomplete__header');
     searchAutocomplete = widgetParams.container.querySelector('.autocomplete__dropdown');
     searchAutocompleteList = widgetParams.container.querySelector('ul');
 
+    // Render autocomplete based on search term existence and number of hits
     if (searchResultsNumber && searchTerm) {
       searchAutocompleteHeader.innerHTML = formatHeader();
       searchInput.value = searchTerm;
-      searchQueryID = indices.length ? indices[0].results.queryID : null;
+      searchQueryID = searchIndice ? searchIndice.results.queryID : null;
       searchAutocompleteList.innerHTML = indices
         .map(renderIndexListItem)
         .join('');
       searchAutocomplete.classList.add('autocomplete__dropdown--visible');
-
     } else if (!searchResultsNumber && searchTerm) {
       searchAutocompleteHeader.innerHTML = formatHeader();
       searchAutocompleteList.innerHTML = formatEmptySuggestion();
@@ -265,7 +283,7 @@ window.initSearch = (() => {
     }
   };
 
-  // Create the custom widget
+  // Create Algolia custom widget based on Autocomplete
   const customAutocomplete = instantsearch.connectors.connectAutocomplete(
     renderAutocomplete
   );
@@ -278,8 +296,8 @@ window.initSearch = (() => {
   ]);
 
   return () => {
-    if (searchAPI) {
-      setSearchResultSelected();
+    if (searchAPI && searchInput) {
+      onClickOutsideSearch();
       search.start();
       setFocusOnMagnifier('navigation');
       setFocusOnMagnifier('hero');
