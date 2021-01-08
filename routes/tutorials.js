@@ -119,9 +119,7 @@ const getContent = async (req, res) => {
         if (currentLevel === -1) {
             return `/${slug}/${content[0].children.value[0].url.value}${queryHash ? '?' + queryHash : ''}`;
         } else if (currentLevel === 0 && content[0].system.type !== 'multiplatform_article') {
-            if (content[0].system.type === 'certification') {
-                view = 'tutorials/pages/certification';
-            } else if (content[0].system.type === 'training_course') {
+            if (content[0].system.type === 'training_course') {
                 view = 'tutorials/pages/trainingCourse';
                 trainingCourseInfo = await getTrainingCourseInfo(content[0], req, res);
             } else if (content[0].system.type === 'scenario') {

@@ -99,12 +99,6 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
-    getCertification: async (res) => {
-        return await requestDelivery({
-            type: 'certification',
-            ...commonContent.getKCDetails(res)
-        });
-    },
     getTraniningCourse: async (res) => {
         return await requestDelivery({
             type: 'training_course',

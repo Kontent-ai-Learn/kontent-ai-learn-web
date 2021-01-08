@@ -44,7 +44,7 @@ Without the following variables, related features will not work on the website.
 * `APPINSIGHTS_INSTRUMENTATIONKEY` - Application Insights key (used for application monitoring)
 * `GTM.id` - Google Tag Manager ID (used for analytics)
 * `Intercom.id` - Intercom account ID (used for support chat)
-* `LMS.id` - Kentico e-Learning API key (used for certification course and exam registration)
+* `LMS.id` - Kentico e-Learning API key (used for e-learning integration)
 * `Recaptcha-v2.secret` - Google Recaptcha v2 secret API key (used for forms robot protection)
 * `Recaptcha-v2.site` - Google Recaptcha v2 site API key (used for forms robot protection)
 * `Webhook.Cache.Invalidate.CommonContent` - Kentico Kontent Webhook token (used for common content cache invalidation)

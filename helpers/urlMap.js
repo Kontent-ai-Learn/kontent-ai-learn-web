@@ -21,9 +21,6 @@ const typeLevels = {
     scenario: {
         urlLength: 2
     },
-    certification: {
-        urlLength: 2
-    },
     zapi_specification: {
         urlLength: 2
     },
