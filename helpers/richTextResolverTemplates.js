@@ -434,7 +434,7 @@ const richTextResolverTemplates = {
         const personas = item.persona.value;
         const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
         const url = urlMapItem.length ? urlMapItem[0].url : null
-        const image = item.thumbnail.value.length ? item.thumbnail.value[0].url : null
+        const image = item.thumbnail.value.length ? `${item.thumbnail.value[0].url}?auto=format&w=235` : null
 
         return `
             <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}">
