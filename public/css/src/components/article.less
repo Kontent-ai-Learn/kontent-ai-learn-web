@@ -520,6 +520,7 @@
     &__row-links {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         
         & > * {
             margin-right: 1em;
@@ -527,6 +528,15 @@
 
         & + & {
             margin-top: 1em;
+        }
+
+        .call-to-action {
+            margin-bottom: 0;
+        }
+
+        .link {
+            margin-top: .5em;
+            margin-bottom: .5em;
         }
     }
 }
