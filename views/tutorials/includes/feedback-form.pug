@@ -27,5 +27,5 @@ mixin textarea(id, label)
                 button.form__button 
                     span !{UIMessages.feedback_form___submit_button.value}
                     span
-    if process.env['Recaptcha-v2.site']
-        #recaptcha-script(data-site=process.env['Recaptcha-v2.site'])
+    if process.env['Recaptcha.v2.site']
+        #recaptcha-script(data-site=process.env['Recaptcha.v2.site'])
