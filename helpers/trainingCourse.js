@@ -4,6 +4,7 @@ const handleCache = require('./handleCache');
 const helper = require('./helperFunctions');
 const lms = require('./lms')
 const isPreview = require('./isPreview');
+const sendSendGridEmail = require('./sendgrid');
 
 const isCourseAvailable = (user) => {
   if (user.email.endsWith('@kentico.com')) {
@@ -32,18 +33,28 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages) => {
     let text = '';
     let renderAs = 'button';
 
+    if (courseInfo.err) {
+      const emailInfo = {
+        recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
+        subject: 'LMS error notification',
+        text: lms.composeNotification('A user attempt to access to LMS in Kentico Kontent Docs failed with the following error:', courseInfo.err)
+      };
+      sendSendGridEmail(emailInfo);
+      console.log('adasd', courseInfo.err);
+    }
+
     if (courseInfo.completion === 0) {
       text = UIMessages.training___cta_start_course.value;
     } else if (courseInfo.completion === 100) {
       text = UIMessages.training___cta_revisit_course.value;
     } else if (courseInfo.completion === 101) {
-      text = 'User info is not available in LMS.';
+      text = UIMessages.sign_in_error_text.value; // 'User info is not available in LMS.';
       renderAs = 'text';
     } else if (courseInfo.completion === 102) {
-      text = 'Course info is not available in LMS.';
+      text = UIMessages.sign_in_error_text.value; // 'Course info is not available in LMS.';
       renderAs = 'text';
     } else if (courseInfo.completion === 103) {
-      text = 'Course ID does not exist in LMS.';
+      text = UIMessages.sign_in_error_text.value; // 'Course ID does not exist in LMS.';
       renderAs = 'text';
     } else {
       text = UIMessages.training___cta_resume_course.value;
@@ -91,18 +102,30 @@ const getTrainingCourseInfo = async (content, req, res) => {
     }
   } else {
       // Get additional info about authenticated user
-      user = await axios({
-        method: 'get',
-        url: `${process.env['SubscriptionService.Url']}${req.oidc.user.email}/`,
-        headers: {
-          Authorization: `Bearer ${process.env['SubscriptionService.Bearer']}`
-        }
-      });
+      try {
+        user = await axios({
+          method: 'get',
+          url: `${process.env['SubscriptionService.Url']}${req.oidc.user.email}/`,
+          headers: {
+            Authorization: `Bearer ${process.env['SubscriptionService.Bearer']}`
+          }
+        });
+      } catch (err) {
+        err.response.data.userEmail = req.oidc.user.email;
+        err.response.data.file = 'helpers/trainingCourse.js';
+        err.response.data.method = 'getTrainingCourseInfo';
+        const emailInfo = {
+          recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
+          subject: 'Failed user sign in notification',
+          text: lms.composeNotification('A user attempt to sign in to Kentico Kontent Docs failed in the Subscription service with the following error:', err.response.data)
+        };
+        sendSendGridEmail(emailInfo);
+      }
 
       if (!user) {
         renderGeneralMessage = true;
         generalMessage = {
-          text: 'User is not available in the subscription service',
+          text: UIMessages.sign_in_error_text.value,
           renderAs: 'text',
           signedIn: true
         };

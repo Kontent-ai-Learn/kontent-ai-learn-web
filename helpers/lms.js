@@ -20,7 +20,6 @@ const settings = {
 
 const registerUser = async (data) => {
     let userCreated = true;
-
     try {
         await axios({
             method: 'post',
@@ -36,7 +35,7 @@ const registerUser = async (data) => {
 };
 
 const courseExists = async (courseId) => {
-    let exists = true;
+    const exists = {};
 
     try {
         await axios({
@@ -44,15 +43,18 @@ const courseExists = async (courseId) => {
             url: `${settings.coursesUrl}/id:${courseId}`,
             auth: settings.auth
         });
-    } catch (error) {
-        exists = false;
+    } catch (err) {
+        exists.err = err.response.data.error;
+        exists.err.courseId = courseId;
+        exists.err.file = 'helpers/lms.js';
+        exists.err.method = 'courseExists';
     }
 
     return exists;
 };
 
 const addUserToCourse = async (data) => {
-    let addedToCourse;
+    let addedToCourse = {};
 
     try {
         const inCourse = await axios({
@@ -65,8 +67,8 @@ const addUserToCourse = async (data) => {
             auth: settings.auth
         });
         addedToCourse = inCourse.data;
-    } catch (error) {
-        addedToCourse = error.response.data;
+    } catch (err) {
+        addedToCourse.err = err.response.data;
     }
 
     return addedToCourse;
@@ -94,13 +96,22 @@ const addUserToBranch = async (userId) => {
 };
 
 const getUserByEmail = async (email) => {
-    const user = await axios({
-        method: 'get',
-        url: `${settings.getUserByEmailUrl}:${email}`,
-        auth: settings.auth
-    });
+    let userData = {};
+    try {
+        const user = await axios({
+            method: 'get',
+            url: `${settings.getUserByEmailUrl}:${email}`,
+            auth: settings.auth
+        });
+        userData = user.data;
+    } catch (err) {
+        userData.err = err.response.data.error;
+        userData.err.email = email;
+        userData.err.file = 'helpers/lms.js';
+        userData.err.method = 'getUserByEmail';
+    }
 
-    return user.data;
+    return userData;
 };
 
 const updateUser = async (userLMS, user) => {
@@ -120,27 +131,45 @@ const updateUser = async (userLMS, user) => {
 };
 
 const getStatus = async (courseId, userId) => {
-    const status = await axios({
-        method: 'get',
-        url: `${settings.statusUrl}/course_id:${courseId},user_id:${userId}`,
-        auth: settings.auth
-    });
+    let statusData = {};
+    try {
+        const status = await axios({
+            method: 'get',
+            url: `${settings.statusUrl}/course_id:${courseId},user_id:${userId}`,
+            auth: settings.auth
+        });
+        statusData = status.data;
+    } catch (err) {
+        statusData.err = err.response.data.error;
+        statusData.err.courseId = courseId;
+        statusData.err.userId = userId;
+    }
 
-    return status.data;
+    return statusData;
 };
 
 const getGoTo = async (courseId, userId) => {
-    const goto = await axios({
-        method: 'get',
-        url: `${settings.goToUrl}/user_id:${userId},course_id:${courseId},header_hidden_options:courseName;units;sharedFiles;moreOptions`,
-        auth: settings.auth
-    });
-
-    if (goto.data.goto_url) {
-        goto.data.goto_url = goto.data.goto_url.replace('//training.kentico.com', '//kontent.training.kentico.com');
+    let goToData = {};
+    try {
+        const goto = await axios({
+            method: 'get',
+            url: `${settings.goToUrl}/user_id:${userId},course_id:${courseId},header_hidden_options:courseName;units;sharedFiles;moreOptions`,
+            auth: settings.auth
+        });
+        goToData = goto.data;
+    } catch (err) {
+        goToData.err = err.response.data.error;
+        goToData.err.courseId = courseId;
+        goToData.err.userId = userId;
+        goToData.err.file = 'helpers/lms.js';
+        goToData.err.method = 'getGoTo';
     }
 
-    return goto.data;
+    if (goToData.goto_url) {
+        goToData.goto_url = goToData.goto_url.replace('//training.kentico.com', '//kontent.training.kentico.com');
+    }
+
+    return goToData;
 };
 
 const getCertificate = (user, courseId) => {
@@ -159,26 +188,10 @@ const getCertificate = (user, courseId) => {
 };
 
 const lms = {
-    registerAddtoCourse: async (data) => {
-        data.login = data.email;
-        data.password = generator.generate({
-            length: 8,
-            numbers: true
-        });
-
-        // Register user to LMS or get to know the user is already registered
-        // Do not need to check the result as the outcome is a registered user
-        await registerUser(data);
-
-        // Add the user to a course by email
-        const addedToCourse = await addUserToCourse(data);
-
-        // If user already enrolled to the course
-        if (addedToCourse.error) {
-            return true;
-        }
-
-        return false;
+    composeNotification: (text, infoObject) => {
+        return `${text}\n${Object.keys(infoObject).map((key) => {
+            return `${key}: ${infoObject[key]}`;
+        }).join('\n')}`;
     },
     handleTrainingCourse: async (data, courseId) => {
         const user = {};
@@ -190,31 +203,38 @@ const lms = {
             length: 8,
             numbers: true
         });
+        let userCreated = false;
 
-        const userCreated = await registerUser(user);
-        const userLMS = await getUserByEmail(user.login);
+        let userLMS = await getUserByEmail(user.login);
 
-        if (!userLMS) {
-            return {
-                url: '#',
-                completion: 101
+        if (userLMS.err) {
+            userCreated = await registerUser(user);
+            userLMS = await getUserByEmail(user.login);
+
+            if (userLMS.err) {
+                return {
+                    url: '#',
+                    completion: 101,
+                    err: userLMS.err
+                }
             }
         }
 
-        const userToBeUpdated = !userCreated && userLMS && (data.firstName !== userLMS.first_name || data.lastName !== userLMS.last_name);
+        const userToBeUpdated = !userCreated && !userLMS.err && (data.firstName !== userLMS.first_name || data.lastName !== userLMS.last_name);
         if (userToBeUpdated) {
             await updateUser(userLMS, user);
         }
 
-        if (userLMS && !userIsInBranch(userLMS)) {
+        if (!userLMS.err && !userIsInBranch(userLMS)) {
             await addUserToBranch(userLMS.id);
         }
 
         const courseExistsInLMS = await courseExists(courseId);
-        if (!courseExistsInLMS) {
+        if (courseExistsInLMS.err) {
             return {
                 url: '#',
-                completion: 103
+                completion: 103,
+                err: courseExistsInLMS.err
             }
         }
 
@@ -224,15 +244,24 @@ const lms = {
         });
 
         const status = await getStatus(courseId, userLMS.id);
-        const goTo = await getGoTo(courseId, userLMS.id);
-        const certificate = getCertificate(userLMS, courseId);
-
-        if (!status || !goTo) {
+        if (status.err) {
             return {
                 url: '#',
-                completion: 102
+                completion: 102,
+                err: status.err
             }
         }
+
+        const goTo = await getGoTo(courseId, userLMS.id);
+        if (goTo.err) {
+            return {
+                url: '#',
+                completion: 102,
+                err: goTo.err
+            }
+        }
+
+        const certificate = getCertificate(userLMS, courseId);
 
         return {
             url: goTo.goto_url,

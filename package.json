@@ -33,6 +33,7 @@
   "dependencies": {
     "@kentico/kontent-delivery": "^10.0.0",
     "@kentico/kontent-webhook-helper": "^1.1.0",
+    "@sendgrid/mail": "^7.4.2",
     "acorn": "^8.0.4",
     "api2pdf": "^1.1.0",
     "applicationinsights": "^1.8.7",
