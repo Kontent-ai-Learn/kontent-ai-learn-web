@@ -28,6 +28,21 @@ window.initSearch = (() => {
 
   // Init Algolia IntantSearch and Algolia Analytics
   const searchClient = algoliasearch(searchAPI.appid, searchAPI.apikey);
+  searchClient.searchOriginal = searchClient.search;
+  searchClient.search = (requests) => {
+    if (requests.every(({ params }) => !params.query)) { // Prevent sending a search query to Algolia on page load
+      return Promise.resolve({
+        results: requests.map(() => ({
+          hits: [],
+          nbHits: 0,
+          nbPages: 0,
+          page: 0,
+          processingTimeMS: 0,
+        })),
+      });
+    }
+    return searchClient.searchOriginal(requests);
+  };
   const search = instantsearch({
     indexName: searchAPI.indexname,
     searchClient
