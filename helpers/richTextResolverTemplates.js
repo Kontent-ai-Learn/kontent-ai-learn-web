@@ -433,8 +433,17 @@ const richTextResolverTemplates = {
     trainingCourse: (item, config) => {
         const personas = item.persona.value;
         const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
-        const url = urlMapItem.length ? urlMapItem[0].url : null
-        const image = item.thumbnail.value.length ? `${item.thumbnail.value[0].url}?auto=format&w=235` : null
+        const url = urlMapItem.length ? urlMapItem[0].url : null;
+        const imageWidth = item.thumbnail.value[0] ? item.thumbnail.value[0].width || 0 : 0;
+        const imageHeight = item.thumbnail.value[0] ? item.thumbnail.value[0].height || 0 : 0;
+        const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
+        const image = item.thumbnail.value.length ? `${item.thumbnail.value[0].url}?auto=format&w=116` : null;
+        const imageMarkup = image ? `
+            <img class="lazy lazy--exclude-dnt" src='${placeholderSrc}' data-src="${image}" alt="" data-dpr data-lazy-onload loading="lazy" ${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}>
+            <noscript>
+                <img src="${image}" ${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}>
+            </noscript>
+        ` : '';
 
         return `
             <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}">
@@ -442,7 +451,7 @@ const richTextResolverTemplates = {
                 ${helper.showEditLink(config.isPreview, config.isKenticoIP) ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/default/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                 <div class="article__introduction">
                     ${image ? `
-                        ${url ? `<a href="${url}" class="article__introduction-image"><img src="${image}" alt="" /></a>` : `<div class="article__introduction-image"><img src="${image}" alt="" /></div>`}
+                        ${url ? `<a href="${url}" class="article__introduction-image">${imageMarkup}</a>` : `<div class="article__introduction-image">${imageMarkup}</div>`}
                     ` : ''}
                     <div class="article__introduction-content">
                         <div class="article__info-bar">
