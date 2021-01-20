@@ -260,8 +260,8 @@ window.initSearch = (() => {
       searchAutocompleteList = document.createElement('ul');
       searchAutocomplete.appendChild(searchAutocompleteList);
 
-      searchInput.addEventListener('input', event => {
-        refine(event.currentTarget.value);
+      searchInput.addEventListener('input', (e) => {
+        refine(e.currentTarget.value);
       });
 
       widgetParams.container.appendChild(searchAutocomplete);
@@ -298,6 +298,41 @@ window.initSearch = (() => {
     }
   };
 
+  const navigateBetweenSuggestions = () => {
+    body.addEventListener('keydown', function(e) {
+      if (e.target.matches('#nav-search')) {
+        if (e.key === 'Enter' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!searchAutocomplete) return;
+          const firstResult = searchAutocomplete.querySelector('.suggestion');
+          if (!firstResult) return;
+          firstResult.focus();
+          if (e.key === 'Enter') firstResult.click();
+        }
+      }
+      if (e.target.matches('.suggestion')) {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!searchAutocomplete) return;
+          const results = searchAutocomplete.querySelectorAll('.suggestion');
+          const resultsNodes = Array.prototype.slice.call(results);
+          const currentIndex = resultsNodes.indexOf(e.target);
+          let newIndex = currentIndex;
+          if (e.key === 'ArrowUp') newIndex--;
+          if (e.key === 'ArrowDown') newIndex++;
+
+          if (newIndex >= 0 && newIndex < resultsNodes.length) {
+            results[newIndex].focus();
+          } else if (newIndex <= -1) {
+            searchInput.focus();
+          }
+        }
+      }
+    });
+  };
+
   // Create Algolia custom widget based on Autocomplete
   const customAutocomplete = instantsearch.connectors.connectAutocomplete(
     renderAutocomplete
@@ -317,6 +352,7 @@ window.initSearch = (() => {
       setFocusOnMagnifier('navigation');
       setFocusOnMagnifier('hero');
       triggerSearchPanel();
+      navigateBetweenSuggestions();
     }
   }
 })();
