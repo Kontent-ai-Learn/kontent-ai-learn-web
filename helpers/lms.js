@@ -18,6 +18,10 @@ const settings = {
     addUserToBranch: `https://${process.env['LMS.host']}/api/v1/addusertobranch`,
 };
 
+const handleEmptyErrorResponse = (response, requestUrl) => {
+    return response ? response.data.error : { message: `Invalid request to ${requestUrl}` };
+};
+
 const registerUser = async (data) => {
     let userCreated = true;
     try {
@@ -36,15 +40,15 @@ const registerUser = async (data) => {
 
 const courseExists = async (courseId) => {
     const exists = {};
-
+    const url = `${settings.coursesUrl}/id:${courseId}`;
     try {
         await axios({
             method: 'post',
-            url: `${settings.coursesUrl}/id:${courseId}`,
+            url: `${url}`,
             auth: settings.auth
         });
     } catch (err) {
-        exists.err = err.response.data.error;
+        exists.err = handleEmptyErrorResponse(err.response, url);
         exists.err.courseId = courseId;
         exists.err.file = 'helpers/lms.js';
         exists.err.method = 'courseExists';
@@ -55,11 +59,11 @@ const courseExists = async (courseId) => {
 
 const addUserToCourse = async (data) => {
     let addedToCourse = {};
-
+    const url = settings.addToCourseUrl;
     try {
         const inCourse = await axios({
             method: 'post',
-            url: settings.addToCourseUrl,
+            url: url,
             data: {
                 user_email: data.email,
                 course_id: data.course_id || 0
@@ -68,7 +72,11 @@ const addUserToCourse = async (data) => {
         });
         addedToCourse = inCourse.data;
     } catch (err) {
-        addedToCourse.err = err.response.data;
+        addedToCourse.err = handleEmptyErrorResponse(err.response, url);
+        addedToCourse.err.userEmail = data.email;
+        addedToCourse.err.courseId = data.course_id;
+        addedToCourse.err.file = 'helpers/lms.js';
+        addedToCourse.err.method = 'addUserToCourse';
     }
 
     return addedToCourse;
@@ -97,16 +105,17 @@ const addUserToBranch = async (userId) => {
 
 const getUserByEmail = async (email) => {
     let userData = {};
+    const url = `${settings.getUserByEmailUrl}:${email}`;
     try {
         const user = await axios({
             method: 'get',
-            url: `${settings.getUserByEmailUrl}:${email}`,
+            url: url,
             auth: settings.auth
         });
         userData = user.data;
     } catch (err) {
-        userData.err = err.response.data.error;
-        userData.err.email = email;
+        userData.err = handleEmptyErrorResponse(err.response, url);
+        userData.err.userEmail = email;
         userData.err.file = 'helpers/lms.js';
         userData.err.method = 'getUserByEmail';
     }
@@ -132,15 +141,16 @@ const updateUser = async (userLMS, user) => {
 
 const getStatus = async (courseId, userId) => {
     let statusData = {};
+    const url = `${settings.statusUrl}/course_id:${courseId},user_id:${userId}`
     try {
         const status = await axios({
             method: 'get',
-            url: `${settings.statusUrl}/course_id:${courseId},user_id:${userId}`,
+            url: url,
             auth: settings.auth
         });
         statusData = status.data;
     } catch (err) {
-        statusData.err = err.response.data.error;
+        statusData.err = handleEmptyErrorResponse(err.response, url);
         statusData.err.courseId = courseId;
         statusData.err.userId = userId;
     }
@@ -150,15 +160,16 @@ const getStatus = async (courseId, userId) => {
 
 const getGoTo = async (courseId, userId) => {
     let goToData = {};
+    const url = `${settings.goToUrl}/user_id:${userId},course_id:${courseId},header_hidden_options:courseName;units;sharedFiles;moreOptions`;
     try {
         const goto = await axios({
             method: 'get',
-            url: `${settings.goToUrl}/user_id:${userId},course_id:${courseId},header_hidden_options:courseName;units;sharedFiles;moreOptions`,
+            url: url,
             auth: settings.auth
         });
         goToData = goto.data;
     } catch (err) {
-        goToData.err = err.response.data.error;
+        goToData.err = err.response ? err.response.data.error : { message: `Invalid request to ${url}` };
         goToData.err.courseId = courseId;
         goToData.err.userId = userId;
         goToData.err.file = 'helpers/lms.js';
@@ -188,10 +199,16 @@ const getCertificate = (user, courseId) => {
 };
 
 const lms = {
-    composeNotification: (text, infoObject) => {
-        return `${text}\n${Object.keys(infoObject).map((key) => {
-            return `${key}: ${infoObject[key]}`;
-        }).join('\n')}`;
+    composeNotification: (text, info) => {
+        text = `${text}\nenvironment: ${process.env.baseURL}`;
+
+        if (typeof info === 'object') {
+            return `${text}\n${Object.keys(info).map((key) => {
+                return `${key}: ${info[key]}`;
+            }).join('\n')}`;
+        }
+
+        return `${text}\n${info}`;
     },
     handleTrainingCourse: async (data, courseId) => {
         const user = {};

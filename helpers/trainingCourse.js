@@ -26,21 +26,20 @@ const isCourseAvailable = (user) => {
   return false;
 };
 
-const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages) => {
+const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPreviewCourse) => {
     if (!courseId && courseId !== 0) return null;
     // Register user in LMS and course and get info about course url and completion
     const courseInfo = await lms.handleTrainingCourse(user, courseId);
     let text = '';
     let renderAs = 'button';
 
-    if (courseInfo.err) {
+    if (courseInfo.err && !isPreviewCourse) {
       const emailInfo = {
         recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
         subject: 'LMS error notification',
         text: lms.composeNotification('A user attempt to access to LMS in Kentico Kontent Docs failed with the following error:', courseInfo.err)
       };
       sendSendGridEmail(emailInfo);
-      console.log('adasd', courseInfo.err);
     }
 
     if (courseInfo.completion === 0) {
@@ -102,15 +101,26 @@ const getTrainingCourseInfo = async (content, req, res) => {
     }
   } else {
       // Get additional info about authenticated user
+      const url = `${process.env['SubscriptionService.Url']}${req.oidc.user.email}/`;
       try {
         user = await axios({
           method: 'get',
-          url: `${process.env['SubscriptionService.Url']}${req.oidc.user.email}/`,
+          url: url,
           headers: {
             Authorization: `Bearer ${process.env['SubscriptionService.Bearer']}`
           }
         });
       } catch (err) {
+        if (!err.response) {
+          err.response = {
+            data: {
+              message: `Invalid request to ${url}`
+            }
+          };
+        }
+        if (typeof err.response.data === 'string') {
+          err.response.data = { message: err.response.data };
+        }
         err.response.data.userEmail = req.oidc.user.email;
         err.response.data.file = 'helpers/trainingCourse.js';
         err.response.data.method = 'getTrainingCourseInfo';
@@ -150,8 +160,8 @@ const getTrainingCourseInfo = async (content, req, res) => {
 
   return {
     general: renderGeneralMessage ? generalMessage : null,
-    production: !renderGeneralMessage && user ? await getTrainingCourseInfoFromLMS(user.data, content.talentlms_course_id.value, UIMessages) : null,
-    preview: (!renderGeneralMessage || forcePreviewRender) && isPreview(res.locals.previewapikey) && user ? await getTrainingCourseInfoFromLMS(user.data, content.talentlms_course_id_preview.value, UIMessages) : null
+    production: !renderGeneralMessage && user ? await getTrainingCourseInfoFromLMS(user.data, content.talentlms_course_id.value, UIMessages, false) : null,
+    preview: (!renderGeneralMessage || forcePreviewRender) && isPreview(res.locals.previewapikey) && user ? await getTrainingCourseInfoFromLMS(user.data, content.talentlms_course_id_preview.value, UIMessages, true) : null
   }
 };
 
