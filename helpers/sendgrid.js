@@ -7,6 +7,12 @@ const send = (info) => {
     from: process.env.SENDGRID_EMAIL_ADDRESS_FROM,
     subject: info.subject,
     text: info.text,
+    tracking_settings: {
+      click_tracking: {
+        enable: false,
+        enable_text: false
+      }
+    }
   };
 
   sgMail
