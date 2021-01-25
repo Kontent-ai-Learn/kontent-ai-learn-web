@@ -102,6 +102,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
   } else {
       // Get additional info about authenticated user
       const url = `${process.env['SubscriptionService.Url']}${req.oidc.user.email}/`;
+      let errCode;
       try {
         user = await axios({
           method: 'get',
@@ -130,12 +131,13 @@ const getTrainingCourseInfo = async (content, req, res) => {
           text: lms.composeNotification('A user attempt to sign in to Kentico Kontent Docs failed in the Subscription service with the following error:', err.response.data)
         };
         sendSendGridEmail(emailInfo);
+        errCode = err.response.data.code;
       }
 
       if (!user) {
         renderGeneralMessage = true;
         generalMessage = {
-          text: UIMessages.sign_in_error_text.value,
+          text: errCode === 'CR404' ? UIMessages.sign_in_error_subscription_missing_text.value : UIMessages.sign_in_error_text.value,
           renderAs: 'text',
           signedIn: true
         };
