@@ -135,7 +135,7 @@ const helper = {
             /* data = {};
             data.data = await readFileAsync('./helpers/delivery_api.html', 'utf8'); */
         } catch (err) {
-            console.err(err)
+            console.error(err)
             try {
                 if (baseURL) {
                     data = await axios.get(`https://${KCDetails.isPreview ? 'kcddev' : 'kcdmaster'}.blob.core.windows.net/api-reference-pages/${codename}${KCDetails.isPreview ? '-preview' : ''}.html`);

@@ -112,6 +112,9 @@ const getUserByEmail = async (email) => {
             url: url,
             auth: settings.auth
         });
+        if (!user.data.id) {
+            throw new Exception(); // eslint-disable-line no-undef
+        }
         userData = user.data;
     } catch (err) {
         userData.err = handleEmptyErrorResponse(err.response, url);
