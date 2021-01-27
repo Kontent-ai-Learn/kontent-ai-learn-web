@@ -27,5 +27,8 @@
         if (window.initTerminology) {
             window.initTerminology();
         }
+        if (window.initSmartLink && document.querySelector('body').classList.contains('preview-key')) {
+            window.initSmartLink();
+        }
     }, 'json');
 })();

@@ -3,6 +3,7 @@
 
     var updateRoomUrl = function (services, changes, page) {
         var loc = window.location;
+        var urlParams = new URLSearchParams(loc.search);
         var url = loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '') + loc.pathname;
         var qs = [];
         page = parseInt(page);
@@ -15,6 +16,9 @@
         }
         if (page > 1) {
             qs.push(`page=${page}`);
+        }
+        if (urlParams.has('kontent-smart-link-enabled')) {
+            qs.push('kontent-smart-link-enabled');
         }
 
         return `${url}${qs.length ? `?${qs.join('&')}` : ''}${loc.hash}`;

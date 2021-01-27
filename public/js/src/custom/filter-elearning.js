@@ -1,11 +1,15 @@
 (function () {
     var updateRoomUrl = function (personas) {
         var loc = window.location;
+        var urlParams = new URLSearchParams(loc.search);
         var url = loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '') + loc.pathname;
         var qs = [];
 
         if (personas) {
             qs.push(`show=${personas}`);
+        }
+        if (urlParams.has('kontent-smart-link-enabled')) {
+            qs.push('kontent-smart-link-enabled');
         }
 
         return `${url}${qs.length ? `?${qs.join('&')}` : ''}${loc.hash}`;

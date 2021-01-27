@@ -252,3 +252,23 @@ input[type="search"] {
         }
     }
 }
+
+kontent-smart-link-overlay {
+    z-index: 5557 !important;
+}
+
+kontent-smart-link-element {
+    max-width: calc(100% - 4px) !important;
+    max-height: calc(100% - 4px) !important;
+    z-index: 5557 !important;
+}
+
+.navigation {
+    kontent-smart-link-overlay.kontent-smart-link-overlay--restricted {
+        overflow: visible !important;
+    }
+}
+
+.article__content > kontent-smart-link-overlay {
+    position: absolute;
+}

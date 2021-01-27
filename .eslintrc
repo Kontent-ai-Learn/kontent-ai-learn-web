@@ -29,6 +29,7 @@
         "basicLightbox": "writable",
         "algoliasearch": "writable",
         "instantsearch": "writable",
-        "renderReCaptcha": "writable"
+        "renderReCaptcha": "writable",
+        "KontentSmartLink": "writable"
     }
 }

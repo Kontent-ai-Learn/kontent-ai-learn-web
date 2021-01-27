@@ -1,17 +1,18 @@
 extends ../includes/layout.pug
 block content
-    .hero
-        .hero__wrapper
-            h1.hero__heading !{title}
-            form.hero__search(data-search-container='')
-                .hero__search-icon(aria-hidden='true')
-                label.sr-only(for='nav-search') !{UIMessages && UIMessages.search___placeholder.value}
-                input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages && UIMessages.search___placeholder.value)
-                .autocomplete(data-search-autocomplete='')
-            div.hero__note-link(href="#") !{introNote}
-    main(id='main').presentation
-        | !{minify(signposts)}
-    aside.border-top
-        .cta !{minify(support)}
+    div&attributes(smartLink?.itemId(itemId))
+        .hero
+            .hero__wrapper
+                h1.hero__heading&attributes(smartLink?.elementCodename('title')) !{title}
+                form.hero__search(data-search-container='')
+                    .hero__search-icon(aria-hidden='true')
+                    label.sr-only(for='nav-search') !{UIMessages && UIMessages.search___placeholder.value}
+                    input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages && UIMessages.search___placeholder.value)&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
+                    .autocomplete(data-search-autocomplete='')
+                div.hero__note-link(href="#")&attributes(smartLink?.elementCodename('intro_note')) !{introNote}
+        main(id='main')&attributes(smartLink?.elementCodename('signposts')).presentation
+            | !{minify(signposts)}
+        aside.border-top&attributes(smartLink?.elementCodename('support'))
+            .cta !{minify(support)}
         
     

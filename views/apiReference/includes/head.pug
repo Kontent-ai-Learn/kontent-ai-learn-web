@@ -47,6 +47,9 @@ script(src='https://cdn.jsdelivr.net/npm/algoliasearch@4.8.3/dist/algoliasearch-
 script(src='https://cdn.jsdelivr.net/npm/instantsearch.js@4.11.0/dist/instantsearch.production.min.js', crossorigin='anonymous', defer='')
 script.
     var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights@1.7.0";!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],i.async=1,i.src=n,c.parentNode.insertBefore(i,c)}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+if isPreview
+    link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/@kentico/kontent-smart-link@latest/dist/kontent-smart-link.styles.css')
+    script(src='https://cdn.jsdelivr.net/npm/@kentico/kontent-smart-link@latest/dist/kontent-smart-link.umd.min.js', defer='')
 script(src='/js/apireference.min.js?v=' + deployVersion, defer='', onload='initGTM()')
 if canonicalUrl && canonicalUrl !== req.originalUrl
     link(rel='canonical', href=`${canonicalUrl}`)

@@ -2,9 +2,9 @@ extends ../includes/layout.pug
 block content
     main(id='main')
         .article
-            .article__content
-                h1 !{title}
-                p(data-error-search-title)  !{UIMessages.search___404_page_results.value}
+            .article__content&attributes(smartLink?.itemId(itemId))
+                h1&attributes(smartLink?.elementCodename('title')) !{title}
+                p(data-error-search-title)&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___404_page_results')) !{UIMessages.search___404_page_results.value}
                 .article__search(data-error-search) 
-                | !{content} 
+                div&attributes(smartLink?.elementCodename('content')) !{content} 
     script console.log(`#{req.err.stack.replace(/\\/g, '/')}`);

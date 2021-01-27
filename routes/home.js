@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const asyncHandler = require('express-async-handler');
 
 const minify = require('../helpers/minify');
 const isPreview = require('../helpers/isPreview');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
 const handleCache = require('../helpers/handleCache');
-const asyncHandler = require('express-async-handler');
+const smartLink = require('../helpers/smartLink');
 
 router.get('/', asyncHandler(async (req, res, next) => {
   const home = await handleCache.ensureSingle(res, 'home', async () => {
@@ -24,12 +25,14 @@ router.get('/', asyncHandler(async (req, res, next) => {
     return commonContent.getUIMessages(res);
   });
   const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
+  const siteIsPreview = isPreview(res.locals.previewapikey);
 
   return res.render('tutorials/pages/home', {
     req: req,
     minify: minify,
     slug: 'home',
-    isPreview: isPreview(res.locals.previewapikey),
+    isPreview: siteIsPreview,
+    itemId: home[0].system.id,
     title: home[0].title.value,
     titleSuffix: '',
     description: helper.stripTags(home[0].description.value).substring(0, 300),
@@ -40,7 +43,8 @@ router.get('/', asyncHandler(async (req, res, next) => {
     footer: footer && footer.length ? footer[0] : null,
     UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
     platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
-    helper: helper
+    helper: helper,
+    smartLink: siteIsPreview ? smartLink : null
   });
 }));
 

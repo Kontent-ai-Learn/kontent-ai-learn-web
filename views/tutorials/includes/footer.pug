@@ -1,9 +1,9 @@
-footer.footer(data-parallax='footer')
+footer.footer(data-parallax='footer')&attributes(smartLink?.itemId(footer.system.id))
     .footer__paralax(data-parallax-target='footer')
     .footer__wrapper
         a(href='https://www.kontent.ai', rel='noreferrer', target='_blank')
             img.footer__logo(src='/img/ui/logo-kontent.svg')
     .footer__wrapper
         if footer
-            .footer__note !{minify(footer.copyright.value)}
-            .footer__navigation !{minify(footer.external_links.value)}
+            .footer__note&attributes(smartLink?.elementCodename('copyright')) !{minify(footer.copyright.value)}
+            .footer__navigation&attributes(smartLink?.elementCodename('external_links')) !{minify(footer.external_links.value)}

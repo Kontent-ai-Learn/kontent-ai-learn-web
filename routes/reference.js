@@ -13,6 +13,7 @@ const minify = require('../helpers/minify');
 const platforms = require('../helpers/platforms');
 const getUrlMap = require('../helpers/urlMap');
 const customRichTextResolver = require('../helpers/customRichTextResolver');
+const smartLink = require('../helpers/smartLink');
 
 const handleArticle = async (settings, req, res) => {
     settings.renderSettings.view = 'apiReference/pages/reference';
@@ -264,13 +265,15 @@ router.get('/:main/:slug', asyncHandler(async (req, res, next) => {
             slug: slug,
             isPreview: KCDetails.isPreview,
             isKenticoIP: helper.isKenticoIP(req),
+            itemId: content && content.length ? content[0].system.id : null,
             title: content && content.length ? content[0].title.value : '',
             titleSuffix: ` | ${home && home.length ? home[0].title.value : 'Kentico Kontent Docs'}`,
             navigation: home && home.length ? home[0].navigation.value : null,
             footer: footer && footer.length ? footer[0] : null,
             UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
             platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
-            helper: helper
+            helper: helper,
+            smartLink: KCDetails.isPreview ? smartLink : null
         }
     };
 

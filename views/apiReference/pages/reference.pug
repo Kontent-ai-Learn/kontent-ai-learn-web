@@ -5,13 +5,13 @@ block content
             .article__left
                 include ../includes/sub-navigation.pug
             .article__right
-                div(class=`article__content${containsChangelog ? ' article__content--anchors-only' : ''}`)
+                div(class=`article__content${containsChangelog ? ' article__content--anchors-only' : ''}`)&attributes(smartLink?.itemId(itemId))
                     if termDefinitions
                         .term-tooltip-container(aria-hidden='true')
                             .term-tooltip-content
                             .term-tooltip-close
                             .term-tooltip-arrow
-                    h1 !{content.title.value}
+                    h1&attributes(smartLink?.elementCodename('title')) !{content.title.value}
                     .article__notes
                         if (!hideAuthorLastModified)
                             time.article__date(datetime= moment(content.system.lastModified).format('YYYY-MM-DD')) !{moment(content.system.lastModified).format('MMMM D, YYYY')}
@@ -19,66 +19,66 @@ block content
                                 if (content.author.value && content.author.value.length)
                                     each author, index in content.author.value
                                         - let separator = ''; if (index < content.author.value.length - 2) {separator = ', ';} if (index === content.author.value.length - 2) {separator = ' and '}
-                                        | !{author.name.value}!{separator}                                  
+                                        span&attributes(smartLink?.itemId(author.system.id))&attributes(smartLink?.elementCodename('name')) !{author.name.value}!{separator}                                  
                                 else
-                                    | !{UIMessages.article___no_author.value}
+                                    span&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___no_author')) !{UIMessages.article___no_author.value}
                         if (req.query.pdf)
                             .article__tech(data-platform-note)
                         if ((isPreview || isKenticoIP) && !req.query.pdf)
                             a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/default/item/${content.system.id}`, target='_blank', rel='noopener') Edit
                     if (containsChangelog && releaseNoteContentType)
                         div(data-aside-container='filter')
-                            .article__filter(data-aside='filter')
+                            .article__filter(data-aside='filter')&attributes(smartLink?.itemId(UIMessages.system.id))
                                 .filter
                                     ul.filter__list.filter__list--toggle(data-filter-group='changes')
-                                        li.filter__item(data-filter='.all_changes') !{UIMessages && UIMessages.toggle_all_changes.value}
-                                        li.filter__item(data-filter='.breaking_change') !{UIMessages && UIMessages.toggle_breaking_changes_only.value}
+                                        li.filter__item(data-filter='.all_changes')&attributes(smartLink?.elementCodename('toggle_all_changes')) !{UIMessages && UIMessages.toggle_all_changes.value}
+                                        li.filter__item(data-filter='.breaking_change')&attributes(smartLink?.elementCodename('toggle_breaking_changes_only')) !{UIMessages && UIMessages.toggle_breaking_changes_only.value}
 
                                 .filter
-                                    .filter-label !{UIMessages && UIMessages.affected_services_selector_title.value}
+                                    .filter-label&attributes(smartLink?.elementCodename('affected_services_selector_title')) !{UIMessages && UIMessages.affected_services_selector_title.value}
                                     ul.filter__list(data-filter-group='services')
                                         each item, index in releaseNoteContentType.elements.filter(elem => elem.codename === 'affected_services')[0].options
                                             li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
                     if (containsTrainingCourse && trainingCourseContentType)
                         div(data-aside-container='filter')
-                            .article__filter(data-aside='filter')
+                            .article__filter(data-aside='filter')&attributes(smartLink?.itemId(UIMessages.system.id))
                                 .filter
-                                    .filter-label !{UIMessages && UIMessages.training___personas_selector_title.value}
+                                    .filter-label&attributes(smartLink?.elementCodename('training___personas_selector_title')) !{UIMessages && UIMessages.training___personas_selector_title.value}
                                     ul.filter__list(data-filter-group='personas')
                                         each item, index in trainingCourseContentType.elements.filter(elem => elem.codename === 'persona')[0].options
                                             li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
                     if (platform && !availablePlatforms.length)
                         .language-selector.language-selector--unprocessed
-                            ul.language-selector__list
+                            ul.language-selector__list&attributes(smartLink?.elementCodename('platform'))
                                 each item in platform
                                     li.language-selector__item
                                         a(href=`#`, data-platform=item.codename, data-slug=item.slug, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=UIMessages.technology_picker_tooltip.value.replace('{TechnologyName}', item.title), class=`language-selector__link`)
                     if (availablePlatforms && availablePlatforms.length)
                         .language-selector.language-selector--unprocessed
-                            ul.language-selector__list.language-selector__list--static
+                            ul.language-selector__list.language-selector__list--static&attributes(smartLink?.elementCodename('platform'))
                                 - var highlighIndex = 0; availablePlatforms.forEach((item, index) => { if (preselectedPlatform === item.slug) { highlighIndex = index } });
                                 each item, index in availablePlatforms
                                     li.language-selector__item
                                         a(href=`${req.path}?tech=${item.slug}`, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=UIMessages.technology_picker_tooltip.value.replace('{TechnologyName}', item.title), class=`language-selector__link${index === highlighIndex ? ' language-selector__link--active' : ''}`)
                     if (introduction && introduction !== '<p><br></p>')
-                        | !{minify(introduction)}
+                        div&attributes(smartLink?.elementCodename('introduction')) !{minify(introduction)}
                     if (!containsChangelog)
                         div(data-aside-container='table-of-contents')
                             div(data-aside='table-of-contents')
                                 include ../../tutorials/includes/table-of-contents.pug
                     if (content && content.content && content.content.value)
                         if (containsChangelog)
-                            .container 
+                            .container&attributes(smartLink?.elementCodename('content')) 
                                 | !{minify(content.content.value)}
                             .mixitup-page-list
                         else if (containsTrainingCourse)
-                            .container
+                            .container&attributes(smartLink?.elementCodename('content')) 
                                 | !{minify(content.content.value)}
                         else
-                            | !{minify(content.content.value)}
+                            div&attributes(smartLink?.elementCodename('content')) !{minify(content.content.value)}
                     if (nextSteps && nextSteps.value !== '<p><br></p>')
-                        h2.table-of-contents__whatsnext(id='a-whats-next') !{UIMessages && UIMessages.article___next_steps.value}
-                        | !{minify(nextSteps.value)}
+                        h2.table-of-contents__whatsnext(id='a-whats-next')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___next_steps')) !{UIMessages && UIMessages.article___next_steps.value}
+                        div&attributes(smartLink?.elementCodename('next_steps')) !{minify(nextSteps.value)}
                     if (!hideFeedback)
                         div(data-aside-container='feedback')
                             div(data-aside='feedback')

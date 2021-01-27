@@ -4,7 +4,7 @@ mixin lmsInfo(environment)
   - var isPreview = environment === 'preview'
   - var prefix = isPreview ? '(Preview) ' : ''
   if (lmsInfoEnv)
-    .article__row-links
+    .article__row-links&attributes(smartLink?.itemId(UIMessages.system.id))
       if (lmsInfoEnv.renderAs === 'button')
         a.call-to-action(href= lmsInfoEnv.url, target= lmsInfoEnv.target ? lmsInfoEnv.target : '_self')
           span !{prefix}!{lmsInfoEnv.text}
@@ -12,26 +12,26 @@ mixin lmsInfo(environment)
       else
         span !{prefix}!{lmsInfoEnv.text}
       if (lmsInfoEnv.certificate)
-        a.link(href= lmsInfoEnv.certificate, target='_blank') !{UIMessages.training___download_certificate.value}
+        a.link(href= lmsInfoEnv.certificate, target='_blank')&attributes(smartLink?.elementCodename('training___download_certificate')) !{UIMessages.training___download_certificate.value}
       if (!isPreview && lmsInfoEnv.signedIn)
-        a.link(href='/logout') !{UIMessages.sign_out_button.value}
+        a.link(href='/logout')&attributes(smartLink?.elementCodename('sign_out_button')) !{UIMessages.sign_out_button.value}
 block content
     main(id='main')
         .article
             .article__left
             .article__right
-                .article__content 
-                    h1 !{content.title.value}
+                .article__content&attributes(smartLink?.itemId(itemId))
+                    h1&attributes(smartLink?.elementCodename('title')) !{content.title.value}
                     .article__notes
-                      span !{UIMessages.training___estimated_duration.value} !{content.duration.value} !{content.duration.value === 1 ? 'hour' : `hours`}
+                      span&attributes(smartLink?.elementCodename('duration')) !{UIMessages.training___estimated_duration.value} !{content.duration.value} !{content.duration.value === 1 ? 'hour' : `hours`}
                       if (content.persona.value.length)
-                        ul.article__tags
+                        ul.article__tags&attributes(smartLink?.elementCodename('persona'))
                           each item in content.persona.value
                             li.article__tags-item.article__tags-item--green !{item.name}
                       if (trainingCourseInfo['production'] && trainingCourseInfo['production'].completion)
                         span !{trainingCourseInfo['production'].completion}% complete
-                    | !{minify(content.introduction.value)}
-                    | !{minify(content.description.value)}
+                    div&attributes(smartLink?.elementCodename('introduction')) !{minify(content.introduction.value)}
+                    div&attributes(smartLink?.elementCodename('description')) !{minify(content.description.value)}
                     +lmsInfo('general')
                     +lmsInfo('production')
                     +lmsInfo('preview')

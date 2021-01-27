@@ -258,6 +258,36 @@ const helper = {
         }
 
         return isIn;
+    },
+    preserveQueryString(url, query) {
+        if (!url) return null;
+
+        const pathQS = url.split('?');
+        const path = pathQS[0];
+        let qsAnchor = [];
+        let qs = '';
+        let anchor = '';
+
+        if (pathQS[1]) {
+            qsAnchor = pathQS[1].split('#');
+            qs = qsAnchor[0];
+        }
+
+        if (qsAnchor[1]) {
+            anchor = qsAnchor[1];
+        }
+
+        if (qs) {
+            qs += '&';
+        }
+
+        Object.keys(query).forEach((key) => {
+            qs += `${key}${query[key] ? `=${query[key]}` : ''}&`;
+        });
+
+        qs = qs.slice(0, -1);
+
+        return `${path}${qs ? `?${qs}` : ''}${anchor ? `#${anchor}` : ''}`;
     }
 };
 

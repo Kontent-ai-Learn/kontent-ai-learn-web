@@ -9,7 +9,7 @@ nav.navigation
                     img(src='/img/ui/logo.svg', alt='Kentico Kontent Docs logo')
             ul(class= `navigation__list${isNotHome ? '' : ' navigation__list--full'}`)
                 each item in navigation
-                    li.navigation__item
+                    li.navigation__item&attributes(smartLink?.itemId(item.system.id))&attributes(smartLink?.elementCodename('title'))
                         a(href=`${item.system.type === 'navigation_link' ? '' : '/'}${item.url.value}`, class=`navigation__link${req.originalUrl.startsWith(`/${item.url.value}`) ? ' navigation__link--active' : ''}`) !{item.title.value}
         .navigation__right(data-search-target='')
             if isNotHome
@@ -17,9 +17,9 @@ nav.navigation
                     form.navigation__search(data-search-container='')
                         .navigation__search-icon(aria-hidden='true')
                         label.sr-only(for='nav-search') !{UIMessages ? UIMessages.search___placeholder.value : ''}
-                        input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages ? UIMessages.search___placeholder.value : '')
+                        input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages ? UIMessages.search___placeholder.value : '')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
                         .autocomplete(data-search-autocomplete='')
-            a.navigation__app(href='https://app.kontent.ai', target='_blank', rel='noreferrer')
+            a.navigation__app(href='https://app.kontent.ai', target='_blank', rel='noreferrer')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('link_to_app_tooltip'))
                 .navigation__app-tooltip !{UIMessages ? UIMessages.link_to_app_tooltip.value : ''}
         if isNotHome
             .navigation__trigger(data-search-trigger='', aria-hidden='true')

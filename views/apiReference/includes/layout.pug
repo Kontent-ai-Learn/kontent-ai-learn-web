@@ -3,7 +3,7 @@ doctype html
 html(lang='en')
     head
         include ./head.pug
-    body(ontouchstart, class=`${previewFlag ? 'is-preview' : ''}`)
+    body(ontouchstart, class=`${previewFlag ? 'is-preview' : ''}${isPreview ? ' preview-key' : ''}`)
         if (process.env['GTM.id'])
             noscript
                 iframe(src=`https://www.googletagmanager.com/ns.html?id=${process.env['GTM.id']}`, height='0', width='0', style='display:none;visibility:hidden')

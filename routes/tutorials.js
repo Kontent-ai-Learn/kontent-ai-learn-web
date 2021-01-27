@@ -12,6 +12,7 @@ const platforms = require('../helpers/platforms');
 const getUrlMap = require('../helpers/urlMap');
 const getTrainingCourseInfo = require('../helpers/trainingCourse');
 const customRichTextResolver = require('../helpers/customRichTextResolver');
+const smartLink = require('../helpers/smartLink');
 
 let cookiesPlatform;
 
@@ -227,6 +228,7 @@ const getContent = async (req, res) => {
         isPreview: KCDetails.isPreview,
         isKenticoIP: helper.isKenticoIP(req),
         projectId: res.locals.projectid,
+        itemId: content && content.length ? content[0].system.id : null,
         title: content && content.length ? content[0].title.value : '',
         titleSuffix: ` | ${home && home.length ? home[0].title.value : 'Kentico Kontent Docs'}`,
         description: content && content.length && content[0].introduction ? helper.stripTags(content[0].introduction.value).substring(0, 300) : '',
@@ -245,6 +247,7 @@ const getContent = async (req, res) => {
         platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
         termDefinitions: termDefinitions && termDefinitions.length ? termDefinitions : null,
         helper: helper,
+        smartLink: KCDetails.isPreview ? smartLink : null,
         getFormValue: helper.getFormValue,
         preselectedPlatform: preselectedPlatform,
         containsChangelog: containsChangelog,

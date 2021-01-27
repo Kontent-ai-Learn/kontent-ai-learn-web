@@ -1,13 +1,13 @@
 if UIMessages
     div(class=`feedback${req.formPosted ? ' feedback--posted' : ''}`)#feedback-form
-        .feedback__wrapper
-            h2.feedback__heading !{UIMessages.feedback_form___heading.value}
+        .feedback__wrapper&attributes(smartLink?.itemId(UIMessages.system.id))
+            h2.feedback__heading&attributes(smartLink?.elementCodename('feedback_form___heading')) !{UIMessages.feedback_form___heading.value}
             .feedback__answer
-                a.feedback__button.feedback__button--yes(href='#yesMsg') 
+                a.feedback__button.feedback__button--yes(href='#yesMsg')&attributes(smartLink?.elementCodename('feedback_form___yes_button')) 
                     span !{UIMessages.feedback_form___yes_button.value}
                     span
-                a.feedback__button.feedback__button--no(href='#noMsg') 
+                a.feedback__button.feedback__button--no(href='#noMsg')&attributes(smartLink?.elementCodename('feedback_form___no_button')) 
                     span !{UIMessages.feedback_form___no_button.value}
                     span
             .feedback-form__response
-                .feedback__message#yesMsg.feedback__message--yes !{UIMessages.feedback_form___yes_message.value}
+                .feedback__message#yesMsg.feedback__message--yes&attributes(smartLink?.elementCodename('feedback_form___yes_message'))  !{UIMessages.feedback_form___yes_message.value}
