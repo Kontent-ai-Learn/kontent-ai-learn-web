@@ -417,7 +417,7 @@ const richTextResolverTemplates = {
                     <a href="#${id}" class="anchor-copy" aria-hidden="true"></a>
                     ${item.title.value}
                 </h2>
-                ${helper.showEditLink(config.isPreview, config.isKenticoIP) ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/default/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
+                ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/default/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                 <div class="article__info-bar">
                     <time class="article__date article__date--body" datetime="${moment(item.release_date.value).format('YYYY-MM-DD')}"${getSmartLinkAttr(config, 'release_date', 'element')}>${isPlanned ? 'Planned for ' : ''}${moment(item.release_date.value).format('MMMM D, YYYY')}</time>
                     ${displaySeverity || services ? `
@@ -440,7 +440,7 @@ const richTextResolverTemplates = {
                     <a href="#${id}" class="anchor-copy" aria-hidden="true"></a>
                     ${item.term.value}
                 </h2>
-                ${helper.showEditLink(config.isPreview, config.isKenticoIP) ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/default/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
+                ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/default/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                 <div${getSmartLinkAttr(config, 'definition', 'element')}>
                     ${item.definition.value}
                 </div>
@@ -471,7 +471,7 @@ const richTextResolverTemplates = {
         return `
             <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}"${getSmartLinkAttr(config, item.system.id, 'item')}>
                 <h3${getSmartLinkAttr(config, 'title', 'element')}>${url ? `<a href="${url}">${item.title.value}</a>` : `${item.title.value}`}</h3>
-                ${helper.showEditLink(config.isPreview, config.isKenticoIP) ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/default/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
+                ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/default/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                 <div class="article__introduction">
                     ${image ? `
                         ${url ? `<a href="${url}" class="article__introduction-image">${imageMarkup}</a>` : `<div class="article__introduction-image">${imageMarkup}</div>`}

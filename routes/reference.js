@@ -264,7 +264,6 @@ router.get('/:main/:slug', asyncHandler(async (req, res, next) => {
             minify: minify,
             slug: slug,
             isPreview: KCDetails.isPreview,
-            isKenticoIP: helper.isKenticoIP(req),
             itemId: content && content.length ? content[0].system.id : null,
             title: content && content.length ? content[0].title.value : '',
             titleSuffix: ` | ${home && home.length ? home[0].title.value : 'Kentico Kontent Docs'}`,

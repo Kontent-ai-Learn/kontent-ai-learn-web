@@ -8,7 +8,6 @@ const resolveChangelog = async ($, req, res) => {
     const $elem = $('#changelog-resolve');
     const config = {
         isPreview: isPreview(res.locals.previewapikey),
-        isKenticoIP: res.locals.isKenticoIP,
         projectid: res.locals.projectid
     };
 
@@ -31,7 +30,6 @@ const resolveTerminology = async ($, req, res) => {
     const $elem = $('#terminology-resolve');
     const config = {
         isPreview: isPreview(res.locals.previewapikey),
-        isKenticoIP: res.locals.isKenticoIP,
         projectid: res.locals.projectid
     };
 

@@ -226,7 +226,6 @@ const getContent = async (req, res) => {
         minify: minify,
         slug: content && content.length ? content[0].url.value : '',
         isPreview: KCDetails.isPreview,
-        isKenticoIP: helper.isKenticoIP(req),
         projectId: res.locals.projectid,
         itemId: content && content.length ? content[0].system.id : null,
         title: content && content.length ? content[0].title.value : '',

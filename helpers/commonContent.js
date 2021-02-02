@@ -21,7 +21,6 @@ const commonContent = {
             host: res.locals.host,
             protocol: res.locals.protocol,
             isPreview: isPreview(res.locals.previewapikey),
-            isKenticoIP: res.locals.isKenticoIP,
             UIMessages: UIMessages
         };
     },

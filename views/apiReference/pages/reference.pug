@@ -24,7 +24,7 @@ block content
                                     span&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___no_author')) !{UIMessages.article___no_author.value}
                         if (req.query.pdf)
                             .article__tech(data-platform-note)
-                        if ((isPreview || isKenticoIP) && !req.query.pdf)
+                        if (isPreview && !req.query.pdf)
                             a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/default/item/${content.system.id}`, target='_blank', rel='noopener') Edit
                     if (containsChangelog && releaseNoteContentType)
                         div(data-aside-container='filter')

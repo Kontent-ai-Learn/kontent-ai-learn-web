@@ -166,16 +166,6 @@ const helper = {
         }
         return false;
     },
-    isKenticoIP: (req) => {
-        const ip = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
-            req.connection.remoteAddress ||
-            req.socket.remoteAddress ||
-            req.connection.socket?.remoteAddress;
-        return ip === process.env.KenticoUserIp;
-    },
-    showEditLink: (isPreview, isKenticoIP) => {
-        return isPreview || isKenticoIP
-    },
     addTitlesToLinks: (content, urlMap, articles) => {
         const $ = cheerio.load(content);
         const $links = $('a:not(.call-to-action)');

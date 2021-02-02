@@ -128,7 +128,6 @@ app.enable('trust proxy');
 app.use(async (req, res, next) => {
   res.locals.host = req.headers.host;
   res.locals.protocol = req.protocol;
-  res.locals.isKenticoIP = helper.isKenticoIP(req);
   appHelper.handleKCKeys(req, res);
   res.setHeader('Arr-Disable-Session-Affinity', 'True');
   if (!(isPreview(res.locals.previewapikey) || (req.originalUrl.indexOf('/cache-invalidate') > -1))) {

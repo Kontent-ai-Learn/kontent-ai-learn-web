@@ -30,6 +30,8 @@ block content
                             li.article__tags-item.article__tags-item--green !{item.name}
                       if (trainingCourseInfo['production'] && trainingCourseInfo['production'].completion)
                         span !{trainingCourseInfo['production'].completion}% complete
+                      if (isPreview)
+                        a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/default/item/${content.system.id}`, target='_blank', rel='noopener') Edit
                     div&attributes(smartLink?.elementCodename('introduction')) !{minify(content.introduction.value)}
                     div&attributes(smartLink?.elementCodename('description')) !{minify(content.description.value)}
                     +lmsInfo('general')
