@@ -55,7 +55,7 @@
           // Init lighbox with caption
           let instance;
           item.addEventListener('click', () => {
-            instance = window.basicLightbox.create(`<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><div class="basicLightbox__close"></div></div><img src="${item.getAttribute('src').split('?')[0] + '?w=1600&fm=jpg&auto=format'}"${width ? ` width=${width}` : ''}${height ? ` height=${height}` : ''}>${figcaption}`);
+            instance = window.basicLightbox.create(`<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><div class="basicLightbox__close"></div></div><img src="${item.getAttribute('src').split('?')[0] + '?w=1600&fm=pjpg&auto=format'}"${width ? ` width=${width}` : ''}${height ? ` height=${height}` : ''}>${figcaption}`);
             instance.show();
             showCloseButtonOnElemLoaded('img');
             registerCloseOnEsc(instance);

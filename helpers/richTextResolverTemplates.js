@@ -206,7 +206,7 @@ const richTextResolverTemplates = {
         const imageWidth = item.image.value[0] ? item.image.value[0].width || 0 : 0;
         const imageHeight = item.image.value[0] ? item.image.value[0].height || 0 : 0;
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
-        const imageSrc = item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=jpg&auto=format` : ''
+        const imageSrc = item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=pjpg&auto=format` : ''
 
         if (item.link__link_to_content_item.value[0] && urlMap) {
             const matchUrlMapItem = urlMap.filter(elem => elem.codename === item.link__link_to_content_item.value[0].system.codename);
@@ -247,7 +247,7 @@ const richTextResolverTemplates = {
         const imageWidth = item.image.value[0] ? item.image.value[0].width || 0 : 0;
         const imageHeight = item.image.value[0] ? item.image.value[0].height || 0 : 0;
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
-        const imageSrc = item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=jpg&auto=format` : 'https://plchldr.co/i/290x168?&amp;bg=ededed&amp;text=Image';
+        const imageSrc = item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=pjpg&auto=format` : 'https://plchldr.co/i/290x168?&amp;bg=ededed&amp;text=Image';
 
         if (item.linked_item.value[0] && urlMap) {
             const matchUrlMapItem = urlMap.filter(elem => elem.codename === item.link__link_to_content_item.value[0].system.codename);
@@ -284,7 +284,7 @@ const richTextResolverTemplates = {
         if (item.image.value.length) {
             const alt = item.image.value[0].description ? helper.escapeQuotesHtml(item.image.value[0].description) : '';
             const url = item.url.value.trim();
-            const transformationQueryString = '?fm=jpg&auto=format&w=';
+            const transformationQueryString = '?fm=pjpg&auto=format&w=';
             let cssClass = ' article__image-border'; // Always show border
             // cssClass += item.border.value.length && item.border.value[0].codename === 'show' ? ' article__image-border' : '';
             cssClass += item.zoomable.value.length && item.zoomable.value[0].codename === 'true' && !url ? ' article__add-lightbox' : '';
@@ -361,7 +361,7 @@ const richTextResolverTemplates = {
             <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'component')}>
                 <a class="selection__link" href="${item.url.value}">
                     <div class="selection__img-sizer">
-                        <img class="selection__img" src="${item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=jpg&auto=format` : 'https://plchldr.co/i/290x168?&amp;bg=ededed&amp;text=Image'}"${getSmartLinkAttr(config, 'image', 'element')}>
+                        <img class="selection__img" src="${item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=pjpg&auto=format` : 'https://plchldr.co/i/290x168?&amp;bg=ededed&amp;text=Image'}"${getSmartLinkAttr(config, 'image', 'element')}>
                     </div>
                     <div class="selection__title"${getSmartLinkAttr(config, 'title', 'element')}>${item.title.value}</div>
                 </a>
@@ -460,7 +460,7 @@ const richTextResolverTemplates = {
         const imageWidth = item.thumbnail.value[0] ? item.thumbnail.value[0].width || 0 : 0;
         const imageHeight = item.thumbnail.value[0] ? item.thumbnail.value[0].height || 0 : 0;
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
-        const image = item.thumbnail.value.length ? `${item.thumbnail.value[0].url}?auto=format&w=116` : null;
+        const image = item.thumbnail.value.length ? `${item.thumbnail.value[0].url}?auto=format&w=116&fm=pjpg` : null;
         const imageMarkup = image ? `
             <img class="lazy lazy--exclude-dnt" src='${placeholderSrc}' data-src="${image}" alt="" data-dpr data-lazy-onload loading="lazy" ${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
             <noscript>
