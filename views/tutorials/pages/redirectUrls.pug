@@ -17,7 +17,7 @@ block content
                                 else
                                     div There are no Redirect rules set up in the current project.
                             td
-                                a(href= req.protocol + '://' + req.get('host') + url.originalUrl, target='_blank') #{url.originalUrl}
+                                a(href= `${url.originalUrl.includes('://') ? `${req.protocol}://${req.get('host')}` : ''}${url.originalUrl}`, target='_blank') #{url.originalUrl}
                 h2 Redirect URLs for articles and scenarios
                 table
                     tr
@@ -31,5 +31,5 @@ block content
                                 else
                                     div There are no redirects in articles or scenarios.
                             td 
-                                a(href= req.protocol + '://' + req.get('host') + url.originalUrl, target='_blank') #{url.originalUrl}
+                                a(href= `${url.originalUrl.includes('://') ? `${req.protocol}://${req.get('host')}` : ''}${url.originalUrl}`, target='_blank') #{url.originalUrl}
             

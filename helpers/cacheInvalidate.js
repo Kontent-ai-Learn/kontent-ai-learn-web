@@ -229,6 +229,10 @@ const sendPurgeToGeneralPages = async (itemsByTypes, req, res) => {
             if (itemsByTypes.trainingCourses.length && req.app.locals.elearningPath) {
                 await handleCache.axiosFastlySoftPurge(`${axiosDomain}${req.app.locals.elearningPath}`);
             }
+
+            if (itemsByTypes.articles.length || itemsByTypes.scenarios.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
+                await handleCache.axiosFastlySoftPurge(`${axiosDomain}/redirect-urls`);
+            }
         }
     }
 };
@@ -247,7 +251,6 @@ const processInvalidation = async (req, res) => {
         const KCDetails = commonContent.getKCDetails(res);
         const keys = cache.keys();
         const itemsByTypes = splitPayloadByContentType(items);
-        await invalidateUrlMap(res, KCDetails);
         await invalidateHome(res, KCDetails);
         await invalidateSubNavigation(res, keys, KCDetails);
         await invalidateRootItems(items, KCDetails, res);
@@ -265,6 +268,7 @@ const processInvalidation = async (req, res) => {
         await invalidateMultiple(itemsByTypes, KCDetails, 'topics', res);
         await invalidateElearning(itemsByTypes, KCDetails, res);
         await sendPurgeToGeneralPages(itemsByTypes, req, res);
+        await invalidateUrlMap(res, KCDetails);
 
         if (app.appInsights) {
             app.appInsights.defaultClient.trackTrace({ message: 'URL_MAP_INVALIDATE: ' + items });

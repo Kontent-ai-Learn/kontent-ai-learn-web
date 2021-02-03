@@ -103,6 +103,8 @@ router.get('/keys/:key/invalidate', asyncHandler(async (req, res) => {
             path = req.app.locals.terminologyPath;
         } else if (codename === 'trainingCourses' && req.app.locals.elearningPath) {
             path = req.app.locals.elearningPath;
+        } else if (codename === 'articles' || codename === 'scenarios' || codename === 'apiSpecifications') {
+            path = '/redirect-urls';
         } else {
             await handleCache.sendFastlySoftPurge(codename, res);
         }

@@ -114,7 +114,7 @@ app.use(cacheControl({
 }));
 
 app.use((req, res, next) => {
-  if (req.originalUrl.startsWith('/cache-invalidate')) {
+  if (req.originalUrl.startsWith('/cache-invalidate') || req.originalUrl.startsWith('/redirect-urls')) {
     res.cacheControl = {
       noStore: true,
       private: true
