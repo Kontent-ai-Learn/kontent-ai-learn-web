@@ -24,6 +24,10 @@ window.initSmartLink =(() => {
 
   return () => {
     initSDK();
-    addSmartLinkQS();
+
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('kontent-smart-link-enabled')) {
+      addSmartLinkQS();
+    }
   };
 })();
