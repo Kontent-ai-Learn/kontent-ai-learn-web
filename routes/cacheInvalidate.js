@@ -27,6 +27,7 @@ const poolPayload = (req) => {
         for (let j = 0; j < pool.length; j++) {
             if (pool[j].codename === items[i].codename) {
                 itemExists = true;
+                pool[j].operation = message.operation;
             }
         }
 
