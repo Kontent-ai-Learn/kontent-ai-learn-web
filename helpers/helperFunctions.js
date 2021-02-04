@@ -249,7 +249,7 @@ const helper = {
 
         return isIn;
     },
-    preserveQueryString(url, query) {
+    preserveQueryString: (url, query) => {
         if (!url) return null;
 
         const pathQS = url.split('?');
@@ -278,6 +278,16 @@ const helper = {
         qs = qs.slice(0, -1);
 
         return `${path}${qs ? `?${qs}` : ''}${anchor ? `#${anchor}` : ''}`;
+    },
+    getRedirectUrls: (urls) => {
+        return urls?.value ? urls.value.trim().replace(/\n/g, '').split(';') : [];
+    },
+    getDomainSplitProtocolHost: () => {
+        return process.env.baseURL.split('://');
+    },
+    isAbsoluteUrl: (url) => {
+        const pattern = new RegExp('^(?:[a-z]+:)?//', 'i');
+        return pattern.test(url);
     }
 };
 

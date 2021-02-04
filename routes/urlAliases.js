@@ -1,6 +1,7 @@
 const commonContent = require('../helpers/commonContent');
 const getUrlMap = require('../helpers/urlMap');
 const handleCache = require('../helpers/handleCache');
+const helper = require('../helpers/helperFunctions');
 
 const urlAliases = async (req, res, next) => {
     const urlSplit = req.originalUrl.split('?');
@@ -23,7 +24,7 @@ const urlAliases = async (req, res, next) => {
     let redirectUrl = [];
 
     items.forEach((item) => {
-        const aliases = item.redirect_urls && item.redirect_urls.value ? item.redirect_urls.value.trim().replace(/\n/g, '').split(';') : [];
+        const aliases = helper.getRedirectUrls(item.redirect_urls);
 
         aliases.forEach(alias => {
             alias = alias.trim().toLowerCase().replace(/\/\s*$/, '');

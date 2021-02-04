@@ -9,13 +9,16 @@ const handleCache = require('../helpers/handleCache');
 const commonContent = require('../helpers/commonContent');
 const isPreview = require('../helpers/isPreview');
 const helper = require('../helpers/helperFunctions');
+const fastly = require('../helpers/fastly');
 
 const isValidSignature = (req, secret) => {
     return signatureHelper.isValidSignatureFromString(req.body, secret, req.headers['x-kc-signature']);
 };
 
 const poolPayload = (req) => {
-    const items = JSON.parse(req.body).data.items;
+    const body = JSON.parse(req.body);
+    const items = body.data.items;
+    const message = body.message;
     const pool = cache.get('webhook-payload-pool') || [];
 
     for (let i = 0; i < items.length; i++) {
@@ -28,6 +31,7 @@ const poolPayload = (req) => {
         }
 
         if (!itemExists) {
+            items[i].operation = message.operation;
             pool.push(items[i]);
         }
     }
@@ -82,7 +86,7 @@ router.get('/keys', (req, res) => {
 
 router.get('/keys/:key', (req, res) => {
     const key = cache.get(req.params.key);
-    res.set('Content-Type', 'text/plain');
+    res.set('Content-Type', 'application/json');
     return res.send(util.inspect(key, {
         maxArrayLength: 200
     }));
@@ -93,7 +97,7 @@ router.get('/keys/:key/invalidate', asyncHandler(async (req, res) => {
     const KCDetails = commonContent.getKCDetails(res);
     const codename = req.params.key.replace(`_${KCDetails.projectid}`, '');
     if (!isPreview(res.locals.previewapikey)) {
-        const domain = process.env.baseURL.split('://');
+        const domain = helper.getDomainSplitProtocolHost();
         let path = '';
         if (codename === 'urlMap') {
             path = '/urlmap';
@@ -106,11 +110,11 @@ router.get('/keys/:key/invalidate', asyncHandler(async (req, res) => {
         } else if (codename === 'articles' || codename === 'scenarios' || codename === 'apiSpecifications') {
             path = '/redirect-urls';
         } else {
-            await handleCache.sendFastlySoftPurge(codename, res);
+            await fastly.purge(codename, res);
         }
 
         if (path && domain[1]) {
-            await handleCache.axiosFastlySoftPurge(`${helper.getDomain(domain[0], domain[1])}${path}`);
+            await handleCache.axiosPurge(`${helper.getDomain(domain[0], domain[1])}${path}`);
         }
     }
 

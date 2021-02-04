@@ -32,7 +32,7 @@ const getRedirectUrls = async (res) => {
       if (originalUrl.length) {
         redirectMap.push({
           originalUrl: originalUrl[0].url,
-          redirectUrls: item.redirect_urls.value.split(';')
+          redirectUrls: helper.getRedirectUrls(item.redirect_urls)
         });
       }
     }

@@ -1,18 +1,29 @@
 const cache = require('memory-cache');
-const commonContent = require('../helpers/commonContent');
+const commonContent = require('./commonContent');
 const app = require('../app');
-const requestDelivery = require('../helpers/requestDelivery');
-const getRootCodenamesOfSingleItem = require('../helpers/rootItemsGetter');
-const handleCache = require('../helpers/handleCache');
-const getUrlMap = require('../helpers/urlMap');
-const isPreview = require('../helpers/isPreview');
-const helper = require('../helpers/helperFunctions');
+const requestDelivery = require('./requestDelivery');
+const getRootCodenamesOfSingleItem = require('./rootItemsGetter');
+const handleCache = require('./handleCache');
+const getUrlMap = require('./urlMap');
+const isPreview = require('./isPreview');
+const helper = require('./helperFunctions');
+const fastly = require('./fastly');
 
 const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
+    const originalItem = handleCache.getCache(codename, KCDetails);
+
+    if (originalItem && originalItem.length) {
+        if (originalItem[0].redirect_urls) {
+            await fastly.purgeToRedirectUrls(originalItem[0].redirect_urls, res);
+        }
+
+        handleCache.deleteCache(codename, KCDetails);
+    }
+
     const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });
-    const item = await requestDelivery({
+    const newItem = await requestDelivery({
         codename: codename,
         depth: 2,
         resolveRichText: true,
@@ -20,14 +31,15 @@ const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
         ...KCDetails
     });
 
-    if (item && item.length) {
-        if (handleCache.getCache(codename, KCDetails)) {
-            handleCache.deleteCache(codename, KCDetails);
-            handleCache.putCache(codename, item, KCDetails);
+    if (newItem && newItem.length) {
+        handleCache.putCache(codename, newItem, KCDetails);
+
+        if (newItem[0].redirect_urls) {
+            await fastly.purgeToRedirectUrls(newItem[0].redirect_urls, res);
         }
     }
 
-    await handleCache.sendFastlySoftPurge(codename, res);
+    await fastly.purge(codename, res);
 };
 
 const deleteSpecificKeys = async (KCDetails, items, res) => {
@@ -81,7 +93,7 @@ const splitPayloadByContentType = (items) => {
             itemsByTypes.topics.push(item);
         } else if (item.type === 'not_found') {
             itemsByTypes.notFound.push(item);
-        } else if (item.type === 'platform_picker') {
+        } else if (item.type === 'platform_picker' || item.type === 'platform_option') {
             itemsByTypes.picker.push(item);
         } else if (item.type === 'navigation_item') {
             itemsByTypes.navigationItems.push(item);
@@ -191,9 +203,9 @@ const invalidateHome = async (res, KCDetails) => {
 const invalidateUrlMap = async (res, KCDetails) => {
     handleCache.deleteCache('urlMap', KCDetails);
     if (!isPreview(res.locals.previewapikey)) {
-        const domain = process.env.baseURL.split('://');
+        const domain = helper.getDomainSplitProtocolHost();
         if (domain[1]) {
-            await handleCache.axiosFastlySoftPurge(`${helper.getDomain(domain[0], domain[1])}/urlmap`);
+            await fastly.axiosPurge(`${helper.getDomain(domain[0], domain[1])}/urlmap`);
         }
     }
     await handleCache.evaluateCommon(res, ['urlMap']);
@@ -212,31 +224,6 @@ const invalidateSubNavigation = async (res, keys, KCDetails) => {
     }
 };
 
-const sendPurgeToGeneralPages = async (itemsByTypes, req, res) => {
-    if (!isPreview(res.locals.previewapikey)) {
-        const domain = process.env.baseURL.split('://');
-        if (domain[1]) {
-            const axiosDomain = helper.getDomain(domain[0], domain[1]);
-
-            if (itemsByTypes.releaseNotes.length && req.app.locals.changelogPath) {
-                await handleCache.axiosFastlySoftPurge(`${axiosDomain}${req.app.locals.changelogPath}`);
-            }
-
-            if (itemsByTypes.termDefinitions.length && req.app.locals.terminologyPath) {
-                await handleCache.axiosFastlySoftPurge(`${axiosDomain}${req.app.locals.terminologyPath}`);
-            }
-
-            if (itemsByTypes.trainingCourses.length && req.app.locals.elearningPath) {
-                await handleCache.axiosFastlySoftPurge(`${axiosDomain}${req.app.locals.elearningPath}`);
-            }
-
-            if (itemsByTypes.articles.length || itemsByTypes.scenarios.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
-                await handleCache.axiosFastlySoftPurge(`${axiosDomain}/redirect-urls`);
-            }
-        }
-    }
-};
-
 const invalidateElearning = async (itemsByTypes, KCDetails, res) => {
     if (itemsByTypes.trainingCourses.length) {
         await invalidateMultiple(itemsByTypes, KCDetails, 'trainingCourses', res);
@@ -251,8 +238,10 @@ const processInvalidation = async (req, res) => {
         const KCDetails = commonContent.getKCDetails(res);
         const keys = cache.keys();
         const itemsByTypes = splitPayloadByContentType(items);
+        await fastly.purgeInitial(items, res);
+        await invalidateGeneral(itemsByTypes, KCDetails, res, 'picker', 'platformsConfig');
+        await invalidateUrlMap(res, KCDetails);
         await invalidateHome(res, KCDetails);
-        await invalidateSubNavigation(res, keys, KCDetails);
         await invalidateRootItems(items, KCDetails, res);
         await invalidateAPISpecifications(itemsByTypes, KCDetails, res);
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'footer');
@@ -261,14 +250,13 @@ const processInvalidation = async (req, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'redirectRules');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'releaseNotes');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'termDefinitions');
-        await invalidateGeneral(itemsByTypes, KCDetails, res, 'picker', 'platformsConfig');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'navigationItems');
+        await invalidateSubNavigation(res, keys, KCDetails);
         await invalidateArticles(itemsByTypes, KCDetails, res);
         await invalidateScenarios(itemsByTypes, KCDetails, res);
         await invalidateMultiple(itemsByTypes, KCDetails, 'topics', res);
         await invalidateElearning(itemsByTypes, KCDetails, res);
-        await sendPurgeToGeneralPages(itemsByTypes, req, res);
-        await invalidateUrlMap(res, KCDetails);
+        await fastly.purgeFinal(itemsByTypes, req, res);
 
         if (app.appInsights) {
             app.appInsights.defaultClient.trackTrace({ message: 'URL_MAP_INVALIDATE: ' + items });

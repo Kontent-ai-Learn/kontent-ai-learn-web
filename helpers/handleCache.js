@@ -1,10 +1,7 @@
 const cache = require('memory-cache');
-const axios = require('axios');
-const consola = require('consola');
 const getUrlMap = require('./urlMap');
 const commonContent = require('./commonContent');
-const helper = require('../helpers/helperFunctions');
-const isPreview = require('../helpers/isPreview');
+const helper = require('./helperFunctions');
 
 const deleteCachePreviewCheck = (keyName, KCDetails, isPreviewRequest) => {
     if (isPreviewRequest && cache.get(`${keyName}_${KCDetails.projectid}`)) {
@@ -139,37 +136,6 @@ const cacheAllAPIReferences = async (res) => {
     }
 };
 
-const axiosFastlySoftPurge = async (url) => {
-    try {
-        await axios({
-            method: 'purge',
-            url: url,
-            headers: {
-                'Fastly-Soft-Purge': '1'
-            }
-        });
-    } catch (error) {
-        consola.error(error && error.response ? error.response.data : '');
-    }
-};
-
-const sendFastlySoftPurge = async (key, res) => {
-    if (isPreview(res.locals.previewapikey)) return;
-
-    const urlMap = await ensureSingle(res, 'urlMap', async () => {
-        return await getUrlMap(res);
-    });
-
-    for (let i = 0; i < urlMap.length; i++) {
-        if (urlMap[i].codename === key) {
-            const domain = process.env.baseURL.split('://');
-            if (domain[1]) {
-                await axiosFastlySoftPurge(`${helper.getDomain(domain[0], domain[1])}${urlMap[i].url}`);
-            }
-        }
-    }
-};
-
 module.exports = {
     evaluateCommon,
     evaluateSingle,
@@ -178,7 +144,5 @@ module.exports = {
     putCache,
     deleteCache,
     deleteMultipleKeys,
-    ensureSingle,
-    sendFastlySoftPurge,
-    axiosFastlySoftPurge
+    ensureSingle
 };

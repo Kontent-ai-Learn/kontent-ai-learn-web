@@ -3,6 +3,7 @@ const router = express.Router();
 const handleCache = require('../helpers/handleCache');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
+const fastly = require('../helpers/fastly');
 
 router.post('/', async (req, res) => {
     const event = req.body[0];
@@ -21,7 +22,7 @@ router.post('/', async (req, res) => {
 
     if (isReferenceUpdatedEvent(event)) {
         await helper.getReferenceFiles(apiCodename, true, KCDetails, 'referenceUpdated');
-        await handleCache.sendFastlySoftPurge(apiCodename, res);
+        await fastly.purge(apiCodename, res);
     }
 
     if (isReferenceDeletedEvent(event)) {
