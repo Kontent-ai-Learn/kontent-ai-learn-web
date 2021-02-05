@@ -34,6 +34,7 @@ const error = asyncHandler(async (req, res) => {
         minify: minify,
         slug: '404',
         isPreview: siteIsPreview,
+        language: res.locals.language,
         navigation: home && home.length ? home[0].navigation.value : [],
         itemId: content && content.length ? content[0].system.id : null,
         title: content && content.length ? content[0].title.value : '',

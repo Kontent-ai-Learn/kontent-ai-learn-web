@@ -1,6 +1,7 @@
 const cache = require('memory-cache');
 const handleCache = require('./handleCache');
 const getUrlMap = require('./urlMap');
+const commonContent = require('./commonContent');
 
 // URLs allowed in the application
 const urlWhitelist = [
@@ -113,6 +114,14 @@ const appHelper = {
         logs.length = 200;
     }
     cache.put(key, logs);
+  },
+  getProjectLanguage: async (res) => {
+    const languages = await commonContent.getLanguages(res);
+    if (languages.length) {
+      res.locals.language = languages[0].system.codename;
+    } else {
+      res.locals.language = 'default';
+    }
   }
 };
 

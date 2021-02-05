@@ -49,7 +49,11 @@ const defineQuery = (deliveryConfig, config) => {
         return deliveryClient.type(config.type);
     }
 
-    let query = deliveryClient.items()
+    if (config.data === 'languages') {
+        return deliveryClient.languages();
+    }
+
+    let query = deliveryClient.items();
 
     if (config.type) {
         query.type(config.type);
@@ -254,11 +258,14 @@ const requestDelivery = async (config) => {
     let response = await getResponse(query, config);
     response = extendLinkedItems(response);
 
-    if (response && response.items) {
+    if (response?.items) {
         return response.items;
     }
-    if (response && response.type) {
+    if (response?.type) {
         return response.type;
+    }
+    if (response?.languages) {
+        return response.languages;
     }
 
     return response;

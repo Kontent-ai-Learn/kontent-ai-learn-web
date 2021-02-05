@@ -19,6 +19,7 @@ const handleArticle = async (settings, req, res) => {
     settings.renderSettings.view = 'apiReference/pages/reference';
     let parentSlug = req.originalUrl.split('/')[1];
     parentSlug = parentSlug.split('?')[0];
+    const KCDetails = commonContent.getKCDetails(res);
     const codename = helper.getCodenameByUrl(`/${parentSlug}`, settings.urlMap);
     const subNavigation = await handleCache.evaluateSingle(res, `subNavigation_${codename}`, async () => {
         return await commonContent.getSubNavigation(res, codename);
@@ -124,12 +125,14 @@ const handleArticle = async (settings, req, res) => {
     settings.renderSettings.data.moment = moment;
     settings.renderSettings.data.canonicalUrl = canonicalUrl;
     settings.renderSettings.data.projectId = res.locals.projectid;
+    settings.renderSettings.data.language = res.locals.language;
     settings.renderSettings.data.containsChangelog = containsChangelog;
     settings.renderSettings.data.releaseNoteContentType = releaseNoteContentType;
     settings.renderSettings.data.containsTrainingCourse = containsTrainingCourse;
     settings.renderSettings.data.trainingCourseContentType = trainingCourseContentType;
     settings.renderSettings.data.hideAuthorLastModified = settings.content && settings.content.length && settings.content[0].display_options ? helper.isCodenameInMultipleChoice(settings.content[0].display_options.value, 'hide_metadata') : false;
     settings.renderSettings.data.hideFeedback = settings.content && settings.content.length && settings.content[0].display_options? helper.isCodenameInMultipleChoice(settings.content[0].display_options.value, 'hide_feedback') : false;
+    settings.renderSettings.data.smartLink = KCDetails.isPreview ? smartLink : null;
 
     return settings.renderSettings;
 };
@@ -271,8 +274,7 @@ router.get('/:main/:slug', asyncHandler(async (req, res, next) => {
             footer: footer && footer.length ? footer[0] : null,
             UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
             platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
-            helper: helper,
-            smartLink: KCDetails.isPreview ? smartLink : null
+            helper: helper
         }
     };
 

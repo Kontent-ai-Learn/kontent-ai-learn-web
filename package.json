@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/KenticoDocs/kontent-docs-web#readme",
   "dependencies": {
-    "@kentico/kontent-delivery": "^10.0.0",
+    "@kentico/kontent-delivery": "^10.3.0",
     "@kentico/kontent-webhook-helper": "^1.1.0",
     "@sendgrid/mail": "^7.4.2",
     "acorn": "^8.0.4",

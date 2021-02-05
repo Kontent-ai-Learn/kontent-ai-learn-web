@@ -18,6 +18,7 @@ const commonContent = {
             projectid: res.locals.projectid,
             previewapikey: res.locals.previewapikey,
             securedapikey: res.locals.securedapikey,
+            language: res.locals.language,
             host: res.locals.host,
             protocol: res.locals.protocol,
             isPreview: isPreview(res.locals.previewapikey),
@@ -200,6 +201,12 @@ const commonContent = {
         }
 
         return pairings;
+    },
+    getLanguages: async (res) => {
+        return await requestDelivery({
+            data: 'languages',
+            ...commonContent.getKCDetails(res)
+        });
     },
     normalizePlatforms: async (platforms, res) => {
         const result = [];

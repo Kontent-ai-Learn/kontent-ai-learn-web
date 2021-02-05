@@ -25,7 +25,7 @@ block content
                         if (req.query.pdf)
                             .article__tech(data-platform-note)
                         if (isPreview && !req.query.pdf)
-                            a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/default/item/${content.system.id}`, target='_blank', rel='noopener') Edit
+                            a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${content.system.id}`, target='_blank', rel='noopener') Edit
                     if (containsChangelog && releaseNoteContentType)
                         div(data-aside-container='filter')
                             .article__filter(data-aside='filter')&attributes(smartLink?.itemId(UIMessages.system.id))

@@ -8,7 +8,8 @@ const resolveChangelog = async ($, req, res) => {
     const $elem = $('#changelog-resolve');
     const config = {
         isPreview: isPreview(res.locals.previewapikey),
-        projectid: res.locals.projectid
+        projectid: res.locals.projectid,
+        language: res.locals.language
     };
 
     if (!$elem.length) return;
@@ -30,7 +31,8 @@ const resolveTerminology = async ($, req, res) => {
     const $elem = $('#terminology-resolve');
     const config = {
         isPreview: isPreview(res.locals.previewapikey),
-        projectid: res.locals.projectid
+        projectid: res.locals.projectid,
+        language: res.locals.language
     };
 
     if (!$elem.length) return;

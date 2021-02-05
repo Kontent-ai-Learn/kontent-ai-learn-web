@@ -227,6 +227,7 @@ const getContent = async (req, res) => {
         slug: content && content.length ? content[0].url.value : '',
         isPreview: KCDetails.isPreview,
         projectId: res.locals.projectid,
+        language: res.locals.language,
         itemId: content && content.length ? content[0].system.id : null,
         title: content && content.length ? content[0].title.value : '',
         titleSuffix: ` | ${home && home.length ? home[0].title.value : 'Kentico Kontent Docs'}`,

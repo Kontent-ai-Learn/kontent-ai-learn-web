@@ -32,6 +32,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
     minify: minify,
     slug: 'home',
     isPreview: siteIsPreview,
+    language: res.locals.language,
     itemId: home[0].system.id,
     title: home[0].title.value,
     titleSuffix: '',

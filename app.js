@@ -133,6 +133,9 @@ app.use(async (req, res, next) => {
   if (!(isPreview(res.locals.previewapikey) || (req.originalUrl.indexOf('/cache-invalidate') > -1))) {
     res.setHeader('Surrogate-Control', 'max-age=3600');
   }
+  if (isPreview(res.locals.previewapikey)) {
+    await appHelper.getProjectLanguage(res);
+  }
   return next();
 });
 
