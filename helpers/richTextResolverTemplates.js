@@ -50,96 +50,124 @@ const getImageAttributes = (item, cssClass, transformationQueryString) => {
     }
 }
 
+const getYoutubeTemplate = (cssClass, item, config) => {
+    return `
+        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+            <iframe class="lazy" width="560" height="315" data-src="https://www.youtube-nocookie.com/embed/${item.id.value}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+            <noscript>
+                <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/${item.id.value}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+            </noscript>
+        </div>
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        <p class="print-only"> 
+            <i>Play video on <a href="https://www.youtube.com/watch?v=${item.id.value}"> https://www.youtube.com/watch?v=${item.id.value}</a></i>
+        </p>
+    `;
+};
+
+const getCodepenTemplate = (cssClass, item, config) => {
+    return `
+        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}>
+            <iframe class="lazy" height="265" scrolling="no" data-src="https://codepen.io/${item.id.value.replace('/pen/', '/embed/')}/?height=265&amp;theme-id=0" frameborder="no" allowtransparency="true" allowfullscreen="true"${getSmartLinkAttr(config, 'id', 'element')}></iframe>
+            <noscript>
+                <iframe height="265" scrolling="no" src="https://codepen.io/${item.id.value}/?height=265&amp;theme-id=0" frameborder="no" allowtransparency="true" allowfullscreen="true"${getSmartLinkAttr(config, 'id', 'element')}></iframe>
+            </noscript>
+        </div>
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        <p class="print-only"> 
+            <i>See the code example on <a href="https://codepen.io/${item.id.value}">https://codepen.io/${item.id.value}</a></i>
+        </p>
+    `;
+};
+
+const getStackblitzTemplate = (cssClass, item, config) => {
+    return `
+        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+            <iframe class="lazy" data-src="https://stackblitz.com/edit/${item.id.value}?embed=1"></iframe>
+            <noscript>
+                <iframe src="https://stackblitz.com/edit/${item.id.value}?embed=1"></iframe>
+            </noscript>
+        </div>
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        <p class="print-only"> 
+            <i>See the code example on <a href="https://stackblitz.com/edit/${item.id.value}">https://stackblitz.com/edit/${item.id.value}</a></i>
+        </p>
+    `;
+};
+
+const getCodesandboxTemplate = (cssClass, item, config) => {
+    return `
+        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+            <iframe class="lazy" data-src="https://codesandbox.io/embed/${item.id.value}"></iframe>
+            <noscript>
+                <iframe src="https://codesandbox.io/embed/${item.id.value}"></iframe>
+            </noscript>
+        </div>
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        <p class="print-only"> 
+            <i>See the code example on <a href="https://codesandbox.io/s/${item.id.value}">https://codesandbox.io/s/${item.id.value}</a></i>
+        </p>
+    `;
+};
+
+const getNetlifyTemplate = (cssClass, item, config, netlifyId) => {
+    return `
+        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+            <iframe class="lazy lazy--exclude-dnt" data-src="https://${netlifyId[0]}.netlify.com/${netlifyId[1]}"></iframe>
+            <noscript>
+                <iframe src="https://${netlifyId[0]}.netlify.com${netlifyId[1]}"></iframe>
+            </noscript>
+        </div>
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        <p class="print-only"> 
+            <i>See the example on <a href="https://${netlifyId[0]}.netlify.com${netlifyId[1]}">https://${netlifyId[0]}.netlify.com${netlifyId[1]}</a></i>
+        </p>
+    `;
+};
+
+const getGiphyTemplate = (cssClass, item, config) => {
+    return `
+        <div class="embed embed--giphy${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+            <iframe class="lazy" data-src="https://giphy.com/embed/${item.id.value}"></iframe>
+            <div class="embed__overlay" aria-hidden="true"></div>
+            <noscript>
+                <iframe src="https://giphy.com/embed/${item.id.value}"></iframe>
+            </noscript>
+            <a class="embed__link" href="https://giphy.com/gifs/${item.id.value}" target="_blank">via GIPHY</a>
+        </div>
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        <p class="print-only"> 
+            <i>See the image on <a href="https://giphy.com/embed/${item.id.value}">https://giphy.com/embed/${item.id.value}</a></i>
+        </p>
+    `;
+};
+
+const getDiagramsnetTemplate = (cssClass, item, config, elemId) => {
+    return `
+        <div class="embed embed--diagrams-net${cssClass}" id="embed-${elemId}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+            <iframe width="2000" height="1125" class="lazy" frameborder="0" data-src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
+            <a data-lightbox="embed-${elemId}" target="_blank" href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>
+            <noscript>
+                <iframe frameborder="0" src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
+            </noscript>
+        </div>
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        <p class="print-only"> 
+            <i>See the diagram on <a href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}">https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}</a></i>
+        </p>
+    `;
+};
+
 const getEmbeddedTemplate = (cssClass, item, config, netlifyId) => {
     const elemId = `${item.provider.value[0].codename}-${Math.floor(Math.random() * 9999999) + 1}`;
     return {
-        youtube: `
-            <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
-                <iframe class="lazy" width="560" height="315" data-src="https://www.youtube-nocookie.com/embed/${item.id.value}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
-                <noscript>
-                    <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/${item.id.value}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
-                </noscript>
-            </div>
-            ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
-            <p class="print-only"> 
-                <i>Play video on <a href="https://www.youtube.com/watch?v=${item.id.value}"> https://www.youtube.com/watch?v=${item.id.value}</a></i>
-            </p>
-            `,
-        codepen: `
-            <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}>
-                <iframe class="lazy" height="265" scrolling="no" data-src="https://codepen.io/${item.id.value.replace('/pen/', '/embed/')}/?height=265&amp;theme-id=0" frameborder="no" allowtransparency="true" allowfullscreen="true"${getSmartLinkAttr(config, 'id', 'element')}></iframe>
-                <noscript>
-                    <iframe height="265" scrolling="no" src="https://codepen.io/${item.id.value}/?height=265&amp;theme-id=0" frameborder="no" allowtransparency="true" allowfullscreen="true"${getSmartLinkAttr(config, 'id', 'element')}></iframe>
-                </noscript>
-            </div>
-            ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
-            <p class="print-only"> 
-                <i>See the code example on <a href="https://codepen.io/${item.id.value}">https://codepen.io/${item.id.value}</a></i>
-            </p>
-            `,
-        stackblitz: `
-            <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
-                <iframe class="lazy" data-src="https://stackblitz.com/edit/${item.id.value}?embed=1"></iframe>
-                <noscript>
-                    <iframe src="https://stackblitz.com/edit/${item.id.value}?embed=1"></iframe>
-                </noscript>
-            </div>
-            ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
-            <p class="print-only"> 
-                <i>See the code example on <a href="https://stackblitz.com/edit/${item.id.value}">https://stackblitz.com/edit/${item.id.value}</a></i>
-            </p>
-            `,
-        codesandbox: `
-            <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
-                <iframe class="lazy" data-src="https://codesandbox.io/embed/${item.id.value}"></iframe>
-                <noscript>
-                    <iframe src="https://codesandbox.io/embed/${item.id.value}"></iframe>
-                </noscript>
-            </div>
-            ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
-            <p class="print-only"> 
-                <i>See the code example on <a href="https://codesandbox.io/s/${item.id.value}">https://codesandbox.io/s/${item.id.value}</a></i>
-            </p>
-            `,
-        netlify: `
-            <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
-                <iframe class="lazy lazy--exclude-dnt" data-src="https://${netlifyId[0]}.netlify.com/${netlifyId[1]}"></iframe>
-                <noscript>
-                    <iframe src="https://${netlifyId[0]}.netlify.com${netlifyId[1]}"></iframe>
-                </noscript>
-            </div>
-            ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
-            <p class="print-only"> 
-                <i>See the example on <a href="https://${netlifyId[0]}.netlify.com${netlifyId[1]}">https://${netlifyId[0]}.netlify.com${netlifyId[1]}</a></i>
-            </p>
-            `,
-        giphy: `
-            <div class="embed embed--giphy${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
-                <iframe class="lazy" data-src="https://giphy.com/embed/${item.id.value}"></iframe>
-                <div class="embed__overlay" aria-hidden="true"></div>
-                <noscript>
-                    <iframe src="https://giphy.com/embed/${item.id.value}"></iframe>
-                </noscript>
-                <a class="embed__link" href="https://giphy.com/gifs/${item.id.value}" target="_blank">via GIPHY</a>
-            </div>
-            ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
-            <p class="print-only"> 
-                <i>See the image on <a href="https://giphy.com/embed/${item.id.value}">https://giphy.com/embed/${item.id.value}</a></i>
-            </p>
-            `,
-        diagrams_net: `
-            <div class="embed embed--diagrams-net${cssClass}" id="embed-${elemId}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
-                <iframe width="2000" height="1125" class="lazy" frameborder="0" data-src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
-                <a data-lightbox="embed-${elemId}" target="_blank" href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>
-                <noscript>
-                    <iframe frameborder="0" src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
-                </noscript>
-            </div>
-            ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
-            <p class="print-only"> 
-                <i>See the diagram on <a href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}">https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}</a></i>
-            </p>
-            `,
+        youtube: getYoutubeTemplate(cssClass, item, config),
+        codepen: getCodepenTemplate(cssClass, item, config),
+        stackblitz: getStackblitzTemplate(cssClass, item, config),
+        codesandbox: getCodesandboxTemplate(cssClass, item, config),
+        netlify: getNetlifyTemplate(cssClass, item, config, netlifyId),
+        giphy: getGiphyTemplate(cssClass, item, config),
+        diagrams_net: getDiagramsnetTemplate(cssClass, item, config, elemId)
     }
 };
 

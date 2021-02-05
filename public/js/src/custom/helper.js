@@ -395,6 +395,17 @@ window.helper = (() => {
         return tech;
     };
 
+    const logAnchorUpdate = (anchor) => {
+        if (window.dataLayer) {
+            window.dataLayer.push({
+                event: 'event',
+                eventCategory: 'Anchor',
+                eventAction: anchor,
+                eventLabel: getAbsoluteUrl()
+            });
+        }
+    };
+
     return {
         getParents: getParents,
         findAncestor: findAncestor,
@@ -419,7 +430,8 @@ window.helper = (() => {
         nextUntil: nextUntil,
         fixElem: fixElem,
         getAbsoluteUrl: getAbsoluteUrl,
-        getTech: getTech
+        getTech: getTech,
+        logAnchorUpdate: logAnchorUpdate
     }
 })();
 

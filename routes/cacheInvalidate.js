@@ -40,16 +40,6 @@ const poolPayload = (req) => {
     cache.put('webhook-payload-pool', pool);
 };
 
-const logInvalidate = (log) => {
-    const key = 'cache-invalidate';
-    const logs = cache.get(key) || [];
-    logs.unshift(log);
-    if (logs.length > 200) {
-        logs.length = 200;
-    }
-    cache.put(key, logs);
-};
-
 router.post('/', asyncHandler(async (req, res) => {
     const log = {
         timestamp: (new Date()).toISOString(),
@@ -69,7 +59,7 @@ router.post('/', asyncHandler(async (req, res) => {
         maxArrayLength: 500
     });
 
-    logInvalidate(log);
+    helper.logInCacheKey('cache-invalidate', log);
     return res.end();
 }));
 

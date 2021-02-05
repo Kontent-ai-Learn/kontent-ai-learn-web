@@ -220,7 +220,7 @@ setIntervalAsync(async () => {
     log.error = error && error.response ? error.response.data : '';
   }
 
-  appHelper.logPool(log);
+  helper.logInCacheKey('cache-interval-pool', log);
 }, 300000);
 
 // catch 404 and forward to error handler

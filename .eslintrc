@@ -17,10 +17,11 @@
     },
     "globals": {
         "grecaptcha": "writable",
+        "helper": "writable",
         "helperForm": "writable",
+        "helperFilter": "writable",
         "Prism": "writable",
         "searchAPI": "writable",
-        "helper": "writable",
         "autocomplete": "writable",
         "supportsPassive": "writable",
         "$clamp": "writable",

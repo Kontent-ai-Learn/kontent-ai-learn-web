@@ -185,54 +185,43 @@
         return position;
     };
 
-    const logAnchorUpdate = (anchor) => {
-        if (window.dataLayer) {
-            window.dataLayer.push({
-                event: 'event',
-                eventCategory: 'Anchor',
-                eventAction: anchor,
-                eventLabel: window.helper.getAbsoluteUrl()
-            });
-        }
-    };
-
     const affix = () => {
         let headingsPosition = [];
-        if (affixHeadings && tableOfContentsElem) {
-            const affixHeadingsLocal = filterNonHiddenHeadings(affixHeadings);
+        if (!(affixHeadings && tableOfContentsElem)) return;
 
-            for (let i = 0; i < affixHeadingsLocal.length; i++) {
-                const nextHeading = affixHeadingsLocal[i + 1];
-                const position = getNextHeadingPosition(nextHeading);
+        const affixHeadingsLocal = filterNonHiddenHeadings(affixHeadings);
 
-                headingsPosition.push([position, affixHeadingsLocal[i].id]);
-            }
+        for (let i = 0; i < affixHeadingsLocal.length; i++) {
+            const nextHeading = affixHeadingsLocal[i + 1];
+            const position = getNextHeadingPosition(nextHeading);
 
-            const contentOffset = 128; // how many pixels before the heading is right on the top of viewport should the affix nav item get active
-            headingsPosition = headingsPosition.filter((item) => item[0] >= contentOffset);
-            const topHeading = arrayMin(headingsPosition);
+            headingsPosition.push([position, affixHeadingsLocal[i].id]);
+        }
 
-            if (topHeading) {
-                const active = tableOfContentsElem.querySelector('.active');
-                const futureActive = tableOfContentsElem.querySelector(`[href="#${topHeading[1]}"]`);
+        const contentOffset = 128; // how many pixels before the heading is right on the top of viewport should the affix nav item get active
+        headingsPosition = headingsPosition.filter((item) => item[0] >= contentOffset);
+        const topHeading = arrayMin(headingsPosition);
 
-                if (active) {
-                    active.classList.remove('active');
+        if (!topHeading) return;
+
+        const active = tableOfContentsElem.querySelector('.active');
+        const futureActive = tableOfContentsElem.querySelector(`[href="#${topHeading[1]}"]`);
+
+        if (active) {
+            active.classList.remove('active');
+        }
+
+        if (futureActive) {
+            futureActive.classList.add('active');
+
+            setTimeout(() => {
+                if (futureActive.classList.contains('active')) {
+                    if (activeHeadingID !== futureActive.getAttribute('href')) {
+                        activeHeadingID = futureActive.getAttribute('href');
+                        helper.logAnchorUpdate(activeHeadingID);
+                    }
                 }
-
-                if (futureActive) {
-                    futureActive.classList.add('active');
-
-                    setTimeout(() => {
-                        if (futureActive.classList.contains('active')) {
-                            if (activeHeadingID !== futureActive.getAttribute('href')) {
-                                activeHeadingID = futureActive.getAttribute('href');
-                                logAnchorUpdate(activeHeadingID);
-                            }
-                        }
-                    }, 500);
-                }
-            }
+            }, 500);
         }
     };
 

@@ -1,4 +1,3 @@
-const cache = require('memory-cache');
 const handleCache = require('./handleCache');
 const getUrlMap = require('./urlMap');
 const commonContent = require('./commonContent');
@@ -105,15 +104,6 @@ const appHelper = {
     }
 
     return revalidate;
-  },
-  logPool: (log) => {
-    const key = 'cache-interval-pool';
-    const logs = cache.get(key) || [];
-    logs.unshift(log);
-    if (logs.length > 200) {
-        logs.length = 200;
-    }
-    cache.put(key, logs);
   },
   getProjectLanguage: async (res) => {
     const languages = await commonContent.getLanguages(res);

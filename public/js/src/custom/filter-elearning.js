@@ -2,7 +2,7 @@
     var updateRoomUrl = function (personas) {
         var loc = window.location;
         var urlParams = new URLSearchParams(loc.search);
-        var url = loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '') + loc.pathname;
+        var url = helperFilter.getUrl(loc);
         var qs = [];
 
         if (personas) {
@@ -22,37 +22,10 @@
         }
     };
 
-    var getActivePersonas = function () {
-        var items = document.querySelectorAll('[data-filter-group="personas"] .filter__item--active');
-
-        if (!items.length) {
-            return '';
-        }
-
-        var codenames = [];
-
-        for (var i = 0; i < items.length; i++) {
-            codenames.push(items[i].getAttribute('data-toggle').replace('.', ''));
-        }
-
-        return codenames.join(',');
-    };
-
     var setFilterOnLoad = function (url) {
         var show = helper.getParameterByName('show', url);
 
-        if (show) {
-            show = show.split(',');
-            var items = document.querySelectorAll('[data-filter-group="personas"] .filter__item');
-            for (var i = 0; i < items.length; i++) {
-                var attr = items[i].getAttribute('data-toggle').replace('.', '');
-                for (var j = 0; j < show.length; j++) {
-                    if (attr === show[j]) {
-                        items[i].click();
-                    }
-                }
-            }
-        }
+        helperFilter.setFilterOnLoad(show, 'personas');
     };
 
     window.mixitup('.article__content .container', {
@@ -64,7 +37,7 @@
         },
         callbacks: {
             onMixEnd: function () {
-                updateUrl(getActivePersonas());
+                updateUrl(helperFilter.getActiveItems('personas'));
             }
         }
     });

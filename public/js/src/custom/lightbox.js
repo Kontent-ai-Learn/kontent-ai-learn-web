@@ -24,10 +24,19 @@
     };
   };
 
+  const initLightboxOnElemsAvailable = (selector, callback) => {
+    const interval = setInterval(() => {
+      const elems = document.querySelectorAll(selector);
+
+      if (elems.length) {
+        callback();
+        clearInterval(interval);
+      }
+    }, 100);
+  };
+
   const initLightboxOnImages = () => {
     setTimeout(() => {
-      let imgs = document.querySelectorAll('img.article__add-lightbox');
-
       const initLightbox = () => {
         document.querySelectorAll('img.article__add-lightbox').forEach((item) => {
           let figcaption = '';
@@ -63,21 +72,12 @@
         });
       }
 
-      const interval = setInterval(() => {
-        imgs = document.querySelectorAll('img.article__add-lightbox');
-
-        if (imgs.length) {
-          initLightbox();
-          clearInterval(interval);
-        }
-      }, 100);
+      initLightboxOnElemsAvailable('img.article__add-lightbox', initLightbox);
     }, 0);
   };
 
   const initLightboxOnEmbeds = () => {
     setTimeout(() => {
-      let elems = document.querySelectorAll('[data-lightbox]');
-
       const initLightbox = () => {
         document.querySelectorAll('[data-lightbox]').forEach((item) => {
           let figcaption = '';
@@ -113,21 +113,12 @@
         });
       }
 
-      const interval = setInterval(() => {
-        elems = document.querySelectorAll('[data-lightbox]');
-
-        if (elems.length) {
-          initLightbox();
-          clearInterval(interval);
-        }
-      }, 100);
+      initLightboxOnElemsAvailable('[data-lightbox]', initLightbox);
     }, 0);
   };
 
   const initLightboxOnChangelog = () => {
     setTimeout(() => {
-      let elems = document.querySelectorAll('[href="#subscribe-breaking-changes-email"]');
-
       const initLightbox = () => {
         document.querySelectorAll('[href="#subscribe-breaking-changes-email"]').forEach((item) => {
           // Init lighbox with caption
@@ -145,14 +136,7 @@
         });
       }
 
-      const interval = setInterval(() => {
-        elems = document.querySelectorAll('[href="#subscribe-breaking-changes-email"]');
-
-        if (elems.length) {
-          initLightbox();
-          clearInterval(interval);
-        }
-      }, 100);
+      initLightboxOnElemsAvailable('[href="#subscribe-breaking-changes-email"]', initLightbox);
     }, 0);
   };
 

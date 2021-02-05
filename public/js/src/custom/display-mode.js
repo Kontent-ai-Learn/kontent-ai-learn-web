@@ -113,23 +113,12 @@
         }
     };
 
-    const logAnchorUpdate = (anchor) => {
-        if (window.dataLayer) {
-            window.dataLayer.push({
-                event: 'event',
-                eventCategory: 'Anchor',
-                eventAction: anchor,
-                eventLabel: window.helper.getAbsoluteUrl()
-            });
-        }
-    };
-
     const activateTOC = (href) => {
         const links = document.querySelectorAll('.table-of-contents__list a');
         for (let i = 0; i < links.length; i++) {
             if (links[i].getAttribute('href') === href) {
                 links[i].classList.add('active');
-                logAnchorUpdate(links[i].getAttribute('href'))
+                helper.logAnchorUpdate(links[i].getAttribute('href'))
             } else {
                 links[i].classList.remove('active');
             }

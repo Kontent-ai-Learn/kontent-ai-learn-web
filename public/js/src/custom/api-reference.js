@@ -8,17 +8,12 @@
     }, 0);
   };
 
-  var findAncestor = (el, sel) => {
-    while ((el = el.parentElement) && !((el.matches || el.matchesSelector).call(el, sel)));
-    return el;
-  };
-
   var updateLabel = function (item) {
     if (!item) {
       return;
     }
 
-    var selectorLabel = findAncestor(item, '.language-selector');
+    var selectorLabel = helper.findAncestor(item, '.language-selector');
     if (selectorLabel) {
       selectorLabel = selectorLabel.querySelector('.language-selector__label');
     }
@@ -250,7 +245,7 @@
     for (var i = 0; i < headings.length; i++) {
       var headingId = headings[i].getAttribute('id');
       var headingHTML = headings[i].innerHTML;
-      var ancestor = window.helper.findAncestor(headings[i], '[data-section-id]')
+      var ancestor = helper.findAncestor(headings[i], '[data-section-id]')
       var section = ancestor ? ancestor.getAttribute('data-section-id') : '';
       var newId = section + '/' + headingId;
 
@@ -344,7 +339,7 @@
   var interactSelectLanguageSelector = function () {
     document.querySelector('body').addEventListener('click', (e) => {
       if (e.target && e.target.matches('.language-selector__label')) {
-        var languageSelector = findAncestor(e.target, '.language-selector');
+        var languageSelector = helper.findAncestor(e.target, '.language-selector');
         if (languageSelector.classList.contains('language-selector--opened')) {
             languageSelector.classList.remove('language-selector--opened');
         } else {

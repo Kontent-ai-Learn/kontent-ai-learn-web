@@ -288,6 +288,14 @@ const helper = {
     isAbsoluteUrl: (url) => {
         const pattern = new RegExp('^(?:[a-z]+:)?//', 'i');
         return pattern.test(url);
+    },
+    logInCacheKey: (key, log) => {
+        const logs = cache.get(key) || [];
+        logs.unshift(log);
+        if (logs.length > 200) {
+            logs.length = 200;
+        }
+        cache.put(key, logs);
     }
 };
 

@@ -4,14 +4,16 @@ const handleCache = require('./handleCache');
 const richTextResolverTemplates = require('./richTextResolverTemplates');
 const isPreview = require('./isPreview');
 
-const resolveChangelog = async ($, req, res) => {
-    const $elem = $('#changelog-resolve');
-    const config = {
+const getConfig = (res) => {
+    return {
         isPreview: isPreview(res.locals.previewapikey),
         projectid: res.locals.projectid,
         language: res.locals.language
-    };
+    }
+};
 
+const resolveChangelog = async ($, req, res) => {
+    const $elem = $('#changelog-resolve');
     if (!$elem.length) return;
 
     const releaseNotes = await handleCache.evaluateSingle(res, 'releaseNotes', async () => {
@@ -21,7 +23,7 @@ const resolveChangelog = async ($, req, res) => {
     let html = '';
 
     for (let i = 0; i < releaseNotes.length; i++) {
-        html += richTextResolverTemplates.releaseNote(releaseNotes[i], config);
+        html += richTextResolverTemplates.releaseNote(releaseNotes[i], getConfig(res));
     }
 
     $elem.html(html);
@@ -29,12 +31,6 @@ const resolveChangelog = async ($, req, res) => {
 
 const resolveTerminology = async ($, req, res) => {
     const $elem = $('#terminology-resolve');
-    const config = {
-        isPreview: isPreview(res.locals.previewapikey),
-        projectid: res.locals.projectid,
-        language: res.locals.language
-    };
-
     if (!$elem.length) return;
 
     const termDefinitions = await handleCache.evaluateSingle(res, 'termDefinitions', async () => {
@@ -44,7 +40,7 @@ const resolveTerminology = async ($, req, res) => {
     let html = '';
 
     for (let i = 0; i < termDefinitions.length; i++) {
-        html += richTextResolverTemplates.termDefinition(termDefinitions[i], config);
+        html += richTextResolverTemplates.termDefinition(termDefinitions[i], getConfig(res));
     }
 
     $elem.html(html);

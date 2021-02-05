@@ -4,7 +4,7 @@
     var updateRoomUrl = function (services, changes, page) {
         var loc = window.location;
         var urlParams = new URLSearchParams(loc.search);
-        var url = loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '') + loc.pathname;
+        var url = helperFilter.getUrl(loc);
         var qs = [];
         page = parseInt(page);
 
@@ -29,22 +29,6 @@
         if (history && history.replaceState) {
             history.replaceState({}, null, url);
         }
-    };
-
-    var getActiveServices = function () {
-        var items = document.querySelectorAll('[data-filter-group="services"] .filter__item--active');
-
-        if (!items.length) {
-            return '';
-        }
-
-        var codenames = [];
-
-        for (var i = 0; i < items.length; i++) {
-            codenames.push(items[i].getAttribute('data-toggle').replace('.', ''));
-        }
-
-        return codenames.join(',');
     };
 
     var getBreaking = function () {
@@ -94,7 +78,7 @@
         callbacks: {
             onMixEnd: function () {
                 var state = mixer.getState();
-                updateUrl(getActiveServices(), getBreaking(), state.activePagination.page);
+                updateUrl(helperFilter.getActiveItems('services'), getBreaking(), state.activePagination.page);
             }
         }
     });
@@ -109,18 +93,7 @@
             page = getPageByHash(hash);
         }
 
-        if (show) {
-            show = show.split(',');
-            var items = document.querySelectorAll('[data-filter-group="services"] .filter__item');
-            for (var i = 0; i < items.length; i++) {
-                var attr = items[i].getAttribute('data-toggle').replace('.', '');
-                for (var j = 0; j < show.length; j++) {
-                    if (attr === show[j]) {
-                        items[i].click();
-                    }
-                }
-            }
-        }
+        helperFilter.setFilterOnLoad(show, 'services');
 
         var item;
         if (breaking === 'true') {
