@@ -77,7 +77,10 @@ block content
                             .container&attributes(smartLink?.elementCodename('content'))
                                 | !{minify(content.content.value)}
                         else
-                            div&attributes(smartLink?.elementCodename('content')) !{minify(content.content.value)}
+                            if (smartLink)
+                                div&attributes(smartLink?.elementCodename('content')) !{minify(content.content.value)}
+                            else 
+                                | !{minify(content.content.value)}
                     if (nextSteps.value !== '<p><br></p>')
                         h2.table-of-contents__whatsnext(id='a-whats-next')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___next_steps')) !{UIMessages && UIMessages.article___next_steps.value}
                         div&attributes(smartLink?.elementCodename('next_steps')) !{minify(nextSteps.value)}
