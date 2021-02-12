@@ -5,8 +5,6 @@ const { signatureHelper } = require('@kentico/kontent-webhook-helper');
 var util = require('util');
 const asyncHandler = require('express-async-handler');
 const cacheInvalidate = require('../helpers/cacheInvalidate');
-const handleCache = require('../helpers/handleCache');
-const commonContent = require('../helpers/commonContent');
 const isPreview = require('../helpers/isPreview');
 const helper = require('../helpers/helperFunctions');
 const fastly = require('../helpers/fastly');
@@ -85,28 +83,8 @@ router.get('/keys/:key', (req, res) => {
 
 router.get('/keys/:key/invalidate', asyncHandler(async (req, res) => {
     cache.del(req.params.key);
-    const KCDetails = commonContent.getKCDetails(res);
-    const codename = req.params.key.replace(`_${KCDetails.projectid}`, '');
     if (!isPreview(res.locals.previewapikey)) {
-        const domain = helper.getDomainSplitProtocolHost();
-        let path = '';
-        if (codename === 'urlMap') {
-            path = '/urlmap';
-        } else if (codename === 'releaseNotes' && req.app.locals.changelogPath) {
-            path = req.app.locals.changelogPath;
-        } else if (codename === 'termDefinitions' && req.app.locals.terminologyPath) {
-            path = req.app.locals.terminologyPath;
-        } else if (codename === 'trainingCourses' && req.app.locals.elearningPath) {
-            path = req.app.locals.elearningPath;
-        } else if (codename === 'articles' || codename === 'scenarios' || codename === 'apiSpecifications') {
-            path = '/redirect-urls';
-        } else {
-            await fastly.purge(codename, res);
-        }
-
-        if (path && domain[1]) {
-            await handleCache.axiosPurge(`${helper.getDomain(domain[0], domain[1])}${path}`);
-        }
+        await fastly.purgeAllUrls(res);
     }
 
     return res.redirect(303, '/cache-invalidate/keys');

@@ -129,7 +129,7 @@ const purgeFinal = async (itemsByTypes, req, res) => {
       await axiosPurge(`${axiosDomain}${req.app.locals.changelogPath}`);
     }
 
-    if (itemsByTypes.termDefinitions.length && req.app.locals.terminologyPath && !allUrlsPurged) {
+    if (itemsByTypes.termDefinitions.length && !allUrlsPurged) {
       await purgeAllUrls(res);
       allUrlsPurged = true;
     }
@@ -164,5 +164,6 @@ module.exports = {
   axiosPurge,
   purgeToRedirectUrls,
   purgeFinal,
-  purgeInitial
+  purgeInitial,
+  purgeAllUrls
 };
