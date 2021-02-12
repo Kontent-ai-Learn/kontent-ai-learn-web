@@ -296,6 +296,18 @@ const helper = {
             logs.length = 200;
         }
         cache.put(key, logs);
+    },
+    getUniqueUrls: (urlMap) => {
+        const uniqueUrls = [];
+
+        for (let i = 0; i < urlMap.length; i++) {
+            const url = urlMap[i].url.split('#')[0]; // Remove anchor
+            if (!uniqueUrls.includes(url)) {
+                uniqueUrls.push(url);
+            }
+        }
+
+        return uniqueUrls;
     }
 };
 

@@ -64,6 +64,7 @@ const revalidateTrainingCourseType = async (KCDetails, res) => {
 
 const splitPayloadByContentType = (items) => {
     const itemsByTypes = {
+        home: [],
         footer: [],
         UIMessages: [],
         articles: [],
@@ -81,7 +82,9 @@ const splitPayloadByContentType = (items) => {
 
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
-        if (item.type === 'footer') {
+        if (item.type === 'home' || item.type === 'navigation_item' || item.type === 'navigation_link') {
+            itemsByTypes.home.push(item);
+        } else if (item.type === 'footer') {
             itemsByTypes.footer.push(item);
         } else if (item.type === 'ui_messages') {
             itemsByTypes.UIMessages.push(item);

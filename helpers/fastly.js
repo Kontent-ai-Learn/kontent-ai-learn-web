@@ -74,6 +74,20 @@ const purgeRedirectRule = async (codename, res) => {
   }
 };
 
+const purgeAllUrls = async (res) => {
+  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+    return await getUrlMap(res);
+  });
+  const uniqueUrls = helper.getUniqueUrls(urlMap);
+  const validDomain = getValidDomain();
+  if (!validDomain) return;
+
+  for (let i = 0; i < uniqueUrls.length; i++) {
+    await axiosPurge(`${validDomain}${uniqueUrls[i]}`);
+  }
+  await axiosPurge(`${validDomain}/redirect-urls`);
+};
+
 const purgeAllTechUrls = async (res) => {
   const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
@@ -105,6 +119,7 @@ const purgeInitial = async (items, res) => {
 
 const purgeFinal = async (itemsByTypes, req, res) => {
   if (isPreview(res.locals.previewapikey)) return;
+  let allUrlsPurged = false;
 
   const domain = helper.getDomainSplitProtocolHost();
   if (domain[1]) {
@@ -114,8 +129,9 @@ const purgeFinal = async (itemsByTypes, req, res) => {
       await axiosPurge(`${axiosDomain}${req.app.locals.changelogPath}`);
     }
 
-    if (itemsByTypes.termDefinitions.length && req.app.locals.terminologyPath) {
-      await axiosPurge(`${axiosDomain}${req.app.locals.terminologyPath}`);
+    if (itemsByTypes.termDefinitions.length && req.app.locals.terminologyPath && !allUrlsPurged) {
+      await purgeAllUrls(res);
+      allUrlsPurged = true;
     }
 
     if (itemsByTypes.trainingCourses.length && req.app.locals.elearningPath) {
@@ -132,7 +148,12 @@ const purgeFinal = async (itemsByTypes, req, res) => {
       }
     }
 
-    if (itemsByTypes.picker.length) {
+    if (itemsByTypes.home.length && !allUrlsPurged) {
+      await purgeAllUrls(res);
+      allUrlsPurged = true;
+    }
+
+    if (itemsByTypes.picker.length && !allUrlsPurged) {
       await purgeAllTechUrls(res);
     }
   }
