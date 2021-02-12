@@ -57,7 +57,7 @@
         return page;
     };
 
-    var mixer = window.mixitup('.container', {
+    var mixer = window.mixitup('.article__body', {
         animation: {
             enable: false
         },

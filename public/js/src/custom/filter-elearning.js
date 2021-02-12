@@ -28,7 +28,7 @@
         helperFilter.setFilterOnLoad(show, 'personas');
     };
 
-    window.mixitup('.article__content .container', {
+    window.mixitup('.article__content .article__body', {
         animation: {
             enable: false
         },
