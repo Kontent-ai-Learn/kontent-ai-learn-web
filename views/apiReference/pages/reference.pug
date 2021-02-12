@@ -61,27 +61,21 @@ block content
                                     li.language-selector__item
                                         a(href=`${req.path}?tech=${item.slug}`, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=UIMessages.technology_picker_tooltip.value.replace('{TechnologyName}', item.title), class=`language-selector__link${index === highlighIndex ? ' language-selector__link--active' : ''}`)
                     if (introduction && introduction !== '<p><br></p>')
-                        div&attributes(smartLink?.elementCodename('introduction')) !{minify(introduction)}
+                        .article__introduction
+                            div&attributes(smartLink?.elementCodename('introduction')) !{minify(introduction)}
                     if (!containsChangelog)
                         div(data-aside-container='table-of-contents')
                             div(data-aside='table-of-contents')
                                 include ../../tutorials/includes/table-of-contents.pug
                     if (content && content.content && content.content.value)
+                        .article__body&attributes(smartLink?.elementCodename('content')) 
+                            | !{minify(content.content.value)}
                         if (containsChangelog)
-                            .container&attributes(smartLink?.elementCodename('content')) 
-                                | !{minify(content.content.value)}
                             .mixitup-page-list
-                        else if (containsTrainingCourse)
-                            .container&attributes(smartLink?.elementCodename('content')) 
-                                | !{minify(content.content.value)}
-                        else
-                            if (smartLink)
-                                div&attributes(smartLink?.elementCodename('content')) !{minify(content.content.value)}
-                            else 
-                                | !{minify(content.content.value)}
                     if (nextSteps && nextSteps.value !== '<p><br></p>')
-                        h2.table-of-contents__whatsnext(id='a-whats-next')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___next_steps')) !{UIMessages && UIMessages.article___next_steps.value}
-                        div&attributes(smartLink?.elementCodename('next_steps')) !{minify(nextSteps.value)}
+                        .article__next-steps
+                            h2.table-of-contents__whatsnext(id='a-whats-next')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___next_steps')) !{UIMessages && UIMessages.article___next_steps.value}
+                            div&attributes(smartLink?.elementCodename('next_steps')) !{minify(nextSteps.value)}
                     if (!hideFeedback)
                         div(data-aside-container='feedback')
                             div(data-aside='feedback')

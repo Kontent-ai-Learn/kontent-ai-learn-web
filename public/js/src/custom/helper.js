@@ -148,7 +148,7 @@ window.helper = (() => {
 
     // Ajax GET call
     const ajaxGet = (url, callback, type) => {
-        var xmlhttp = new XMLHttpRequest();
+        const xmlhttp = new XMLHttpRequest();
         xmlhttp.open('GET', url, true);
         xmlhttp.onreadystatechange = () => {
             return evaluateAjaxResponse(xmlhttp, callback, type);
@@ -159,7 +159,7 @@ window.helper = (() => {
 
     // Ajax POST call
     const ajaxPost = (url, requestData, callback, type) => {
-        var xmlhttp = new XMLHttpRequest();
+        const xmlhttp = new XMLHttpRequest();
         xmlhttp.open('POST', url, true);
         xmlhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
         xmlhttp.onload = () => {
@@ -172,8 +172,8 @@ window.helper = (() => {
     const getParameterByName = (name, url) => {
         if (!url) url = window.location.href;
         name = name.replace(/[[\]]/g, '\\$&');
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
-            var results = regex.exec(url);
+        const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+        const results = regex.exec(url);
         if (!results) return null;
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
@@ -406,6 +406,16 @@ window.helper = (() => {
         }
     };
 
+    const unwrapElement = (wrapper) => {
+        if (!wrapper) return;
+        const docFrag = document.createDocumentFragment();
+        while (wrapper.firstChild) {
+            const child = wrapper.removeChild(wrapper.firstChild);
+            docFrag.appendChild(child);
+        }
+        wrapper.parentNode.replaceChild(docFrag, wrapper);
+    };
+
     return {
         getParents: getParents,
         findAncestor: findAncestor,
@@ -431,7 +441,8 @@ window.helper = (() => {
         fixElem: fixElem,
         getAbsoluteUrl: getAbsoluteUrl,
         getTech: getTech,
-        logAnchorUpdate: logAnchorUpdate
+        logAnchorUpdate: logAnchorUpdate,
+        unwrapElement: unwrapElement
     }
 })();
 

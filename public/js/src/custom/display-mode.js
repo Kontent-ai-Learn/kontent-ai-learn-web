@@ -35,6 +35,15 @@
         }
     };
 
+    const removeWrapperElements = (content) => {
+        const wrapperSelectors = ['.article__introduction', '.article__body', '.article__next-steps'];
+        for (let i = 0; i < wrapperSelectors.length; i++) {
+            const wrapper = content.querySelector(wrapperSelectors[i]);
+            helper.unwrapElement(wrapper);
+        }
+        return content;
+    };
+
     const createSections = (content) => {
         if (!content) {
             return;
@@ -42,6 +51,7 @@
 
         // Each section starts with h2
         // Get h2s as as delimiter ind iterate them
+        content = removeWrapperElements(content);
         const h2s = content.querySelectorAll('.article__content > h2');
 
         for (let i = 0; i < h2s.length; i++) {
@@ -199,7 +209,7 @@
         }
     };
 
-    if (!helper.getParameterByName('pdf')) {
+    if (!helper.getParameterByName('pdf') && helper.getParameterByName('kontent-smart-link-enabled') === null) {
         setTimeout(() => {
             init();
         }, 0);
