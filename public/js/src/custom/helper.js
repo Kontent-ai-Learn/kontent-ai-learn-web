@@ -179,6 +179,22 @@ window.helper = (() => {
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     };
 
+    const updateParameter = (key, value) => {
+        if (history.pushState) {
+            const url = window.location.href.split('#');
+            const hash = url[1] || '';
+            const searchParams = new URLSearchParams(window.location.search);
+            if (value) {
+                searchParams.set(key, value);
+            } else {
+                searchParams.delete(key);
+            }
+            const params = searchParams.toString();
+            const newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + (params ? '?' + params : '') + (hash ? '#' + hash : '');
+            window.history.replaceState({ path: newurl }, '', newurl);
+        }
+    }
+
     // Get page url and remove query string parameters specified in the params array
     const removeParametersByNames = (params) => {
         const url = window.location.href.split('#');
@@ -442,7 +458,8 @@ window.helper = (() => {
         getAbsoluteUrl: getAbsoluteUrl,
         getTech: getTech,
         logAnchorUpdate: logAnchorUpdate,
-        unwrapElement: unwrapElement
+        unwrapElement: unwrapElement,
+        updateParameter: updateParameter
     }
 })();
 

@@ -1,5 +1,6 @@
 (function () {
     var pageSize = 10;
+    var searchParam = helper.getParameterByName('search');
 
     var updateRoomUrl = function (services, changes, page) {
         var loc = window.location;
@@ -16,6 +17,9 @@
         }
         if (page > 1) {
             qs.push(`page=${page}`);
+        }
+        if (searchParam) {
+            qs.push(`search=${searchParam}`);
         }
         if (urlParams.has('kontent-smart-link-enabled')) {
             qs.push('kontent-smart-link-enabled');

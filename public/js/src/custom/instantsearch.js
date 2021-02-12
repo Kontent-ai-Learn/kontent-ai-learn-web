@@ -9,7 +9,6 @@ window.initSearch = (() => {
   searchAPI.indexname = window.helper.getParameterByName('searchindexname') || searchAPI.indexname;
 
   // Define variables used throughout the search logic
-  let searchTerm = '';
   let searchResultsNumber = 0;
   let searchAutocomplete = null;
   let searchAutocompleteList = null;
@@ -121,8 +120,6 @@ window.initSearch = (() => {
 
   // Get markup when no hit is available
   const formatEmptySuggestion = () => {
-    searchTerm = encodeURIComponent(searchInput.value);
-
     // Template for a empty result
     return `<div class="suggestion suggestion--empty">
                 <span class="suggestion__heading">${window.UIMessages ? window.UIMessages.searchNoResults : ''}</span>
@@ -130,8 +127,8 @@ window.initSearch = (() => {
   };
 
   // Get markup for autocomplete header
-  const formatHeader = () => {
-    return `Showing ${searchResultsNumber} results for <strong>'${searchTerm}'</strong>`;
+  const formatHeader = (searchTerm) => {
+    return `Showing ${searchResultsNumber} results for <strong>'${helper.encodeHTMLEntities(searchTerm)}'</strong>`;
   };
 
   // Render list of hits
@@ -178,11 +175,26 @@ window.initSearch = (() => {
     }
   };
 
+  const prefillOnLoad = () => {
+    const searchValue = helper.getParameterByName('search');
+    if (searchValue) {
+      searchInput.value = searchValue;
+      searchInput.focus();
+      searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+      if (searchTrigger) {
+        searchTrigger.click();
+      }
+    }
+  };
+
   // Hide autocomplete panel
   const onAutocompleteClosed = () => {
     if (searchWrapper && searchOverlay) {
       navigation.classList.remove('navigation--search-active');
       searchWrapper.classList.remove('navigation__search-wrapper--wide');
+      if (searchOverlay) {
+        searchOverlay.classList.remove('search-overlay--visible');
+      }
     }
     if (searchAutocomplete) {
       searchAutocomplete.classList.remove('autocomplete__dropdown--visible');
@@ -190,10 +202,13 @@ window.initSearch = (() => {
   };
 
   // Show autocomplete panel
-  const onAutocompleteOpened = () => {
+  const onAutocompleteOpened = (searchTerm) => {
     if (searchWrapper && searchOverlay) {
       navigation.classList.add('navigation--search-active');
       searchWrapper.classList.add('navigation__search-wrapper--wide');
+      if (searchOverlay) {
+        searchOverlay.classList.add('search-overlay--visible');
+      }
     }
     if (searchAutocomplete && searchTerm) {
       searchAutocomplete.classList.add('autocomplete__dropdown--visible');
@@ -218,7 +233,7 @@ window.initSearch = (() => {
       const parent = window.helper.findAncestor(e.target, '[data-search-container]');
       const parentTrigger = e.target.matches('[data-search-trigger]');
 
-      if (!parent && !parentTrigger) {
+      if (!parent && !parentTrigger && !e.target.matches('[role*="tab"]') && !e.target.matches('[data-platform]')) {
         onAutocompleteClosed();
 
         if (searchTrigger && searchOverlay) {
@@ -262,10 +277,13 @@ window.initSearch = (() => {
 
       searchInput.addEventListener('input', (e) => {
         refine(e.currentTarget.value);
+        helper.updateParameter('search', e.currentTarget.value);
       });
 
       widgetParams.container.appendChild(searchAutocomplete);
-      searchInput.addEventListener('focus', onAutocompleteOpened);
+      searchInput.addEventListener('focus', () => {
+        onAutocompleteOpened(currentRefinement)
+      });
 
       body.addEventListener('click', function (e) {
         trackAlogiaEvent(e);
@@ -274,22 +292,20 @@ window.initSearch = (() => {
 
     // Get data and DOM elements
     searchResultsNumber = searchIndice ? searchIndice.hits.length : 0;
-    searchTerm = window.filterXSS(decodeURIComponent(currentRefinement));
     searchAutocompleteHeader = widgetParams.container.querySelector('.autocomplete__header');
     searchAutocomplete = widgetParams.container.querySelector('.autocomplete__dropdown');
     searchAutocompleteList = widgetParams.container.querySelector('ul');
 
     // Render autocomplete based on search term existence and number of hits
-    if (searchResultsNumber && searchTerm) {
-      searchAutocompleteHeader.innerHTML = formatHeader();
-      searchInput.value = searchTerm;
+    if (searchResultsNumber && currentRefinement) {
+      searchAutocompleteHeader.innerHTML = formatHeader(currentRefinement);
       searchQueryID = searchIndice ? searchIndice.results.queryID : null;
       searchAutocompleteList.innerHTML = indices
         .map(renderIndexListItem)
         .join('');
       searchAutocomplete.classList.add('autocomplete__dropdown--visible');
-    } else if (!searchResultsNumber && searchTerm) {
-      searchAutocompleteHeader.innerHTML = formatHeader();
+    } else if (!searchResultsNumber && currentRefinement) {
+      searchAutocompleteHeader.innerHTML = formatHeader(currentRefinement);
       searchAutocompleteList.innerHTML = formatEmptySuggestion();
     } else {
       searchAutocomplete.classList.remove('autocomplete__dropdown--visible');
@@ -352,6 +368,7 @@ window.initSearch = (() => {
       setFocusOnMagnifier('navigation');
       setFocusOnMagnifier('hero');
       triggerSearchPanel();
+      prefillOnLoad();
       navigateBetweenSuggestions();
     }
   }

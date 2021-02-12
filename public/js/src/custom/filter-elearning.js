@@ -1,4 +1,6 @@
 (function () {
+    var searchParam = helper.getParameterByName('search');
+
     var updateRoomUrl = function (personas) {
         var loc = window.location;
         var urlParams = new URLSearchParams(loc.search);
@@ -8,8 +10,13 @@
         if (personas) {
             qs.push(`show=${personas}`);
         }
+
         if (urlParams.has('kontent-smart-link-enabled')) {
             qs.push('kontent-smart-link-enabled');
+        }
+
+        if (searchParam) {
+            qs.push(`search=${searchParam}`);
         }
 
         return `${url}${qs.length ? `?${qs.join('&')}` : ''}${loc.hash}`;
