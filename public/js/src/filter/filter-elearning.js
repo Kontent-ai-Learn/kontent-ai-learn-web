@@ -1,7 +1,7 @@
 (function () {
-    var searchParam = helper.getParameterByName('search');
+    const searchParam = helper.getParameterByName('search');
 
-    var updateRoomUrl = function (personas) {
+    const updateRoomUrl = function (personas) {
         var loc = window.location;
         var urlParams = new URLSearchParams(loc.search);
         var url = helperFilter.getUrl(loc);
@@ -22,14 +22,14 @@
         return `${url}${qs.length ? `?${qs.join('&')}` : ''}${loc.hash}`;
     };
 
-    var updateUrl = function (personas) {
+    const updateUrl = function (personas) {
         var url = updateRoomUrl(personas);
         if (history && history.replaceState) {
             history.replaceState({}, null, url);
         }
     };
 
-    var setFilterOnLoad = function (url) {
+    const setFilterOnLoad = function (url) {
         var show = helper.getParameterByName('show', url);
 
         helperFilter.setFilterOnLoad(show, 'personas');
@@ -49,5 +49,13 @@
         }
     });
 
+    const setLoadedClassToIntoructionImageWrappers = () => {
+        const intoructionImageWrappers = document.querySelectorAll('.article__introduction-image');
+        for (let i = 0; i < intoructionImageWrappers.length; i++) {
+            intoructionImageWrappers[i].classList.add('article__introduction-image--loaded');
+        }
+    };
+
     setFilterOnLoad();
+    setLoadedClassToIntoructionImageWrappers();
 })();

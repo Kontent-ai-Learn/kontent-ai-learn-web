@@ -10,7 +10,6 @@ Kentico Kontent documentation portal, which utilizes [Kentico Kontent](https://a
 
 1. The website is written in JavaScript.
 2. It uses [express.js](https://expressjs.com/) framework for server-side rendering and [Kentico Kontent Delivery SDK](https://github.com/Kentico/kontent-delivery-sdk-js) for content retrieval from Kentico Kontent project.
-3. Additionally, [Autocomplete.js](https://github.com/algolia/autocomplete.js) package supports the search box that is connected to the indexed content on Algolia.
 
 ## Setup
 
@@ -24,8 +23,9 @@ Kentico Kontent documentation portal, which utilizes [Kentico Kontent](https://a
 
 1. Clone the project repository.
 2. Run `npm install` in the terminal.
-3. Run `npm run debug` to start a development server.
-4. The website can be opened in your browser at http://localhost:3000.
+3. Run `gulp` to make sure CSS and client-side JavaScript get built.
+4. Run `npm run debug` to start a development server.
+5. The website can be opened in your browser at http://localhost:3000.
 
 #### Recommended environmental variables
 

@@ -31,6 +31,7 @@
         "algoliasearch": "writable",
         "instantsearch": "writable",
         "renderReCaptcha": "writable",
-        "KontentSmartLink": "writable"
+        "KontentSmartLink": "writable",
+        "AlgoliaAnalyticsObject": "writable"
     }
 }

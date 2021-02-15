@@ -1,4 +1,4 @@
-/**!
+/** !
  * MixItUp Pagination v3.3.0
  * Client-side pagination for filtered and sorted content
  * Build 875b7d31-63d1-4040-ac6f-b1c814027891
@@ -94,7 +94,6 @@
          */
 
         mixitup.ConfigClassNames.registerAction('afterConstruct', 'pagination', function() {
-
             /**
              * The "element" portion of the class name added to pager controls.
              *
@@ -285,7 +284,6 @@
          */
 
         mixitup.ConfigPagination = function() {
-
             /**
              * A boolean dictating whether or not MixItUp should render a list of pager controls.
              *
@@ -566,7 +564,7 @@
              * @default     '.mixitup-page-list'
              */
 
-            this.pageList  = '.mixitup-page-list';
+            this.pageList = '.mixitup-page-list';
 
             /**
              * A selector string used to query the page stats element.
@@ -687,35 +685,35 @@
         });
 
         mixitup.ModelPager = function() {
-            this.pageNumber         = -1;
-            this.classNames         = '';
-            this.classList          = [];
-            this.isDisabled         = false;
-            this.isPrev             = false;
-            this.isNext             = false;
-            this.isPageLink         = false;
+            this.pageNumber = -1;
+            this.classNames = '';
+            this.classList = [];
+            this.isDisabled = false;
+            this.isPrev = false;
+            this.isNext = false;
+            this.isPageLink = false;
             this.isTruncationMarker = false;
 
             h.seal(this);
         };
 
         mixitup.ModelPageStats = function() {
-            this.startPageAt    = -1;
-            this.endPageAt      = -1;
-            this.totalTargets   = -1;
+            this.startPageAt = -1;
+            this.endPageAt = -1;
+            this.totalTargets = -1;
 
             h.seal(this);
         };
 
         mixitup.UiClassNames.registerAction('afterConstruct', 'pagination', function() {
-            this.first              = '';
-            this.last               = '';
-            this.prev               = '';
-            this.next               = '';
-            this.first              = '';
-            this.last               = '';
-            this.truncated          = '';
-            this.truncationMarker   = '';
+            this.first = '';
+            this.last = '';
+            this.prev = '';
+            this.next = '';
+            this.first = '';
+            this.last = '';
+            this.truncated = '';
+            this.truncationMarker = '';
         });
 
         mixitup.controlDefinitions.push(new mixitup.ControlDefinition('pager', '[data-page]', true, 'pageListEls'));
@@ -727,13 +725,13 @@
          */
 
         mixitup.Control.registerFilter('commandsHandleClick', 'pagination', function(commands, e) {
-            var self            = this,
-                command         = {},
-                page            = '',
-                pageNumber      = -1,
-                mixer           = null,
-                button          = null,
-                i               = -1;
+            var self = this;
+                var command = {};
+                var page = '';
+                var pageNumber = -1;
+                var mixer = null;
+                var button = null;
+                var i = -1;
 
             if (!self.selector || self.selector !== '[data-page]') {
                 // Static control or non-pager live control
@@ -792,8 +790,8 @@
          */
 
         mixitup.CommandPaginate = function() {
-            this.page   = -1;
-            this.limit  = -1;
+            this.page = -1;
+            this.limit = -1;
             this.action = ''; // enum: ['prev', 'next']
             this.anchor = null;
 
@@ -827,10 +825,10 @@
         mixitup.events = new mixitup.Events();
 
         mixitup.Operation.registerAction('afterConstruct', 'pagination', function() {
-            this.startPagination    = null;
-            this.newPagination      = null;
-            this.startTotalPages    = -1;
-            this.newTotalPages      = -1;
+            this.startPagination = null;
+            this.newPagination = null;
+            this.startTotalPages = -1;
+            this.newTotalPages = -1;
         });
 
         /**
@@ -848,7 +846,6 @@
          */
 
         mixitup.State.registerAction('afterConstruct', 'pagination', function() {
-
             /**
              * The currently active pagination command as set by a control click or API call.
              *
@@ -876,7 +873,7 @@
         });
 
         mixitup.MixerDom.registerAction('afterConstruct', 'pagination', function() {
-            this.pageListEls  = [];
+            this.pageListEls = [];
             this.pageStatsEls = [];
         });
 
@@ -895,9 +892,9 @@
          */
 
         mixitup.Mixer.registerAction('afterConstruct', 'pagination', function() {
-            this.classNamesPager        = new mixitup.UiClassNames();
-            this.classNamesPageList     = new mixitup.UiClassNames();
-            this.classNamesPageStats    = new mixitup.UiClassNames();
+            this.classNamesPager = new mixitup.UiClassNames();
+            this.classNamesPageList = new mixitup.UiClassNames();
+            this.classNamesPageStats = new mixitup.UiClassNames();
         });
 
         /**
@@ -906,29 +903,29 @@
          */
 
         mixitup.Mixer.registerAction('afterAttach', 'pagination', function() {
-            var self = this,
-                el   = null,
-                i    = -1;
+            var self = this;
+                var el = null;
+                var i = -1;
 
             if (self.config.pagination.limit < 0) return;
 
             // Map pagination ui classNames
 
             // jscs:disable
-            self.classNamesPager.base               = h.getClassname(self.config.classNames, 'pager');
-            self.classNamesPager.active             = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierActive);
-            self.classNamesPager.disabled           = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierDisabled);
-            self.classNamesPager.first              = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierFirst);
-            self.classNamesPager.last               = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierLast);
-            self.classNamesPager.prev               = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierPrev);
-            self.classNamesPager.next               = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierNext);
-            self.classNamesPager.truncationMarker   = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierTruncationMarker);
+            self.classNamesPager.base = h.getClassname(self.config.classNames, 'pager');
+            self.classNamesPager.active = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierActive);
+            self.classNamesPager.disabled = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierDisabled);
+            self.classNamesPager.first = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierFirst);
+            self.classNamesPager.last = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierLast);
+            self.classNamesPager.prev = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierPrev);
+            self.classNamesPager.next = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierNext);
+            self.classNamesPager.truncationMarker = h.getClassname(self.config.classNames, 'pager', self.config.classNames.modifierTruncationMarker);
 
-            self.classNamesPageList.base            = h.getClassname(self.config.classNames, 'page-list');
-            self.classNamesPageList.disabled        = h.getClassname(self.config.classNames, 'page-list', self.config.classNames.modifierDisabled);
+            self.classNamesPageList.base = h.getClassname(self.config.classNames, 'page-list');
+            self.classNamesPageList.disabled = h.getClassname(self.config.classNames, 'page-list', self.config.classNames.modifierDisabled);
 
-            self.classNamesPageStats.base           = h.getClassname(self.config.classNames, 'page-stats');
-            self.classNamesPageStats.disabled       = h.getClassname(self.config.classNames, 'page-stats', self.config.classNames.modifierDisabled);
+            self.classNamesPageStats.base = h.getClassname(self.config.classNames, 'page-stats');
+            self.classNamesPageStats.disabled = h.getClassname(self.config.classNames, 'page-stats', self.config.classNames.modifierDisabled);
             // jscs:enable
 
             if (self.config.pagination.generatePageList && self.dom.pageListEls.length > 0) {
@@ -945,18 +942,18 @@
         });
 
         mixitup.Mixer.registerAction('afterSanitizeConfig', 'pagination', function() {
-            var self            = this,
-                onMixStart      = self.config.callbacks.onMixStart,
-                onMixEnd        = self.config.callbacks.onMixEnd,
-                onPaginateStart = self.config.callbacks.onPaginateStart,
-                onPaginateEnd   = self.config.callbacks.onPaginateEnd,
-                didPaginate     = false;
+            var self = this;
+                var onMixStart = self.config.callbacks.onMixStart;
+                var onMixEnd = self.config.callbacks.onMixEnd;
+                var onPaginateStart = self.config.callbacks.onPaginateStart;
+                var onPaginateEnd = self.config.callbacks.onPaginateEnd;
+                var didPaginate = false;
 
             if (self.config.pagination.limit < 0) return;
 
-            self.classNamesPager        = new mixitup.UiClassNames();
-            self.classNamesPageList     = new mixitup.UiClassNames();
-            self.classNamesPageStats    = new mixitup.UiClassNames();
+            self.classNamesPager = new mixitup.UiClassNames();
+            self.classNamesPageList = new mixitup.UiClassNames();
+            self.classNamesPageStats = new mixitup.UiClassNames();
 
             self.config.callbacks.onMixStart = function(prevState, nextState) {
                 if (
@@ -1025,8 +1022,8 @@
 
             state.activePagination = new mixitup.CommandPaginate();
 
-            state.activePagination.page     = self.config.load.page;
-            state.activePagination.limit    = self.config.pagination.limit;
+            state.activePagination.page = self.config.load.page;
+            state.activePagination.limit = self.config.pagination.limit;
 
             return state;
         });
@@ -1056,8 +1053,8 @@
          */
 
         mixitup.Mixer.registerAction('afterCacheDom', 'pagination', function() {
-            var self    = this,
-                parent  = null;
+            var self = this;
+                var parent = null;
 
             if (self.config.pagination.limit < 0) return;
 
@@ -1076,7 +1073,7 @@
                     throw new Error(mixitup.messages.ERROR_CONFIG_INVALID_CONTROLS_SCOPE);
             }
 
-            self.dom.pageListEls  = parent.querySelectorAll(self.config.selectors.pageList);
+            self.dom.pageListEls = parent.querySelectorAll(self.config.selectors.pageList);
             self.dom.pageStatsEls = parent.querySelectorAll(self.config.selectors.pageStats);
         });
 
@@ -1088,14 +1085,14 @@
          */
 
         mixitup.Mixer.registerFilter('stateBuildState', 'pagination', function(state, operation) {
-            var self        = this;
+            var self = this;
 
             if (self.config.pagination.limit < 0) return state;
 
             // Map pagination-specific properties into state
 
-            state.activePagination  = operation.newPagination;
-            state.totalPages        = operation.newTotalPages;
+            state.activePagination = operation.newPagination;
+            state.totalPages = operation.newTotalPages;
 
             return state;
         });
@@ -1125,14 +1122,14 @@
          */
 
         mixitup.Mixer.registerAction('afterFilterOperation', 'pagination', function(operation) {
-            var self        = this,
-                startPageAt = -1,
-                endPageAt   = -1,
-                inPage      = [],
-                notInPage   = [],
-                target      = null,
-                index       = -1,
-                i           = -1;
+            var self = this;
+                var startPageAt = -1;
+                var endPageAt = -1;
+                var inPage = [];
+                var notInPage = [];
+                var target = null;
+                var index = -1;
+                var i = -1;
 
             if (self.config.pagination.limit < 0) return;
 
@@ -1162,12 +1159,12 @@
                 }
 
                 startPageAt = i;
-                endPageAt   = i + operation.newPagination.limit - 1;
+                endPageAt = i + operation.newPagination.limit - 1;
             } else {
                 // Start page based on limit and page index
 
                 startPageAt = operation.newPagination.limit * (operation.newPagination.page - 1);
-                endPageAt   = (operation.newPagination.limit * operation.newPagination.page) - 1;
+                endPageAt = (operation.newPagination.limit * operation.newPagination.page) - 1;
 
                 if (isNaN(startPageAt)) {
                     startPageAt = 0;
@@ -1239,14 +1236,14 @@
 
             if (self.config.pagination.limit < 0) return operation;
 
-            operation.startState      = self.state;
+            operation.startState = self.state;
             operation.startPagination = self.state.activePagination;
             operation.startTotalPages = self.state.totalPages;
 
             operation.newPagination = new mixitup.CommandPaginate();
 
             operation.newPagination.limit = operation.startPagination.limit;
-            operation.newPagination.page  = operation.startPagination.page;
+            operation.newPagination.page = operation.startPagination.page;
 
             if (command.paginate) {
                 self.parsePaginateCommand(command.paginate, operation);
@@ -1274,9 +1271,9 @@
          */
 
         mixitup.Mixer.registerFilter('operationMappedGetOperation', 'pagination', function(operation, command, isPreFetch) {
-            var self = this,
-                el   = null,
-                i    = -1;
+            var self = this;
+                var el = null;
+                var i = -1;
 
             if (self.config.pagination.limit < 0) return operation;
 
@@ -1355,8 +1352,8 @@
              */
 
             getNextPage: function() {
-                var self = this,
-                    page = -1;
+                var self = this;
+                    var page = -1;
 
                 page = self.state.activePagination.page + 1;
 
@@ -1373,8 +1370,8 @@
              */
 
             getPrevPage: function() {
-                var self = this,
-                    page = -1;
+                var self = this;
+                    var page = -1;
 
                 page = self.state.activePagination.page - 1;
 
@@ -1393,19 +1390,19 @@
              */
 
             renderPageListEl: function(pageListEl, operation) {
-                var self                = this,
-                    activeIndex         = -1,
-                    pagerHtml           = '',
-                    buttonList          = [],
-                    model               = null,
-                    renderer            = null,
-                    allowedIndices      = [],
-                    truncatedBefore     = false,
-                    truncatedAfter      = false,
-                    disabled            = null,
-                    el                  = null,
-                    html                = '',
-                    i                   = -1;
+                var self = this;
+                    var activeIndex = -1;
+                    var pagerHtml = '';
+                    var buttonList = [];
+                    var model = null;
+                    var renderer = null;
+                    var allowedIndices = [];
+                    var truncatedBefore = false;
+                    var truncatedAfter = false;
+                    var disabled = null;
+                    var el = null;
+                    var html = '';
+                    var i = -1;
 
                 if (
                     operation.newPagination.limit < 0 ||
@@ -1423,7 +1420,7 @@
 
                 activeIndex = operation.newPagination.page - 1;
 
-                renderer = typeof (renderer = self.config.render.pager) === 'function' ?  renderer : null;
+                renderer = typeof (renderer = self.config.render.pager) === 'function' ? renderer : null;
 
                 if (self.config.pagination.maxPagers < Infinity && operation.newTotalPages > self.config.pagination.maxPagers) {
                     allowedIndices = self.getAllowedIndices(operation);
@@ -1557,17 +1554,17 @@
              */
 
             getAllowedIndices: function(operation) {
-                var self                = this,
-                    activeIndex         = operation.newPagination.page - 1,
-                    lastIndex           = operation.newTotalPages - 1,
-                    indices             = [],
-                    paddingRange        = -1,
-                    paddingBack         = -1,
-                    paddingFront        = -1,
-                    paddingRangeStart   = -1,
-                    paddingRangeEnd     = -1,
-                    paddingRangeOffset  = -1,
-                    i                   = -1;
+                var self = this;
+                    var activeIndex = operation.newPagination.page - 1;
+                    var lastIndex = operation.newTotalPages - 1;
+                    var indices = [];
+                    var paddingRange = -1;
+                    var paddingBack = -1;
+                    var paddingFront = -1;
+                    var paddingRangeStart = -1;
+                    var paddingRangeEnd = -1;
+                    var paddingRangeOffset = -1;
+                    var i = -1;
 
                 // Examples:
 
@@ -1591,22 +1588,22 @@
 
                 // Calculate the "padding range" by subtracting 2 from `pagination.maxPagers`
 
-                paddingRange  = self.config.pagination.maxPagers - 2;
+                paddingRange = self.config.pagination.maxPagers - 2;
 
                 // Distribute the padding equally behind and in front of the active pager.
                 // If the padding range is an even number, we allow an extra pager behind the active pager.
 
-                paddingBack   = Math.ceil((paddingRange - 1) / 2);
-                paddingFront  = Math.floor((paddingRange - 1) / 2);
+                paddingBack = Math.ceil((paddingRange - 1) / 2);
+                paddingFront = Math.floor((paddingRange - 1) / 2);
 
                 // Calculate where the range should start and finish based on the active index
 
-                paddingRangeStart   = activeIndex - paddingBack;
-                paddingRangeEnd     = activeIndex + paddingFront;
+                paddingRangeStart = activeIndex - paddingBack;
+                paddingRangeEnd = activeIndex + paddingFront;
 
                 // Set the offset to 0
 
-                paddingRangeOffset  = 0;
+                paddingRangeOffset = 0;
 
                 // If the start of the range has collided with the first pager, positively offset as needed
 
@@ -1649,11 +1646,11 @@
              */
 
             renderPager: function(i, operation, allowedIndices) {
-                var self        = this,
-                    renderer    = null,
-                    activePage  = operation.newPagination.page - 1,
-                    model       = new mixitup.ModelPager(),
-                    output      = '';
+                var self = this;
+                    var renderer = null;
+                    var activePage = operation.newPagination.page - 1;
+                    var model = new mixitup.ModelPager();
+                    var output = '';
 
                 if (
                     self.config.pagination.maxPagers < Infinity &&
@@ -1665,7 +1662,7 @@
                     return '';
                 }
 
-                renderer = typeof (renderer = self.config.render.pager) === 'function' ?  renderer : null;
+                renderer = typeof (renderer = self.config.render.pager) === 'function' ? renderer : null;
 
                 model.isPageLink = true;
 
@@ -1703,11 +1700,11 @@
              */
 
             renderPageStatsEl: function(pageStatsEl, operation) {
-                var self            = this,
-                    model           = new mixitup.ModelPageStats(),
-                    renderer        = null,
-                    output          = '',
-                    template        = '';
+                var self = this;
+                    var model = new mixitup.ModelPageStats();
+                    var renderer = null;
+                    var output = '';
+                    var template = '';
 
                 if (
                     operation.newPagination.limit < 0 ||
@@ -1723,7 +1720,7 @@
                     return;
                 }
 
-                renderer = typeof (renderer = self.config.render.pageStats) === 'function' ?  renderer : null;
+                renderer = typeof (renderer = self.config.render.pageStats) === 'function' ? renderer : null;
 
                 model.totalTargets = operation.matching.length;
 
@@ -1737,7 +1734,7 @@
 
                 if (model.totalTargets && operation.newPagination.limit > 0) {
                     model.startPageAt = ((operation.newPagination.page - 1) * operation.newPagination.limit) + 1;
-                    model.endPageAt   = Math.min(model.startPageAt + operation.newPagination.limit - 1, model.totalTargets);
+                    model.endPageAt = Math.min(model.startPageAt + operation.newPagination.limit - 1, model.totalTargets);
                 } else {
                     model.startPageAt = model.endPageAt = 0;
                 }
@@ -1764,10 +1761,10 @@
              */
 
             parsePaginateArgs: function(args) {
-                var self        = this,
-                    instruction = new mixitup.UserInstruction(),
-                    arg         = null,
-                    i           = -1;
+                var self = this;
+                    var instruction = new mixitup.UserInstruction();
+                    var arg = null;
+                    var i = -1;
 
                 instruction.animate = self.config.animation.enable;
                 instruction.command = new mixitup.CommandPaginate();
@@ -1875,8 +1872,8 @@
              */
 
             paginate: function() {
-                var self        = this,
-                    instruction = self.parsePaginateArgs(arguments);
+                var self = this;
+                    var instruction = self.parsePaginateArgs(arguments);
 
                 return self.multimix({
                     paginate: instruction.command
@@ -1906,8 +1903,8 @@
              */
 
             nextPage: function() {
-                var self        = this,
-                    instruction = self.parsePaginateArgs(arguments);
+                var self = this;
+                    var instruction = self.parsePaginateArgs(arguments);
 
                 return self.multimix({
                     paginate: {
@@ -1939,8 +1936,8 @@
              */
 
             prevPage: function() {
-                var self = this,
-                    instruction = self.parsePaginateArgs(arguments);
+                var self = this;
+                    var instruction = self.parsePaginateArgs(arguments);
 
                 return self.multimix({
                     paginate: {
@@ -1954,12 +1951,13 @@
             this.paginate = mixer.paginate.bind(mixer);
             this.nextPage = mixer.nextPage.bind(mixer);
             this.prevPage = mixer.prevPage.bind(mixer);
-        });    };
+        });
+};
 
-    mixitupPagination.TYPE                    = 'mixitup-extension';
-    mixitupPagination.NAME                    = 'mixitup-pagination';
-    mixitupPagination.EXTENSION_VERSION       = '3.3.0';
-    mixitupPagination.REQUIRE_CORE_VERSION    = '^3.1.8';
+    mixitupPagination.TYPE = 'mixitup-extension';
+    mixitupPagination.NAME = 'mixitup-pagination';
+    mixitupPagination.EXTENSION_VERSION = '3.3.0';
+    mixitupPagination.REQUIRE_CORE_VERSION = '^3.1.8';
 
     if (typeof exports === 'object' && typeof module === 'object') {
         module.exports = mixitupPagination;
@@ -1971,4 +1969,5 @@
         mixitupPagination(window.mixitup);
     } else {
         throw new Error('[MixItUp Pagination] MixItUp core not found');
-    }})(window);
+    }
+})(window);

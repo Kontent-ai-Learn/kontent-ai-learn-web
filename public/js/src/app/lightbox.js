@@ -2,13 +2,16 @@
  * Initializes lightbox and caption if available
  */
 (() => {
-  const showCloseButtonOnElemLoaded = (elemSelector) => {
+  const showCloseButtonOnElemLoaded = (elemSelector, instance) => {
     const close = document.querySelector('.basicLightbox__close-container--hidden');
     const elem = document.querySelector(`.basicLightbox__close-container + ${elemSelector}`);
     var interval = setInterval(function () {
       if (close && elem) {
         if (elem.clientWidth > 0) {
           close.classList.remove('basicLightbox__close-container--hidden');
+          close.querySelector('.basicLightbox__close').addEventListener('click', function () {
+            instance.close();
+          });
           clearInterval(interval);
         }
       }
@@ -66,7 +69,7 @@
           item.addEventListener('click', () => {
             instance = window.basicLightbox.create(`<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><div class="basicLightbox__close"></div></div><img src="${item.getAttribute('src').split('?')[0] + '?w=1600&fm=pjpg&auto=format'}"${width ? ` width=${width}` : ''}${height ? ` height=${height}` : ''}>${figcaption}`);
             instance.show();
-            showCloseButtonOnElemLoaded('img');
+            showCloseButtonOnElemLoaded('img', instance);
             registerCloseOnEsc(instance);
           });
         });
@@ -106,7 +109,7 @@
             if (itemToZoom) {
               instance = window.basicLightbox.create(`<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><div class="basicLightbox__close"></div></div>${wrap.innerHTML}${figcaption}`);
               instance.show();
-              showCloseButtonOnElemLoaded('iframe');
+              showCloseButtonOnElemLoaded('iframe', instance);
               registerCloseOnEsc(instance);
             }
           });

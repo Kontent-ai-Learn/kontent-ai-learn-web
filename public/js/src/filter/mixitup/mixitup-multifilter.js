@@ -1,4 +1,4 @@
-/**!
+/** !
  * MixItUp MultiFilter v3.3.4
  * A UI-builder for powerful multidimensional filtering
  * Build 6bbb142d-9851-4ca8-b6d4-f760362d93ec
@@ -185,7 +185,6 @@
          */
 
         mixitup.ConfigMultifilter = function() {
-
             /**
              * A boolean dictating whether or not to enable multifilter functionality.
              *
@@ -317,31 +316,31 @@
         });
 
         mixitup.MultifilterFormEventTracker = function() {
-            this.form           = null;
-            this.totalBound     = 0;
-            this.totalHandled   = 0;
+            this.form = null;
+            this.totalBound = 0;
+            this.totalHandled = 0;
 
             h.seal(this);
         };
 
         mixitup.FilterGroupDom = function() {
-            this.el     = null;
-            this.form   = null;
+            this.el = null;
+            this.form = null;
 
             h.seal(this);
         };
 
         mixitup.FilterGroup = function() {
-            this.name               = '';
-            this.dom                = new mixitup.FilterGroupDom();
-            this.activeSelectors    = [];
-            this.activeFilters      = [];
-            this.activeToggles      = [];
-            this.handler            = null;
-            this.mixer              = null;
-            this.logic              = 'or';
-            this.parseOn            = 'change';
-            this.keyupTimeout       = -1;
+            this.name = '';
+            this.dom = new mixitup.FilterGroupDom();
+            this.activeSelectors = [];
+            this.activeFilters = [];
+            this.activeToggles = [];
+            this.handler = null;
+            this.mixer = null;
+            this.logic = 'or';
+            this.parseOn = 'change';
+            this.keyupTimeout = -1;
 
             h.seal(this);
         };
@@ -356,8 +355,8 @@
              */
 
             init: function(el, mixer) {
-                var self  = this,
-                    logic = el.getAttribute('data-logic');
+                var self = this;
+                    var logic = el.getAttribute('data-logic');
 
                 self.dom.el = el;
 
@@ -375,7 +374,6 @@
                     // override default group logic
 
                     self.logic = 'and';
-
                 }
 
                 self.bindEvents();
@@ -393,10 +391,10 @@
             },
 
             enableButtons: function() {
-                var self    = this,
-                    buttons = self.dom.form.querySelectorAll('button[type="submit"]:disabled'),
-                    button  = null,
-                    i       = -1;
+                var self = this;
+                    var buttons = self.dom.form.querySelectorAll('button[type="submit"]:disabled');
+                    var button = null;
+                    var i = -1;
 
                 for (i = 0; button = buttons[i]; i++) {
                     if (button.disabled) {
@@ -462,13 +460,13 @@
              */
 
             handleClick: function(e) {
-                var self            = this,
-                    mixer           = self.mixer,
-                    returnValue     = null,
-                    controlEl       = h.closestParent(e.target, '[data-filter], [data-toggle]', true),
-                    controlSelector = '',
-                    index           = -1,
-                    selector        = '';
+                var self = this;
+                    var mixer = self.mixer;
+                    var returnValue = null;
+                    var controlEl = h.closestParent(e.target, '[data-filter], [data-toggle]', true);
+                    var controlSelector = '';
+                    var index = -1;
+                    var selector = '';
 
                 if (!controlEl) return;
 
@@ -531,12 +529,12 @@
              */
 
             handleChange: function(e) {
-                var self    = this,
-                    input   = e.target;
+                var self = this;
+                    var input = e.target;
 
                 e.stopPropagation();
 
-                switch(input.type) {
+                switch (input.type) {
                     case 'text':
                     case 'search':
                     case 'email':
@@ -558,8 +556,8 @@
             },
 
             handleKeyup: function(e) {
-                var self    = this,
-                    input   = e.target;
+                var self = this;
+                    var input = e.target;
 
                 // NB: Selects can fire keyup events (e.g. multiselect, textual search)
 
@@ -586,18 +584,18 @@
              */
 
             handleFormEvent: function(e) {
-                var self            = this,
-                    tracker         = null,
-                    group           = null,
-                    i               = -1;
+                var self = this;
+                    var tracker = null;
+                    var group = null;
+                    var i = -1;
 
                 if (e.type === 'submit') {
                     e.preventDefault();
                 }
 
                 if (e.type === 'reset') {
-                    self.activeFilters    =
-                    self.activeToggles   =
+                    self.activeFilters =
+                    self.activeToggles =
                     self.activeSelectors = [];
 
                     self.updateControls();
@@ -637,12 +635,12 @@
              */
 
             getSingleValue: function(input) {
-                var self            = this,
-                    diacriticMap    = null,
-                    attributeName   = '',
-                    selector        = '',
-                    value           = '',
-                    i               = -1;
+                var self = this;
+                    var diacriticMap = null;
+                    var attributeName = '';
+                    var selector = '';
+                    var value = '';
+                    var i = -1;
 
                 if (input.type.match(/text|search|email/g)) {
                     attributeName = input.getAttribute('data-search-attribute');
@@ -691,12 +689,12 @@
              */
 
             getMultipleValues: function(input) {
-                var self            = this,
-                    activeToggles   = [],
-                    query           = '',
-                    item            = null,
-                    items           = null,
-                    i               = -1;
+                var self = this;
+                    var activeToggles = [];
+                    var query = '';
+                    var item = null;
+                    var items = null;
+                    var i = -1;
 
                 switch (input.type) {
                     case 'checkbox':
@@ -734,12 +732,12 @@
              */
 
             updateControls: function(controlEls) {
-                var self             = this,
-                    controlEl        = null,
-                    controlSelector  = '',
-                    controlsSelector = '',
-                    type             = '',
-                    i                = -1;
+                var self = this;
+                    var controlEl = null;
+                    var controlSelector = '';
+                    var controlsSelector = '';
+                    var type = '';
+                    var i = -1;
 
                 controlSelector = self.mixer.config.selectors.control.trim();
 
@@ -751,7 +749,7 @@
                 controlEls = controlEls || self.dom.el.querySelectorAll(controlsSelector);
 
                 for (i = 0; controlEl = controlEls[i]; i++) {
-                    type = Boolean(controlEl.getAttribute('data-toggle')) ? 'toggle' : 'filter';
+                    type = controlEl.getAttribute('data-toggle') ? 'toggle' : 'filter';
 
                     self.updateControl(controlEl, type);
                 }
@@ -765,10 +763,10 @@
              */
 
             updateControl: function(controlEl, type) {
-                var self            = this,
-                    selector        = controlEl.getAttribute('data-' + type),
-                    activeControls  = self.activeToggles.concat(self.activeFilters),
-                    activeClassName = '';
+                var self = this;
+                    var selector = controlEl.getAttribute('data-' + type);
+                    var activeControls = self.activeToggles.concat(self.activeFilters);
+                    var activeClassName = '';
 
                 activeClassName = h.getClassname(self.mixer.config.classNames, type, self.mixer.config.classNames.modifierActive);
 
@@ -784,13 +782,13 @@
              */
 
             updateUi: function() {
-                var self           = this,
-                    controlEls     = self.dom.el.querySelectorAll('[data-filter], [data-toggle]'),
-                    inputEls       = self.dom.el.querySelectorAll('input[type="radio"], input[type="checkbox"], option'),
-                    activeControls = self.activeToggles.concat(self.activeFilters),
-                    isActive       = false,
-                    inputEl        = null,
-                    i              = -1;
+                var self = this;
+                    var controlEls = self.dom.el.querySelectorAll('[data-filter], [data-toggle]');
+                    var inputEls = self.dom.el.querySelectorAll('input[type="radio"], input[type="checkbox"], option');
+                    var activeControls = self.activeToggles.concat(self.activeFilters);
+                    var isActive = false;
+                    var inputEl = null;
+                    var i = -1;
 
                 if (controlEls.length) {
                     self.updateControls(controlEls, true);
@@ -833,14 +831,14 @@
          */
 
         mixitup.Mixer.registerAction('afterConstruct', 'multifilter', function() {
-            this.filterGroups                   = [];
-            this.filterGroupsHash               = {};
-            this.multifilterFormEventTracker    = null;
+            this.filterGroups = [];
+            this.filterGroupsHash = {};
+            this.multifilterFormEventTracker = null;
         });
 
         mixitup.Mixer.registerAction('afterCacheDom', 'multifilter', function() {
-            var self    = this,
-                parent  = null;
+            var self = this;
+                var parent = null;
 
             if (!self.config.multifilter.enable) return;
 
@@ -884,9 +882,9 @@
         });
 
         mixitup.Mixer.registerAction('afterUpdateControls', 'multifilter', function() {
-            var self    = this,
-                group   = null,
-                i       = -1;
+            var self = this;
+                var group = null;
+                var i = -1;
 
             for (i = 0; group = self.filterGroups[i]; i++) {
                 group.updateControls();
@@ -894,9 +892,9 @@
         });
 
         mixitup.Mixer.registerAction('beforeDestroy', 'multifilter', function() {
-            var self    = this,
-                group   = null,
-                i       = -1;
+            var self = this;
+                var group = null;
+                var i = -1;
 
             for (i = 0; group = self.filterGroups[i]; i++) {
                 group.unbindEvents();
@@ -912,10 +910,10 @@
              */
 
             indexFilterGroups: function() {
-                var self                = this,
-                    filterGroup         = null,
-                    el                  = null,
-                    i                   = -1;
+                var self = this;
+                    var filterGroup = null;
+                    var el = null;
+                    var i = -1;
 
                 for (i = 0; el = self.dom.filterGroups[i]; i++) {
                     filterGroup = new mixitup.FilterGroup();
@@ -945,10 +943,10 @@
              */
 
             parseParseFilterGroupsArgs: function(args) {
-                var self        = this,
-                    instruction = new mixitup.UserInstruction(),
-                    arg         = null,
-                    i           = -1;
+                var self = this;
+                    var instruction = new mixitup.UserInstruction();
+                    var arg = null;
+                    var i = -1;
 
                 instruction.animate = self.config.animation.enable;
                 instruction.command = new mixitup.CommandFilter();
@@ -977,14 +975,14 @@
              */
 
             getFilterGroupPaths: function() {
-                var self       = this,
-                    buildPath  = null,
-                    crawl      = null,
-                    nodes      = null,
-                    matrix     = [],
-                    paths      = [],
-                    trackers   = [],
-                    i          = -1;
+                var self = this;
+                    var buildPath = null;
+                    var crawl = null;
+                    var nodes = null;
+                    var matrix = [];
+                    var paths = [];
+                    var trackers = [];
+                    var i = -1;
 
                 for (i = 0; i < self.filterGroups.length; i++) {
                     // Filter out groups without any active filters
@@ -999,9 +997,9 @@
                 }
 
                 buildPath = function() {
-                    var node = null,
-                        path = [],
-                        i    = -1;
+                    var node = null;
+                        var path = [];
+                        var i = -1;
 
                     for (i = 0; i < matrix.length; i++) {
                         node = matrix[i][trackers[i]];
@@ -1058,12 +1056,12 @@
              */
 
             buildSelectorFromPaths: function(paths) {
-                var self           = this,
-                    path           = null,
-                    output         = [],
-                    pathSelector   = '',
-                    nodeDelineator = '',
-                    i              = -1;
+                var self = this;
+                    var path = null;
+                    var output = [];
+                    var pathSelector = '';
+                    var nodeDelineator = '';
+                    var i = -1;
 
                 if (!paths.length) {
                     return '';
@@ -1120,12 +1118,12 @@
              */
 
             parseFilterGroups: function() {
-                var self        = this,
-                    instruction = self.parseFilterArgs(arguments),
-                    paths       = self.getFilterGroupPaths(),
-                    selector    = self.buildSelectorFromPaths(paths),
-                    callback    = null,
-                    command     = {};
+                var self = this;
+                    var instruction = self.parseFilterArgs(arguments);
+                    var paths = self.getFilterGroupPaths();
+                    var selector = self.buildSelectorFromPaths(paths);
+                    var callback = null;
+                    var command = {};
 
                 if (selector === '') {
                     selector = self.config.controls.toggleDefault;
@@ -1181,8 +1179,8 @@
              */
 
             setFilterGroupSelectors: function(groupName, selectors) {
-                var self            = this,
-                    filterGroup     = null;
+                var self = this;
+                    var filterGroup = null;
 
                 selectors = Array.isArray(selectors) ? selectors : [selectors];
 
@@ -1221,8 +1219,8 @@
              */
 
             getFilterGroupSelectors: function(groupName) {
-                var self        = this,
-                    filterGroup = null;
+                var self = this;
+                    var filterGroup = null;
 
                 if (typeof (filterGroup = self.filterGroupsHash[groupName]) === 'undefined') {
                     throw new Error('[MixItUp MultiFilter] No filter group could be found with the name "' + groupName + '"');
@@ -1233,15 +1231,16 @@
         });
 
         mixitup.Facade.registerAction('afterConstruct', 'multifilter', function(mixer) {
-            this.parseFilterGroups       = mixer.parseFilterGroups.bind(mixer);
+            this.parseFilterGroups = mixer.parseFilterGroups.bind(mixer);
             this.setFilterGroupSelectors = mixer.setFilterGroupSelectors.bind(mixer);
             this.getFilterGroupSelectors = mixer.getFilterGroupSelectors.bind(mixer);
-        });    };
+        });
+};
 
-    mixitupMultifilter.TYPE                    = 'mixitup-extension';
-    mixitupMultifilter.NAME                    = 'mixitup-multifilter';
-    mixitupMultifilter.EXTENSION_VERSION       = '3.3.4';
-    mixitupMultifilter.REQUIRE_CORE_VERSION    = '^3.1.2';
+    mixitupMultifilter.TYPE = 'mixitup-extension';
+    mixitupMultifilter.NAME = 'mixitup-multifilter';
+    mixitupMultifilter.EXTENSION_VERSION = '3.3.4';
+    mixitupMultifilter.REQUIRE_CORE_VERSION = '^3.1.2';
 
     if (typeof exports === 'object' && typeof module === 'object') {
         module.exports = mixitupMultifilter;
@@ -1253,4 +1252,5 @@
         mixitupMultifilter(window.mixitup);
     } else {
         throw new Error('[MixItUp MultiFilter] MixItUp core not found');
-    }})(window);
+    }
+})(window);

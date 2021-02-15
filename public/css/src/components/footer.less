@@ -5,20 +5,27 @@
     margin: 2em 0 0;
     position: relative;
     z-index: 5000;
+    background-image: url('../img/ui/people-480.jpg');
+    background-position: center center;
+    position: relative;
+    overflow: hidden;
 
     @media screen and (min-width: 480px) {
         margin: 4em 0 0;
         padding: 1.25em 0 2em;
+        background-image: url('../img/ui/people-768.jpg');
     }
 
     @media screen and (min-width: 768px) {
         margin: 6em 0 0;
         padding: 1.25em 0 3em;
+        background-image: url('../img/ui/people-1024.jpg');
     }
 
     @media screen and (min-width: 1024px) {
         margin: 6em 0 0;
         padding: 2.9375em 0 4.75em;
+        background-image: url('../img/ui/people-1464.jpg');
     }
      
 	&__wrapper {
@@ -75,35 +82,4 @@
     .api-reference + & {
         margin-top: 0;
     }
-}
-
-[data-parallax='footer'],
-[data-parallax-target='footer'] {
-    background-image: url('../img/ui/people-480.jpg');
-    background-position: center center;
-    position: relative;
-    overflow: hidden;
-
-    @media screen and (min-width: 480px) {
-        background-image: url('../img/ui/people-768.jpg');
-    }
-
-    @media screen and (min-width: 768px) {
-        background-image: url('../img/ui/people-1024.jpg');
-    }
-
-    @media screen and (min-width: 1024px) {
-        background-image: url('../img/ui/people-1464.jpg');
-    }
-}
-
-[data-parallax-target='footer'] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: -100px;
-    background-size: cover;
-    transform: translate3d(0,0,0);
-    transition: transform .1s linear;
 }
