@@ -12,7 +12,11 @@ mixin lmsInfo(environment)
       else
         span !{prefix}!{lmsInfoEnv.text}
       if (lmsInfoEnv.certificate)
-        a.link(href= lmsInfoEnv.certificate, target='_blank')&attributes(smartLink?.elementCodename('training___download_certificate')) !{UIMessages.training___download_certificate.value}
+        a.link(href= lmsInfoEnv.certificate.public_url, target='_blank')&attributes(smartLink?.elementCodename('training___download_certificate')) !{UIMessages.training___download_certificate.value}
+        - const certIssue = lmsInfoEnv.certificate.issued_date.split('/').map(x => parseInt(x));
+        - const certExpiration = lmsInfoEnv.certificate.expiration_date.split('/').map(x => parseInt(x));
+        - const certName = encodeURIComponent(lmsInfoEnv.certificate.course_name);
+        a.link(href=`https://www.linkedin.com/profile/add?startTask=${certName}&name=${certName}&organizationId=373060&issueYear=${certIssue[0]}&issueMonth=${certIssue[1]}&expirationYear=${certExpiration[0]}&expirationMonth=${certExpiration[1]}&certUrl=${lmsInfoEnv.certificate.public_url}`, target='_blank') !{UIMessages.training___add_to_linkedin.value}
       if (!isPreview && lmsInfoEnv.signedIn)
         a.link(href='/logout')&attributes(smartLink?.elementCodename('sign_out_button')) !{UIMessages.sign_out_button.value}
 block content
