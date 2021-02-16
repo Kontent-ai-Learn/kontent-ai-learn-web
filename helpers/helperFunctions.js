@@ -151,11 +151,13 @@ const helper = {
         }
         return data;
     },
-    getDomain: (protocol, host) => {
-        let domain = protocol + '://' + host;
+    getDomain: () => {
+        let domain;
 
-        if (domain.indexOf('kcd-web-live-master') > -1) {
-            domain = protocol + '://docs.kontent.ai';
+        if (process.env.aliasURL) {
+            domain = process.env.aliasURL;
+        } else {
+            domain = process.env.baseURL;
         }
 
         return domain;
@@ -281,9 +283,6 @@ const helper = {
     },
     getRedirectUrls: (urls) => {
         return urls?.value ? urls.value.trim().replace(/\n/g, '').split(';') : [];
-    },
-    getDomainSplitProtocolHost: () => {
-        return process.env.baseURL.split('://');
     },
     isAbsoluteUrl: (url) => {
         const pattern = new RegExp('^(?:[a-z]+:)?//', 'i');

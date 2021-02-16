@@ -206,10 +206,7 @@ const invalidateHome = async (res, KCDetails) => {
 const invalidateUrlMap = async (res, KCDetails) => {
     handleCache.deleteCache('urlMap', KCDetails);
     if (!isPreview(res.locals.previewapikey)) {
-        const domain = helper.getDomainSplitProtocolHost();
-        if (domain[1]) {
-            await fastly.axiosPurge(`${helper.getDomain(domain[0], domain[1])}/urlmap`);
-        }
+        await fastly.axiosPurge(`${helper.getDomain()}/urlmap`);
     }
     await handleCache.evaluateCommon(res, ['urlMap']);
 };

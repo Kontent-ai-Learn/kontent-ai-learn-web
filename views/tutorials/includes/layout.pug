@@ -1,9 +1,8 @@
-include ./preview-flag.pug
 doctype html
 html(lang='en')
     head
         include ./head.pug
-    body(ontouchstart, class=`${(req.originalUrl.indexOf('/api-changelog') > -1) ? 'overflow' : ''}${previewFlag ? ' is-preview' : ''}${isPreview ? ' preview-key' : ''}`)&attributes(smartLink?.projectId())&attributes(smartLink?.projectLanguage(language))
+    body(ontouchstart, class=`${(req.originalUrl.indexOf('/api-changelog') > -1) ? 'overflow' : ''}${process.env.isProduction === 'false' ? 'non-production' : ''}${isPreview ? ' preview-key' : ''}`)&attributes(smartLink?.projectId())&attributes(smartLink?.projectLanguage(language))
         if (process.env['GTM.id'])
             noscript
                 iframe(src=`https://www.googletagmanager.com/ns.html?id=${process.env['GTM.id']}`, height='0', width='0', style='display:none;visibility:hidden')

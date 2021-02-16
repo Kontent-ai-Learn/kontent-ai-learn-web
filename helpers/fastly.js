@@ -6,12 +6,6 @@ const helper = require('./helperFunctions');
 const getUrlMap = require('./urlMap');
 const commonContent = require('./commonContent');
 
-const getValidDomain = () => {
-  const domain = helper.getDomainSplitProtocolHost();
-  if (!domain[1]) return null;
-  return helper.getDomain(domain[0], domain[1]);
-};
-
 const axiosPurge = async (url) => {
   try {
     await axios({
@@ -35,7 +29,7 @@ const purge = async (key, res) => {
 
   for (let i = 0; i < urlMap.length; i++) {
     if (urlMap[i].codename === key) {
-      const validDomain = getValidDomain();
+      const validDomain = helper.getDomain();
       if (!validDomain) return;
       await axiosPurge(`${validDomain}${urlMap[i].url}`);
     }
@@ -48,7 +42,7 @@ const purgeToRedirectUrls = async (urls, res) => {
   const redirectUrls = helper.getRedirectUrls(urls);
   if (!redirectUrls.length) return;
 
-  const validDomain = getValidDomain();
+  const validDomain = helper.getDomain();
   if (!validDomain) return;
 
   for (let i = 0; i < redirectUrls.length; i++) {
@@ -61,7 +55,7 @@ const purgeRedirectRule = async (codename, res) => {
     return await commonContent.getRedirectRules(res);
   });
 
-  const validDomain = getValidDomain();
+  const validDomain = helper.getDomain();
   if (!validDomain) return;
 
   for (let i = 0; i < redirectRules.length; i++) {
@@ -79,7 +73,7 @@ const purgeAllUrls = async (res) => {
     return await getUrlMap(res);
   });
   const uniqueUrls = helper.getUniqueUrls(urlMap);
-  const validDomain = getValidDomain();
+  const validDomain = helper.getDomain();
   if (!validDomain) return;
 
   for (let i = 0; i < uniqueUrls.length; i++) {
@@ -93,7 +87,7 @@ const purgeAllTechUrls = async (res) => {
     return await getUrlMap(res);
   });
 
-  const validDomain = getValidDomain();
+  const validDomain = helper.getDomain();
   if (!validDomain) return;
 
   for (let i = 0; i < urlMap.length; i++) {
@@ -120,42 +114,38 @@ const purgeInitial = async (items, res) => {
 const purgeFinal = async (itemsByTypes, req, res) => {
   if (isPreview(res.locals.previewapikey)) return;
   let allUrlsPurged = false;
+  const axiosDomain = helper.getDomain();
 
-  const domain = helper.getDomainSplitProtocolHost();
-  if (domain[1]) {
-    const axiosDomain = helper.getDomain(domain[0], domain[1]);
+  if (itemsByTypes.releaseNotes.length && req.app.locals.changelogPath) {
+    await axiosPurge(`${axiosDomain}${req.app.locals.changelogPath}`);
+  }
 
-    if (itemsByTypes.releaseNotes.length && req.app.locals.changelogPath) {
-      await axiosPurge(`${axiosDomain}${req.app.locals.changelogPath}`);
+  if (itemsByTypes.termDefinitions.length && !allUrlsPurged) {
+    await purgeAllUrls(res);
+    allUrlsPurged = true;
+  }
+
+  if (itemsByTypes.trainingCourses.length && req.app.locals.elearningPath) {
+    await axiosPurge(`${axiosDomain}${req.app.locals.elearningPath}`);
+  }
+
+  if (itemsByTypes.articles.length || itemsByTypes.scenarios.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
+    await axiosPurge(`${axiosDomain}/redirect-urls`);
+  }
+
+  if (itemsByTypes.redirectRules.length) {
+    for (let i = 0; i < itemsByTypes.redirectRules.length; i++) {
+      await purgeRedirectRule(itemsByTypes.redirectRules[i].codename, res);
     }
+  }
 
-    if (itemsByTypes.termDefinitions.length && !allUrlsPurged) {
-      await purgeAllUrls(res);
-      allUrlsPurged = true;
-    }
+  if (itemsByTypes.home.length && !allUrlsPurged) {
+    await purgeAllUrls(res);
+    allUrlsPurged = true;
+  }
 
-    if (itemsByTypes.trainingCourses.length && req.app.locals.elearningPath) {
-      await axiosPurge(`${axiosDomain}${req.app.locals.elearningPath}`);
-    }
-
-    if (itemsByTypes.articles.length || itemsByTypes.scenarios.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
-      await axiosPurge(`${axiosDomain}/redirect-urls`);
-    }
-
-    if (itemsByTypes.redirectRules.length) {
-      for (let i = 0; i < itemsByTypes.redirectRules.length; i++) {
-        await purgeRedirectRule(itemsByTypes.redirectRules[i].codename, res);
-      }
-    }
-
-    if (itemsByTypes.home.length && !allUrlsPurged) {
-      await purgeAllUrls(res);
-      allUrlsPurged = true;
-    }
-
-    if (itemsByTypes.picker.length && !allUrlsPurged) {
-      await purgeAllTechUrls(res);
-    }
+  if (itemsByTypes.picker.length && !allUrlsPurged) {
+    await purgeAllTechUrls(res);
   }
 };
 

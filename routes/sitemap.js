@@ -19,7 +19,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
     req: req,
     moment: moment,
     urlMap: urlMap,
-    domain: helper.getDomain(req.protocol, req.get('Host'))
+    domain: helper.getDomain()
   });
 }));
 

@@ -1,7 +1,7 @@
-if (previewFlag)
+if (process.env.isProduction === 'false')
     .preview-warning&attributes(smartLink?.itemId(UIMessages.system.id))
         .preview-warning__container
-            if (host.indexOf('localhost') > -1 || host.indexOf('-dev') > -1)
+            if (!isPreview)
                 div&attributes(smartLink?.elementCodename('banner_for_dev_environment')) !{UIMessages.banner_for_dev_environment.value}
-            else if (host.indexOf('-master') > -1)
+            else
                 div&attributes(smartLink?.elementCodename('banner_for_preview_environment')) !{UIMessages.banner_for_preview_environment.value}
