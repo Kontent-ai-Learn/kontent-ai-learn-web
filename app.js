@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const logger = require('morgan');
 const asyncHandler = require('express-async-handler');
-const cacheControl = require('express-cache-controller');
 const serveStatic = require('serve-static');
 const slashes = require('connect-slashes');
 const consola = require('consola');
@@ -23,6 +22,7 @@ const appHelper = require('./helpers/app');
 const handleCache = require('./helpers/handleCache');
 const commonContent = require('./helpers/commonContent');
 const isPreview = require('./helpers/isPreview');
+const fastly = require('./helpers/fastly');
 
 const home = require('./routes/home');
 const tutorials = require('./routes/tutorials');
@@ -102,26 +102,15 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser());
 app.use(serveStatic(path.join(__dirname, 'public'), {
-  maxAge: 31536000000,
-  setHeaders: (res) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://tracker.kontent.ai');
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css') || path.endsWith('.js')) {
+      res = fastly.immutableFileCaching(res);
+    } else {
+      res = fastly.staticFileCaching(res);
+    }
   }
 }));
 app.use(slashes(false));
-
-app.use(cacheControl({
-  noCache: true
-}));
-
-app.use((req, res, next) => {
-  if (req.originalUrl.startsWith('/cache-invalidate') || req.originalUrl.startsWith('/redirect-urls')) {
-    res.cacheControl = {
-      noStore: true,
-      private: true
-    };
-  }
-  return next();
-});
 
 app.enable('trust proxy');
 
@@ -129,10 +118,9 @@ app.use(async (req, res, next) => {
   res.locals.host = req.headers.host;
   res.locals.protocol = req.protocol;
   appHelper.handleKCKeys(req, res);
-  res.setHeader('Arr-Disable-Session-Affinity', 'True');
-  if (!(isPreview(res.locals.previewapikey) || (req.originalUrl.indexOf('/cache-invalidate') > -1))) {
-    res.setHeader('Surrogate-Control', 'max-age=3600');
-  }
+
+  res = fastly.handleGlobalCaching(req, res);
+
   if (isPreview(res.locals.previewapikey)) {
     await appHelper.getProjectLanguage(res);
   }

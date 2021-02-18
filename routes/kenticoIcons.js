@@ -3,13 +3,9 @@ const router = express.Router();
 const axios = require('axios');
 const asyncHandler = require('express-async-handler');
 const handleCache = require('../helpers/handleCache');
+const fastly = require('../helpers/fastly');
 
 router.get('/', asyncHandler(async (req, res) => {
-    res.cacheControl = {
-        public: true,
-        maxAge: 31536000
-    };
-
     const icons = await handleCache.ensureSingle(res, 'kenticoIcons_', async () => {
         return await axios.get('https://cdn.jsdelivr.net/gh/Kentico/kentico-icons/production/icon-variables.less');
     });
@@ -25,6 +21,8 @@ router.get('/', asyncHandler(async (req, res) => {
     }
 
     res.header('Content-Type', 'text/css');
+    res = fastly.immutableFileCaching(res);
+
     return res.send(css);
 }));
 

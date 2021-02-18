@@ -149,11 +149,50 @@ const purgeFinal = async (itemsByTypes, req, res) => {
   }
 };
 
+const preventCaching = (res) => {
+  res.removeHeader('Surrogate-Control');
+  res.setHeader('Cache-Control', 'private,no-store,no-cache,max-age=0');
+  return res;
+};
+
+const handleGlobalCaching = (req, res) => {
+  res.setHeader('Arr-Disable-Session-Affinity', 'True');
+
+  if (req.originalUrl.startsWith('/cache-invalidate') || req.originalUrl.startsWith('/redirect-urls')) {
+    res.setHeader('Cache-Control', 'private,no-store,no-cache,max-age=0');
+  } else {
+    res.setHeader('Cache-Control', 'max-age=0,must-revalidate,public');
+  }
+
+  if (!(isPreview(res.locals.previewapikey) || (req.originalUrl.indexOf('/cache-invalidate') > -1))) {
+    res.setHeader('Surrogate-Control', 'max-age=3600');
+  }
+
+  return res;
+};
+
+const staticFileCaching = (res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://tracker.kontent.ai');
+  res.setHeader('Cache-Control', 'public,max-age=31536000');
+  return res;
+};
+
+const immutableFileCaching = (res) => {
+  res.removeHeader('Surrogate-Control');
+  res.setHeader('Access-Control-Allow-Origin', 'https://tracker.kontent.ai');
+  res.setHeader('Cache-Control', 'max-age=31536000,immutable');
+  return res;
+};
+
 module.exports = {
   purge,
   axiosPurge,
   purgeToRedirectUrls,
   purgeFinal,
   purgeInitial,
-  purgeAllUrls
+  purgeAllUrls,
+  preventCaching,
+  handleGlobalCaching,
+  staticFileCaching,
+  immutableFileCaching
 };

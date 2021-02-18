@@ -13,6 +13,7 @@ const getUrlMap = require('../helpers/urlMap');
 const getTrainingCourseInfo = require('../helpers/trainingCourse');
 const customRichTextResolver = require('../helpers/customRichTextResolver');
 const smartLink = require('../helpers/smartLink');
+const fastly = require('../helpers/fastly');
 
 let cookiesPlatform;
 
@@ -122,6 +123,7 @@ const getContent = async (req, res) => {
         } else if (currentLevel === 0 && content[0].system.type !== 'multiplatform_article') {
             if (content[0].system.type === 'training_course') {
                 view = 'tutorials/pages/trainingCourse';
+                res = fastly.preventCaching(res);
                 trainingCourseInfo = await getTrainingCourseInfo(content[0], req, res);
             } else if (content[0].system.type === 'scenario') {
                 view = 'tutorials/pages/scenario';
