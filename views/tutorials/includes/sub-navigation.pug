@@ -1,6 +1,7 @@
 if !selectedPlatform 
     - selectedPlatform = '{tech}'
-.article__sub-navigation-trigger(data-toggle-trigger='sub-navigation', aria-hidden='true')
+if subNavigation.length > 1
+    .article__sub-navigation-trigger(data-toggle-trigger='sub-navigation', aria-hidden='true')
 ul.sub-navigation.sub-navigation--level-1.sub-navigation--top(data-toggle-target='sub-navigation')
     if subNavigation.length > 1
         each scenario in subNavigation
