@@ -140,12 +140,21 @@ gulp.task('js-elearning', () => {
 gulp.task('js-algolia', () => {
   return gulp.src([
       'node_modules/algoliasearch/dist/algoliasearch-lite.umd.js',
-      'node_modules/instantsearch.js/dist/instantsearch.production.min.js',
-      'node_modules/search-insights/dist/search-insights.min.js',
-      'public/js/src/algolia/aa.js'
+      'node_modules/instantsearch.js/dist/instantsearch.production.min.js'
     ])
     .pipe(concat('algolia.js'))
     .pipe(replace('//# sourceMappingURL=instantsearch.production.min.js.map', ''))
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest('public/js'))
+});
+
+gulp.task('js-search-insights', () => {
+  return gulp.src([
+      'node_modules/search-insights/dist/search-insights.min.js'
+    ])
+    .pipe(concat('search-insights.js'))
     .pipe(rename({
       suffix: '.min'
     }))
@@ -309,7 +318,7 @@ gulp.task('observe', async () => {
   })
 });
 
-gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-elearning', 'js-algolia', 'js-kontentsmartlink', 'css-app', 'css-reference', 'css-kontentsmartlink']));
+gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-elearning', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'css-app', 'css-reference', 'css-kontentsmartlink']));
 
 gulp.task('develop', gulp.series(['build', 'observe']));
 

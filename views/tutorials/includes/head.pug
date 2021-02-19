@@ -48,6 +48,8 @@ if isPreview
     link(rel='stylesheet', href='/css/kontentsmartlink.min.css?v=' + deployVersion)
     script(src='/js/kontentsmartlink.min.js?v=' + deployVersion, defer='')
 script(src='/js/algolia.min.js?v=' + deployVersion, defer='')
+script var ALGOLIA_INSIGHTS_SRC = "/js/search-insights.min.js?v=!{deployVersion}";!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],i.async=1,i.src=n,c.parentNode.insertBefore(i,c)}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+
 script(src='/js/app.min.js?v=' + deployVersion, defer='', onload='initGTM()')
 
 if (containsChangelog)
