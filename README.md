@@ -23,9 +23,8 @@ Kentico Kontent documentation portal, which utilizes [Kentico Kontent](https://a
 
 1. Clone the project repository.
 2. Run `npm install` in the terminal.
-3. Run `gulp` to make sure CSS and client-side JavaScript get built.
-4. Run `npm run debug` to start a development server.
-5. The website can be opened in your browser at http://localhost:3000.
+3. Run `npm run debug` to start a development server.
+5. The website will open in the browser on `http://localhost:3099` (proxying port `3000`).
 
 #### Recommended environmental variables
 

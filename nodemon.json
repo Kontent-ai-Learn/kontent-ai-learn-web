@@ -1,3 +1,0 @@
-{   
-    "ignore": ["helpers/redoc-cli/*.json", "public/**", "gulpfile.js"] 
-}

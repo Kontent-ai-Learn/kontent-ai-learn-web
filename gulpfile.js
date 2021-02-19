@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+const nodemon = require('gulp-nodemon');
 const uglify = require('gulp-uglify');
 const babel = require('gulp-babel');
 const rename = require('gulp-rename');
@@ -10,7 +11,16 @@ const autoprefix = new LessAutoprefix({
 });
 const cleanCSS = require('gulp-clean-css');
 const replace = require('gulp-replace');
-const browserSync = require('browser-sync');
+const browserSync = require('browser-sync').create();
+const axios = require('axios');
+const axiosRetry = require('axios-retry');
+const localUrl = 'http://localhost:3000';
+let nodemonStarted = false;
+
+axiosRetry(axios, {
+  retries: 20,
+  retryDelay: () => 500
+});
 
 gulp.task('js-app', () => {
   return gulp.src([
@@ -256,18 +266,51 @@ gulp.task('css-kontentsmartlink', () => {
     .pipe(gulp.dest('./public/css'));
 });
 
-gulp.task('browser-sync', () => {
-  browserSync.init({
-    files: ['public/**/*.*'],
-    proxy: 'http://localhost:3000',
-    port: 3099
-  });
+gulp.task('reload', (done) => {
+  browserSync.reload();
+  done();
 });
 
-gulp.task('watch', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-elearning', 'js-algolia', 'js-kontentsmartlink', 'css-app', 'css-reference', 'css-kontentsmartlink', 'browser-sync'], () => {
-  gulp.watch('public/js/src/app/*.js', gulp.parallel(['js-app', 'js-reference']));
-  gulp.watch('public/js/src/filter/*.js', gulp.parallel(['js-changelog', 'js-elearning']));
-  gulp.watch('public/css/src/**/*.less', gulp.parallel(['css-app', 'css-reference']));
-}));
+gulp.task('build-js-app', gulp.parallel(['js-app', 'js-reference']));
+gulp.task('build-js-filer', gulp.parallel(['js-changelog', 'js-elearning']));
+gulp.task('build-css', gulp.parallel(['css-app', 'css-reference']));
 
-gulp.task('default', gulp.series(['watch']));
+gulp.task('watch', (done) => {
+  gulp.watch('public/js/src/app/*.js', gulp.series(['build-js-app', 'reload']));
+  gulp.watch('public/js/src/filter/*.js', gulp.series(['build-js-filer', 'reload']));
+  gulp.watch('public/css/src/**/*.less', gulp.series(['build-css', 'reload']));
+  done();
+});
+
+gulp.task('browser-sync', (done) => {
+  browserSync.init({
+    proxy: localUrl,
+    port: 3099
+  });
+  done();
+});
+
+gulp.task('observe', async () => {
+  return nodemon({
+    script: 'server.js',
+    ignore: ['helpers/redoc-cli/*.json', 'public/**', 'gulpfile.js']
+  }).on('start', () => {
+      if (!nodemonStarted) {
+        nodemonStarted = true;
+        console.log('\x1b[36m%s\x1b[0m', 'Waiting for browser-sync to attach...');
+        axios.get(localUrl)
+          .then(() => {
+            return gulp.parallel(['browser-sync', 'watch'])();
+          })
+          .catch(() => {
+            console.log(`Error:  Unable to request ${localUrl} to be able to attach browser-sync.`);
+        });
+      }
+  })
+});
+
+gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-elearning', 'js-algolia', 'js-kontentsmartlink', 'css-app', 'css-reference', 'css-kontentsmartlink']));
+
+gulp.task('develop', gulp.series(['build', 'observe']));
+
+gulp.task('default', gulp.series(['develop']));

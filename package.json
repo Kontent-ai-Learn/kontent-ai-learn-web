@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "scripts": {
         "start": "node server.js",
-        "debug": "nodemon server.js",
+        "debug": "gulp",
         "eslint": "npx eslint ."
     },
     "repository": {
@@ -58,7 +58,6 @@
         "memory-cache": "^0.2.0",
         "moment": "^2.29.1",
         "morgan": "~1.10.0",
-        "nodemon": "^2.0.4",
         "pug": "^3.0.0",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",
@@ -73,6 +72,7 @@
         "@babel/preset-env": "^7.12.16",
         "@kentico/kontent-smart-link": "^1.2.2",
         "algoliasearch": "^4.8.5",
+        "axios-retry": "^3.1.9",
         "basiclightbox": "^5.0.4",
         "browser-sync": "^2.26.14",
         "eslint": "^7.11.0",
@@ -87,6 +87,7 @@
         "gulp-clean-css": "^4.3.0",
         "gulp-concat": "^2.6.1",
         "gulp-less": "^4.0.1",
+        "gulp-nodemon": "^2.5.0",
         "gulp-rename": "^2.0.0",
         "gulp-replace": "^1.0.0",
         "gulp-uglify": "^3.0.2",
