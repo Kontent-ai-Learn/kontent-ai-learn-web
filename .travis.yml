@@ -2,10 +2,6 @@ sudo: required
 language: node_js
 node_js:
   - "14"
-install:
-  - npm install
-script:
-  - gulp build
 jobs:
   include:
     - stage: "Tests"
@@ -16,6 +12,7 @@ jobs:
       script: npm test
     - stage: "Deployment"
       if: type != pull_request AND (branch = master OR branch = develop)
-      script: gulp build
-      before_install: chmod +rx .travis/deploy.sh
+      before_install: chmod +rx .travis/deploy.sh && npm install -g gulp-cli
+      install: npm install
+      before_script: gulp build
       script: .travis/deploy.sh
