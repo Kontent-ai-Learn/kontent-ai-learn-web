@@ -64,3 +64,5 @@ typings/
 .clinic/*
 
 public/docs
+public/js/*.min.js
+public/css/*.min.css
