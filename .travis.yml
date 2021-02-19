@@ -2,6 +2,10 @@ sudo: required
 language: node_js
 node_js:
   - "14"
+install:
+  - npm install
+script:
+  - gulp build
 jobs:
   include:
     - stage: "Tests"
