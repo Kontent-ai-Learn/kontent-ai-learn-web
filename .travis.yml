@@ -15,4 +15,4 @@ jobs:
       before_install: chmod +rx .travis/deploy.sh && npm install -g gulp-cli
       install: npm install
       script: .travis/deploy.sh
-      after_success: gulp build
+      after_script: gulp build
