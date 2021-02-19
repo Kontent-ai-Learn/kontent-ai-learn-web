@@ -2,7 +2,7 @@
     "name": "kontent-docs-web",
     "version": "1.0.0",
     "scripts": {
-        "start": "node server.js",
+        "start": "gulp build && node server.js",
         "debug": "gulp",
         "eslint": "npx eslint ."
     },
