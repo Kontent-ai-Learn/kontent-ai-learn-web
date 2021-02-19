@@ -14,5 +14,5 @@ jobs:
       if: type != pull_request AND (branch = master OR branch = develop)
       before_install: chmod +rx .travis/deploy.sh && npm install -g gulp-cli
       install: npm install
-      before_script: gulp build
       script: .travis/deploy.sh
+      after_success: gulp build
