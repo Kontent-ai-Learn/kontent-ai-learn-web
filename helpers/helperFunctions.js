@@ -162,12 +162,6 @@ const helper = {
 
         return domain;
     },
-    isLiveSite: (host) => {
-        if (host.indexOf('kcd-web-live-master') > -1) {
-            return true;
-        }
-        return false;
-    },
     addTitlesToLinks: (content, urlMap, articles) => {
         const $ = cheerio.load(content);
         const $links = $('a:not(.call-to-action)');
