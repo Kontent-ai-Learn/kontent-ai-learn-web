@@ -307,6 +307,7 @@ window.initSearch = (() => {
     } else if (!searchResultsNumber && currentRefinement) {
       searchAutocompleteHeader.innerHTML = formatHeader(currentRefinement);
       searchAutocompleteList.innerHTML = formatEmptySuggestion();
+      searchAutocomplete.classList.add('autocomplete__dropdown--visible');
     } else {
       searchAutocomplete.classList.remove('autocomplete__dropdown--visible');
       searchAutocompleteHeader.innerHTML = '';
