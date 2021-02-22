@@ -1,5 +1,6 @@
 meta(name='viewport', content='width=device-width, initial-scale=1')
 meta(charset='utf-8')
+- const titleSuffix = (slug !== 'home' ? ` | ${UIMessages.portal_name.value}` : '');
 title !{title}!{titleSuffix}
 meta(property='og:title', content=`${title.trim().replace(/\s+/g, ' ').replace(/"/g, '&quot;')}${titleSuffix}`)
 if description
@@ -66,7 +67,7 @@ link(rel='icon', type='image/png', sizes='32x32', href='/img/favicon/favicon-32x
 link(rel='icon', type='image/png', sizes='96x96', href='/img/favicon/favicon-96x96.png')
 link(rel='icon', type='image/png', sizes='16x16', href='/img/favicon/favicon-16x16.png')
 link(rel='manifest', href='/img/favicon/manifest.json')
-link(rel='search' type='application/opensearchdescription+xml' title=`${titleSuffix || 'Kentico Kontent Docs'}` href='/opensearch.xml')
+link(rel='search' type='application/opensearchdescription+xml' title=`${UIMessages.portal_name.value}` href='/opensearch.xml')
 meta(name='msapplication-TileColor', content='#ffffff')
 meta(name='msapplication-TileImage', content='/img/favicon/ms-icon-144x144.png')
 meta(name='theme-color', content='#ffffff')

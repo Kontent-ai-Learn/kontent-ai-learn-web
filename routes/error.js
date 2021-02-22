@@ -38,7 +38,6 @@ const error = asyncHandler(async (req, res) => {
         navigation: home && home.length ? home[0].navigation.value : [],
         itemId: content && content.length ? content[0].system.id : null,
         title: content && content.length ? content[0].title.value : '',
-        titleSuffix: ` | ${home && home.length ? home[0].title.value : 'Kentico Kontent Docs'}`,
         content: content && content.length ? content[0].content.value : '',
         footer: footer && footer.length ? footer[0] : null,
         UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,

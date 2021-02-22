@@ -269,7 +269,6 @@ router.get('/:main/:slug', asyncHandler(async (req, res, next) => {
             isPreview: KCDetails.isPreview,
             itemId: content && content.length ? content[0].system.id : null,
             title: content && content.length ? content[0].title.value : '',
-            titleSuffix: ` | ${home && home.length ? home[0].title.value : 'Kentico Kontent Docs'}`,
             navigation: home && home.length ? home[0].navigation.value : null,
             footer: footer && footer.length ? footer[0] : null,
             UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
