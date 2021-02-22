@@ -22,7 +22,8 @@ const urlWhitelist = [
   '/callback',
   '/elearning',
   '/elearning/*',
-  '/instantsearch'
+  '/instantsearch',
+  '/opensearch.xml'
 ];
 
 const appHelper = {
