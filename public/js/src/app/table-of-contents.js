@@ -225,6 +225,14 @@
         }
     };
 
+    const handleHeadingsOverlay = () => {
+        // Purpose of this function is to reverse z-index elements order to ensure all text in articles is selectable
+        const articleBodyElems = document.querySelectorAll('.article__body > *');
+        for (let i = 0; i < articleBodyElems.length; i++) {
+            articleBodyElems[i].style.zIndex = articleBodyElems.length - i;
+        }
+    };
+
     if (tableOfContentsElem) {
         setTimeout(() => {
             createTableOfContents();
@@ -232,6 +240,7 @@
             requestOnLoad();
             toggleItemsFromWithinContentChunks();
             scrollToLinkInSubNavigation();
+            handleHeadingsOverlay();
             if (!document.querySelector('[data-display-mode="step-by-step"]')) {
                 affix();
                 window.addEventListener('scroll', affix, window.supportsPassive ? {

@@ -5,6 +5,10 @@
         display: flex;
     }
 
+    &__body > * {
+        position: relative;
+    }
+
 	&__left {
         @media screen and (min-width: 768px) {
             width: 250px;
@@ -249,7 +253,6 @@
             position: relative;
             padding-left: 32px;
             margin-left: -32px;
-            z-index: 1;
 
             a {
                 color: #231F20;
@@ -385,11 +388,6 @@
                     }
                 }
             }
-        }
-
-        & > * {
-            position: relative;
-            z-index: 2;
         }
     }
 
