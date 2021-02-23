@@ -70,7 +70,7 @@ router.post('/pool', asyncHandler(async (req, res) => {
 router.get('/keys', (req, res) => {
     const keys = cache.keys();
     keys.sort();
-    return res.render('tutorials/pages/cacheKeys', { keys });
+    return res.render('pages/cacheKeys', { keys });
 });
 
 router.get('/keys/:key', (req, res) => {

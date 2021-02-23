@@ -28,7 +28,7 @@ router.get('/changelog', asyncHandler(async (req, res) => {
 
     res.set('Content-Type', 'application/xml');
 
-    return res.render('tutorials/pages/rssApiChangelog', {
+    return res.render('pages/rssApiChangelog', {
         req: req,
         helper: helper,
         home: home[0],

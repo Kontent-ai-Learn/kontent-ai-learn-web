@@ -9,8 +9,8 @@ if description
     meta(property='og:description', content=description)
 meta(property='og:image', content=`${process.env.baseURL}/img/kentico-kontent-og.jpg`)
 if !isPreview
-    if (content && content.visibility && content.visibility.value.filter(item => item.codename === 'excluded_from_search').length)
-        meta(name='robots', content='noindex')
+    if ((content && content.visibility && content.visibility.value.filter(item => item.codename === 'excluded_from_search').length) || status === 404)
+        meta(name='robots', content='noindex,nofollow')
     else 
         meta(name='robots', content='index,follow')
 else
@@ -19,13 +19,17 @@ link(rel='preload' as='font' href='/fonts/GT-Walsheim-Regular.woff2' type='font/
 link(rel='preload' as='font' href='/fonts/GT-Walsheim-Regular.woff' type='font/woff' crossorigin='anonymous')
 link(rel='preload' as='font' href='/fonts/GT-Walsheim-Bold.woff2' type='font/woff2' crossorigin='anonymous')
 link(rel='preload' as='font' href='/fonts/GT-Walsheim-Bold.woff' type='font/woff' crossorigin='anonymous')
-link(rel='stylesheet', href='//fonts.googleapis.com/css?family=Inconsolata')
-link(rel='stylesheet', href='/css/apireference.min.css?v=' + deployVersion)
+if (isReference)
+    link(rel='stylesheet', href='/css/apireference.min.css?v=' + deployVersion)
+else 
+    link(rel='stylesheet', href='/css/app.min.css?v=' + deployVersion)
 link(rel='stylesheet', href='/kentico-icons.min.css?v=' + deployVersion)
+if (req.query.pdf)
+    link(rel='stylesheet', href='/css/pdf.css?v=' + deployVersion)
 if helper
     script var searchAPI={appid:"#{process.env['Search.AppId']}",apikey:"#{process.env['Search.ApiKey']}",indexname:"#{process.env['Search.IndexName']}"};
 if UIMessages
-    script var UIMessages={copyUrl:"#{helper.removeNewLines(UIMessages.heading___copy_url_hover.value)}",copyUrlActive:"#{helper.removeNewLines(UIMessages.heading___copy_url_active.value)}",searchNoResults:"#{helper.removeNewLines(UIMessages.search___no_results.value)}",dntLabel:"#{helper.removeNewLines(UIMessages.embedded_content_dnt_notice.value)}",copyCode:"#{helper.removeNewLines(UIMessages.code_block___copy_code_button.value)}",copyCodeActive:"#{helper.removeNewLines(UIMessages.code_block___copy_code_button_active.value)}",cookieBar:"#{helper.removeNewLines(UIMessages.cookie_policy_bar.value)}",technologyLabel:"#{helper.removeNewLines(UIMessages.technology_selector_label.value)}",emptyCodeBlock:"#{helper.removeNewLines(UIMessages.code_block___empty_state_text.value)}"};
+    script var UIMessages={copyUrl:"#{helper.removeNewLines(UIMessages.heading___copy_url_hover.value)}",copyUrlActive:"#{helper.removeNewLines(UIMessages.heading___copy_url_active.value)}",searchNoResults:"#{helper.removeNewLines(UIMessages.search___no_results.value)}",dntLabel:"#{helper.removeNewLines(UIMessages.embedded_content_dnt_notice.value)}",copyCode:"#{UIMessages.code_block___copy_code_button.value}",copyCodeActive:"#{helper.removeNewLines(UIMessages.code_block___copy_code_button_active.value)}",cookieBar:"#{helper.removeNewLines(UIMessages.cookie_policy_bar.value)}",technologyLabel:"#{helper.removeNewLines(UIMessages.technology_selector_label.value)}",emptyCodeBlock:"#{helper.removeNewLines(UIMessages.code_block___empty_state_text.value)}",nextPartText:"#{helper.removeNewLines(UIMessages.next_part_link_text.value)}",prevPartText:"#{helper.removeNewLines(UIMessages.previous_part_link_text.value)}",showMore:"#{helper.removeNewLines(UIMessages.home___show_more.value)}",showLess:"#{helper.removeNewLines(UIMessages.home___show_less.value)}"};
 if platformsConfig
     script var platformsConfig=[
         each item, index in platformsConfig
@@ -50,8 +54,15 @@ if isPreview
 script(src='/js/algolia.min.js?v=' + deployVersion, defer='')
 script var ALGOLIA_INSIGHTS_SRC = "/js/search-insights.min.js?v=!{deployVersion}";!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],i.async=1,i.src=n,c.parentNode.insertBefore(i,c)}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
 
-script(src='/js/apireference.min.js?v=' + deployVersion, defer='', onload='initGTM()')
-if canonicalUrl && canonicalUrl !== req.originalUrl
+if (isReference)
+    script(src='/js/apireference.min.js?v=' + deployVersion, defer='', onload='initGTM()')
+else
+    script(src='/js/app.min.js?v=' + deployVersion, defer='', onload='initGTM()')
+if (containsChangelog)
+    script(src='/js/changelog.min.js?v=' + deployVersion, defer='')
+if (containsTrainingCourse)
+    script(src='/js/elearning.min.js?v=' + deployVersion, defer='')
+if canonicalUrl
     link(rel='canonical', href=`${canonicalUrl}`)
 link(rel='apple-touch-icon', sizes='57x57', href='/img/favicon/apple-icon-57x57.png')
 link(rel='apple-touch-icon', sizes='60x60', href='/img/favicon/apple-icon-60x60.png')

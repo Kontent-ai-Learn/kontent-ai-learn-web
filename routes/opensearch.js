@@ -13,7 +13,7 @@ router.get('/', asyncHandler(async (req, res) => {
 
   res.set('Content-Type', 'application/opensearchdescription+xml');
 
-  return res.render('tutorials/pages/opensearch', {
+  return res.render('pages/opensearch', {
     req: req,
     domain: helper.getDomain(),
     UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,

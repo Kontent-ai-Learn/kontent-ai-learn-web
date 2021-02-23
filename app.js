@@ -25,7 +25,7 @@ const isPreview = require('./helpers/isPreview');
 const fastly = require('./helpers/fastly');
 
 const home = require('./routes/home');
-const tutorials = require('./routes/tutorials');
+const articles = require('./routes/articles');
 const sitemap = require('./routes/sitemap');
 const rss = require('./routes/rss');
 const robots = require('./routes/robots');
@@ -37,7 +37,6 @@ const redirectUrls = require('./routes/redirectUrls');
 const referenceUpdated = require('./routes/referenceUpdated');
 const linkUrls = require('./routes/linkUrls');
 const cacheInvalidate = require('./routes/cacheInvalidate');
-const reference = require('./routes/reference');
 const error = require('./routes/error');
 const form = require('./routes/form');
 const redirectRules = require('./routes/redirectRules');
@@ -160,7 +159,7 @@ app.use('/', asyncHandler(async (req, res, next) => {
   }
   return next();
 }));
-app.use('/', home);
+
 app.use('/redirect-urls', redirectUrls);
 app.use('/sitemap.xml', sitemap);
 app.use('/rss', rss);
@@ -168,27 +167,7 @@ app.use('/robots.txt', robots);
 app.use('/opensearch.xml', opensearch);
 app.use('/pdf', generatePDF);
 app.get('/urlmap', urlMap);
-app.use('/', authorize);
-
-// Dynamic routing setup
-app.use('/', async (req, res, next) => {
-  const topLevel = req.originalUrl.split('/')[1];
-  const navigationItems = await handleCache.ensureSingle(res, 'navigationItems', async () => {
-    return commonContent.getNavigationItems(res);
-  });
-
-  if (navigationItems) {
-    res.locals.router = navigationItems.filter(item => topLevel === item.url.value);
-  }
-
-  if (res.locals.router && res.locals.router.length && res.locals.router[0].type.value.length) {
-    res.locals.router = res.locals.router[0].type.value[0].codename;
-  } else {
-    res.locals.router = 'tutorials';
-  }
-
-  return next();
-}, tutorials, reference);
+app.use('/', home, authorize, articles);
 
 // Check aliases on whitelisted url paths that do not match any routing above
 app.use('/', asyncHandler(async (req, res, next) => {

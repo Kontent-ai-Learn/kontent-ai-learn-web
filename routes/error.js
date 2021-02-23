@@ -29,7 +29,7 @@ const error = asyncHandler(async (req, res) => {
     }
     const siteIsPreview = isPreview(res.locals.previewapikey);
 
-    return res.render('tutorials/pages/error', {
+    return res.render('pages/error', {
         req: req,
         minify: minify,
         slug: '404',

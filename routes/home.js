@@ -27,7 +27,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
   const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
   const siteIsPreview = isPreview(res.locals.previewapikey);
 
-  return res.render('tutorials/pages/home', {
+  return res.render('pages/home', {
     req: req,
     minify: minify,
     slug: 'home',

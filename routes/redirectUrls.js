@@ -88,7 +88,7 @@ router.get('/', async (req, res) => {
   const redirectMap = await getRedirectUrls(res);
   const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
 
-  return res.render('tutorials/pages/redirectUrls', {
+  return res.render('pages/redirectUrls', {
     req: req,
     minify: minify,
     isPreview: isPreview(res.locals.previewapikey),

@@ -2,6 +2,8 @@ const express = require('express');
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
 const moment = require('moment');
+const htmlparser2 = require('htmlparser2');
+const cheerio = require('cheerio');
 
 const requestDelivery = require('../helpers/requestDelivery');
 const minify = require('../helpers/minify');
@@ -62,6 +64,65 @@ const getCurrentLevel = (levels) => {
     // Get last non-null array item index
     while (index-- && !levels[index]);
     return index;
+};
+
+const getRedocReference = async (apiCodename, res, KCDetails) => {
+    return await handleCache.evaluateSingle(res, `reDocReference_${apiCodename}`, async () => {
+        return await helper.getReferenceFiles(apiCodename, false, KCDetails, 'getRedocReference');
+    });
+};
+
+const resolveLinks = (data, urlMap) => {
+    // Resolve links in DOM
+    const parserOptions = {
+        decodeEntities: true,
+        lowerCaseAttributeNames: false,
+        lowerCaseTags: false,
+        recognizeSelfClosing: false,
+    };
+
+    const dom = htmlparser2.parseDOM(data.data, parserOptions);
+    const $ = cheerio.load(dom);
+    const links = $('a[href]');
+
+    for (let i = 0; i < links.length; i++) {
+        const link = $(links[i]);
+
+        if (link.attr('href').indexOf('/link-to/') > -1) {
+            const urlParts = link.attr('href').split('/');
+            const codename = urlParts[urlParts.length - 1];
+
+            for (let i = 0; i < urlMap.length; i++) {
+                if (urlMap[i].codename === codename) {
+                    link.attr('href', urlMap[i].url);
+                }
+            }
+        }
+    }
+
+    data.data = $.root().html().trim();
+
+    // Resolve links in Markdown
+    // eslint-disable-next-line no-useless-escape
+    const regexLink = /(\]\()([a-zA-Z0-9-._~:\/?#\[\]@!\$&'\+,;=]*)(\))/g;
+    data.data = data.data.replace(regexLink, (match, $1, $2, $3) => {
+        let url = $2;
+
+        if ($2.indexOf('/link-to/') > -1) {
+            const urlParts = $2.split('/');
+            const codename = urlParts[urlParts.length - 1];
+
+            for (let i = 0; i < urlMap.length; i++) {
+                if (urlMap[i].codename === codename) {
+                    url = urlMap[i].url;
+                }
+            }
+        }
+
+        return $1 + url + $3;
+    });
+
+    return data;
 };
 
 const getContent = async (req, res) => {
@@ -127,6 +188,27 @@ const getContent = async (req, res) => {
                 trainingCourseInfo = await getTrainingCourseInfo(content[0], req, res);
             } else if (content[0].system.type === 'scenario') {
                 view = 'pages/scenario';
+            } else if (content[0].system.type === 'zapi_specification') {
+                view = 'pages/redoc';
+                content = await getRedocReference(content[0].system.codename, res, KCDetails);
+                content = resolveLinks(content, urlMap);
+
+                return {
+                    req: req,
+                    minify: minify,
+                    slug: slug,
+                    isPreview: KCDetails.isPreview,
+                    isReference: true,
+                    itemId: content && content.length ? content[0].system.id : null,
+                    title: content && content.length ? content[0].title.value : '',
+                    navigation: home && home.length ? home[0].navigation.value : null,
+                    footer: footer && footer.length ? footer[0] : null,
+                    UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
+                    platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
+                    helper: helper,
+                    content: content,
+                    view: view
+                };
             }
         } else if (currentLevel === 1) {
             return `/${slug}/${subNavigationLevels[currentLevel - 1]}/${subNavigationLevels[currentLevel]}/${content[0].children.value[0].url.value}${queryHash ? '?' + queryHash : ''}`;
@@ -262,10 +344,6 @@ const getContent = async (req, res) => {
 };
 
 router.get(['/other/:article', '/:main', '/:main/:scenario', '/:main/:scenario/:topic', '/:main/:scenario/:topic/:article'], asyncHandler(async (req, res, next) => {
-    if (res.locals.router !== 'tutorials') {
-        return next();
-    }
-
     const data = await getContent(req, res, next);
     if (data && !data.view) return res.redirect(301, data);
     if (!data) return next();

@@ -15,7 +15,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
 
   res.set('Content-Type', 'application/xml');
 
-  return res.render('tutorials/pages/sitemap', {
+  return res.render('pages/sitemap', {
     req: req,
     moment: moment,
     urlMap: urlMap,
