@@ -9,7 +9,6 @@ const urlWhitelist = [
   '/urlmap',
   '/kentico-icons.min.css',
   '/favicon.ico',
-  '/api-reference',
   '/rss/*',
   '/redirect-urls',
   '/cache-invalidate',
@@ -20,9 +19,6 @@ const urlWhitelist = [
   '/login',
   '/logout',
   '/callback',
-  '/elearning',
-  '/elearning/*',
-  '/instantsearch',
   '/opensearch.xml'
 ];
 
@@ -83,24 +79,14 @@ const appHelper = {
   },
   isOneOfCacheRevalidate: (req) => {
     const urls = [
-      '/reference/',
-      '/rss/',
-      '/tutorials/',
-      '/certification/',
-      '/e-learning/',
-      '/changelog/',
-      '/other/'
+      '/kentico-icons.min.css'
     ];
 
-    if (req.originalUrl === '/') {
-      return true;
-    }
-
-    let revalidate = false;
+    let revalidate = true;
 
     for (var i = 0; i < urls.length; i++) {
       if (req.originalUrl.startsWith(urls[i])) {
-        revalidate = true;
+        revalidate = false;
       }
     }
 

@@ -80,7 +80,7 @@ const config = {
   secret: process.env.AUTH0_SESSION_SECRET,
   routes: {
     login: false,
-    postLogoutRedirect: '/e-learning/overview'
+    postLogoutRedirect: process.env.AUTH0_LOGOUT_URL
   }
 };
 

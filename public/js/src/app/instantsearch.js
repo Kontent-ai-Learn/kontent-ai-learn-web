@@ -78,9 +78,10 @@ window.initSearch = (() => {
     }
     const tech = suggestion.platforms && suggestion.platforms.length === 1 ? `?tech=${window.helper.getTech(suggestion.platforms[0])}` : '';
     suggestion.resolvedUrl = suggestionUrl.length ? `${suggestionUrl[0].url}${suggestionUrl[0].url.indexOf('?tech') === -1 ? tech : ''}${suggestion.section !== 'API' ? anchor : ''}` : '';
-    let section = (suggestion.section === 'tutorials' && suggestion.resolvedUrl.includes('/reference/')) ? 'reference' : suggestion.section;
+    
+    let section;
 
-    if (section.toLowerCase() === 'api') {
+    if (suggestion.section.toLowerCase() === 'api') {
         section = 'Reference';
     }
 
