@@ -7,9 +7,6 @@ jobs:
     - stage: "Tests"
       name: "ESLint"
       script: npm run eslint
-    - stage: "Tests"
-      name: "Test"
-      script: npm test
     - stage: "Deployment"
       if: type != pull_request AND (branch = master OR branch = develop)
       before_install: chmod +rx .travis/deploy.sh
