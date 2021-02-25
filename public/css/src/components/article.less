@@ -5,8 +5,13 @@
         display: flex;
     }
 
-    &__body > * {
+    &__body {
         position: relative;
+        z-index: 1;
+        
+        & > * {
+            position: relative;
+        }
     }
 
 	&__left {
@@ -155,21 +160,6 @@
             &:hover,
             &:active {
                 text-decoration: none;
-            }
-
-            &[href*='/reference/'] {
-                &:after {
-                    content: 'API';
-                    font-size: .625em;
-                    display: inline-block;
-                    margin: 0 0 0 .25em;
-                    line-height: 1em;
-                    color: #F05A22;
-                    font-weight: 400;
-                    letter-spacing: .5px;
-                    position: relative;
-                    top: -5px;
-                }
             }
         }
 
@@ -486,6 +476,8 @@
     }
 
     &__introduction {
+        position: relative;
+        z-index: 2;
         @media screen and (min-width: 480px) {
             display: flex;
             justify-content: space-between;
