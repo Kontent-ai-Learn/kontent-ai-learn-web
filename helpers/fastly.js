@@ -159,13 +159,15 @@ const handleGlobalCaching = (req, res) => {
   res.setHeader('Arr-Disable-Session-Affinity', 'True');
 
   if (req.originalUrl.startsWith('/cache-invalidate') || req.originalUrl.startsWith('/redirect-urls')) {
-    res.setHeader('Cache-Control', 'private,no-store,no-cache,max-age=0');
+    res.setHeader('Cache-Control', 'private,no-store,no-cache');
   } else {
     res.setHeader('Cache-Control', 'max-age=0,must-revalidate,public');
   }
 
   if (!(isPreview(res.locals.previewapikey) || (req.originalUrl.indexOf('/cache-invalidate') > -1))) {
-    res.setHeader('Surrogate-Control', 'max-age=3600');
+    // https://docs.fastly.com/en/guides/serving-stale-content#manually-enabling-serve-stale
+    // update the content after 24 hours (86400 seconds) but if the origin is down then show stale content for three days (259200 seconds)
+    res.setHeader('Surrogate-Control', 'max-age=86400, stale-if-error=259200');
   }
 
   return res;
@@ -173,14 +175,14 @@ const handleGlobalCaching = (req, res) => {
 
 const staticFileCaching = (res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://tracker.kontent.ai');
-  res.setHeader('Cache-Control', 'public,max-age=31536000');
+  res.setHeader('Cache-Control', 'public,max-age=31536000,stale-while-revalidate=86400');
   return res;
 };
 
 const immutableFileCaching = (res) => {
   res.removeHeader('Surrogate-Control');
   res.setHeader('Access-Control-Allow-Origin', 'https://tracker.kontent.ai');
-  res.setHeader('Cache-Control', 'max-age=31536000,immutable');
+  res.setHeader('Cache-Control', 'max-age=31536000,immutable,stale-while-revalidate=86400');
   return res;
 };
 
