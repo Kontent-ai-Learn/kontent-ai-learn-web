@@ -56,7 +56,7 @@ if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
 // Session
 const sess = {
   secret: process.env.AUTH0_SESSION_SECRET,
-  cookie: { sameSite: true },
+  cookie: { sameSite: 'strict' },
   resave: false,
   saveUninitialized: true
 };
