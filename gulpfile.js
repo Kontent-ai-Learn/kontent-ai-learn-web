@@ -22,6 +22,23 @@ axiosRetry(axios, {
   retryDelay: () => 500
 });
 
+const prismFiles = [
+  'node_modules/prismjs/components/prism-core.js',
+  'node_modules/prismjs/components/prism-clike.js',
+  'node_modules/prismjs/components/prism-javascript.js',
+  'node_modules/prismjs/components/prism-java.js',
+  'node_modules/prismjs/components/prism-csharp.js',
+  'node_modules/prismjs/components/prism-markup-templating.js',
+  'node_modules/prismjs/components/prism-php.js',
+  'node_modules/prismjs/components/prism-ruby.js',
+  'node_modules/prismjs/components/prism-swift.js',
+  'node_modules/prismjs/components/prism-rest.js',
+  'node_modules/prismjs/components/prism-typescript.js',
+  'node_modules/prismjs/plugins/line-numbers/prism-line-numbers.min.js',
+  'node_modules/prismjs/plugins/autolinker/prism-autolinker.min.js',
+  'node_modules/prismjs/plugins/file-highlight/prism-file-highlight.js',
+];
+
 gulp.task('js-app', () => {
   return gulp.src([
       'public/js/src/app/polyfills.js',
@@ -34,9 +51,7 @@ gulp.task('js-app', () => {
       'node_modules/basiclightbox/dist/basicLightbox.min.js',
       'public/js/src/app/lightbox.js',
       'public/js/src/app/tables.js',
-      'node_modules/prismjs/prism.js',
-      'node_modules/prismjs/plugins/line-numbers/prism-line-numbers.min.js',
-      'node_modules/prismjs/plugins/autolinker/prism-autolinker.min.js',
+      ...prismFiles,
       'public/js/src/app/lazy-load.js',
       'public/js/src/app/table-of-contents.js',
       'public/js/src/app/gtag-events.js',
@@ -79,8 +94,7 @@ gulp.task('js-reference', () => {
       'public/js/src/app/intercom.js',
       'node_modules/basiclightbox/dist/basicLightbox.min.js',
       'public/js/src/app/lightbox.js',
-      'node_modules/prismjs/prism.js',
-      'node_modules/prismjs/plugins/line-numbers/prism-line-numbers.min.js',
+      ...prismFiles,
       'public/js/src/app/preview-warning.js',
       'public/js/src/app/icon-tooltip.js',
       'public/js/src/app/api-reference.js',
