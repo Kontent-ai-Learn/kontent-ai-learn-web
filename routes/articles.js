@@ -190,8 +190,8 @@ const getContent = async (req, res) => {
                 view = 'pages/scenario';
             } else if (content[0].system.type === 'zapi_specification') {
                 view = 'pages/redoc';
-                content = await getRedocReference(content[0].system.codename, res, KCDetails);
-                content = resolveLinks(content, urlMap);
+                let contentReference = await getRedocReference(content[0].system.codename, res, KCDetails);
+                contentReference = resolveLinks(contentReference, urlMap);
 
                 return {
                     req: req,
@@ -206,7 +206,7 @@ const getContent = async (req, res) => {
                     UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
                     platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
                     helper: helper,
-                    content: content,
+                    content: contentReference,
                     view: view
                 };
             }
