@@ -91,7 +91,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
         renderAs: 'text'
       };
     } else {
-      req.session.returnTo = req.originalUrl;
+      res.cookie('returnTo', req.originalUrl);
       renderGeneralMessage = true;
       generalMessage = {
         text: UIMessages.sign_in_button.value,

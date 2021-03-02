@@ -14,7 +14,7 @@ const axios = require('axios');
 const cache = require('memory-cache');
 const util = require('util');
 const { setIntervalAsync } = require('set-interval-async/dynamic')
-const session = require('express-session');
+
 const { auth } = require('express-openid-connect');
 
 const helper = require('./helpers/helperFunctions');
@@ -52,23 +52,9 @@ if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
   exports.appInsights = appInsights;
 }
 
-// Auth0 authentication setup
-// Session
-const sess = {
-  secret: process.env.AUTH0_SESSION_SECRET,
-  cookie: { sameSite: 'strict' },
-  resave: false,
-  saveUninitialized: true
-};
-
-// https://github.com/auth0/passport-auth0/issues/70#issuecomment-570004407
 if (!process.env.baseURL.includes('localhost')) {
-  sess.cookie.secure = true;
-  sess.proxy = true;
   app.set('trust proxy', 1);
 }
-
-app.use(session(sess));
 
 // Auth0
 const config = {
@@ -118,6 +104,7 @@ app.use(async (req, res, next) => {
   res.locals.host = req.headers.host;
   res.locals.protocol = req.protocol;
   appHelper.handleKCKeys(req, res);
+  res.clearCookie('connect.sid');
 
   res = fastly.handleGlobalCaching(req, res);
 
