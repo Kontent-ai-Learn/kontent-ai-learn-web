@@ -163,7 +163,7 @@ const getStatus = async (courseId, userId) => {
 
 const getGoTo = async (courseId, userId) => {
     let goToData = {};
-    const url = `${settings.goToUrl}/user_id:${userId},course_id:${courseId},header_hidden_options:courseName;units;sharedFiles;moreOptions`;
+    const url = `${settings.goToUrl}/user_id:${userId},course_id:${courseId},header_hidden_options:courseName;sharedFiles;moreOptions`;
     try {
         const goto = await axios({
             method: 'get',
