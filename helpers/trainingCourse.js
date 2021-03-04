@@ -1,4 +1,5 @@
 const axios = require('axios');
+const app = require('../app');
 const commonContent = require('./commonContent');
 const handleCache = require('./handleCache');
 const helper = require('./helperFunctions');
@@ -34,12 +35,17 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPrevie
     let renderAs = 'button';
 
     if (courseInfo.err && !isPreviewCourse) {
+      const notification = lms.composeNotification('A user attempt to access to LMS in Kentico Kontent Docs failed with the following error:', courseInfo.err);
       const emailInfo = {
         recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
         subject: 'LMS error notification',
         text: lms.composeNotification('A user attempt to access to LMS in Kentico Kontent Docs failed with the following error:', courseInfo.err)
       };
       sendSendGridEmail(emailInfo);
+
+      if (app.appInsights) {
+        app.appInsights.defaultClient.trackTrace({ message: `LMS_ERROR: ${notification}` });
+      }
     }
 
     if (courseInfo.completion === 0) {
@@ -125,12 +131,18 @@ const getTrainingCourseInfo = async (content, req, res) => {
         err.response.data.userEmail = req.oidc.user.email;
         err.response.data.file = 'helpers/trainingCourse.js';
         err.response.data.method = 'getTrainingCourseInfo';
+        const notification = lms.composeNotification('A user attempt to sign in to Kentico Kontent Docs failed in the Subscription service with the following error:', err.response.data);
         const emailInfo = {
           recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
           subject: 'Failed user sign in notification',
-          text: lms.composeNotification('A user attempt to sign in to Kentico Kontent Docs failed in the Subscription service with the following error:', err.response.data)
+          text: notification
         };
         sendSendGridEmail(emailInfo);
+
+        if (app.appInsights) {
+          app.appInsights.defaultClient.trackTrace({ message: `SUBSCRIPTION_SERVICE_ERROR: ${notification}` });
+        }
+
         errCode = err.response.data.code;
       }
 
