@@ -104,7 +104,8 @@ app.use(async (req, res, next) => {
   res.locals.host = req.headers.host;
   res.locals.protocol = req.protocol;
   appHelper.handleKCKeys(req, res);
-  res.clearCookie('connect.sid');
+
+  if (req.cookies['connect.sid']) res.clearCookie('connect.sid');
 
   res = fastly.handleGlobalCaching(req, res);
 
