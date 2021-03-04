@@ -238,7 +238,7 @@ const processInvalidation = async (req, res) => {
         const KCDetails = commonContent.getKCDetails(res);
         const keys = cache.keys();
         const itemsByTypes = splitPayloadByContentType(items);
-        await fastly.purgeInitial(items, res);
+        await fastly.purgeInitial(itemsByTypes, items, res);
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'picker', 'platformsConfig');
         await invalidateUrlMap(res, KCDetails);
         await invalidateHome(res, KCDetails);

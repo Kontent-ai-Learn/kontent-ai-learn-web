@@ -97,7 +97,7 @@ const purgeAllTechUrls = async (res) => {
   }
 };
 
-const purgeInitial = async (items, res) => {
+const purgeInitial = async (itemsByTypes, items, res) => {
   if (isPreview(res.locals.previewapikey)) return;
 
   for (let i = 0; i < items.length; i++) {
@@ -108,6 +108,10 @@ const purgeInitial = async (items, res) => {
         await purgeRedirectRule(items[i].codename, res);
       }
     }
+  }
+
+  if (itemsByTypes.home.length) {
+    await purgeAllUrls(res);
   }
 };
 
