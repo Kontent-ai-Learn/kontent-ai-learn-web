@@ -5,13 +5,23 @@
         display: flex;
     }
 
-    &__body {
+    &__body,
+    &__introduction,
+    &__next-steps {
         position: relative;
-        z-index: 1;
+        z-index: 2;
         
         & > * {
             position: relative;
         }
+
+        & > div:not([class]) > * {
+            position: relative;
+        }
+    }
+
+    &__next-steps {
+        z-index: 1;
     }
 
 	&__left {
@@ -477,7 +487,7 @@
 
     &__introduction {
         position: relative;
-        z-index: 2;
+        z-index: 3;
         @media screen and (min-width: 480px) {
             display: flex;
             justify-content: space-between;

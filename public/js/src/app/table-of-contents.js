@@ -227,7 +227,7 @@
 
     const handleHeadingsOverlay = () => {
         // Purpose of this function is to reverse z-index elements order to ensure all text in articles is selectable
-        const articleBodyElems = document.querySelectorAll('.article__body > *');
+        const articleBodyElems = document.querySelectorAll('.article__introduction > *, .article__body > *, .article__next-steps > *, .article__introduction > div:not([class]) > *, .article__body > div:not([class]) > *, .article__next-steps > div:not([class]) > *');
         for (let i = 0; i < articleBodyElems.length; i++) {
             articleBodyElems[i].style.zIndex = articleBodyElems.length - i;
         }
