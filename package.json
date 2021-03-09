@@ -12,7 +12,7 @@
         "url": "git+https://github.com/KenticoDocs/kontent-docs-web.git"
     },
     "engines": {
-        "node": "14.15.0",
+        "node": "14.15.1",
         "npm": "6.14.8"
     },
     "keywords": [
