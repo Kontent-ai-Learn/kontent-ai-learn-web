@@ -4,7 +4,7 @@
     "scripts": {
         "start": "node server.js",
         "debug": "gulp",
-        "eslint": "npx eslint .",
+        "test": "npx eslint .",
         "postinstall": "gulp build"
     },
     "repository": {
