@@ -46,7 +46,7 @@ const processLinks = ($) => {
         var $that = $(this);
         $that.attr('rel', 'nofollow');
     });
-    $('a[data-item-id]').each(function () {
+    $('a').each(function () {
         const $that = $(this);
         let text = $that.text();
         const found = text.match(/{#[^#]+#}/);
