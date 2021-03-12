@@ -46,6 +46,18 @@ const processLinks = ($) => {
         var $that = $(this);
         $that.attr('rel', 'nofollow');
     });
+    $('a[data-item-id]').each(function () {
+        const $that = $(this);
+        let text = $that.text();
+        const found = text.match(/{#[^#]+#}/);
+        if (!found) return;
+        const macro = found[0];
+        const anchor = macro.replace('{#', '').replace('#}', '');
+        text = text.replace(macro, '').trim();
+        const href = $that.attr('href');
+        $that.attr('href', `${href}#${anchor}`);
+        $that.text(text);
+    });
 };
 
 const createAnchors = ($) => {
