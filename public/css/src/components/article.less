@@ -107,15 +107,19 @@
         }
 
         &:before {
-            content: @icon-menu;
+            content: "\e650";
             font-family: 'kentico-icons';
             font-size: 1.5em;
             color: #231F20;
+
+            .reskin & {
+                font-family: 'kentico-icons-reskin';
+            }
         }
 
         &.trigger-active {
             &:before {
-                content: @icon-modal-close;
+                content: "\e64a";
             }
         }
     }
@@ -411,13 +415,17 @@
             display: inline-block;
 
             &:after {
-                content: @icon-circle;
+                content: "\e6ac";
                 font-family: 'kentico-icons';
                 display: inline-block;
                 padding: 0 2em;
                 font-size: .25em;
                 position: relative;
                 top: -1em;
+
+                .reskin & {
+                    font-family: 'kentico-icons-reskin';
+                }
             }
 
             &:last-child {

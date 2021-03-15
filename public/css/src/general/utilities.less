@@ -187,7 +187,7 @@ input[type="search"] {
     }
 
     &:after {
-        content: @icon-arrow-right-top-square;
+        content: "\e6d8";
         font-family: 'kentico-icons';
         font-style: normal;
         display: inline-block;
@@ -196,6 +196,10 @@ input[type="search"] {
         position: relative;
         top: -.325em;
         text-indent: 0;
+
+        .reskin & {
+            font-family: 'kentico-icons-reskin';
+        }
     }
 
     .no-icon & {

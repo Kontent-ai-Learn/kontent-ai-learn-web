@@ -7,7 +7,6 @@ const urlWhitelist = [
   '/other/*',
   '/form/*',
   '/urlmap',
-  '/kentico-icons.min.css',
   '/favicon.ico',
   '/rss/*',
   '/redirect-urls',
@@ -76,21 +75,6 @@ const appHelper = {
     } else {
       res.locals.securedapikey = process.env['KC.SecuredApiKey'];
     }
-  },
-  isOneOfCacheRevalidate: (req) => {
-    const urls = [
-      '/kentico-icons.min.css'
-    ];
-
-    let revalidate = true;
-
-    for (var i = 0; i < urls.length; i++) {
-      if (req.originalUrl.startsWith(urls[i])) {
-        revalidate = false;
-      }
-    }
-
-    return revalidate;
   },
   getProjectLanguage: async (res) => {
     const languages = await commonContent.getLanguages(res);

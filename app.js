@@ -23,14 +23,12 @@ const handleCache = require('./helpers/handleCache');
 const commonContent = require('./helpers/commonContent');
 const isPreview = require('./helpers/isPreview');
 const fastly = require('./helpers/fastly');
-
 const home = require('./routes/home');
 const articles = require('./routes/articles');
 const sitemap = require('./routes/sitemap');
 const rss = require('./routes/rss');
 const robots = require('./routes/robots');
 const opensearch = require('./routes/opensearch');
-const kenticoIcons = require('./routes/kenticoIcons');
 const urlMap = require('./routes/urlMap');
 const urlAliases = require('./routes/urlAliases');
 const redirectUrls = require('./routes/redirectUrls');
@@ -127,20 +125,17 @@ app.use('/', redirectRules);
 app.use('/form', bodyParser.text({
   type: '*/*'
 }), form);
-app.use('/kentico-icons.min.css', kenticoIcons);
 app.use('/', asyncHandler(async (req, res, next) => {
-  if (appHelper.isOneOfCacheRevalidate(req)) {
-    await handleCache.evaluateCommon(res, ['platformsConfig', 'urlMap', 'footer', 'UIMessages', 'home', 'navigationItems', 'articles', 'scenarios', 'termDefinitions']);
+  await handleCache.evaluateCommon(res, ['platformsConfig', 'urlMap', 'footer', 'UIMessages', 'home', 'navigationItems', 'articles', 'scenarios', 'termDefinitions']);
 
-    const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-      return await commonContent.getUIMessages(res);
-    });
-    if (UIMessages && UIMessages.length) {
-      res.locals.UIMessages = UIMessages[0];
-    }
-
-    await handleCache.cacheAllAPIReferences(res);
+  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
+    return await commonContent.getUIMessages(res);
+  });
+  if (UIMessages && UIMessages.length) {
+    res.locals.UIMessages = UIMessages[0];
   }
+
+  await handleCache.cacheAllAPIReferences(res);
   const exists = await appHelper.pageExists(req, res, next);
   if (!exists) {
     return await urlAliases(req, res, next);
