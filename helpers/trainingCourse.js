@@ -18,7 +18,7 @@ const isCourseAvailable = (user) => {
     }
 
     for (let j = 0; j < user.customerSuccessSubscriptions[i].activePackages.length; j++) {
-      if (user.customerSuccessSubscriptions[i].activePackages[j].name === 'elearning-all') {
+      if (user.customerSuccessSubscriptions[i].activePackages[j].name.includes('elearning')) {
         return true;
       }
     }
