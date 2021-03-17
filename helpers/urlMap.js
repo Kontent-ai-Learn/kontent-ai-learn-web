@@ -85,9 +85,8 @@ const redefineTypeLevelArticle = (response, urlLength) => {
     return level;
 };
 
-const handleLangForMultiplatformArticle = async (queryString, item, res) => {
-    queryString = '?tech=';
-    const cachedPlatforms = await ensureSingle(res, 'platformsConfig', async () => {
+const getPlatforms = async (res) => {
+    return await ensureSingle(res, 'platformsConfig', async () => {
         const KCDetails = {
             projectid: res.locals.projectid,
             previewapikey: res.locals.previewapikey,
@@ -100,6 +99,26 @@ const handleLangForMultiplatformArticle = async (queryString, item, res) => {
             ...KCDetails
         });
     });
+};
+
+const handleLangForArticle = async (platformCodename, res) => {
+    let queryString = '?tech=';
+    const cachedPlatforms = await getPlatforms(res);
+
+    if (cachedPlatforms && cachedPlatforms.length && platformCodename) {
+        const tempPlatform = cachedPlatforms[0].options.value.filter(elem => platformCodename === elem.platform.value[0].codename);
+        if (tempPlatform.length) {
+            queryString += tempPlatform[0].url.value;
+        }
+    }
+
+    return queryString;
+}
+
+const handleLangForMultiplatformArticle = async (queryString, item, res) => {
+    queryString = '?tech=';
+    const cachedPlatforms = await getPlatforms(res);
+
     if (cachedPlatforms && cachedPlatforms.length && item.platform && item.platform.value.length) {
         const tempPlatform = cachedPlatforms[0].options.value.filter(elem => item.platform.value[0].codename === elem.platform.value[0].codename);
         if (tempPlatform.length) {
@@ -114,7 +133,7 @@ const addItemToMap = (settings) => {
     // Do not place multiplatform articles (urls without tech qs) in sitemap
     if (!(settings.type === 'multiplatform_article' && settings.isSitemap)) {
         settings.urlMap.push(getMapItem({
-            codename: settings.item.system.codename,
+            codename: `${settings.item.system.codename}${settings.platform ? `|${settings.platform}` : ''}`,
             url: `/${settings.url.join('/')}${settings.queryString}${settings.hash}`,
             date: settings.item.system.lastModified,
             visibility: settings.item.visibility && settings.item.visibility.value.length ? settings.item.visibility.value : null,
@@ -225,7 +244,7 @@ const handleNode = async (settings) => {
 
     // Add url to map
     if (typeLevels[settings.item.system.type]) {
-        settings.urlMap = addItemToMap({
+        const mapObj = {
             urlMap: settings.urlMap,
             item: settings.item,
             url: settings.url,
@@ -233,7 +252,18 @@ const handleNode = async (settings) => {
             hash: settings.hash,
             type: settings.item.system.type,
             isSitemap: settings.isSitemap
-        });
+        }
+
+        settings.urlMap = addItemToMap(mapObj);
+
+        // If is article that is not a part of a multiplatform atricle and has platforms, add it in the url map too
+        if (settings.item.system.type === 'article' && settings.response.system.type !== 'multiplatform_article') {
+            for (let i = 0; i < settings.item.platform.value.length; i++) {
+                mapObj.queryString = await handleLangForArticle(settings.item.platform.value[i].codename, settings.res);
+                mapObj.platform = settings.item.platform.value[i].codename;
+                settings.urlMap = addItemToMap(mapObj);
+            }
+        }
     }
 
     settings.queryString = '';
