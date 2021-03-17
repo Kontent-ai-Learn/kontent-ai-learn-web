@@ -170,6 +170,13 @@ const invalidateMultiple = async (itemsByTypes, KCDetails, type, res) => {
 };
 
 const invalidateArticles = async (itemsByTypes, KCDetails, res) => {
+    if (itemsByTypes.home.length) {
+        const articles = handleCache.getCache('articles', KCDetails);
+        for (let i = 0; i < articles.length; i++) {
+            itemsByTypes.articles.push({ codename: articles[i].system.codename })
+        }
+    }
+
     if (itemsByTypes.articles.length) {
         await revalidateReleaseNoteType(KCDetails, res);
         await revalidateTrainingCourseType(KCDetails, res);
@@ -182,6 +189,13 @@ const invalidateArticles = async (itemsByTypes, KCDetails, res) => {
 };
 
 const invalidateScenarios = async (itemsByTypes, KCDetails, res) => {
+    if (itemsByTypes.home.length) {
+        const scenarios = handleCache.getCache('scenarios', KCDetails);
+        for (let i = 0; i < scenarios.length; i++) {
+            itemsByTypes.scenarios.push({ codename: scenarios[i].system.codename })
+        }
+    }
+
     if (itemsByTypes.scenarios.length) {
         await deleteSpecificKeys(KCDetails, itemsByTypes.scenarios, res);
         handleCache.deleteCache('scenarios', KCDetails);
