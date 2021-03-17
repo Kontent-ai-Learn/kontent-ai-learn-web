@@ -151,7 +151,7 @@ const invalidateGeneral = async (itemsByTypes, KCDetails, res, type, keyName) =>
         keyName = type;
     }
 
-    if (itemsByTypes[type].length) {
+    if (itemsByTypes[type].length || itemsByTypes.home.length) {
         handleCache.deleteCache(keyName, KCDetails);
         await handleCache.evaluateCommon(res, [keyName]);
     }
