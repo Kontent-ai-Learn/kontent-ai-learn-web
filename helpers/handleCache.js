@@ -116,21 +116,21 @@ const ensureSingle = async (res, keyName, method) => {
     return getCache(keyName, KCDetails);
 };
 
-const cacheAllAPIReferences = async (res) => {
+const cacheAllAPIReferences = async (res, forceCacheRevalidate) => {
     const KCDetails = commonContent.getKCDetails(res);
     const provideReferences = async (apiCodename, KCDetails) => {
         await helper.getReferenceFiles(apiCodename, true, KCDetails, 'cacheAllAPIReferences');
     };
     const keys = cache.keys();
     let references;
-    if (!(keys.filter(item => item.indexOf('reDocReference_') > -1).length) && !KCDetails.isPreview) {
+    if ((!(keys.filter(item => item.indexOf('reDocReference_') > -1).length) || !!forceCacheRevalidate) && !KCDetails.isPreview) {
         references = await evaluateSingle(res, 'apiSpecifications', async () => {
             return commonContent.getReferences(res);
         });
 
         if (references && references.length) {
             for (const value of references) {
-                provideReferences(value.system.codename, KCDetails)
+                provideReferences(value.system.codename, KCDetails);
             }
         }
     }

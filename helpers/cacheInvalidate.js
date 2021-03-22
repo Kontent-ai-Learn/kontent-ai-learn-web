@@ -210,6 +210,10 @@ const invalidateAPISpecifications = async (itemsByTypes, KCDetails, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'apiSpecifications');
         await deleteSpecificKeys(KCDetails, itemsByTypes.apiSpecifications, res);
     }
+
+    if (itemsByTypes.home.length) {
+        await handleCache.cacheAllAPIReferences(res, true);
+    }
 };
 
 const invalidateHome = async (res, KCDetails) => {
