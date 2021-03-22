@@ -48,7 +48,7 @@ const processLinks = ($) => {
     });
     $('a').each(function () {
         const $that = $(this);
-        let text = $that.text();
+        let text = $that.html();
         const found = text.match(/{#[^#]+#}/);
         if (!found) return;
         const macro = found[0];
@@ -56,7 +56,7 @@ const processLinks = ($) => {
         text = text.replace(macro, '').trim();
         const href = $that.attr('href');
         $that.attr('href', `${href}#${anchor}`);
-        $that.text(text);
+        $that.html(text);
     });
 };
 
