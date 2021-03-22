@@ -34,7 +34,7 @@
     "dependencies": {
         "@babel/core": "^7.12.16",
         "@babel/preset-env": "^7.12.16",
-        "@kentico/kontent-delivery": "^10.3.0",
+        "@kentico/kontent-delivery": "^10.4.0",
         "@kentico/kontent-smart-link": "^1.2.2",
         "@kentico/kontent-webhook-helper": "^1.1.0",
         "@sendgrid/mail": "^7.4.2",

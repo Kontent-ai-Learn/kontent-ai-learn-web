@@ -5,6 +5,7 @@ const {
 const enhanceMarkup = require('./enhanceMarkup');
 const helpers = require('./helperFunctions');
 const app = require('../app');
+const isPreview = require('./isPreview');
 
 const richTextResolverTemplates = require('./richTextResolverTemplates');
 const linksResolverTemplates = require('./linksResolverTemplates');
@@ -54,6 +55,8 @@ const defineQuery = (deliveryConfig, config) => {
     }
 
     let query = deliveryClient.items();
+
+    query.notEqualsFilter('system.workflow_step', 'archived');
 
     if (config.type) {
         query.type(config.type);
@@ -187,6 +190,28 @@ const extendLinkedItems = (response) => {
     return response;
 };
 
+const removeArchivedLinkedItems = (items) => {
+    for (const item of items) {
+        for (const prop in item) {
+            if (Object.prototype.hasOwnProperty.call(item, prop)) {
+                if (item[prop] && item[prop].type === 'modular_content') {
+                    for (const modularItem of item[prop].value) {
+                        if (modularItem._raw.system.workflow_step === 'archived') {
+                            const codename = modularItem.system.codename;
+                            item[prop].rawData.value = item[prop].rawData.value.filter(value => value !== codename);
+                            item[prop].itemCodenames = item[prop].itemCodenames.filter(value => value !== codename);
+                        }
+                    }
+                    item[prop].value = item[prop].value.filter(value => value._raw.system.workflow_step !== 'archived');
+                    item[prop].value = removeArchivedLinkedItems(item[prop].value);
+                }
+            }
+        }
+    }
+
+    return items;
+};
+
 const getResponse = async (query, config) => {
     let error;
     let response = await query
@@ -211,6 +236,10 @@ const getResponse = async (query, config) => {
                 temps.push(++temp);
             }
         }
+    }
+
+    if (isPreview(config.previewapikey) && response && response.items) {
+        response.items = removeArchivedLinkedItems(response.items);
     }
 
     if (config.resolveRichText && response && response.items) {
