@@ -7,7 +7,7 @@ if description
     - description = description.trim().replace(/\s+/g, ' ').replace(/"/g, '&quot;')
     meta(name='description', content=description)
     meta(property='og:description', content=description)
-meta(property='og:image', content=`${process.env.baseURL}/img/kentico-kontent-og.jpg`)
+meta(property='og:image', content=`${helper.getDomain()}/img/kentico-kontent-og.jpg`)
 if !isPreview
     if ((content && content.visibility && content.visibility.value.filter(item => item.codename === 'excluded_from_search').length) || status === 404)
         meta(name='robots', content='noindex,nofollow')
