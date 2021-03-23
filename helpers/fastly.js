@@ -155,7 +155,7 @@ const purgeFinal = async (itemsByTypes, req, res) => {
 
 const preventCaching = (res) => {
   res.removeHeader('Surrogate-Control');
-  res.setHeader('Cache-Control', 'private,no-store,no-cache,max-age=0');
+  res.setHeader('Cache-Control', 'no-store,max-age=0');
   return res;
 };
 
@@ -163,15 +163,15 @@ const handleGlobalCaching = (req, res) => {
   res.setHeader('Arr-Disable-Session-Affinity', 'True');
 
   if (req.originalUrl.startsWith('/cache-invalidate') || req.originalUrl.startsWith('/redirect-urls')) {
-    res.setHeader('Cache-Control', 'private,no-store,no-cache');
+    res.setHeader('Cache-Control', 'no-store, max-age=0');
   } else {
-    res.setHeader('Cache-Control', 'max-age=0,must-revalidate,public');
+    res.setHeader('Cache-Control', 'max-age=600, stale-while-revalidate=3000');
   }
 
   if (!(isPreview(res.locals.previewapikey) || (req.originalUrl.indexOf('/cache-invalidate') > -1))) {
     // https://docs.fastly.com/en/guides/serving-stale-content#manually-enabling-serve-stale
-    // update the content after 24 hours (86400 seconds) but if the origin is down then show stale content for three days (259200 seconds)
-    res.setHeader('Surrogate-Control', 'max-age=86400, stale-if-error=259200');
+    // update the content after 24h; serve stale for 1d after max-age passes; show stale for 3d if origin down
+    res.setHeader('Surrogate-Control', 'max-age=86400, stale-while-revalidate=86400, stale-if-error=259200');
   }
 
   return res;
