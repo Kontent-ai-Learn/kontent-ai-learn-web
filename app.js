@@ -3,7 +3,6 @@ const appInsights = require('applicationinsights');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
 const compression = require('compression');
 const logger = require('morgan');
 const asyncHandler = require('express-async-handler');
@@ -81,7 +80,7 @@ app.set('view engine', 'pug');
 
 app.use(compression());
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({
+app.use(express.urlencoded({
   extended: false
 }));
 app.use(cookieParser());
@@ -115,14 +114,14 @@ app.use(async (req, res, next) => {
 
 // Routes
 app.use('/link-to', linkUrls);
-app.use('/reference-updated', bodyParser.json({
+app.use('/reference-updated', express.json({
   type: '*/*'
 }), referenceUpdated);
-app.use('/cache-invalidate', bodyParser.text({
+app.use('/cache-invalidate', express.text({
   type: '*/*'
 }), cacheInvalidate);
 app.use('/', redirectRules);
-app.use('/form', bodyParser.text({
+app.use('/form', express.text({
   type: '*/*'
 }), form);
 app.use('/', asyncHandler(async (req, res, next) => {
