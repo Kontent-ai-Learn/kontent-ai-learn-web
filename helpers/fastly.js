@@ -165,7 +165,7 @@ const handleGlobalCaching = (req, res) => {
   if (req.originalUrl.startsWith('/cache-invalidate') || req.originalUrl.startsWith('/redirect-urls')) {
     res.setHeader('Cache-Control', 'no-store, max-age=0');
   } else {
-    res.setHeader('Cache-Control', 'max-age=600, stale-while-revalidate=3000');
+    res.setHeader('Cache-Control', 'max-age=60');
   }
 
   if (!(isPreview(res.locals.previewapikey) || (req.originalUrl.indexOf('/cache-invalidate') > -1))) {
