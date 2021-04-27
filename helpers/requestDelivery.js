@@ -136,7 +136,7 @@ const componentsResolvers = [{
 const resolveRichText = (item, config) => {
     item = linksResolverTemplates.resolveInnerRichTextLinks(item, config.urlMap);
 
-    for (var i = 0; i < config.componentsResolvers.length; i++) {
+    for (let i = 0; i < config.componentsResolvers.length; i++) {
         if (item.system.type === config.componentsResolvers[i].type) {
             compomentsInRichText.push({
                 codename: item.system.codename,

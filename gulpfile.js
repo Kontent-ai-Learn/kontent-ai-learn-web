@@ -16,6 +16,7 @@ const axios = require('axios');
 const axiosRetry = require('axios-retry');
 const localUrl = 'http://localhost:3000';
 let nodemonStarted = false;
+const browserSyncPort = 3099;
 
 axiosRetry(axios, {
   retries: 20,
@@ -306,7 +307,7 @@ gulp.task('watch', (done) => {
 gulp.task('browser-sync', (done) => {
   browserSync.init({
     proxy: localUrl,
-    port: 3099
+    port: browserSyncPort
   });
   done();
 });
@@ -318,7 +319,7 @@ gulp.task('observe', async () => {
   }).on('start', () => {
       if (!nodemonStarted) {
         nodemonStarted = true;
-        console.log('\x1b[36m%s\x1b[0m', 'Waiting for browser-sync to attach...');
+        console.log('\x1b[36m%s\x1b[0m', `Waiting for browser-sync to attach on port ${browserSyncPort}...`);
         axios.get(localUrl)
           .then(() => {
             return gulp.parallel(['browser-sync', 'watch'])();

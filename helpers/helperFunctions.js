@@ -25,7 +25,7 @@ const helper = {
         return unsafe.replace(/\r?\n|\r/g, '');
     },
     getFormValue: (formValues, fieldName) => {
-        var value = '';
+        let value = '';
         if (typeof formValues !== 'undefined') {
             value = formValues[fieldName] || '';
         }
@@ -279,8 +279,7 @@ const helper = {
         return urls?.value ? urls.value.trim().replace(/\n/g, '').split(';') : [];
     },
     isAbsoluteUrl: (url) => {
-        const pattern = new RegExp('^(?:[a-z]+:)?//', 'i');
-        return pattern.test(url);
+        return /^(?:[a-z]+:)?\/\//.test(url);
     },
     logInCacheKey: (key, log) => {
         const logs = cache.get(key) || [];

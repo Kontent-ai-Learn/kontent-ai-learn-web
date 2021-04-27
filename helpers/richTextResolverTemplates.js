@@ -255,14 +255,16 @@ const richTextResolverTemplates = {
         return `
             <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'component')}>
                 <a class="selection__link" href="${resolvedUrl}"${resolvedUrl.indexOf('tech={tech}') > -1 ? ' rel="nofollow"' : ''}>
-                    ${item.image.value[0] ? `
+                    ${item.image.value[0]
+? `
                         <div class="selection__img-sizer"${getSmartLinkAttr(config, 'image', 'element')}>
                             <img class="selection__img lazy lazy--exclude-dnt" data-dpr data-lazy-onload src='${placeholderSrc}' data-src="${imageSrc}"${imageWidth && imageHeight ? `width="${imageWidth}" height="${imageHeight}"` : ''}>
                             <noscript>
                                 <img class="selection__img" src="${imageSrc}">
                             </noscript>
                         </div> 
-                    ` : ''}
+                    `
+: ''}
                     ${item.title.value ? `<div class="selection__title"${getSmartLinkAttr(config, 'title', 'element')}>${item.title.value}</div>` : ''}
                     ${helper.isNotEmptyRichText(item.description.value) ? `<div class="selection__description"${getSmartLinkAttr(config, 'description', 'element')}>${item.description.value}</div>` : ''}
                 </a>
@@ -448,11 +450,13 @@ const richTextResolverTemplates = {
                 ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                 <div class="article__info-bar">
                     <time class="article__date article__date--body" datetime="${moment(item.release_date.value).format('YYYY-MM-DD')}"${getSmartLinkAttr(config, 'release_date', 'element')}>${isPlanned ? 'Planned for ' : ''}${moment(item.release_date.value).format('MMMM D, YYYY')}</time>
-                    ${displaySeverity || services ? `
+                    ${displaySeverity || services
+? `
                         <ul class="article__tags">
                             ${displaySeverity ? `<li class="article__tags-item article__tags-item--red"${getSmartLinkAttr(config, 'severity', 'element')}>${severityName}</li>` : ''}
                             ${services}
-                        </ul>` : ''}
+                        </ul>`
+: ''}
                 </div>
                 <div${getSmartLinkAttr(config, 'content', 'element')}>
                     ${item.content.value}
@@ -489,21 +493,25 @@ const richTextResolverTemplates = {
         const imageHeight = item.thumbnail.value[0] ? item.thumbnail.value[0].height || 0 : 0;
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
         const image = item.thumbnail.value.length ? `${item.thumbnail.value[0].url}?auto=format&w=116&fm=pjpg` : null;
-        const imageMarkup = image ? `
+        const imageMarkup = image
+? `
             <img class="lazy lazy--exclude-dnt" src='${placeholderSrc}' data-src="${image}" alt="" data-dpr data-lazy-onload loading="lazy" ${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
             <noscript>
                 <img src="${image}" ${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
             </noscript>
-        ` : '';
+        `
+: '';
 
         return `
             <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}"${getSmartLinkAttr(config, item.system.id, 'item')}>
                 <h3${getSmartLinkAttr(config, 'title', 'element')}>${url ? `<a href="${url}">${item.title.value}</a>` : `${item.title.value}`}</h3>
                 ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                 <div class="article__introduction">
-                    ${image ? `
+                    ${image
+? `
                         ${url ? `<a href="${url}" class="article__introduction-image">${imageMarkup}</a>` : `<div class="article__introduction-image">${imageMarkup}</div>`}
-                    ` : ''}
+                    `
+: ''}
                     <div class="article__introduction-content">
                         <div class="article__info-bar">
                             ${personas.length ? `<ul class="article__tags"${getSmartLinkAttr(config, 'persona', 'element')}>` : ''}
@@ -513,12 +521,14 @@ const richTextResolverTemplates = {
                         <div${getSmartLinkAttr(config, 'introduction', 'element')}>
                             ${item.introduction.value}
                         </div>
-                        ${url && config.UIMessages && config.UIMessages.training___view_details ? `  
+                        ${url && config.UIMessages && config.UIMessages.training___view_details
+? `  
                             <a href="${url}" class="call-to-action call-to-action--small"${getSmartLinkAttr(config, config.UIMessages.system.id, 'item')}${getSmartLinkAttr(config, 'training___view_details', 'element')}>
                                 <span>${config.UIMessages.training___view_details.value}</span>
                                 <span></span>
                             </a>
-                        ` : ''}
+                        `
+: ''}
                     </div>
                 </div>
             </div>

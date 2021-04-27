@@ -5,7 +5,7 @@ const consola = require('consola');
 
 // Normalize a port into a number, string, or false.
 const normalizePort = val => {
-    var port = parseInt(val, 10);
+    const port = parseInt(val, 10);
 
     if (isNaN(port)) {
         // named pipe
@@ -30,7 +30,7 @@ const onError = error => {
         throw error;
     }
 
-    var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+    const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
     // Handle specific listen errors with friendly messages
     if (error.code === 'EACCES') {
@@ -49,8 +49,8 @@ const server = http.createServer(app);
 
 // Event listener for HTTP server 'listening' event.
 const onListening = () => {
-    var addr = server.address();
-    var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    const addr = server.address();
+    const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
     debug('Listening on ' + bind);
 };
 

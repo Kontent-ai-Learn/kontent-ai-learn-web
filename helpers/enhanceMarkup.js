@@ -5,22 +5,22 @@ const helper = require('./helperFunctions');
 
 const replaceNodeWithItsContent = ($, selector) => {
     $(selector).each(function() {
-        var contents = $(this).contents();
+        const contents = $(this).contents();
         $(this).replaceWith(contents);
     });
 };
 
 const replaceTooltipSpaces = ($) => {
     $('a[href^="#term-definition-"]').each(function() {
-        var $that = $(this);
+        const $that = $(this);
         $that.html($that.html().replace(/\s/g, '&nbsp;'));
     });
 };
 
 const setWidthToImages = ($) => {
     $('img[data-asset-id]').each(function() {
-        var $that = $(this);
-        var src = $that.attr('src');
+        const $that = $(this);
+        const src = $that.attr('src');
         if (src && !src.endsWith('.gif')) {
             $that.attr('src', src + '?w=926&fm=pjpg&auto=format');
         }
@@ -33,17 +33,17 @@ const removeEmptyParagraph = ($) => {
 
 const processLinks = ($) => {
     $('a[data-item-id][href=""]').each(function () {
-        var $that = $(this);
+        const $that = $(this);
         $that.removeAttr('data-item-id');
         $that.attr('href', '/page-not-found');
     });
     $('a[target="_blank"]:not([data-lightbox]):not(.edit-link)').each(function () {
-        var $that = $(this);
-        var linkHTML = $that.html() + '<span class="a-blank"><span>Opens in a new window</span></span>';
+        const $that = $(this);
+        const linkHTML = $that.html() + '<span class="a-blank"><span>Opens in a new window</span></span>';
         $that.html(linkHTML);
     });
     $('a[href*="tech={tech}"]').each(function () {
-        var $that = $(this);
+        const $that = $(this);
         $that.attr('rel', 'nofollow');
     });
     $('a').each(function () {
@@ -65,7 +65,7 @@ const createAnchors = ($) => {
     const anchorNameList = [];
 
     $headings.each(function () {
-        var $that = $(this);
+        const $that = $(this);
         const anchorName = helper.generateAnchor($that.html());
         anchorNameList.push(anchorName);
         let anchorNameCount = 0;
