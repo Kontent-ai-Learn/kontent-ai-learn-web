@@ -41,7 +41,7 @@ const getImageAttributes = (item, cssClass, transformationQueryString) => {
     }
 
     if (item.image.value.length && item.image.value[0].url.endsWith('.gif')) {
-        transformationQueryString = '';
+        transformationQueryString = '?fm=mp4';
     }
 
     return {
@@ -315,19 +315,32 @@ const richTextResolverTemplates = {
             const alt = item.image.value[0].description ? helper.escapeQuotesHtml(item.image.value[0].description) : '';
             const url = item.url.value.trim();
             const transformationQueryString = '?fm=pjpg&auto=format&w=';
+            const zoomable = item.zoomable.value.length && item.zoomable.value[0].codename === 'true';
             let cssClass = ' article__image-border'; // Always show border
-            // cssClass += item.border.value.length && item.border.value[0].codename === 'show' ? ' article__image-border' : '';
-            cssClass += item.zoomable.value.length && item.zoomable.value[0].codename === 'true' && !url ? ' article__add-lightbox' : '';
+            cssClass += zoomable && !url ? ' article__add-lightbox' : '';
             const imageWidth = item.image.value[0] ? item.image.value[0].width || 0 : 0;
             const imageHeight = item.image.value[0] ? item.image.value[0].height || 0 : 0;
             const openLinkTag = url ? `<a href="${url}" target="_blank" class="no-icon"${getSmartLinkAttr(config, 'url', 'element')}>` : '';
             const closeLinkTag = url ? '</a>' : '';
             const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${item.image.value[0].width}" height="${item.image.value[0].height}"></svg>`;
             const attributes = getImageAttributes(item, cssClass, transformationQueryString);
+
+            if (item.image.value[0].url.endsWith('.gif')) {
+                return `
+                    <figure${getSmartLinkAttr(config, item.system.id, 'component')}>
+                        ${openLinkTag}
+                            <video class="article__image ${attributes.cssClass}" autoplay muted loop playsinline${imageWidth && imageHeight ? ` style="height:auto" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-video' : ''}>
+                                <source src="${item.image.value[0].url}${attributes.transformationQueryString}" type="video/mp4">
+                            </video>
+                        ${closeLinkTag}
+                        ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}>${item.description.value}</figcaption>` : ''}
+                    </figure>`;
+            }
+
             return `
                 <figure${getSmartLinkAttr(config, item.system.id, 'component')}>
                     ${openLinkTag}
-                        <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src='${placeholderSrc}' data-src="${item.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}>
+                        <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src='${placeholderSrc}' data-src="${item.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-image' : ''}>
                     ${closeLinkTag}
                     <noscript>
                         ${openLinkTag}

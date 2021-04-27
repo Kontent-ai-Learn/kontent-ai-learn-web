@@ -130,10 +130,16 @@
 
     &__image-border {
         border: .20em solid #D3D2D2;
+
+        .basicLightbox & {
+            border: none;
+        }
     }
 
-    & img&__image {
+    & img&__image,
+    & video&__image {
         box-sizing: border-box;
+        max-width: 100%;
         
         @media screen and (min-width: 768px) {
             &--100{
@@ -152,6 +158,7 @@
                 max-width: 25%;
             }
 
+            & + figcaption
             & + noscript + figcaption {
                 max-width: 100%;
             }
@@ -442,6 +449,10 @@
 
     &__add-lightbox {
         cursor: pointer;
+
+        .basicLightbox & {
+            cursor: default;
+        }
     }
 
     &__date {

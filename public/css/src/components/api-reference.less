@@ -685,13 +685,24 @@ figure {
 .article {
   &__add-lightbox {
     cursor: pointer;
+
+    .basicLightbox & {
+      cursor: default;
+    }
   }
 
   &__image-border {
     border: .25em solid #E3E9EC;
+
+    .basicLightbox & {
+      border: none;
+    }
   }
 
-  img&__image {
+  img&__image,
+  video&__image {
+    max-width: 100%;
+
     @media screen and (min-width: 768px) {
       &--100 {
         max-width: 75% !important;
