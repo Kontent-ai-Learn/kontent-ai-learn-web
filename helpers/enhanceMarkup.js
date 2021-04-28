@@ -37,7 +37,7 @@ const processLinks = ($) => {
         $that.removeAttr('data-item-id');
         $that.attr('href', '/page-not-found');
     });
-    $('a[target="_blank"]:not([data-lightbox]):not(.edit-link)').each(function () {
+    $('a[target="_blank"]:not([data-lightbox-embed]):not(.edit-link)').each(function () {
         const $that = $(this);
         const linkHTML = $that.html() + '<span class="a-blank"><span>Opens in a new window</span></span>';
         $that.html(linkHTML);

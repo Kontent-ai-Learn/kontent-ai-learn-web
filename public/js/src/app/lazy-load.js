@@ -118,7 +118,7 @@
             wrapper[0].insertBefore(window.helper.createElementFromHTML(`<div class="embed__dnt-enable">${window.helper.decodeHTMLEntities(label)}</div>`), wrapper[0].firstChild);
             const btn = item.parentNode.nextElementSibling;
 
-            if (btn.hasAttribute('data-lightbox')) {
+            if (btn.hasAttribute('data-lightbox-embed')) {
                 btn.classList.add('hidden');
             }
         });

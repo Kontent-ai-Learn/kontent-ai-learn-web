@@ -146,7 +146,7 @@ const getDiagramsnetTemplate = (cssClass, item, config, elemId) => {
     return `
         <div class="embed embed--diagrams-net${cssClass}" id="embed-${elemId}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
             <iframe width="2000" height="1125" class="lazy" frameborder="0" data-src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
-            <a data-lightbox="embed-${elemId}" target="_blank" href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>
+            <a data-lightbox-embed="embed-${elemId}" target="_blank" href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>
             <noscript>
                 <iframe frameborder="0" src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
             </noscript>
@@ -329,7 +329,7 @@ const richTextResolverTemplates = {
                 return `
                     <figure${getSmartLinkAttr(config, item.system.id, 'component')}>
                         ${openLinkTag}
-                            <video class="article__image ${attributes.cssClass}" autoplay muted loop playsinline${imageWidth && imageHeight ? ` style="height:auto" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-video' : ''}>
+                            <video class="article__image article__image--video ${attributes.cssClass}" autoplay muted loop playsinline${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-video' : ''}>
                                 <source src="${item.image.value[0].url}${attributes.transformationQueryString}" type="video/mp4">
                             </video>
                         ${closeLinkTag}
