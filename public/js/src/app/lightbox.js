@@ -53,6 +53,11 @@
     basicLightboxInstance.show();
     showCloseButtonOnElemLoaded(elemSelector, basicLightboxInstance);
     registerCloseOnEsc(basicLightboxInstance);
+
+    if (elemSelector === '.video-controls') {
+      videoHelper.initLightbox(basicLightboxInstance.element());
+    }
+
     return basicLightboxInstance;
   };
 
@@ -170,12 +175,13 @@
           let instance;
           item.addEventListener('click', (e) => {
             e.preventDefault();
+            if (e.target.classList.contains('video-controls__elem')) return;
             const itemToZoom = item;
             const wrap = document.createElement('div');
             wrap.appendChild(itemToZoom.cloneNode(true));
 
             if (itemToZoom) {
-              instance = zoomItem('video', instance, wrap.innerHTML, figcaption);
+              instance = zoomItem('.video-controls', instance, wrap.innerHTML, figcaption);
             }
           });
         });

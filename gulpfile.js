@@ -72,6 +72,7 @@ gulp.task('js-app', () => {
       'public/js/src/app/pdf.js',
       'public/js/src/app/instantsearch.js',
       'public/js/src/app/multitech-articles.js',
+      'public/js/src/app/video.js',
       'public/js/src/app/kontent-smart-link.js',
       'public/js/src/app/trigger-on-url-map.js'
     ])
@@ -102,6 +103,7 @@ gulp.task('js-reference', () => {
       'public/js/src/app/button.js',
       'public/js/src/app/code-sample.js',
       'public/js/src/app/instantsearch.js',
+      'public/js/src/app/video.js',
       'public/js/src/app/kontent-smart-link.js',
       'public/js/src/app/trigger-on-url-map.js'
     ])
@@ -229,6 +231,7 @@ gulp.task('css-app', () => {
       'public/css/src/components/items-to-show.less',
       'public/css/src/components/edit-link.less',
       'public/css/src/components/autocomplete.less',
+      'public/css/src/components/video-controls.less',
       'public/css/src/general/print.less'
     ])
     .pipe(concat('app.less'))
@@ -260,6 +263,7 @@ gulp.task('css-reference', () => {
       'public/css/src/components/cookie-bar.less',
       'public/css/src/components/preview-warning.less',
       'public/css/src/components/autocomplete.less',
+      'public/css/src/components/video-controls.less',
       'public/css/src/general/print.less'
     ])
     .pipe(concat('apireference.less'))

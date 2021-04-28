@@ -1,4 +1,4 @@
-window.initSmartLink =(() => {
+window.initSmartLink = (() => {
   const initSDK = () => {
     if (typeof KontentSmartLink !== 'undefined') {
       KontentSmartLink.initialize();

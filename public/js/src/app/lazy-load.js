@@ -13,6 +13,8 @@
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     var elem = entry.target;
+
+                    // Handle images
                     if (elem.classList.contains('lazy') && elem.hasAttribute('data-src')) {
                         elem.src = elem.dataset.src;
                         elem.classList.remove('lazy');
@@ -21,6 +23,17 @@
                             elem.removeAttribute('style');
                         }
                         elemObserver.unobserve(elem);
+                    }
+
+                    // Handle video
+                    if (elem.classList.contains('lazy') && elem.getAttribute('preload') === 'none') {
+                        elem.classList.remove('lazy');
+                        elem.setAttribute('preload', 'auto');
+                        videoHelper.init({
+                            elem: elem,
+                            loop: 3,
+                            customControls: ['play/pause']
+                        })
                     }
                 }
             });

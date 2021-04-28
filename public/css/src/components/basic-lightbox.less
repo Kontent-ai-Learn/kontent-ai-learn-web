@@ -89,7 +89,7 @@
 }
 
 .basicLightbox__placeholder>iframe,
-.basicLightbox__placeholder>video {
+.basicLightbox__placeholder>.video-controls{
     max-width: 95%;
     max-height: 85%;
     background-color: #fff;
@@ -98,7 +98,7 @@
 
 .basicLightbox__placeholder>img + .basicLightbox__description,
 .basicLightbox__placeholder>iframe + .basicLightbox__description,
-.basicLightbox__placeholder>video + .basicLightbox__description {
+.basicLightbox__placeholder>.video-controls + .basicLightbox__description {
     width: 95%;
     margin: 0 auto;
     color: #908e8f;
@@ -132,7 +132,7 @@
 
 .basicLightbox__placeholder>iframe:first-child:last-child,
 .basicLightbox__placeholder>img:first-child:last-child,
-.basicLightbox__placeholder>video:first-child:last-child {
+.basicLightbox__placeholder>.video-controls:first-child:last-child {
     display: block;
     position: absolute;
     top: 0;
@@ -145,12 +145,12 @@
 }
 
 .basicLightbox__placeholder>iframe:first-child:last-child,
-.basicLightbox__placeholder>video:first-child:last-child {
+.basicLightbox__placeholder>.video-controls:first-child:last-child {
     pointer-events: auto
 }
 
 .basicLightbox__placeholder>img:first-child:last-child,
-.basicLightbox__placeholder>video:first-child:last-child {
+.basicLightbox__placeholder>.video-controls:first-child:last-child {
     width: auto;
     height: auto
 }
@@ -161,6 +161,10 @@
     width: 100%;
     height: 100%;
     pointer-events: none
+}
+
+.basicLightbox .video-controls>video {
+    width: 100%;
 }
 
 .basicLightbox--visible .basicLightbox__placeholder {

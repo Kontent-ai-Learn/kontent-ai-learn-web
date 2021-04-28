@@ -329,9 +329,11 @@ const richTextResolverTemplates = {
                 return `
                     <figure${getSmartLinkAttr(config, item.system.id, 'component')}>
                         ${openLinkTag}
-                            <video class="article__image article__image--video ${attributes.cssClass}" autoplay muted loop playsinline${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-video' : ''}>
-                                <source src="${item.image.value[0].url}${attributes.transformationQueryString}" type="video/mp4">
-                            </video>
+                            <div class="video-controls"${zoomable && !url ? ' data-lightbox-video' : ''}>
+                                <video class="article__image article__image--video lazy lazy--exclude-dnt ${attributes.cssClass}" preload="none" muted playsinline${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}>
+                                    <source src="${item.image.value[0].url}${attributes.transformationQueryString}" type="video/mp4">
+                                </video>
+                            </div>
                         ${closeLinkTag}
                         ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}>${item.description.value}</figcaption>` : ''}
                     </figure>`;

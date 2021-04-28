@@ -32,6 +32,7 @@
         "instantsearch": "writable",
         "renderReCaptcha": "writable",
         "KontentSmartLink": "writable",
-        "AlgoliaAnalyticsObject": "writable"
+        "AlgoliaAnalyticsObject": "writable",
+        "videoHelper": "writable"
     }
 }
