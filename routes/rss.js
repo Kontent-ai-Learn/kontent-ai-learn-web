@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
-const { decode } = require('html-entities');
+const Entities = require('html-entities').AllHtmlEntities;
+const entities = new Entities();
 const asyncHandler = require('express-async-handler');
 
 const handleCache = require('../helpers/handleCache');
@@ -31,7 +32,7 @@ router.get('/changelog', asyncHandler(async (req, res) => {
         req: req,
         helper: helper,
         home: home[0],
-        decode: decode,
+        entities: entities,
         moment: moment,
         title: changelog[0].title.value,
         releaseNotes: releaseNotes,

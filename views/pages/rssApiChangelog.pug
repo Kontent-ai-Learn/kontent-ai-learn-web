@@ -5,7 +5,7 @@ rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
         title !{home.title.value} - !{title}
         language en-us
         | <link>!{domain}</link>
-        | <description><![CDATA[!{decode(helper.stripTags(home.description.value).trim())}]]></description>
+        | <description><![CDATA[!{entities.decode(helper.stripTags(home.description.value).trim())}]]></description>
         each item in releaseNotes
             - const anchorName = helper.generateAnchor(item.title.value);
             - const url = `${domain}${path}#a-${anchorName}`;
@@ -13,6 +13,6 @@ rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
                 title !{item.title.value}
                 pubDate !{moment(item.release_date.value).format('ddd, DD MMM YYYY HH:mm:ss ZZ')}
                 atom:updated !{moment(item.release_date.value).format('YYYY-MM-DDTHH:mm:ssZ')}
-                | <description><![CDATA[!{decode(helper.stripTags(item.content.value).trim().replace(/(\r\n|\n|\r)/gm, ''))}]]></description>
+                | <description><![CDATA[!{entities.decode(helper.stripTags(item.content.value).trim().replace(/(\r\n|\n|\r)/gm, ''))}]]></description>
                 | <link>!{url}</link>
                 | <guid isPermaLink="false">!{url}</guid>
