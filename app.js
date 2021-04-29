@@ -53,22 +53,6 @@ if (!process.env.baseURL.includes('localhost')) {
   app.set('trust proxy', 1);
 }
 
-// Auth0
-const config = {
-  authRequired: false,
-  auth0Logout: true,
-  baseURL: process.env.AUTH0_BASE_URL,
-  clientID: process.env.AUTH0_CLIENT_ID,
-  issuerBaseURL: helper.ensureProtocol(process.env.AUTH0_DOMAIN),
-  secret: process.env.AUTH0_SESSION_SECRET,
-  routes: {
-    login: false,
-    postLogoutRedirect: process.env.AUTH0_LOGOUT_URL
-  }
-};
-
-app.use(auth(config));
-
 app.locals.deployVersion = (new Date()).getTime();
 app.locals.changelogPath = '';
 app.locals.terminologyPath = '';
@@ -111,6 +95,22 @@ app.use(async (req, res, next) => {
   }
   return next();
 });
+
+// Auth0
+const config = {
+  authRequired: false,
+  auth0Logout: true,
+  baseURL: process.env.AUTH0_BASE_URL,
+  clientID: process.env.AUTH0_CLIENT_ID,
+  issuerBaseURL: helper.ensureProtocol(process.env.AUTH0_DOMAIN),
+  secret: process.env.AUTH0_SESSION_SECRET,
+  routes: {
+    login: false,
+    postLogoutRedirect: process.env.AUTH0_LOGOUT_URL
+  }
+};
+
+app.use(auth(config));
 
 // Routes
 app.use('/link-to', linkUrls);
@@ -190,7 +190,7 @@ app.use(async (err, req, res, _next) => { // eslint-disable-line no-unused-vars
   res.status(err.status || 500);
   consola.error(err.stack);
 
-  if (appInsights) {
+  if (appInsights && appInsights.defaultClient) {
     appInsights.defaultClient.trackTrace({
       message: `${err.stack}${req.headers.referer ? `\n\nReferer request header value: ${req.headers.referer}` : ''}`
     });
