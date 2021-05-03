@@ -351,6 +351,39 @@ window.initSearch = (() => {
     });
   };
 
+  const initErrorSearch = () => {
+    const container = document.querySelector('[data-error-search]');
+    const title = document.querySelector('[data-error-search-title]');
+    if (!container) return;
+
+    const searchTerm = window.location.pathname.split('/').pop().replace(/-/g, ' ');
+    searchClient.search([{
+      indexName: searchAPI.indexname,
+      params: { 
+        query: searchTerm 
+      }
+    }]).then(({ results }) => {
+      const hits = results && results[0] ? results[0].hits : null;
+      if (!hits) return;
+      const iterations = hits.length > 5 ? 5 : hits.length;
+      if (iterations > 0) {
+        let suggestionsHTML = '<ul>';
+
+        for (let i = 0; i < iterations; i++) {
+          const suggestionUrl = window.urlMap.filter(item => item.codename === hits[i].codename);
+          if (suggestionUrl.length) {
+              hits[i].resolvedUrl = suggestionUrl[0].url;
+          }
+          suggestionsHTML += `<li><a href="${hits[i].resolvedUrl}">${hits[i].title}</a></li>`;
+        }
+
+        suggestionsHTML += '</ul>';
+        title.setAttribute('data-error-search-title', 'visible');
+        container.innerHTML = suggestionsHTML;
+      }
+    });
+  };
+
   // Create Algolia custom widget based on Autocomplete
   const customAutocomplete = instantsearch.connectors.connectAutocomplete(
     renderAutocomplete
@@ -372,6 +405,7 @@ window.initSearch = (() => {
       triggerSearchPanel();
       prefillOnLoad();
       navigateBetweenSuggestions();
+      initErrorSearch();
     }
   }
 })();
