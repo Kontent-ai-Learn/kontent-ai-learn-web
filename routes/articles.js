@@ -81,7 +81,7 @@ const resolveLinks = (data, urlMap) => {
         recognizeSelfClosing: false,
     };
 
-    const dom = htmlparser2.parseDOM(data.data, parserOptions);
+    const dom = htmlparser2.parseDocument(data.data, parserOptions);
     const $ = cheerio.load(dom);
     const links = $('a[href]');
 
