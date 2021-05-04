@@ -192,7 +192,8 @@ const getCertificate = (user, courseId) => {
 
     for (let i = 0; i < user.certifications.length; i++) {
         if (user.certifications[i].course_id === courseId) {
-            if ((new Date(user.certifications[i].expiration_date)).getTime() > (new Date()).getTime()) {
+            const expDate = user.certifications[i].expiration_date;
+            if (((new Date(expDate)).getTime() > (new Date()).getTime()) || expDate === 'Never') {
                 return user.certifications[i];
             }
         }
