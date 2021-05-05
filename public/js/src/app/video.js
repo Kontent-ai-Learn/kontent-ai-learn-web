@@ -100,10 +100,23 @@ window.videoHelper = (() => {
     replay.classList.remove('video-controls__replay--visible');
   };
 
+  const handleVideoLink = (container) => {
+    const url = container.parentNode.getAttribute('data-video-url');
+    if (!url) return;
+
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('target', '_blank');
+    link.classList.add('video-controls__link');
+    container.appendChild(link);
+  };
+
   const handleCustomControls = (video, controls) => {
     const controlsContainer = document.createElement('div');
     controlsContainer.classList.add('video-controls__container');
     video.parentNode.appendChild(controlsContainer);
+
+    handleVideoLink(controlsContainer);
 
     for (let i = 0; i < controls.length; i++) {
       switch (controls[i]) {

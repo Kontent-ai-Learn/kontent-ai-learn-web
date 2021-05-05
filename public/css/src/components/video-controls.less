@@ -1,15 +1,30 @@
 .video-controls {
   position: relative;
-  display: flex;
+  display: inline-flex;
   z-index: 9999;
 
-  &__container {
+  &__container, &__link {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
   }
+
+  &__container {
+    .article__image--75 + & {
+      right: 25%;
+    }
+
+    .article__image--50 + & {
+      right: 50%;
+    }
+
+    .article__image--25 + & {
+      right: 75%;
+    }
+  }
+  
 
   &__tooltip {
     position: absolute;
@@ -39,7 +54,7 @@
       border-color: transparent transparent #3c3638 transparent;
       position: absolute;
       left: 50%;
-      transform: translate(-50%,0);
+      transform: translate(-50%, 0);
       transition: .25s opacity;
     }
 
@@ -81,10 +96,10 @@
   &__elem {
     text-align: center;
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
     text-decoration: none !important;
-    transition: .25s box-shadow; 
+    transition: .25s box-shadow, .25s background-color, .25s transform; 
     box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
     color: #231f20;
     position: relative;
@@ -96,7 +111,12 @@
 
     &:hover {
       color: #f05a22;
+      background-color: rgba(255, 255, 255, 1);
       box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    &:active {
+      transform: translate(0, 1px);
     }
   }
 
@@ -150,6 +170,10 @@
 
     &:before {
       content: "\e620";
+    }
+
+    &:active {
+      transform: translate(-50%, calc(-50% + 1px));
     }
 
     &--visible {
