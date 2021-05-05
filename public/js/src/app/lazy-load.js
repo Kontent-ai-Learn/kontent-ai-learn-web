@@ -29,10 +29,12 @@
                     if (elem.classList.contains('lazy') && elem.getAttribute('preload') === 'none') {
                         elem.classList.remove('lazy');
                         elem.setAttribute('preload', 'auto');
-                        videoHelper.init({
+                        const customControls = ['play/pause', 'replay'];
+                        if (elem.classList.contains('article__add-lightbox')) customControls.push('lightbox');
+                        window.videoHelper.init({
                             elem: elem,
                             loop: 3,
-                            customControls: ['play/pause']
+                            customControls: customControls
                         })
                     }
                 }
@@ -50,6 +52,7 @@
             const offsetTop = el.offsetTop === 0 ? el.offsetParent.offsetTop : el.offsetTop;
 
             if (offsetTop < (window.innerHeight + scrollTop)) {
+                // Handle images
                 if (el.classList.contains('lazy') && el.hasAttribute('data-src')) {
                     el.src = el.dataset.src;
                     el.classList.remove('lazy');
@@ -57,6 +60,19 @@
                     if (el.tagName === 'IMG') {
                         el.removeAttribute('style');
                     }
+                }
+
+                // Handle video
+                if (el.classList.contains('lazy') && el.getAttribute('preload') === 'none') {
+                    el.classList.remove('lazy');
+                    el.setAttribute('preload', 'auto');
+                    const customControls = ['play/pause', 'replay'];
+                    if (el.classList.contains('article__add-lightbox')) customControls.push('lightbox');
+                    window.videoHelper.init({
+                        elem: el,
+                        loop: 3,
+                        customControls: customControls
+                    })
                 }
             }
         });

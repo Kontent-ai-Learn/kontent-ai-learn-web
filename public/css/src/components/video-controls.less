@@ -1,15 +1,7 @@
 .video-controls {
   position: relative;
   display: flex;
-
-  &__elem {
-    transition: .1s color, .1 opacity;
-    opacity: 0;
-
-    .basicLightbox & {
-      opacity: 0 !important;
-    }
-  }
+  z-index: 9999;
 
   &__container {
     position: absolute;
@@ -17,72 +9,129 @@
     left: 0;
     right: 0;
     bottom: 0;
-    transition: 1s background;
+  }
 
-    &:before {
+  &__tooltip {
+    position: absolute;
+    background-color: #3c3638;
+    clip: auto;
+    font-size: .875em;
+    color: #e3e9ec;
+    top: -2000px;
+    padding: .5em .875em;
+    opacity: 0;
+    transition: .25s opacity;
+    z-index: -1;
+    border-radius: .75em;
+    left: 50%;
+    transform: translate(-50%,0);
+    white-space: nowrap;
+    word-break: break-word;
+    font-size: 12.25px;
+    line-height: 1.25em;
+
+    &:after {
       content: '';
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 5px 6px 5px;
+      border-color: transparent transparent #3c3638 transparent;
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      left: 50%;
+      transform: translate(-50%,0);
       transition: .25s opacity;
-      background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 70%, rgba(255,255,255,.7) 85%, rgba(255,255,255,.9) 100%);
-      opacity: 0;
     }
 
-    &:hover {
-      &:before {
-        opacity: 1;
-      }
-      
-      .video-controls__elem {
-        opacity: 1;
-      }
-    }
+    .video-controls__elem:hover & {
+      opacity: 1;
+      z-index: 9999;
+      top: calc(100% + 1em);
 
-    .basicLightbox & {
-      &:before {
-        opacity: 0 !important;
+      &:after {
+        opacity: 1;
+        z-index: 9999;
+        top: -6px;
       }
     }
   }
 
-  &__play, &__pause {
-    width: 42px;
-    height: 42px;
-    position: absolute;
-    bottom: 6px;
-    left: 6px;
-    color: #231f20;
-    font-size: 36px;
-    line-height: 42px;
+  &__elem {
     text-align: center;
     cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    text-decoration: none !important;
+    transition: .25s box-shadow; 
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+    color: #231f20;
+    position: relative;
 
     &:before {
-      content: '';
+      content: "";
       font-family: 'kentico-icons';
     }
 
     &:hover {
       color: #f05a22;
-    }
-
-    &--hidden {
-      display: none;
+      box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.4);
     }
   }
 
-  &__play {
+  &__play-pause {
+    width: 42px;
+    height: 42px;
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    font-size: 22px;
+    line-height: 42px;
+
     &:before {
       content: "\e651";
     }
+
+    &--playing {
+      &:before {
+        content: "\e63b";
+      }
+    }
   }
 
-  &__pause {
+  &__lightbox {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    font-size: 16px;
+    line-height: 32px;
+
     &:before {
-      content: "\e63b";
+      content: "\e6d8";
+    }
+  }
+
+  &__replay {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 56px;
+    line-height: 56px;
+    color: #231f20;
+    font-size: 36px;
+    justify-content: center;
+    align-items: center;
+
+    &:before {
+      content: "\e620";
+    }
+
+    &--visible {
+      display: flex;
     }
   }
 }

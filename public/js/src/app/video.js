@@ -1,55 +1,103 @@
 window.videoHelper = (() => {
-  const handleLooping = (video, loopNum) => {
-    let counter = 0;
-    video.play();
-    video.addEventListener('ended', () => {
-      counter++;
-      if (counter < loopNum) {
-        video.play();
-      }
-    })
-  };
-
-  const togglePlayPauseControls = (playing, video) => {
+  const isVideoPlaying = (video) => {
     const container = video.parentNode;
-    const play = container.querySelector('.video-controls__play');
-    const pause = container.querySelector('.video-controls__pause');
+    const playPause = container.querySelector('.video-controls__play-pause');
+    return playPause ? playPause.classList.contains('video-controls__play-pause--playing') : false;
+  }
+
+  const togglePlayPauseControls = (video) => {
+    const container = video.parentNode;
+    const playPause = container.querySelector('.video-controls__play-pause');
+    const playing = isVideoPlaying(video);
 
     if (playing) {
-      play.classList.add('video-controls__play--hidden');
-      pause.classList.remove('video-controls__pause--hidden');
+      playPause.classList.remove('video-controls__play-pause--playing');
     } else {
-      play.classList.remove('video-controls__play--hidden');
-      pause.classList.add('video-controls__pause--hidden');
+      playPause.classList.add('video-controls__play-pause--playing');
+    }
+  };
+
+  const playPauseVideo = (video) => {
+    const playing = isVideoPlaying(video);
+    
+    if (playing) {
+      video.pause();
+    } else {
+      video.play();
     }
   };
 
   const addPlayPauseControls = (video, container) => {
-    const play = document.createElement('div');
-    play.classList.add('video-controls__play');
+    const play = document.createElement('a');
+    play.setAttribute('href', '#');
+    play.classList.add('video-controls__play-pause');
     play.classList.add('video-controls__elem');
-    play.addEventListener('click', () => {
-      video.play();
-      togglePlayPauseControls(true, video);
+    play.setAttribute('data-video-tooltip', '');
+    play.setAttribute('data-video-tooltip-play', 'Play video');
+    play.setAttribute('data-video-tooltip-pause', 'Pause video');
+    play.innerHTML = '<span class="sr-only">Play/Pause video</span>';
+    play.addEventListener('click', (e) => {
+      e.preventDefault();
+      playPauseVideo(video);
     });
     container.appendChild(play);
 
-    const pause = document.createElement('div');
-    pause.classList.add('video-controls__pause');
-    pause.classList.add('video-controls__elem');
-    pause.addEventListener('click', () => {
-      video.pause();
-      togglePlayPauseControls(false, video);
-    });
-    container.appendChild(pause);
-
     video.addEventListener('play', () => {
-      togglePlayPauseControls(true, video);
+      hideReplayControls(container);
+      togglePlayPauseControls(video);
     });
 
     video.addEventListener('pause', () => {
-      togglePlayPauseControls(false, video);
+      togglePlayPauseControls(video);
     });
+  };
+
+  const handleLooping = (video, loopNum, container) => {
+    let counter = 0;
+    playPauseVideo(video);
+    video.addEventListener('ended', () => {
+      counter++;
+      if (counter < loopNum) {
+        playPauseVideo(video);
+      } else {
+        showReplayControls(container);
+      }
+    })
+  };
+
+  const addReplayControls = (video, container) => {
+    const replay = document.createElement('div');
+    replay.classList.add('video-controls__replay');
+    replay.classList.add('video-controls__elem');
+    replay.setAttribute('data-video-tooltip', 'Replay video');
+    replay.innerHTML = '<span class="sr-only">Replay video</span>';
+    replay.addEventListener('click', () => {
+      video.play();
+      replay.classList.remove('video-controls__replay--visible');
+    });
+    container.appendChild(replay);
+  };
+
+  const addLightboxControls = (container) => {
+    const lightbox = document.createElement('a');
+    lightbox.setAttribute('href', '#');
+    lightbox.classList.add('video-controls__lightbox');
+    lightbox.classList.add('video-controls__elem');
+    lightbox.setAttribute('data-video-tooltip', 'Expand video');
+    lightbox.innerHTML = '<span class="sr-only">Expand video</span>';
+    container.appendChild(lightbox);
+  };
+
+  const showReplayControls = (container) => {
+    if (!container) return;
+    const replay = container.querySelector('.video-controls__replay');
+    replay.classList.add('video-controls__replay--visible');
+  };
+
+  const hideReplayControls = (container) => {
+    if (!container) return;
+    const replay = container.querySelector('.video-controls__replay');
+    replay.classList.remove('video-controls__replay--visible');
   };
 
   const handleCustomControls = (video, controls) => {
@@ -59,37 +107,91 @@ window.videoHelper = (() => {
 
     for (let i = 0; i < controls.length; i++) {
       switch (controls[i]) {
-        default: addPlayPauseControls(video, controlsContainer);
+        case 'play/pause': 
+          addPlayPauseControls(video, controlsContainer);
+          break;
+        case 'replay': 
+          addReplayControls(video, controlsContainer);
+          break;
+        case 'lightbox': 
+          addLightboxControls(controlsContainer);
+          break;
       }
     }
+
+    return controlsContainer;
+  };
+
+  const handleTooltips = (container) => {
+    const tooltips = container.querySelectorAll('[data-video-tooltip]');
+
+    const renderTooltip = (elem) => {
+      const tooltip = document.createElement('div');
+      tooltip.classList.add('video-controls__tooltip');
+      const text = elem.getAttribute('data-video-tooltip');
+      tooltip.innerHTML = text;
+      elem.appendChild(tooltip);
+    }
+
+    const togglePlayPauseTooltip = (container) => {
+      const video = container.parentNode.querySelector('video');
+      const playPause = container.querySelector('.video-controls__play-pause');
+
+      if (!(video && playPause)) return;
+      const playPauseTooltip = playPause.querySelector('.video-controls__tooltip');
+  
+      video.addEventListener('play', () => {
+        playPauseTooltip.innerHTML = playPause.getAttribute('data-video-tooltip-pause');
+      });
+  
+      video.addEventListener('pause', () => {
+        playPauseTooltip.innerHTML = playPause.getAttribute('data-video-tooltip-play');
+      });
+    };
+
+    for (let i = 0; i < tooltips.length; i++) {
+      renderTooltip(tooltips[i]);
+    }
+
+    togglePlayPauseTooltip(container);
   };
 
   const init = (config) => {
     if (!(config && config.elem)) return;
-
+    let container;
     if (config.customControls) {
-      handleCustomControls(config.elem, config.customControls);
+      container = handleCustomControls(config.elem, config.customControls);
     }
 
     if (config.loop) {
       const loopNum = parseInt(config.loop);
       if (!isNaN(loopNum)) {
-        handleLooping(config.elem, loopNum);
+        handleLooping(config.elem, loopNum, container);
       } else {
         config.elem.setAttribute('loop', '');
       }
-    };
-  };
+    }
 
-  const initLightbox = (elem) => {
-    const video = elem.querySelector('video');
-    if (!video) return;
-    video.setAttribute('autoplay', '');
-    video.setAttribute('loop', '');
-  }
+    handleTooltips(container);
+  };
 
   return {
     init: init,
-    initLightbox: initLightbox
+    playPauseVideo: playPauseVideo
   }
 })();
+
+const handleVideoKeyboardActions = () => {
+  document.addEventListener('keydown', function (e)  {
+    if (e.code !== 'Space') return;
+    const containers = document.querySelectorAll('.video-controls');
+    for (let i = 0; i < containers.length; i++) {
+      if (containers[i].matches(':hover')) {
+        e.preventDefault();
+        const video = containers[i].querySelector('video');
+        window.videoHelper.playPauseVideo(video);
+      }
+    }
+  });
+};
+handleVideoKeyboardActions();
