@@ -54,6 +54,28 @@
         top: -6px;
       }
     }
+
+    @media screen and (max-width: 767px) {
+      .video-controls__lightbox & {
+        right: 0;
+        left: auto;
+        transform: translate(0, 0);
+
+        &:after {
+          left: auto;
+          right: 6px;
+        }
+      }
+
+      .video-controls__play-pause & {
+        left: 0;
+        transform: translate(0, 0);
+
+        &:after {
+          left: 22px;
+        }
+      }
+    }
   }
 
   &__elem {
