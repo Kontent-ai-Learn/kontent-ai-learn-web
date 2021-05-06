@@ -12,16 +12,18 @@
   }
 
   &__container {
-    .article__image--75 + & {
-      right: 25%;
-    }
+    @media screen and (min-width: 768px) {
+      .article__image--75 + & {
+        right: 25%;
+      }
 
-    .article__image--50 + & {
-      right: 50%;
-    }
+      .article__image--50 + & {
+        right: 50%;
+      }
 
-    .article__image--25 + & {
-      right: 75%;
+      .article__image--25 + & {
+        right: 75%;
+      }
     }
   }
   

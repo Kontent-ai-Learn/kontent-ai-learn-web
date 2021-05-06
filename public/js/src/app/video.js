@@ -28,13 +28,15 @@ window.videoHelper = (() => {
   };
 
   const addPlayPauseControls = (video, container) => {
+    const labelPlay = window.UIMessages ? window.UIMessages.videoPlay : '';
+    const labelPause = window.UIMessages ? window.UIMessages.videoPause : '';
     const play = document.createElement('a');
     play.setAttribute('href', '#');
     play.classList.add('video-controls__play-pause');
     play.classList.add('video-controls__elem');
     play.setAttribute('data-video-tooltip', '');
-    play.setAttribute('data-video-tooltip-play', 'Play video');
-    play.setAttribute('data-video-tooltip-pause', 'Pause video');
+    play.setAttribute('data-video-tooltip-play', labelPlay);
+    play.setAttribute('data-video-tooltip-pause', labelPause);
     play.innerHTML = '<span class="sr-only">Play/Pause video</span>';
     play.addEventListener('click', (e) => {
       e.preventDefault();
@@ -66,11 +68,12 @@ window.videoHelper = (() => {
   };
 
   const addReplayControls = (video, container) => {
+    const labelReplay = window.UIMessages ? window.UIMessages.videoReplay : '';
     const replay = document.createElement('div');
     replay.classList.add('video-controls__replay');
     replay.classList.add('video-controls__elem');
-    replay.setAttribute('data-video-tooltip', 'Replay video');
-    replay.innerHTML = '<span class="sr-only">Replay video</span>';
+    replay.setAttribute('data-video-tooltip', labelReplay);
+    replay.innerHTML = `<span class="sr-only">${labelReplay}</span>`;
     replay.addEventListener('click', () => {
       video.play();
       replay.classList.remove('video-controls__replay--visible');
@@ -79,12 +82,13 @@ window.videoHelper = (() => {
   };
 
   const addLightboxControls = (container) => {
+    const labelExpand = window.UIMessages ? window.UIMessages.videoExpand : '';
     const lightbox = document.createElement('a');
     lightbox.setAttribute('href', '#');
     lightbox.classList.add('video-controls__lightbox');
     lightbox.classList.add('video-controls__elem');
-    lightbox.setAttribute('data-video-tooltip', 'Expand video');
-    lightbox.innerHTML = '<span class="sr-only">Expand video</span>';
+    lightbox.setAttribute('data-video-tooltip', labelExpand);
+    lightbox.innerHTML = `<span class="sr-only">${labelExpand}</span>`;
     container.appendChild(lightbox);
   };
 

@@ -49,8 +49,6 @@ gulp.task('js-app', () => {
       'public/js/src/app/data-toggle.js',
       'public/js/src/app/sub-navigation.js',
       'public/js/src/app/language-selector.js',
-      'node_modules/basiclightbox/dist/basicLightbox.min.js',
-      'public/js/src/app/lightbox.js',
       'public/js/src/app/tables.js',
       ...prismFiles,
       'public/js/src/app/lazy-load.js',
@@ -73,6 +71,8 @@ gulp.task('js-app', () => {
       'public/js/src/app/instantsearch.js',
       'public/js/src/app/multitech-articles.js',
       'public/js/src/app/video.js',
+      'node_modules/basiclightbox/dist/basicLightbox.min.js',
+      'public/js/src/app/lightbox.js',
       'public/js/src/app/kontent-smart-link.js',
       'public/js/src/app/trigger-on-url-map.js'
     ])
@@ -94,8 +94,6 @@ gulp.task('js-reference', () => {
       'public/js/src/app/dpr.js',
       'public/js/src/app/data-toggle.js',
       'public/js/src/app/intercom.js',
-      'node_modules/basiclightbox/dist/basicLightbox.min.js',
-      'public/js/src/app/lightbox.js',
       ...prismFiles,
       'public/js/src/app/preview-warning.js',
       'public/js/src/app/icon-tooltip.js',
@@ -104,6 +102,8 @@ gulp.task('js-reference', () => {
       'public/js/src/app/code-sample.js',
       'public/js/src/app/instantsearch.js',
       'public/js/src/app/video.js',
+      'node_modules/basiclightbox/dist/basicLightbox.min.js',
+      'public/js/src/app/lightbox.js',
       'public/js/src/app/kontent-smart-link.js',
       'public/js/src/app/trigger-on-url-map.js'
     ])

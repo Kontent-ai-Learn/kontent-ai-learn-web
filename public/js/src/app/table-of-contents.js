@@ -26,7 +26,7 @@
                     dnt = parent.querySelector('.embed__dnt-enable');
                 }
 
-                if (!dnt) {
+                if (!dnt && elem.hasAttribute('data-src')) {
                     elem.src = elem.dataset.src;
                     elem.classList.remove('lazy');
                     elem.removeAttribute('data-src');
