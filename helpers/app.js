@@ -1,6 +1,12 @@
 const handleCache = require('./handleCache');
-const getUrlMap = require('./urlMap');
 const commonContent = require('./commonContent');
+
+let getUrlMap;
+if (process.env.KK_NEW_STRUCTURE) {
+  getUrlMap = require('./urlMap');
+} else {
+  getUrlMap = require('./urlMap_Obsolete');
+}
 
 // URLs allowed in the application
 const urlWhitelist = [

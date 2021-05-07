@@ -7,7 +7,13 @@ const asyncHandler = require('express-async-handler');
 const handleCache = require('../helpers/handleCache');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
-const getUrlMap = require('../helpers/urlMap');
+
+let getUrlMap;
+if (process.env.KK_NEW_STRUCTURE) {
+  getUrlMap = require('../helpers/urlMap');
+} else {
+  getUrlMap = require('../helpers/urlMap_Obsolete');
+}
 
 router.get('/changelog', asyncHandler(async (req, res) => {
     const home = await handleCache.ensureSingle(res, 'home', async () => {

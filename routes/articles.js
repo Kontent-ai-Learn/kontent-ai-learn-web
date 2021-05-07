@@ -11,11 +11,17 @@ const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
 const handleCache = require('../helpers/handleCache');
 const platforms = require('../helpers/platforms');
-const getUrlMap = require('../helpers/urlMap');
 const getTrainingCourseInfo = require('../helpers/trainingCourse');
 const customRichTextResolver = require('../helpers/customRichTextResolver');
 const smartLink = require('../helpers/smartLink');
 const fastly = require('../helpers/fastly');
+
+let getUrlMap;
+if (process.env.KK_NEW_STRUCTURE) {
+  getUrlMap = require('../helpers/urlMap');
+} else {
+  getUrlMap = require('../helpers/urlMap_Obsolete');
+}
 
 let cookiesPlatform;
 

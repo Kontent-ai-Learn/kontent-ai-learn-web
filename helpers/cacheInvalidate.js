@@ -4,10 +4,16 @@ const app = require('../app');
 const requestDelivery = require('./requestDelivery');
 const getRootCodenamesOfSingleItem = require('./rootItemsGetter');
 const handleCache = require('./handleCache');
-const getUrlMap = require('./urlMap');
 const isPreview = require('./isPreview');
 const helper = require('./helperFunctions');
 const fastly = require('./fastly');
+
+let getUrlMap;
+if (process.env.KK_NEW_STRUCTURE) {
+  getUrlMap = require('./urlMap');
+} else {
+  getUrlMap = require('./urlMap_Obsolete');
+}
 
 const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
     const originalItem = handleCache.getCache(codename, KCDetails);

@@ -5,8 +5,14 @@ const minify = require('../helpers/minify');
 const isPreview = require('../helpers/isPreview');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
-const getUrlMap = require('../helpers/urlMap');
 const handleCache = require('../helpers/handleCache');
+
+let getUrlMap;
+if (process.env.KK_NEW_STRUCTURE) {
+  getUrlMap = require('../helpers/urlMap');
+} else {
+  getUrlMap = require('../helpers/urlMap_Obsolete');
+}
 
 const getRedirectUrls = async (res) => {
   const articles = await handleCache.evaluateSingle(res, 'articles', async () => {

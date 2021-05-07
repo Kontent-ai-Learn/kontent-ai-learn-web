@@ -3,8 +3,14 @@ const consola = require('consola');
 const isPreview = require('./isPreview');
 const handleCache = require('./handleCache');
 const helper = require('./helperFunctions');
-const getUrlMap = require('./urlMap');
 const commonContent = require('./commonContent');
+
+let getUrlMap;
+if (process.env.KK_NEW_STRUCTURE) {
+  getUrlMap = require('./urlMap');
+} else {
+  getUrlMap = require('./urlMap_Obsolete');
+}
 
 const axiosPurge = async (url) => {
   try {

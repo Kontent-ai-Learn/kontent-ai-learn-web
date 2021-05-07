@@ -3,8 +3,14 @@ const asyncHandler = require('express-async-handler');
 const router = express.Router();
 const moment = require('moment');
 
-const getUrlMap = require('../helpers/urlMap');
 const helper = require('../helpers/helperFunctions');
+
+let getUrlMap;
+if (process.env.KK_NEW_STRUCTURE) {
+  getUrlMap = require('../helpers/urlMap');
+} else {
+  getUrlMap = require('../helpers/urlMap_Obsolete');
+}
 
 router.get('/', asyncHandler(async (req, res, next) => {
   const urlMap = await getUrlMap(res, true);
