@@ -40,7 +40,7 @@ const authorize = require('./routes/auth');
 const urlMap = require('./routes/urlMap');
 
 let articles;
-if (process.env.KK_NEW_STRUCTURE) {
+if (process.env.KK_NEW_STRUCTURE === 'true') {
   articles = require('./routes/articles');
 } else {
   articles = require('./routes/articles_Obsolete');

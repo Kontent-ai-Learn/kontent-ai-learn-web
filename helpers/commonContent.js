@@ -4,7 +4,7 @@ const ensureSingle = require('./ensureSingle');
 const isPreview = require('./isPreview');
 
 let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE) {
+if (process.env.KK_NEW_STRUCTURE === 'true') {
   getUrlMap = require('./urlMap');
 } else {
   getUrlMap = require('./urlMap_Obsolete');
@@ -75,7 +75,7 @@ const commonContent = {
             return await getUrlMap(res);
         });
         return await requestDelivery({
-            type: process.env.KK_NEW_STRUCTURE ? 'homepage' : 'home',
+            type: process.env.KK_NEW_STRUCTURE === 'true' ? 'homepage' : 'home',
             depth: 4,
             resolveRichText: true,
             urlMap: urlMap,

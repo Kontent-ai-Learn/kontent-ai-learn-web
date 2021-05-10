@@ -8,7 +8,7 @@ const helper = require('../helpers/helperFunctions');
 const handleCache = require('../helpers/handleCache');
 
 let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE) {
+if (process.env.KK_NEW_STRUCTURE === 'true') {
   getUrlMap = require('../helpers/urlMap');
 } else {
   getUrlMap = require('../helpers/urlMap_Obsolete');

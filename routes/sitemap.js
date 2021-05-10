@@ -6,7 +6,7 @@ const moment = require('moment');
 const helper = require('../helpers/helperFunctions');
 
 let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE) {
+if (process.env.KK_NEW_STRUCTURE === 'true') {
   getUrlMap = require('../helpers/urlMap');
 } else {
   getUrlMap = require('../helpers/urlMap_Obsolete');

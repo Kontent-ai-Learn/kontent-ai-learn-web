@@ -6,7 +6,7 @@ const helper = require('./helperFunctions');
 const commonContent = require('./commonContent');
 
 let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE) {
+if (process.env.KK_NEW_STRUCTURE === 'true') {
   getUrlMap = require('./urlMap');
 } else {
   getUrlMap = require('./urlMap_Obsolete');

@@ -9,7 +9,7 @@ const helper = require('./helperFunctions');
 const fastly = require('./fastly');
 
 let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE) {
+if (process.env.KK_NEW_STRUCTURE === 'true') {
   getUrlMap = require('./urlMap');
 } else {
   getUrlMap = require('./urlMap_Obsolete');
