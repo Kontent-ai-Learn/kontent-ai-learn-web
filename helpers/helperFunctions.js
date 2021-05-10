@@ -222,6 +222,24 @@ const helper = {
         }
         return codename;
     },
+    getMapItemByUrl: (originalUrl, urlMap) => {
+        let item;
+        let url = originalUrl.split('#')[0];
+
+        for (let i = 0; i < urlMap.length; i++) {
+            if (urlMap[i].url === url) {
+                item = urlMap[i];
+            }
+
+            if (!item) {
+                url = originalUrl.split('?')[0];
+                if (urlMap[i].url === url) {
+                    item = urlMap[i];
+                }
+            }
+        }
+        return item;
+    },
     generateAnchor: (text) => {
         return text.toLowerCase().replace(/(<([^>]+)>)/g, '').replace(/(&nbsp;)|(&#xa0;)|(&#160;)/g, '-').replace(/&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});/g, '').replace(/\W/g, '-').replace(/[-]+/g, '-');
     },

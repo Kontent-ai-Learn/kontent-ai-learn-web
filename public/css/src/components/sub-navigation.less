@@ -1,5 +1,5 @@
 .sub-navigation {
-    &.sub-navigation--level-1 {
+    &.sub-navigation--parent {
         padding-top: 1em;
         background-color: #fff;
         transition: top .25s ease 0s, opacity .25s ease 0s, max-height .25s ease 0s;
@@ -8,13 +8,13 @@
             background-color: #f5f5f5;
             border-radius: 4px;
         }
-    
+
         &::-webkit-scrollbar {
             width: 8px;
             border-radius: 4px;
             background-color: #f5f5f5;
         }
-    
+
         &::-webkit-scrollbar-thumb {
             border-radius: 4px;
             background-color: #ccc;
@@ -65,19 +65,10 @@
         }
     }
 
-    &.sub-navigation--level-3 {
-        max-height: 0;
-        transition: max-height 0.25s ease-out;
-        overflow: hidden;
-
-        .sub-navigation__link--active + & {
-            max-height: 1200px;
-            transition: max-height 0.25s ease-in;
-        }
-    }
-
 	&__item {
-
+        & > .sub-navigation {
+            padding-left: 1.5em;
+        }
 	}
 
 	&__link {
@@ -85,7 +76,7 @@
         font-size: 1em;
         text-decoration: none;
         line-height: 1.25em;
-        padding: .375em 0;
+        padding: .5em 0 .5em 1.5em;
         display: block;
         position: relative;
 
@@ -95,7 +86,7 @@
             text-decoration: underline;
         }
 
-        .sub-navigation--level-2 & {
+        &--collapse {
             padding: .5em 0 .5em 1.5em;
 
             &:before {
@@ -114,16 +105,17 @@
                     font-family: 'kentico-icons';
                 }
             }
+
+            & +.sub-navigation {
+                max-height: 0;
+                transition: max-height 0.25s ease-out;
+                overflow: hidden;
+            }
         }
 
-        .sub-navigation--level-3 & {
-            margin: 0 0 .25em 1.5em;
-            padding: .25em .875em;
-
-            &:before {
-                content: '';
-                display: none;
-            }
+        &--active + .sub-navigation {
+            max-height: 1200px;
+            transition: max-height 0.25s ease-in;
         }
 
         &--active {
@@ -140,28 +132,17 @@
                 font-weight: 300;
             }
 
-            .sub-navigation--level-2 & {
+            &.sub-navigation__link--collapse {
                 font-weight: 300;
 
                 &:before {
                     content: "\e66f";
                 }
             }
-
-            .sub-navigation--level-3 & {    
-                color: #2D373B;
-                font-weight: 400;
-
-                &:before {
-                    content: '';
-                }
-            }
         }
 
         &--on-path {
-            .sub-navigation--level-2 & {
-                font-weight: 400;
-            }
+            font-weight: 400 !important;
         }
 	}
 

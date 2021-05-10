@@ -3,7 +3,10 @@ block content
     main(id='main')
         .article(data-display-mode=`${content.display_mode.value.length ? content.display_mode.value[0].name.toLowerCase() : 'one-page'}`)
             .article__left
-                include ../includes/sub-navigation.pug
+                if (tempNewStructure)
+                    include ../includes/sub-navigation.pug
+                else
+                    include ../includes/sub-navigation_Obsolete.pug
             .article__right
                 div(class=`article__content${containsChangelog ? ' article__content--anchors-only' : ''}`)&attributes(smartLink?.itemId(itemId))
                     if termDefinitions

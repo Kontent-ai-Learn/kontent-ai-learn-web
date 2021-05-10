@@ -36,7 +36,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
     itemId: home[0].system.id,
     title: home[0].title.value,
     description: helper.stripTags(home[0].description.value).substring(0, 300),
-    navigation: home[0].navigation.value,
+    navigation: process.env.KK_NEW_STRUCTURE ? home[0].subpages.value : home[0].navigation.value,
     introNote: home[0].intro_note.value,
     signposts: home[0].signposts.value,
     support: home[0].support.value,

@@ -23,6 +23,8 @@ block content
     main(id='main')
         .article
             .article__left
+              if (tempNewStructure)
+                include ../includes/sub-navigation.pug
             .article__right
                 .article__content&attributes(smartLink?.itemId(itemId))
                     h1&attributes(smartLink?.elementCodename('title')) !{content.title.value}

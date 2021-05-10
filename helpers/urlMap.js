@@ -146,12 +146,12 @@ const handleNodes = (settings) => {
         }));
     }
 
-    if (item.subpages && item.subpages.value.length) {
+    if (item.subpages) {
         for (let i = 0; i < item.subpages.value.length; i++) {
             settings.item = item.subpages.value[i]
             handleNodes(settings);
         }
-    } else if (item.children && item.children.value.length) {
+    } else if (item.children) {
         for (let i = 0; i < item.children.value.length; i++) {
             settings.item = item.children.value[i];
             handleMultihandlePlatformArticles(settings);

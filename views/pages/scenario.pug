@@ -3,7 +3,10 @@ block content
     main(id='main')
         .article
             .article__left
-                include ../includes/sub-navigation.pug
+                if (tempNewStructure)
+                    include ../includes/sub-navigation.pug
+                else
+                    include ../includes/sub-navigation_Obsolete.pug
             .article__right
                 .article__content&attributes(smartLink?.itemId(itemId))
                     if termDefinitions

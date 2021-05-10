@@ -23,12 +23,10 @@ const commonContent = require('./helpers/commonContent');
 const isPreview = require('./helpers/isPreview');
 const fastly = require('./helpers/fastly');
 const home = require('./routes/home');
-const articles = require('./routes/articles');
 const sitemap = require('./routes/sitemap');
 const rss = require('./routes/rss');
 const robots = require('./routes/robots');
 const opensearch = require('./routes/opensearch');
-const urlMap = require('./routes/urlMap');
 const urlAliases = require('./routes/urlAliases');
 const redirectUrls = require('./routes/redirectUrls');
 const referenceUpdated = require('./routes/referenceUpdated');
@@ -39,6 +37,14 @@ const form = require('./routes/form');
 const redirectRules = require('./routes/redirectRules');
 const generatePDF = require('./routes/generatePDF');
 const authorize = require('./routes/auth');
+const urlMap = require('./routes/urlMap');
+
+let articles;
+if (process.env.KK_NEW_STRUCTURE) {
+  articles = require('./routes/articles');
+} else {
+  articles = require('./routes/articles_Obsolete');
+}
 
 const app = express();
 
