@@ -12,13 +12,15 @@ const isCourseAvailable = (user) => {
     return true;
   }
 
-  for (let i = 0; i < user.customerSuccessSubscriptions.length; i++) {
-    if (user.customerSuccessSubscriptions[i].isPartner) {
-      return true
+  const userSubscriptions = user.customerSuccessSubscriptions;
+
+  for (let i = 0; i < userSubscriptions.length; i++) {
+    if (userSubscriptions[i].isPartner || userSubscriptions[i].isMvp) {
+      return true;
     }
 
-    for (let j = 0; j < user.customerSuccessSubscriptions[i].activePackages.length; j++) {
-      if (user.customerSuccessSubscriptions[i].activePackages[j].name.includes('elearning')) {
+    for (let j = 0; j < userSubscriptions[i].activePackages.length; j++) {
+      if (userSubscriptions[i].activePackages[j].name.includes('elearning')) {
         return true;
       }
     }
