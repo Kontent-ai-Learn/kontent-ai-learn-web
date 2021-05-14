@@ -6,7 +6,7 @@ mixin lmsInfo(environment)
   if (lmsInfoEnv)
     .article__row-links&attributes(smartLink?.itemId(UIMessages.system.id))
       if (lmsInfoEnv.renderAs === 'button')
-        a.call-to-action(href= lmsInfoEnv.url, target= lmsInfoEnv.target ? lmsInfoEnv.target : '_self')
+        a.call-to-action&attributes({ 'href': lmsInfoEnv.url ? lmsInfoEnv.url : '#' })&attributes(lmsInfoEnv.target ? { 'target': lmsInfoEnv.target } : {})&attributes(lmsInfoEnv.action === 'intercom' ? { 'data-click': 'support' } : {})
           span !{prefix}!{lmsInfoEnv.text}
           span
       else

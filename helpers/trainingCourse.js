@@ -167,7 +167,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
         renderGeneralMessage = true;
         generalMessage = {
           text: UIMessages.training___cta_buy_course.value,
-          url: UIMessages.training___cta_buy_link.value,
+          action: 'intercom',
           renderAs: 'button',
           signedIn: true
         };
