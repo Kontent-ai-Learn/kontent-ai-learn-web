@@ -12,12 +12,15 @@ const urlAliases = async (req, res, next) => {
     });
     const scenarios = await handleCache.ensureSingle(res, 'scenarios', async () => {
         return await commonContent.getScenarios(res);
-      });
+    });
+    const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
+        return await commonContent.getTraniningCourse(res);
+    });
     const references = await handleCache.ensureSingle(res, 'apiSpecifications', async () => {
         return commonContent.getReferences(res);
     });
 
-    const items = [...articles, ...references, ...scenarios];
+    const items = [...articles, ...references, ...scenarios, ...trainingCourses];
     const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });

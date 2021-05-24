@@ -15,6 +15,9 @@ const getRedirectUrls = async (res) => {
   const scenarios = await handleCache.evaluateSingle(res, 'scenarios', async () => {
     return await commonContent.getScenarios(res);
   });
+  const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
+    return await commonContent.getTraniningCourse(res);
+  });
   const references = await handleCache.evaluateSingle(res, 'apiSpecifications', async () => {
     return commonContent.getReferences(res);
   });
@@ -22,7 +25,7 @@ const getRedirectUrls = async (res) => {
     return await getUrlMap(res);
   });
 
-  const items = [...articles, ...references, ...scenarios];
+  const items = [...articles, ...references, ...scenarios, ...trainingCourses];
   const redirectMap = [];
 
   items.forEach(item => {
