@@ -178,24 +178,13 @@ input[type="search"] {
 
 .a-blank {
     line-height: 0;
-    
-    span {
-        display: inline-block;
-        overflow: hidden;
-        text-indent: -9999px;
-        width: 0;
-    }
 
     &:after {
-        content: "\e6d8";
+        content: "\202F\e6d8";
         font-family: 'kentico-icons';
         font-style: normal;
-        display: inline-block;
-        padding: 0 .375em 0 .125em;
+        display: inline;
         font-size: .675em;
-        position: relative;
-        top: -.325em;
-        text-indent: 0;
 
         .reskin & {
             font-family: 'kentico-icons';
