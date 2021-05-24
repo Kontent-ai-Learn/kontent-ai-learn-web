@@ -39,7 +39,7 @@ if platformsConfig
 if termDefinitions
     script var termDefinitions=[
         each item, index in termDefinitions
-            | {codename:"#{item.system.codename}",term:"#{item.term.value}",text:"!{helper.removeNewLines(helper.escapeQuotes(item.definition.value))}"}
+            | {id:"#{item.system.id}",codename:"#{item.system.codename}",term:"#{item.term.value}",text:"!{helper.removeNewLines(helper.escapeQuotes(item.definition.value))}"}
             if index < termDefinitions.length - 1
                 | ,
         | ]

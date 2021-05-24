@@ -1,7 +1,16 @@
 window.initSmartLink = (() => {
+  const disableLinks = () => {
+    const links = document.querySelectorAll('a');
+    document.body.addEventListener('click', function (e) {
+      if (e.target.matches('a')) e.preventDefault();
+    })
+  };
+
   const initSDK = () => {
     if (typeof KontentSmartLink !== 'undefined') {
       KontentSmartLink.initialize();
+      window.kontentSmartLinkEnabled = true;
+      disableLinks();
     }
   };
 

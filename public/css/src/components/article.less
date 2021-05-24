@@ -11,11 +11,11 @@
         position: relative;
         z-index: 2;
         
-        & > * {
+        & > *:not(kontent-smart-link-overlay) {
             position: relative;
         }
 
-        & > div:not([class]) > * {
+        & > div:not([class]) > *:not(kontent-smart-link-overlay) {
             position: relative;
         }
     }

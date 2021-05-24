@@ -283,7 +283,9 @@ window.initSearch = (() => {
 
       widgetParams.container.appendChild(searchAutocomplete);
       searchInput.addEventListener('focus', () => {
-        onAutocompleteOpened(currentRefinement)
+        if (!window.kontentSmartLinkEnabled) {
+          onAutocompleteOpened(currentRefinement);
+        }
       });
 
       body.addEventListener('click', function (e) {

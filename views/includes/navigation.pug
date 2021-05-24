@@ -9,7 +9,7 @@ nav.navigation
                     img(src='/img/ui/logo.svg', alt='Kentico Kontent Docs logo')
             ul(class= `navigation__list${isNotHome ? '' : ' navigation__list--full'}`)
                 each item in navigation
-                    li.navigation__item&attributes(smartLink?.itemId(item.system.id))&attributes(smartLink?.elementCodename('title'))
+                    li.navigation__item
                         a(href=`${item.system.type === 'navigation_link' ? '' : '/'}${item.url.value}`, class=`navigation__link${req.originalUrl.startsWith(`/${item.url.value}`) ? ' navigation__link--active' : ''}`) !{item.title.value}
         .navigation__right(data-search-target='')
             if isNotHome

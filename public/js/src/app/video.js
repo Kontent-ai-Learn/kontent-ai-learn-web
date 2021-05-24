@@ -40,7 +40,9 @@ window.videoHelper = (() => {
     play.innerHTML = '<span class="sr-only">Play/Pause video</span>';
     play.addEventListener('click', (e) => {
       e.preventDefault();
-      playPauseVideo(video);
+      if (!window.kontentSmartLinkEnabled) {
+        playPauseVideo(video);
+      }
     });
     container.appendChild(play);
 
@@ -75,8 +77,10 @@ window.videoHelper = (() => {
     replay.setAttribute('data-video-tooltip', labelReplay);
     replay.innerHTML = `<span class="sr-only">${labelReplay}</span>`;
     replay.addEventListener('click', () => {
-      video.play();
-      replay.classList.remove('video-controls__replay--visible');
+      if (!window.kontentSmartLinkEnabled) {
+        video.play();
+        replay.classList.remove('video-controls__replay--visible');
+      }
     });
     container.appendChild(replay);
   };
