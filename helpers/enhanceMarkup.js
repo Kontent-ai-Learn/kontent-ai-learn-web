@@ -81,7 +81,29 @@ const createAnchors = ($) => {
     });
 };
 
-const enhanceMarkup = (text) => {
+const kontentSmartLinksResolveUndecided = ($, resolvedData) => {
+    const $undecided = $('[data-kontent-undecided]');
+    $undecided.each(function() {
+        const $that = $(this);
+        const attr = $that.attr('data-kontent-undecided').split('|');
+        const id = attr[0];
+        const codename = attr[1];
+        let type = 'component';
+
+        resolvedData.linkedItemCodenames.forEach((item) => {
+            if (item === codename) {
+                type = 'item';
+            }
+        });
+
+        const smartLinkAttr = `data-kontent-${type}-id`;
+        $that.attr(smartLinkAttr, id);
+        $that.removeAttr('data-kontent-undecided');
+    });
+};
+
+const enhanceMarkup = (resolvedData) => {
+    let text = resolvedData.html;
     text = helper.resolveMacros(text);
     const $ = cheerio.load(text);
 
@@ -91,6 +113,7 @@ const enhanceMarkup = (text) => {
     removeEmptyParagraph($);
     createAnchors($);
     replaceTooltipSpaces($);
+    kontentSmartLinksResolveUndecided($, resolvedData);
 
     const output = $.html();
     return output.replace('<html><head></head><body>', '').replace('</body></html>', '');

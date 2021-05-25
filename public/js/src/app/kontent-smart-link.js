@@ -1,16 +1,27 @@
 window.initSmartLink = (() => {
   const disableLinks = () => {
     document.body.addEventListener('click', function (e) {
-      if (e.target.matches('a')) e.preventDefault();
+      if (e.target.matches('a:not(.navigation__link):not(.sub-navigation__link)')) e.preventDefault();
     });
   };
 
   const initSDK = () => {
     if (typeof KontentSmartLink !== 'undefined') {
       KontentSmartLink.initialize();
-      window.kontentSmartLinkEnabled = true;
-      disableLinks();
-      document.body.classList.add('kontent-smart-link-enabled');
+
+      let intervalCount = 0;
+      const interval = setInterval(() => {
+        intervalCount++;
+        const elem = document.querySelector('kontent-smart-link-element');
+        if (elem) {
+          clearInterval(interval);
+          window.kontentSmartLinkEnabled = true;
+          disableLinks();
+          document.body.classList.add('kontent-smart-link-enabled');
+        } else if (intervalCount > 20) {
+          clearInterval(interval);
+        }
+      }, 200);
     }
   };
 
@@ -32,9 +43,10 @@ window.initSmartLink = (() => {
   };
 
   return () => {
+    initSDK();
+    
     var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('kontent-smart-link-enabled')) {
-      initSDK();
       addSmartLinkQS();
     }
   };

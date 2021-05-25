@@ -13,7 +13,10 @@ const smartLink = {
   },
   componentId: (id) => {
     return { 'data-kontent-component-id': id }
-  }
+  },
+  undecided: (id) => {
+    return { 'data-kontent-undecided': id }
+  },
 }
 
 module.exports = smartLink;
