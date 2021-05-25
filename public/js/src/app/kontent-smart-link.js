@@ -1,9 +1,8 @@
 window.initSmartLink = (() => {
   const disableLinks = () => {
-    const links = document.querySelectorAll('a');
     document.body.addEventListener('click', function (e) {
       if (e.target.matches('a')) e.preventDefault();
-    })
+    });
   };
 
   const initSDK = () => {
@@ -11,6 +10,7 @@ window.initSmartLink = (() => {
       KontentSmartLink.initialize();
       window.kontentSmartLinkEnabled = true;
       disableLinks();
+      document.body.classList.add('kontent-smart-link-enabled');
     }
   };
 
@@ -32,10 +32,9 @@ window.initSmartLink = (() => {
   };
 
   return () => {
-    initSDK();
-
     var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('kontent-smart-link-enabled')) {
+      initSDK();
       addSmartLinkQS();
     }
   };
