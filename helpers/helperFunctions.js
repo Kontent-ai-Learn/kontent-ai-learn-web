@@ -276,7 +276,9 @@ const helper = {
         return `${path}${qs ? `?${qs}` : ''}${anchor ? `#${anchor}` : ''}`;
     },
     getRedirectUrls: (urls) => {
-        return urls?.value ? urls.value.trim().replace(/\n/g, '').split(';') : [];
+        const redirectUrls = urls?.value ? urls.value.trim().replace(/\n/g, '').replace(/;\s*$/, '').split(';') : [];
+        redirectUrls.sort();
+        return redirectUrls;
     },
     isAbsoluteUrl: (url) => {
         return /^(?:[a-z]+:)?\/\//.test(url);

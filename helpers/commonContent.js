@@ -132,6 +132,10 @@ const commonContent = {
     getRedirectRules: async (res) => {
         return await requestDelivery({
             type: 'redirect_rule',
+            order: {
+                field: 'elements.redirect_to',
+                type: 'ascending'
+            },
             ...commonContent.getKCDetails(res)
         });
     },

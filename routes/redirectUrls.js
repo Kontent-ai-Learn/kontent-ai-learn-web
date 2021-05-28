@@ -34,12 +34,15 @@ const getRedirectUrls = async (res) => {
 
       if (originalUrl.length) {
         redirectMap.push({
+          id: item.system.id,
           originalUrl: originalUrl[0].url,
           redirectUrls: helper.getRedirectUrls(item.redirect_urls)
         });
       }
     }
   });
+
+  redirectMap.sort((a, b) => (a.originalUrl > b.originalUrl) ? 1 : ((b.originalUrl > a.originalUrl) ? -1 : 0))
 
   return redirectMap;
 };
@@ -58,7 +61,10 @@ const getRedirectRules = async (res) => {
     if (!redirectRules[i].processed) {
       for (let j = 0; j < redirectRules.length; j++) {
         if (to === redirectRules[j].redirect_to.value) {
-          redirectTo.push(redirectRules[j].redirect_from.value)
+          redirectTo.push({
+            id: redirectRules[j].system.id,
+            url: redirectRules[j].redirect_from.value
+          });
           redirectRules[j].processed = true;
         }
       }
@@ -95,6 +101,8 @@ router.get('/', async (req, res) => {
     req: req,
     minify: minify,
     isPreview: isPreview(res.locals.previewapikey),
+    projectId: res.locals.projectid,
+    language: res.locals.language,
     title: 'Redirect URLs',
     navigation: home[0] ? home[0].navigation.value : [],
     redirectRules: redirectRules,
