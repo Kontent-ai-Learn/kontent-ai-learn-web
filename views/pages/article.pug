@@ -52,13 +52,13 @@ block content
                                             li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
                     if (platform && !availablePlatforms.length)
                         .language-selector.language-selector--unprocessed
-                            ul.language-selector__list&attributes(smartLink?.elementCodename('platform'))
+                            ul.language-selector__list
                                 each item in platform
                                     li.language-selector__item
                                         a(href=`#`, data-platform=item.codename, data-slug=item.slug, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=UIMessages.technology_picker_tooltip.value.replace('{TechnologyName}', item.title), class=`language-selector__link`)
                     if (availablePlatforms && availablePlatforms.length)
                         .language-selector.language-selector--unprocessed
-                            ul.language-selector__list.language-selector__list--static&attributes(smartLink?.elementCodename('platform'))
+                            ul.language-selector__list.language-selector__list--static
                                 - var highlighIndex = 0; availablePlatforms.forEach((item, index) => { if (preselectedPlatform === item.slug) { highlighIndex = index } });
                                 each item, index in availablePlatforms
                                     li.language-selector__item

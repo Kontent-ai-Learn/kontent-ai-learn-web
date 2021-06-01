@@ -1,7 +1,7 @@
 window.initSmartLink = (() => {
   const disableLinks = () => {
     document.body.addEventListener('click', function (e) {
-      if (e.target.matches('a:not(.navigation__link):not(.sub-navigation__link)')) e.preventDefault();
+      if (e.target.matches('a:not(.navigation__link):not(.sub-navigation__link):not(.language-selector__link)')) e.preventDefault();
     });
   };
 
@@ -26,10 +26,11 @@ window.initSmartLink = (() => {
   };
 
   const addSmartLinkQS = () => {
-    const subNavigationLinks = document.querySelectorAll('.sub-navigation__link');
+    const subNavigationLinks = document.querySelectorAll('.sub-navigation__link, .language-selector__link');
 
     for (let i = 0; i < subNavigationLinks.length; i++) {
       let href = subNavigationLinks[i].getAttribute('href');
+      if (href === '#') continue;
       const qs = href.split('?');
 
       if (qs[1]) {

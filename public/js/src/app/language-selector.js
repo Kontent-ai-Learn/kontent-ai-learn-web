@@ -16,7 +16,7 @@
                     }
                     return item;
                 });
-                qs.join('&');
+                qs = qs.join('&');
             } else {
                 qs = 'tech=' + platform;
             }
