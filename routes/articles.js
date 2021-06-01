@@ -173,7 +173,7 @@ const getContent = async (req, res) => {
                 isReference: true,
                 itemId: content && content.length ? content[0].system.id : null,
                 title: content && content.length ? content[0].title.value : '',
-                navigation: home && home.length ? home[0].navigation.value : null,
+                navigation: home && home.length ? home[0].subpages.value : null,
                 footer: footer && footer.length ? footer[0] : null,
                 UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
                 platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,

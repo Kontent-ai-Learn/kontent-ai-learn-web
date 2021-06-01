@@ -99,7 +99,7 @@ router.get('/', async (req, res) => {
     minify: minify,
     isPreview: isPreview(res.locals.previewapikey),
     title: 'Redirect URLs',
-    navigation: home[0] ? home[0].navigation.value : [],
+    navigation: process.env.KK_NEW_STRUCTURE === 'true' ? home[0].subpages.value : home[0].navigation.value,
     redirectRules: redirectRules,
     redirectMap: redirectMap,
     footer: footer[0] ? footer[0] : null,
