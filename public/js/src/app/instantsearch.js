@@ -79,7 +79,7 @@ window.initSearch = (() => {
     const tech = suggestion.platforms && suggestion.platforms.length === 1 ? `?tech=${window.helper.getTech(suggestion.platforms[0])}` : '';
     suggestion.resolvedUrl = suggestionUrl.length ? `${suggestionUrl[0].url}${suggestionUrl[0].url.indexOf('?tech') === -1 ? tech : ''}${suggestion.section !== 'API' ? anchor : ''}` : '';
     
-    let section;
+    let section = "";
 
     if (suggestion.section.toLowerCase() === 'api') {
         section = 'Reference';
@@ -117,7 +117,7 @@ window.initSearch = (() => {
                   <p class="suggestion__text">${removeInlineElements(suggestion._snippetResult.content.value)}</p>
                 </div>
                 <div class="suggestion__right">
-                  <span class="suggestion__category suggestion__category--${section.toLowerCase()}">${section.toUpperCase()}</span>
+                  ${section ? `<span class="suggestion__category suggestion__category--${section.toLowerCase()}">${section.toUpperCase()}</span>` : ''}
                 </div>
               </a>
             </li>`;
