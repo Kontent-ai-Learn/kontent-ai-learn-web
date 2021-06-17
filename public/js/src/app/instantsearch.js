@@ -90,6 +90,10 @@ window.initSearch = (() => {
         section = 'Tutorial';
     }
 
+    if (suggestion.section === 'training') {
+      section = 'E-learning';
+    }
+
     // Custom label for terminology page
     if (suggestion.codename === 'terminology') {
         section = 'Terminology';
