@@ -7,8 +7,9 @@ const lms = require('./lms')
 const isPreview = require('./isPreview');
 const sendSendGridEmail = require('./sendgrid');
 
-const isCourseAvailable = (user) => {
-  if (user.email.endsWith('@kentico.com')) {
+const isCourseAvailable = (user, content) => {
+  const isFreeCourse = helper.isCodenameInMultipleChoice(content.is_free.value, 'yes');
+  if (user.email.endsWith('@kentico.com') || isFreeCourse) {
     return true;
   }
 
@@ -78,6 +79,49 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPrevie
     };
 };
 
+const getUserFromSubscriptionService = async (req) => {
+  const url = `${process.env['SubscriptionService.Url']}${req.oidc.user.email}/`;
+  let user;
+  let errCode;
+  try {
+    user = await axios({
+      method: 'get',
+      url: url,
+      headers: {
+        Authorization: `Bearer ${process.env['SubscriptionService.Bearer']}`
+      }
+    });
+  } catch (err) {
+    if (!err.response) {
+      err.response = {
+        data: {
+          message: `Invalid request to ${url}`
+        }
+      };
+    }
+    if (typeof err.response.data === 'string') {
+      err.response.data = { message: err.response.data };
+    }
+    err.response.data.userEmail = req.oidc.user.email;
+    err.response.data.file = 'helpers/trainingCourse.js';
+    err.response.data.method = 'getTrainingCourseInfo';
+    const notification = lms.composeNotification('A user attempt to sign in to Kentico Kontent Docs failed in the Subscription service with the following error:', err.response.data);
+    const emailInfo = {
+      recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
+      subject: 'Failed user sign in notification',
+      text: notification
+    };
+    sendSendGridEmail(emailInfo);
+
+    if (app.appInsights) {
+      app.appInsights.defaultClient.trackTrace({ message: `SUBSCRIPTION_SERVICE_ERROR: ${notification}` });
+    }
+
+    errCode = err.response.data.code;
+  }
+  return { user, errCode };
+};
+
 const getTrainingCourseInfo = async (content, req, res) => {
   const UIMessagesObj = await handleCache.ensureSingle(res, 'UIMessages', async () => {
     return await commonContent.getUIMessages(res);
@@ -89,6 +133,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
   let forcePreviewRender = false;
   let generalMessage;
   let user;
+  let errCode;
 
   // If user is not authenticated
   if (!req.oidc.isAuthenticated()) {
@@ -109,44 +154,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
     }
   } else {
       // Get additional info about authenticated user
-      const url = `${process.env['SubscriptionService.Url']}${req.oidc.user.email}/`;
-      let errCode;
-      try {
-        user = await axios({
-          method: 'get',
-          url: url,
-          headers: {
-            Authorization: `Bearer ${process.env['SubscriptionService.Bearer']}`
-          }
-        });
-      } catch (err) {
-        if (!err.response) {
-          err.response = {
-            data: {
-              message: `Invalid request to ${url}`
-            }
-          };
-        }
-        if (typeof err.response.data === 'string') {
-          err.response.data = { message: err.response.data };
-        }
-        err.response.data.userEmail = req.oidc.user.email;
-        err.response.data.file = 'helpers/trainingCourse.js';
-        err.response.data.method = 'getTrainingCourseInfo';
-        const notification = lms.composeNotification('A user attempt to sign in to Kentico Kontent Docs failed in the Subscription service with the following error:', err.response.data);
-        const emailInfo = {
-          recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
-          subject: 'Failed user sign in notification',
-          text: notification
-        };
-        sendSendGridEmail(emailInfo);
-
-        if (app.appInsights) {
-          app.appInsights.defaultClient.trackTrace({ message: `SUBSCRIPTION_SERVICE_ERROR: ${notification}` });
-        }
-
-        errCode = err.response.data.code;
-      }
+      ({ user, errCode } = await getUserFromSubscriptionService(req));
 
       if (!user) {
         renderGeneralMessage = true;
@@ -163,7 +171,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
           renderAs: 'text',
           signedIn: true
         };
-      } else if (!isCourseAvailable(user.data)) {
+      } else if (!isCourseAvailable(user.data, content)) {
         renderGeneralMessage = true;
         generalMessage = {
           text: UIMessages.training___cta_buy_course.value,

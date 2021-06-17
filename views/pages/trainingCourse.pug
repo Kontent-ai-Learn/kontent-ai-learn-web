@@ -26,6 +26,9 @@ block content
             .article__right
                 .article__content&attributes(smartLink?.itemId(itemId))
                     h1&attributes(smartLink?.elementCodename('title')) !{content.title.value}
+                      - const isFree = helper.isCodenameInMultipleChoice(content.is_free.value, 'yes');
+                      if (isFree)
+                        span.article__tag.article__tag--blue !{UIMessages.training___free_course_label.value}
                     .article__notes
                       span&attributes(smartLink?.elementCodename('duration')) !{UIMessages.training___estimated_duration.value} !{content.duration.value} !{content.duration.value === 1 ? 'hour' : `hours`}
                       if (content.persona.value.length)
