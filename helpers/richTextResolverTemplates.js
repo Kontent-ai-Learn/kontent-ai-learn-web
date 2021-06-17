@@ -547,7 +547,17 @@ const richTextResolverTemplates = {
                 </div>
             </div>
         `;
-    }
+    },
+    quote: (item, config) => {
+        return `<div class="quote"${getSmartLinkAttr(config, item.system.id, 'item')}>
+                    <div class="quote__text"${getSmartLinkAttr(config, 'quote', 'element')}>
+                        ${item.quote.value}
+                    </div>
+                    <div class="quote__author"${getSmartLinkAttr(config, 'author', 'element')}>
+                        ${item.author.value}
+                    </div>
+                </div>`;
+    },
 };
 
 module.exports = richTextResolverTemplates;

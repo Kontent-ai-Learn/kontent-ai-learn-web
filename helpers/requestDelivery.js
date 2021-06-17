@@ -131,6 +131,9 @@ const componentsResolvers = [{
 }, {
     type: 'training_course',
     resolver: richTextResolverTemplates.trainingCourse
+}, {
+    type: 'quote',
+    resolver: richTextResolverTemplates.quote
 }];
 
 const resolveRichText = (item, config) => {

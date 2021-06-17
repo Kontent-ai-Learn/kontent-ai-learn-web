@@ -232,6 +232,7 @@ gulp.task('css-app', () => {
       'public/css/src/components/edit-link.less',
       'public/css/src/components/autocomplete.less',
       'public/css/src/components/video-controls.less',
+      'public/css/src/components/quote.less',
       'public/css/src/general/print.less'
     ])
     .pipe(concat('app.less'))
