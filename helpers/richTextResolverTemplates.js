@@ -554,7 +554,7 @@ const richTextResolverTemplates = {
                         ${item.quote.value}
                     </div>
                     <div class="quote__author"${getSmartLinkAttr(config, 'author', 'element')}>
-                        ${item.author.value}
+                        &mdash; ${item.author.value}
                     </div>
                 </div>`;
     },
