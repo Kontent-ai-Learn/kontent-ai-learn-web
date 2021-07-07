@@ -214,6 +214,15 @@ const lms = {
 
         return `${text}\n${info}`;
     },
+    getUserCourseCertificate: async (data, courseId) => {
+        const userLMS = await getUserByEmail(data.email);
+
+        if (!userLMS.err) {
+            return getCertificate(userLMS, courseId);
+        }
+
+        return null;
+    },
     enrollTrainingCourse: async (data, courseId) => {
         const user = {};
         user.login = data.email;

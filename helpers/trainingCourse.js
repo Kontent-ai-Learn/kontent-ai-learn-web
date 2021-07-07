@@ -187,7 +187,8 @@ const getTrainingCourseInfo = async (content, req, res) => {
           text: UIMessages.training___cta_buy_course.value,
           action: 'intercom',
           renderAs: 'button',
-          signedIn: true
+          signedIn: true,
+          certificate: await lms.getUserCourseCertificate(user.data, content.talentlms_course_id.value)
         };
       }
   }
