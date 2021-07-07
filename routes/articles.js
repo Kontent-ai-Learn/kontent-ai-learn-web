@@ -180,12 +180,26 @@ const getContent = async (req, res) => {
 
     if (content && content.length) {
         if (currentLevel === -1) {
-            return `/${slug}/${content[0].children.value[0].url.value}${queryHash ? '?' + queryHash : ''}`;
+            return {
+                redirectCode: 301,
+                redirectUrl: `/${slug}/${content[0].children.value[0].url.value}${queryHash ? '?' + queryHash : ''}`
+            }
         } else if (currentLevel === 0 && content[0].system.type !== 'multiplatform_article') {
             if (content[0].system.type === 'training_course') {
                 view = 'pages/trainingCourse';
                 res = fastly.preventCaching(res);
                 trainingCourseInfo = await getTrainingCourseInfo(content[0], req, res);
+
+                for (const key in trainingCourseInfo) {
+                    if (Object.prototype.hasOwnProperty.call(trainingCourseInfo, key)) {
+                        if (trainingCourseInfo[key] && trainingCourseInfo[key].redirectToLMS) {
+                            return {
+                                redirectCode: 302,
+                                redirectUrl: trainingCourseInfo[key].url
+                            };
+                        }
+                    }
+                }
             } else if (content[0].system.type === 'scenario') {
                 view = 'pages/scenario';
             } else if (content[0].system.type === 'zapi_specification') {
@@ -211,7 +225,10 @@ const getContent = async (req, res) => {
                 };
             }
         } else if (currentLevel === 1) {
-            return `/${slug}/${subNavigationLevels[currentLevel - 1]}/${subNavigationLevels[currentLevel]}/${content[0].children.value[0].url.value}${queryHash ? '?' + queryHash : ''}`;
+            return {
+                redirectCode: 301,
+                redirectUrl: `/${slug}/${subNavigationLevels[currentLevel - 1]}/${subNavigationLevels[currentLevel]}/${content[0].children.value[0].url.value}${queryHash ? '?' + queryHash : ''}`
+            }
         } else {
             const preselectedPlatformSettings = await platforms.getPreselectedPlatform(content[0], cookiesPlatform, req, res);
 
@@ -345,7 +362,7 @@ const getContent = async (req, res) => {
 
 router.get(['/other/:article', '/:main', '/:main/:scenario', '/:main/:scenario/:topic', '/:main/:scenario/:topic/:article'], asyncHandler(async (req, res, next) => {
     const data = await getContent(req, res, next);
-    if (data && !data.view) return res.redirect(301, data);
+    if (data && data.redirectUrl && data.redirectCode) return res.redirect(data.redirectCode, data.redirectUrl);
     if (!data) return next();
     return res.render(data.view, data);
 }));

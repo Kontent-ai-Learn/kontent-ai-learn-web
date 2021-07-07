@@ -30,10 +30,19 @@ const isCourseAvailable = (user, content) => {
   return false;
 };
 
-const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPreviewCourse) => {
+const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPreviewCourse, req) => {
     if (!courseId && courseId !== 0) return null;
+    let courseInfo = null;
+    let redirectToLMS = false;
+
     // Register user in LMS and course and get info about course url and completion
-    const courseInfo = await lms.handleTrainingCourse(user, courseId);
+    if ((typeof req.query.enroll !== 'undefined' && req.query.enroll !== 'preview' && !isPreviewCourse) || (typeof req.query.enroll !== 'undefined' && req.query.enroll === 'preview' && isPreviewCourse)) {
+      courseInfo = await lms.enrollTrainingCourse(user, courseId, req);
+      redirectToLMS = true;
+    } else {
+      courseInfo = await lms.handleTrainingCourse(user, courseId, req, isPreviewCourse);
+    }
+
     let text = '';
     let renderAs = 'button';
 
@@ -75,7 +84,8 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPrevie
       certificate: courseInfo.certificate,
       target: courseInfo.target,
       signedIn: true,
-      renderAs: renderAs
+      renderAs: renderAs,
+      redirectToLMS: redirectToLMS
     };
 };
 
@@ -184,8 +194,8 @@ const getTrainingCourseInfo = async (content, req, res) => {
 
   return {
     general: renderGeneralMessage ? generalMessage : null,
-    production: !renderGeneralMessage && user ? await getTrainingCourseInfoFromLMS(user.data, content.talentlms_course_id.value, UIMessages, false) : null,
-    preview: (!renderGeneralMessage || forcePreviewRender) && isPreview(res.locals.previewapikey) && user ? await getTrainingCourseInfoFromLMS(user.data, content.talentlms_course_id_preview.value, UIMessages, true) : null
+    production: !renderGeneralMessage && user ? await getTrainingCourseInfoFromLMS(user.data, content.talentlms_course_id.value, UIMessages, false, req) : null,
+    preview: (!renderGeneralMessage || forcePreviewRender) && isPreview(res.locals.previewapikey) && user ? await getTrainingCourseInfoFromLMS(user.data, content.talentlms_course_id_preview.value, UIMessages, true, req) : null
   }
 };
 

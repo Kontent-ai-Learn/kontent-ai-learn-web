@@ -214,7 +214,7 @@ const lms = {
 
         return `${text}\n${info}`;
     },
-    handleTrainingCourse: async (data, courseId) => {
+    enrollTrainingCourse: async (data, courseId) => {
         const user = {};
         user.login = data.email;
         user.email = data.email;
@@ -287,6 +287,75 @@ const lms = {
         return {
             url: goTo.goto_url,
             completion: parseInt(status.completion_percentage),
+            certificate: certificate,
+            target: '_blank'
+        }
+    },
+    handleTrainingCourse: async (data, courseId, req, isPreviewCourse) => {
+        let isNewUser = false;
+        let goTo = null;
+        let certificate = null;
+        let status = null;
+        let url = '#';
+
+        const user = {};
+        user.login = data.email;
+        user.email = data.email;
+        user.first_name = data.firstName;
+        user.last_name = data.lastName;
+
+        const userLMS = await getUserByEmail(user.login);
+        if (userLMS.err) {
+            isNewUser = true;
+        }
+
+        const userToBeUpdated = !isNewUser && (data.firstName !== userLMS.first_name || data.lastName !== userLMS.last_name);
+        if (userToBeUpdated) {
+            await updateUser(userLMS, user);
+        }
+
+        if (!isNewUser && !userIsInBranch(userLMS)) {
+            isNewUser = true;
+        }
+
+        const courseExistsInLMS = await courseExists(courseId);
+        if (courseExistsInLMS.err) {
+            return {
+                url: '#',
+                completion: 103,
+                err: courseExistsInLMS.err
+            }
+        }
+
+        if (!isNewUser) {
+            status = await getStatus(courseId, userLMS.id);
+            if (status.err) {
+                isNewUser = true;
+            }
+        }
+
+        if (!isNewUser) {
+            goTo = await getGoTo(courseId, userLMS.id);
+            if (goTo.err) {
+                return {
+                    url: '#',
+                    completion: 102,
+                    err: goTo.err
+                }
+            }
+
+            certificate = getCertificate(userLMS, courseId);
+        }
+
+        if (goTo) {
+            url = goTo.goto_url;
+        } else {
+            url = `${req.originalUrl.split('?')[0]}?enroll${isPreviewCourse ? '=preview' : ''}`;
+        }
+
+        return {
+            url: url,
+            completion: status && status.completion_percentage ? parseInt(status.completion_percentage) : 0,
             certificate: certificate,
             target: '_blank'
         }
