@@ -1,7 +1,13 @@
 const cache = require('memory-cache');
-const getUrlMap = require('./urlMap');
 const commonContent = require('./commonContent');
 const helper = require('./helperFunctions');
+
+let getUrlMap;
+if (process.env.KK_NEW_STRUCTURE === 'true') {
+  getUrlMap = require('./urlMap');
+} else {
+  getUrlMap = require('./urlMap_Obsolete');
+}
 
 const deleteCachePreviewCheck = (keyName, KCDetails, isPreviewRequest) => {
     if (isPreviewRequest && cache.get(`${keyName}_${KCDetails.projectid}`)) {

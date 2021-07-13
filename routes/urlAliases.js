@@ -1,7 +1,13 @@
 const commonContent = require('../helpers/commonContent');
-const getUrlMap = require('../helpers/urlMap');
 const handleCache = require('../helpers/handleCache');
 const helper = require('../helpers/helperFunctions');
+
+let getUrlMap;
+if (process.env.KK_NEW_STRUCTURE === 'true') {
+  getUrlMap = require('../helpers/urlMap');
+} else {
+  getUrlMap = require('../helpers/urlMap_Obsolete');
+}
 
 const urlAliases = async (req, res, next) => {
     const urlSplit = req.originalUrl.split('?');

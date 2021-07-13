@@ -16,29 +16,55 @@ const customRichTextResolver = require('../helpers/customRichTextResolver');
 const smartLink = require('../helpers/smartLink');
 const fastly = require('../helpers/fastly');
 
-const getUrlMap = require('../helpers/urlMap');
+const getUrlMap = require('../helpers/urlMap_Obsolete'); ;
 
 let cookiesPlatform;
 
-const getItemContent = async (item, urlMap, res) => {
+const getSubNavigationLevels = (req) => {
+    return [
+        typeof req.params.scenario !== 'undefined' ? req.params.scenario : null,
+        typeof req.params.topic !== 'undefined' ? req.params.topic : null,
+        typeof req.params.article !== 'undefined' ? req.params.article : null,
+        typeof req.params.platform !== 'undefined' ? req.params.platform : null
+    ];
+};
+
+const getContentLevel = async (currentLevel, codename, urlMap, req, res) => {
     const KCDetails = commonContent.getKCDetails(res);
 
     const settings = {
-        codename: item.codename,
+        codename: codename,
         depth: 2,
         ...KCDetails
     };
 
-    if (item.type === 'navigation_item') {
+    if (currentLevel === -1) {
+        settings.type = 'navigation_item';
         delete settings.depth;
-    } else {
+    } else if (currentLevel === 0) {
+        settings.resolveRichText = true;
+        settings.urlMap = urlMap;
+    } else if (currentLevel === 1) {
+        settings.type = 'topic';
+    } else if (currentLevel === 2) {
         settings.resolveRichText = true;
         settings.urlMap = urlMap;
     }
 
-    return await handleCache.evaluateSingle(res, item.codename, async () => {
+    if (!settings.codename) {
+        settings.slug = getSubNavigationLevels(req)[currentLevel]
+    }
+
+    return await handleCache.evaluateSingle(res, settings.codename, async () => {
         return await requestDelivery(settings);
     });
+};
+
+const getCurrentLevel = (levels) => {
+    let index = levels.length;
+    // Get last non-null array item index
+    while (index-- && !levels[index]);
+    return index;
 };
 
 const getRedocReference = async (apiCodename, res, KCDetails) => {
@@ -138,15 +164,15 @@ const getContent = async (req, res) => {
     });
 
     const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
+    const itemCodename = helper.getCodenameByUrl(req.originalUrl, urlMap);
+    const subNavigationLevels = getSubNavigationLevels(req);
+    const currentLevel = getCurrentLevel(subNavigationLevels);
 
-    const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
-    let content = await getItemContent(urlMapItem, urlMap, res);
-
+    let content = await getContentLevel(currentLevel, itemCodename, urlMap, req, res);
     let view = 'pages/article';
     let availablePlatforms;
     let trainingCourseInfo;
 
-    const pathUrl = req.originalUrl.split('?')[0];
     const queryHash = req.url.split('?')[1];
     const platformsConfig = await platforms.getPlatformsConfig(res);
     let preselectedPlatform;
@@ -154,48 +180,40 @@ const getContent = async (req, res) => {
     cookiesPlatform = req.cookies['KCDOCS.preselectedLanguage'];
 
     if (content && content.length) {
-        if (content[0].system.type === 'navigation_item' && content[0].subpages.value.length) {
-            return {
-                redirectCode: 301,
-                redirectUrl: `${pathUrl}/${content[0].subpages.value[0].url.value}${queryHash ? '?' + queryHash : ''}`
-            }
-        } else if (content[0].system.type === 'training_course') {
-            view = 'pages/trainingCourse';
-            res = fastly.preventCaching(res);
-            trainingCourseInfo = await getTrainingCourseInfo(content[0], req, res);
+        if (currentLevel === -1) {
+            return `/${slug}/${content[0].children.value[0].url.value}${queryHash ? '?' + queryHash : ''}`;
+        } else if (currentLevel === 0 && content[0].system.type !== 'multiplatform_article') {
+            if (content[0].system.type === 'training_course') {
+                view = 'pages/trainingCourse';
+                res = fastly.preventCaching(res);
+                trainingCourseInfo = await getTrainingCourseInfo(content[0], req, res);
+            } else if (content[0].system.type === 'scenario') {
+                view = 'pages/scenario';
+            } else if (content[0].system.type === 'zapi_specification') {
+                view = 'pages/redoc';
+                let contentReference = await getRedocReference(content[0].system.codename, res, KCDetails);
+                contentReference = resolveLinks(contentReference, urlMap);
 
-            for (const key in trainingCourseInfo) {
-                if (Object.prototype.hasOwnProperty.call(trainingCourseInfo, key)) {
-                    if (trainingCourseInfo[key] && trainingCourseInfo[key].redirectToLMS) {
-                        return {
-                            redirectCode: 302,
-                            redirectUrl: trainingCourseInfo[key].url
-                        };
-                    }
-                }
+                return {
+                    req: req,
+                    minify: minify,
+                    slug: slug,
+                    isPreview: KCDetails.isPreview,
+                    isReference: true,
+                    itemId: content && content.length ? content[0].system.id : null,
+                    title: content && content.length ? content[0].title.value : '',
+                    navigation: home && home.length ? home[0].navigation.value : null,
+                    footer: footer && footer.length ? footer[0] : null,
+                    UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
+                    platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
+                    helper: helper,
+                    content: contentReference,
+                    view: view
+                };
             }
-        } else if (content[0].system.type === 'zapi_specification') {
-            view = 'pages/redoc';
-            let contentReference = await getRedocReference(content[0].system.codename, res, KCDetails);
-            contentReference = resolveLinks(contentReference, urlMap);
-
-            return {
-                req: req,
-                minify: minify,
-                slug: slug,
-                isPreview: KCDetails.isPreview,
-                isReference: true,
-                itemId: content && content.length ? content[0].system.id : null,
-                title: content && content.length ? content[0].title.value : '',
-                navigation: home && home.length ? home[0].subpages.value : null,
-                footer: footer && footer.length ? footer[0] : null,
-                UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
-                platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
-                helper: helper,
-                content: contentReference,
-                view: view
-            };
-        } else if (content[0].system.type === 'multiplatform_article' || content[0].system.type === 'article') {
+        } else if (currentLevel === 1) {
+            return `/${slug}/${subNavigationLevels[currentLevel - 1]}/${subNavigationLevels[currentLevel]}/${content[0].children.value[0].url.value}${queryHash ? '?' + queryHash : ''}`;
+        } else {
             const preselectedPlatformSettings = await platforms.getPreselectedPlatform(content[0], cookiesPlatform, req, res);
 
             if (!preselectedPlatformSettings) {
@@ -223,8 +241,6 @@ const getContent = async (req, res) => {
             }
 
             preselectedPlatform = platforms.getPreselectedPlatformByConfig(preselectedPlatform, platformsConfig);
-        } else {
-            return null;
         }
     } else {
         return null;
@@ -308,8 +324,9 @@ const getContent = async (req, res) => {
         canonicalUrl: canonicalUrl,
         introduction: content && content.length && content[0].introduction ? content[0].introduction.value : '',
         nextSteps: content && content.length && content[0].next_steps ? content[0].next_steps : '',
-        navigation: home && home.length ? home[0].subpages.value : [],
-        subNavigation: subNavigation && subNavigation.length ? subNavigation[0].subpages.value : [],
+        navigation: home && home.length ? home[0].navigation.value : [],
+        subNavigation: subNavigation && subNavigation.length ? subNavigation[0].children.value : [],
+        subNavigationLevels: subNavigationLevels,
         content: content && content.length ? content[0] : null,
         footer: footer && footer.length ? footer[0] : null,
         UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
@@ -331,7 +348,7 @@ const getContent = async (req, res) => {
 
 router.get(['/other/:article', '/:main', '/:main/:scenario', '/:main/:scenario/:topic', '/:main/:scenario/:topic/:article'], asyncHandler(async (req, res, next) => {
     const data = await getContent(req, res, next);
-    if (data && data.redirectUrl && data.redirectCode) return res.redirect(data.redirectCode, data.redirectUrl);
+    if (data && !data.view) return res.redirect(301, data);
     if (!data) return next();
     return res.render(data.view, data);
 }));

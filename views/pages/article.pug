@@ -3,7 +3,10 @@ block content
     main(id='main')
         .article(data-display-mode=`${content.display_mode.value.length ? content.display_mode.value[0].name.toLowerCase() : 'one-page'}`)
             .article__left
-                include ../includes/sub-navigation.pug
+                if (tempNewStructure)
+                    include ../includes/sub-navigation.pug
+                else
+                    include ../includes/sub-navigation_Obsolete.pug
             .article__right
                 div(class=`article__content${containsChangelog ? ' article__content--anchors-only' : ''}`)&attributes(smartLink?.itemId(itemId))
                     if termDefinitions
@@ -19,7 +22,7 @@ block content
                                 if (content.author.value && content.author.value.length)
                                     each author, index in content.author.value
                                         - let separator = ''; if (index < content.author.value.length - 2) {separator = ', ';} if (index === content.author.value.length - 2) {separator = ' and '}
-                                        span&attributes(smartLink?.itemId(author.system.id))&attributes(smartLink?.elementCodename('name')) !{author.name.value}!{separator}                                  
+                                        span&attributes(smartLink?.itemId(content.system.id))&attributes(smartLink?.elementCodename('author')) !{author.name.value}!{separator}                                  
                                 else
                                     span&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___no_author')) !{UIMessages.article___no_author.value}
                         if (req.query.pdf)
@@ -49,13 +52,13 @@ block content
                                             li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
                     if (platform && !availablePlatforms.length)
                         .language-selector.language-selector--unprocessed
-                            ul.language-selector__list&attributes(smartLink?.elementCodename('platform'))
+                            ul.language-selector__list
                                 each item in platform
                                     li.language-selector__item
                                         a(href=`#`, data-platform=item.codename, data-slug=item.slug, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=UIMessages.technology_picker_tooltip.value.replace('{TechnologyName}', item.title), class=`language-selector__link`)
                     if (availablePlatforms && availablePlatforms.length)
                         .language-selector.language-selector--unprocessed
-                            ul.language-selector__list.language-selector__list--static&attributes(smartLink?.elementCodename('platform'))
+                            ul.language-selector__list.language-selector__list--static
                                 - var highlighIndex = 0; availablePlatforms.forEach((item, index) => { if (preselectedPlatform === item.slug) { highlighIndex = index } });
                                 each item, index in availablePlatforms
                                     li.language-selector__item

@@ -86,10 +86,12 @@ window.initTerminology = () => {
     };
 
     const setTooltipContent = (wrapper, content) => {
-        content.text = handleTooltipTerminologyLinks(content.text)
+        content.text = handleTooltipTerminologyLinks(content.text);
         wrapper.innerHTML = `
-            <h3 class="term-tooltip__title">${content.term}</h3>
-            ${content.text}
+            <div ${window.kontentSmartLinkEnabled ? `data-kontent-item-id="${content.id}" data-kontent-element-codename="${content.codename}"` : ''}>
+                <h3 class="term-tooltip__title">${content.term}</h3>
+                ${content.text}
+            </div>
         `;
     };
 

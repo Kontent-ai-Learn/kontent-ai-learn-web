@@ -16,13 +16,15 @@ mixin lmsInfo(environment)
         - const certIssue = lmsInfoEnv.certificate.issued_date.split('/').map(x => parseInt(x));
         - const certExpiration = lmsInfoEnv.certificate.expiration_date.split('/').map(x => parseInt(x));
         - const certName = encodeURIComponent(lmsInfoEnv.certificate.course_name);
-        a.link(href=`https://www.linkedin.com/profile/add?startTask=${certName}&name=${certName}&organizationId=373060&issueYear=${certIssue[0]}&issueMonth=${certIssue[1]}&expirationYear=${certExpiration[0]}&expirationMonth=${certExpiration[1]}&certUrl=${lmsInfoEnv.certificate.public_url}`, target='_blank') !{UIMessages.training___add_to_linkedin.value}
+        a.link(href=`https://www.linkedin.com/profile/add?startTask=${certName}&name=${certName}&organizationId=373060&issueYear=${certIssue[0]}&issueMonth=${certIssue[1]}&expirationYear=${certExpiration[0]}&expirationMonth=${certExpiration[1]}&certUrl=${lmsInfoEnv.certificate.public_url}`, target='_blank')&attributes(smartLink?.elementCodename('training___add_to_linkedin')) !{UIMessages.training___add_to_linkedin.value}
       if (!isPreview && lmsInfoEnv.signedIn)
         a.link(href='/logout')&attributes(smartLink?.elementCodename('sign_out_button')) !{UIMessages.sign_out_button.value}
 block content
     main(id='main')
         .article
             .article__left
+              if (tempNewStructure)
+                include ../includes/sub-navigation.pug
             .article__right
                 .article__content&attributes(smartLink?.itemId(itemId))
                     h1&attributes(smartLink?.elementCodename('title')) !{content.title.value}
@@ -39,8 +41,10 @@ block content
                         span !{trainingCourseInfo['production'].completion}% complete
                       if (isPreview)
                         a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${content.system.id}`, target='_blank', rel='noopener') Edit
-                    div&attributes(smartLink?.elementCodename('introduction')) !{minify(content.introduction.value)}
-                    div&attributes(smartLink?.elementCodename('description')) !{minify(content.description.value)}
+                    if helper.isNotEmptyRichText(content.introduction.value)
+                      div&attributes(smartLink?.elementCodename('introduction')) !{minify(content.introduction.value)}
+                    if helper.isNotEmptyRichText(content.description.value)
+                      div&attributes(smartLink?.elementCodename('description')) !{minify(content.description.value)}
                     +lmsInfo('general')
                     +lmsInfo('production')
                     +lmsInfo('preview')

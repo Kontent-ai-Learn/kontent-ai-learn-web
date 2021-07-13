@@ -255,7 +255,7 @@ const getResponse = async (query, config) => {
                     .forEach((key) => {
                         if (elem[key]) {
                             elem[key].resolveHtml();
-                            elem[key].value = enhanceMarkup(elem[key].resolvedData.html);
+                            elem[key].value = enhanceMarkup(elem[key].resolvedData);
                         }
                     });
             }

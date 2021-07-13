@@ -1,8 +1,9 @@
 const moment = require('moment');
+const cheerio = require('cheerio');
 const helper = require('./helperFunctions');
 const smartLink = require('./smartLink');
 
-const getSmartLinkAttr = (config, id, type) => {
+const getSmartLinkAttr = (config, id, type, codename) => {
     if (!config.isPreview) return '';
 
     let smartLinkObj = null;
@@ -12,8 +13,26 @@ const getSmartLinkAttr = (config, id, type) => {
         smartLinkObj = config.isPreview ? smartLink.componentId(id) : null;
     } else if (type === 'item') {
         smartLinkObj = config.isPreview ? smartLink.itemId(id) : null;
+    } else if (type === 'undecided') {
+        smartLinkObj = config.isPreview ? smartLink.undecided(`${id}|${codename}`) : null;
     }
     return smartLinkObj ? ` ${Object.keys(smartLinkObj)[0]}="${smartLinkObj[Object.keys(smartLinkObj)[0]]}"` : '';
+};
+
+const getSmartLinkAttrInner = (markup, config) => {
+    if (!config.isPreview) return '';
+    const $ = cheerio.load(markup);
+    const rels = [];
+    const codenames = [];
+    const $unresolvedObjects = $('object[type="application/kenticocloud"]');
+
+    $unresolvedObjects.each(function () {
+        const $that = $(this);
+        rels.push($that.attr('data-rel'));
+        codenames.push($that.attr('data-codename'));
+    })
+
+    return ` data-kk-rels="${rels.join('|')}" data-kk-codenames="${codenames.join('|')}"`;
 };
 
 const getImageAttributes = (item, cssClass, transformationQueryString) => {
@@ -52,82 +71,93 @@ const getImageAttributes = (item, cssClass, transformationQueryString) => {
 
 const getYoutubeTemplate = (cssClass, item, config) => {
     return `
-        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+        ${config.isPreview ? `<div$${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        <div class="embed${cssClass}">
             <iframe class="lazy" width="560" height="315" data-src="https://www.youtube-nocookie.com/embed/${item.id.value}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
             <noscript>
                 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/${item.id.value}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>Play video on <a href="https://www.youtube.com/watch?v=${item.id.value}"> https://www.youtube.com/watch?v=${item.id.value}</a></i>
         </p>
+        ${config.isPreview ? '</div>' : ''}
     `;
 };
 
 const getCodepenTemplate = (cssClass, item, config) => {
     return `
-        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}>
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>` : ''}
+        <div class="embed${cssClass}">
             <iframe class="lazy" height="265" scrolling="no" data-src="https://codepen.io/${item.id.value.replace('/pen/', '/embed/')}/?height=265&amp;theme-id=0" frameborder="no" allowtransparency="true" allowfullscreen="true"${getSmartLinkAttr(config, 'id', 'element')}></iframe>
             <noscript>
                 <iframe height="265" scrolling="no" src="https://codepen.io/${item.id.value}/?height=265&amp;theme-id=0" frameborder="no" allowtransparency="true" allowfullscreen="true"${getSmartLinkAttr(config, 'id', 'element')}></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the code example on <a href="https://codepen.io/${item.id.value}">https://codepen.io/${item.id.value}</a></i>
         </p>
+        ${config.isPreview ? '</div>' : ''}
     `;
 };
 
 const getStackblitzTemplate = (cssClass, item, config) => {
     return `
-        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        <div class="embed${cssClass}">
             <iframe class="lazy" data-src="https://stackblitz.com/edit/${item.id.value}?embed=1"></iframe>
             <noscript>
                 <iframe src="https://stackblitz.com/edit/${item.id.value}?embed=1"></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the code example on <a href="https://stackblitz.com/edit/${item.id.value}">https://stackblitz.com/edit/${item.id.value}</a></i>
         </p>
+        ${config.isPreview ? '</div>' : ''}
     `;
 };
 
 const getCodesandboxTemplate = (cssClass, item, config) => {
     return `
-        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        <div class="embed${cssClass}">
             <iframe class="lazy" data-src="https://codesandbox.io/embed/${item.id.value}"></iframe>
             <noscript>
                 <iframe src="https://codesandbox.io/embed/${item.id.value}"></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the code example on <a href="https://codesandbox.io/s/${item.id.value}">https://codesandbox.io/s/${item.id.value}</a></i>
         </p>
+        ${config.isPreview ? '</div>' : ''}
     `;
 };
 
 const getNetlifyTemplate = (cssClass, item, config, netlifyId) => {
     return `
-        <div class="embed${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        <div class="embed${cssClass}">
             <iframe class="lazy lazy--exclude-dnt" data-src="https://${netlifyId[0]}.netlify.com/${netlifyId[1]}"></iframe>
             <noscript>
                 <iframe src="https://${netlifyId[0]}.netlify.com${netlifyId[1]}"></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the example on <a href="https://${netlifyId[0]}.netlify.com${netlifyId[1]}">https://${netlifyId[0]}.netlify.com${netlifyId[1]}</a></i>
         </p>
+        ${config.isPreview ? '</div>' : ''}
     `;
 };
 
 const getGiphyTemplate = (cssClass, item, config) => {
     return `
-        <div class="embed embed--giphy${cssClass}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        <div class="embed embed--giphy${cssClass}">
             <iframe class="lazy" data-src="https://giphy.com/embed/${item.id.value}"></iframe>
             <div class="embed__overlay" aria-hidden="true"></div>
             <noscript>
@@ -135,26 +165,29 @@ const getGiphyTemplate = (cssClass, item, config) => {
             </noscript>
             <a class="embed__link" href="https://giphy.com/gifs/${item.id.value}" target="_blank">via GIPHY</a>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the image on <a href="https://giphy.com/embed/${item.id.value}">https://giphy.com/embed/${item.id.value}</a></i>
         </p>
+        ${config.isPreview ? '</div>' : ''}
     `;
 };
 
 const getDiagramsnetTemplate = (cssClass, item, config, elemId) => {
     return `
-        <div class="embed embed--diagrams-net${cssClass}" id="embed-${elemId}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'id', 'element')}>
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        <div class="embed embed--diagrams-net${cssClass}" id="embed-${elemId}">
             <iframe width="2000" height="1125" class="lazy" frameborder="0" data-src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
             <a data-lightbox-embed="embed-${elemId}" target="_blank" href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>
             <noscript>
                 <iframe frameborder="0" src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}>${item.caption.value}</div>` : ''}
+        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the diagram on <a href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}">https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}</a></i>
         </p>
+        ${config.isPreview ? '</div>' : ''}
     `;
 };
 
@@ -219,10 +252,10 @@ const richTextResolverTemplates = {
         if (item.items_to_show.value) itemsToShow = parseInt(item.items_to_show.value);
 
         return `
-            <section class="presentation__section${missingTitle && missingDescription ? ' presentation__section--list-only' : ''}"${getSmartLinkAttr(config, item.system.id, 'component')}>
+            <section class="presentation__section${missingTitle && missingDescription ? ' presentation__section--list-only' : ''}"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                 ${!missingTitle ? `<h2 class="presentation__heading"${getSmartLinkAttr(config, 'title', 'element')}>${item.title.value}</h2>` : ''}
                 ${!missingDescription ? `<span class="presentation__sub-heading"${getSmartLinkAttr(config, 'description', 'element')}>${item.description.value}</span>` : ''}
-                <ul class="selection${listClass}" data-items-to-show="${!isNaN(itemsToShow) && itemsToShow > -1 ? itemsToShow : -1}"${getSmartLinkAttr(config, 'content', 'element')}>
+                <ul class="selection${listClass}" data-items-to-show="${!isNaN(itemsToShow) && itemsToShow > -1 ? itemsToShow : -1}"${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(item.content.value, config)}>
                     ${item.content.value}
                 </ul>
             </section>
@@ -253,7 +286,7 @@ const richTextResolverTemplates = {
         }
 
         return `
-            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'component')}>
+            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                 <a class="selection__link" href="${resolvedUrl}"${resolvedUrl.indexOf('tech={tech}') > -1 ? ' rel="nofollow"' : ''}>
                     ${item.image.value[0]
 ? `
@@ -266,7 +299,7 @@ const richTextResolverTemplates = {
                     `
 : ''}
                     ${item.title.value ? `<div class="selection__title"${getSmartLinkAttr(config, 'title', 'element')}>${item.title.value}</div>` : ''}
-                    ${helper.isNotEmptyRichText(item.description.value) ? `<div class="selection__description"${getSmartLinkAttr(config, 'description', 'element')}>${item.description.value}</div>` : ''}
+                    ${helper.isNotEmptyRichText(item.description.value) ? `<div class="selection__description"${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</div>` : ''}
                 </a>
             </li>
         `;
@@ -291,7 +324,7 @@ const richTextResolverTemplates = {
         }
 
         return `
-            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'component')}>
+            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                 ${resolvedUrl ? `<a class="selection__link" href="${resolvedUrl}"${resolvedUrl.indexOf('tech={tech}') > -1 ? ' rel="nofollow"' : ''}>` : '<div class="selection__link">'}
                     <div class="selection__img-sizer">
                         <img class="selection__img lazy lazy--exclude-dnt" data-dpr data-lazy-onload loading="lazy" src='${placeholderSrc}' data-src="${imageSrc}"${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}>
@@ -306,8 +339,8 @@ const richTextResolverTemplates = {
     },
     callout: (item, config) => {
         return `
-            <div class="callout callout--${item.type.value.length ? item.type.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, 'component')}>
-                <div${getSmartLinkAttr(config, 'content', 'element')}>${item.content.value}</div>
+            <div class="callout callout--${item.type.value.length ? item.type.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+                <div${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(item.content.value, config)}>${item.content.value}</div>
             </div>`;
     },
     image: (item, config) => {
@@ -327,18 +360,18 @@ const richTextResolverTemplates = {
 
             if (item.image.value[0].url.endsWith('.gif')) {
                 return `
-                    <figure${getSmartLinkAttr(config, item.system.id, 'component')}>
+                    <figure${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                             <div class="video-controls"${zoomable && !url ? ' data-lightbox-video' : ''}${url ? ` data-video-url="${url}"` : ''}>
                                 <video class="article__image article__image--video lazy lazy--exclude-dnt ${attributes.cssClass}" preload="none" muted playsinline${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}>
                                     <source src="${item.image.value[0].url}${attributes.transformationQueryString}" type="video/mp4">
                                 </video>
                             </div>
-                        ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}>${item.description.value}</figcaption>` : ''}
+                        ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</figcaption>` : ''}
                     </figure>`;
             }
 
             return `
-                <figure${getSmartLinkAttr(config, item.system.id, 'component')}>
+                <figure${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                     ${openLinkTag}
                         <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src='${placeholderSrc}' data-src="${item.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-image' : ''}>
                     ${closeLinkTag}
@@ -347,7 +380,7 @@ const richTextResolverTemplates = {
                             <img class="article__image ${attributes.cssClass}" alt="${alt}" src="${item.image.value[0].url}${attributes.transformationQueryString}"${getSmartLinkAttr(config, 'image', 'element')}>
                         ${closeLinkTag}
                     </noscript>
-                    ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}>${item.description.value}</figcaption>` : ''}
+                    ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</figcaption>` : ''}
                 </figure>`;
         }
 
@@ -355,7 +388,7 @@ const richTextResolverTemplates = {
     },
     callToAction: (item, config) => {
         const action = item.action.value.length ? item.action.value[0].codename : null;
-        const smartLinkComponentAttr = getSmartLinkAttr(config, item.system.id, 'component');
+        const smartLinkComponentAttr = getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename);
         const smartLinkAttr = getSmartLinkAttr(config, 'text', 'element');
 
         if (action === 'show_intercom') {
@@ -395,13 +428,13 @@ const richTextResolverTemplates = {
         let value = item.content.value;
         item.platform.value.forEach(item => platforms.push(item.codename));
         if (platforms.length) {
-            value = `<div data-platform-chunk="${platforms.join('|')}"${getSmartLinkAttr(config, item.system.id, 'item')}${getSmartLinkAttr(config, 'content', 'element')}>${value}</div>`;
+            value = `<div data-platform-chunk="${platforms.join('|')}"${getSmartLinkAttr(config, item.system.id, 'item')}${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(value, config)}>${value}</div>`;
         }
-        return `<div${getSmartLinkAttr(config, item.system.id, 'item')}${getSmartLinkAttr(config, 'content', 'element')}>${value}</div>`;
+        return `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(value, config)}>${value}</div>`;
     },
     homeLinkToExternalUrl: (item, config) => {
         return `
-            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'component')}>
+            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                 <a class="selection__link" href="${item.url.value}">
                     <div class="selection__img-sizer">
                         <img class="selection__img" src="${item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=pjpg&auto=format` : 'https://plchldr.co/i/290x168?&amp;bg=ededed&amp;text=Image'}"${getSmartLinkAttr(config, 'image', 'element')}>
@@ -411,7 +444,7 @@ const richTextResolverTemplates = {
             </li>
         `;
     },
-    codeSample: (item, config) => {
+    codeSample: (item, config, type) => {
         const lang = helper.getPrismClassName(item.programming_language.value.length ? item.programming_language.value[0] : '');
         let infoBar = '<div class="infobar"><ul class="infobar__languages">';
         item.programming_language.value.forEach(item => {
@@ -419,10 +452,10 @@ const richTextResolverTemplates = {
         });
         infoBar += '</ul><div class="infobar__copy"><div class="infobar__tooltip"></div></div></div>';
 
-        return `<pre class="line-numbers" data-platform-code="${item.platform.value.length ? item.platform.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, 'component')}${getSmartLinkAttr(config, 'code', 'element')}>${infoBar}<div class="clean-code">${helper.escapeHtml(item.code.value)}</div><code class="${lang}">${helper.escapeHtml(item.code.value)}</code></pre>`;
+        return `<pre class="line-numbers" data-platform-code="${item.platform.value.length ? item.platform.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, type || 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'code', 'element')}>${infoBar}<div class="clean-code">${helper.escapeHtml(item.code.value)}</div><code class="${lang}">${helper.escapeHtml(item.code.value)}</code></pre>`;
     },
     contentSwitcher: (item, config) => {
-        let switcher = `<div class="language-selector"${getSmartLinkAttr(config, item.system.id, 'component')}><ul class="language-selector__list">`;
+        let switcher = `<div class="language-selector"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}><ul class="language-selector__list">`;
 
         item.children.forEach(item => {
             switcher += `<li class="language-selector__item"><a class="language-selector__link" href="" data-platform="${item.platform.value.length ? item.platform.value[0].codename : ''}">${item.platform.value.length ? item.platform.value[0].name : ''}</a></li>`
@@ -432,9 +465,9 @@ const richTextResolverTemplates = {
         return switcher;
     },
     codeSamples: (item, config) => {
-        let codeExamples = `<div class="code-samples"${getSmartLinkAttr(config, item.system.id, 'component')}>`;
+        let codeExamples = `<div class="code-samples"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>`;
         item.code_samples.value.forEach(item => {
-            codeExamples += richTextResolverTemplates.codeSample(item, config);
+            codeExamples += richTextResolverTemplates.codeSample(item, config, 'item');
         });
         codeExamples += '</div>';
 
@@ -471,7 +504,7 @@ const richTextResolverTemplates = {
                         </ul>`
 : ''}
                 </div>
-                <div${getSmartLinkAttr(config, 'content', 'element')}>
+                <div${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(item.content.value, config)}>
                     ${item.content.value}
                 </div>
             </div>
@@ -486,7 +519,7 @@ const richTextResolverTemplates = {
                     ${item.term.value}
                 </h2>
                 ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
-                <div${getSmartLinkAttr(config, 'definition', 'element')}>
+                <div${getSmartLinkAttr(config, 'definition', 'element')}${getSmartLinkAttrInner(item.definition.value, config)}>
                     ${item.definition.value}
                 </div>
             </div>
@@ -517,7 +550,7 @@ const richTextResolverTemplates = {
 : '';
 
         return `
-            <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}"${getSmartLinkAttr(config, item.system.id, 'item')}>
+            <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}"${getSmartLinkAttr(config, item.system.id, 'undecided')}>
                 <h3${getSmartLinkAttr(config, 'title', 'element')}>${url ? `<a href="${url}">${item.title.value}</a>` : `${item.title.value}`}${isFree ? `<span class="article__tag article__tag--blue">${config.UIMessages.training___free_course_label.value}</span>` : ''}</h3>
                 ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                 <div class="article__introduction">
@@ -532,7 +565,7 @@ const richTextResolverTemplates = {
                             ${personas.map(item => `<li class="article__tags-item article__tags-item--green">${item.name}</li>`).join('')}
                             ${personas.length ? '</ul>' : ''}
                         </div>
-                        <div${getSmartLinkAttr(config, 'introduction', 'element')}>
+                        <div${getSmartLinkAttr(config, 'introduction', 'element')}${getSmartLinkAttrInner(item.introduction.value, config)}>
                             ${item.introduction.value}
                         </div>
                         ${url && config.UIMessages && config.UIMessages.training___view_details

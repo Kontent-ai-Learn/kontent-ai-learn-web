@@ -93,7 +93,9 @@
           // Init lighbox with caption
           let instance;
           item.addEventListener('click', () => {
-            instance = zoomItem('img', instance, content, figcaption);
+            if (!window.kontentSmartLinkEnabled) {
+              instance = zoomItem('img', instance, content, figcaption);
+            }
           });
         });
       }
@@ -121,12 +123,14 @@
           let instance;
           item.addEventListener('click', (e) => {
             e.preventDefault();
-            const itemToZoom = document.querySelector(`#${item.getAttribute('data-lightbox-embed')} iframe`);
-            const wrap = document.createElement('div');
-            wrap.appendChild(itemToZoom.cloneNode(true));
+            if (!window.kontentSmartLinkEnabled) {
+              const itemToZoom = document.querySelector(`#${item.getAttribute('data-lightbox-embed')} iframe`);
+              const wrap = document.createElement('div');
+              wrap.appendChild(itemToZoom.cloneNode(true));
 
-            if (itemToZoom) {
-              instance = zoomItem('iframe', instance, wrap.innerHTML, figcaption);
+              if (itemToZoom) {
+                instance = zoomItem('iframe', instance, wrap.innerHTML, figcaption);
+              }
             }
           });
         });
@@ -144,13 +148,15 @@
           let instance;
           item.addEventListener('click', (e) => {
             e.preventDefault();
-            const itemToZoom = '<div class="iframe-box"><div class="iframe-box__close"></div><iframe width="240" height="145" src="https://tracker.kontent.ai/l/849473/2020-04-21/4qsx" /></div>';
+            if (!window.kontentSmartLinkEnabled) {
+              const itemToZoom = '<div class="iframe-box"><div class="iframe-box__close"></div><iframe width="240" height="145" src="https://tracker.kontent.ai/l/849473/2020-04-21/4qsx" /></div>';
 
-            if (itemToZoom) {
-              instance = window.basicLightbox.create(itemToZoom);
-              instance.show();
-              registerCloseOnEsc(instance);
-              registerCloseOnElemClick(instance, '.iframe-box__close');
+              if (itemToZoom) {
+                instance = window.basicLightbox.create(itemToZoom);
+                instance.show();
+                registerCloseOnEsc(instance);
+                registerCloseOnElemClick(instance, '.iframe-box__close');
+              }
             }
           });
         });

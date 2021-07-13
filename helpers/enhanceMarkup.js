@@ -79,7 +79,65 @@ const createAnchors = ($) => {
     });
 };
 
-const enhanceMarkup = (text) => {
+const tryGetKontentSmartLinkTypeInner = ($elem, codename) => {
+    const $innerDefinitionElem = $elem.parents('[data-kk-codenames]');
+    if (!$innerDefinitionElem.length) return;
+
+    const codenames = $innerDefinitionElem.attr('data-kk-codenames').split('|');
+    const rels = $innerDefinitionElem.attr('data-kk-rels').split('|');
+
+    const index = codenames.indexOf(codename);
+    const type = rels[index];
+
+    if (type === 'link') {
+        return 'item';
+    }
+
+    return 'component';
+};
+
+const kontentSmartLinksResolveUndecided = ($, resolvedData) => {
+    const $undecided = $('[data-kontent-undecided]');
+    $undecided.each(function() {
+        const $that = $(this);
+        const attr = $that.attr('data-kontent-undecided').split('|');
+        const id = attr[0];
+        const codename = attr[1];
+        let type = '';
+
+        resolvedData.linkedItemCodenames.forEach((item) => {
+            if (item === codename) {
+                type = 'item';
+            }
+        });
+
+        resolvedData.componentCodenames.forEach((item) => {
+            if (item === codename) {
+                type = 'component';
+            }
+        });
+
+        if (!type) {
+            type = tryGetKontentSmartLinkTypeInner($that, codename);
+        }
+
+        if (type) {
+            const smartLinkAttr = `data-kontent-${type}-id`;
+            $that.attr(smartLinkAttr, id);
+            $that.removeAttr('data-kontent-undecided');
+        }
+    });
+};
+
+const kontentSmartLinksRemoveInnerDataAttributes = ($) => {
+    const $innerDefinitionElem = $('[data-kk-codenames]');
+
+    $innerDefinitionElem.removeAttr('data-kk-codenames');
+    $innerDefinitionElem.removeAttr('data-kk-rels');
+};
+
+const enhanceMarkup = (resolvedData) => {
+    let text = resolvedData.html;
     text = helper.resolveMacros(text);
     const $ = cheerio.load(text);
 
@@ -89,6 +147,8 @@ const enhanceMarkup = (text) => {
     removeEmptyParagraph($);
     createAnchors($);
     replaceTooltipSpaces($);
+    kontentSmartLinksResolveUndecided($, resolvedData);
+    kontentSmartLinksRemoveInnerDataAttributes($);
 
     const output = $.html();
     return output.replace('<html><head></head><body>', '').replace('</body></html>', '');
