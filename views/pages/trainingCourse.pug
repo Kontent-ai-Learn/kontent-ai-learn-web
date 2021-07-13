@@ -28,7 +28,7 @@ block content
             .article__right
                 .article__content&attributes(smartLink?.itemId(itemId))
                     h1&attributes(smartLink?.elementCodename('title')) !{content.title.value}
-                      - const isFree = helper.isCodenameInMultipleChoice(content.is_free.value, 'yes');
+                      - const isFree = content.is_free ? helper.isCodenameInMultipleChoice(content.is_free.value, 'yes') : false;
                       if (isFree)
                         span.article__tag.article__tag--blue !{UIMessages.training___free_course_label.value}
                     .article__notes

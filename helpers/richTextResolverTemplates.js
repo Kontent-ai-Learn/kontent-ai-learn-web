@@ -535,7 +535,7 @@ const richTextResolverTemplates = {
         const personas = item.persona.value;
         const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
         const url = urlMapItem.length ? urlMapItem[0].url : null;
-        const isFree = helper.isCodenameInMultipleChoice(item.is_free.value, 'yes');
+        const isFree = item.is_free ? helper.isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
         const imageWidth = item.thumbnail.value[0] ? item.thumbnail.value[0].width || 0 : 0;
         const imageHeight = item.thumbnail.value[0] ? item.thumbnail.value[0].height || 0 : 0;
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;

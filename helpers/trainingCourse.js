@@ -8,7 +8,7 @@ const isPreview = require('./isPreview');
 const sendSendGridEmail = require('./sendgrid');
 
 const isCourseAvailable = (user, content) => {
-  const isFreeCourse = helper.isCodenameInMultipleChoice(content.is_free.value, 'yes');
+  const isFreeCourse = content.is_free ? helper.isCodenameInMultipleChoice(content.is_free.value, 'yes') : false;
   if (user.email.endsWith('@kentico.com') || isFreeCourse) {
     return true;
   }
