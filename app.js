@@ -38,6 +38,7 @@ const redirectRules = require('./routes/redirectRules');
 const generatePDF = require('./routes/generatePDF');
 const authorize = require('./routes/auth');
 const urlMap = require('./routes/urlMap');
+const serviceCheck = require('./routes/serviceCheck');
 
 let articles;
 if (process.env.KK_NEW_STRUCTURE === 'true') {
@@ -119,6 +120,7 @@ const config = {
 app.use(auth(config));
 
 // Routes
+app.use('/service-check', serviceCheck);
 app.use('/link-to', linkUrls);
 app.use('/reference-updated', express.json({
   type: '*/*'

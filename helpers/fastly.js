@@ -168,7 +168,7 @@ const preventCaching = (res) => {
 const handleGlobalCaching = (req, res) => {
   res.setHeader('Arr-Disable-Session-Affinity', 'True');
 
-  if (req.originalUrl.startsWith('/cache-invalidate') || req.originalUrl.startsWith('/redirect-urls')) {
+  if (req.originalUrl.startsWith('/cache-invalidate') || req.originalUrl.startsWith('/redirect-urls') || req.originalUrl.startsWith('/service-check')) {
     res.setHeader('Cache-Control', 'no-store, max-age=0');
   } else {
     res.setHeader('Cache-Control', 'max-age=60');
