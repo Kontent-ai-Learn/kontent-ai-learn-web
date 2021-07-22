@@ -26,7 +26,9 @@
                     dnt = parent.querySelector('.embed__dnt-enable');
                 }
 
-                if (!dnt && elem.hasAttribute('data-src')) {
+                var dataDisplayWrapper = window.helper.findAncestor(elem, '[data-display-mode="step-by-step"]');
+
+                if (!dnt && elem.hasAttribute('data-src') && !dataDisplayWrapper) {
                     elem.src = elem.dataset.src;
                     elem.classList.remove('lazy');
                     elem.removeAttribute('data-src');
