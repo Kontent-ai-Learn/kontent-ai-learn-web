@@ -11,6 +11,10 @@ mixin lmsInfo(environment)
           span
       else
         span !{prefix}!{lmsInfoEnv.text}
+      if (lmsInfoEnv.signup)
+        a.call-to-action(href='https://app.kontent.ai/sign-up', target='_blank')
+          span !{prefix}!{UIMessages.sign_up_button.value}
+          span
       if (lmsInfoEnv.certificate)
         a.link(href= lmsInfoEnv.certificate.public_url, target='_blank')&attributes(smartLink?.elementCodename('training___download_certificate')) !{UIMessages.training___download_certificate.value}
         - const certIssue = lmsInfoEnv.certificate.issued_date.split('/').map(x => parseInt(x));

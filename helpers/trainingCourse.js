@@ -159,7 +159,8 @@ const getTrainingCourseInfo = async (content, req, res) => {
       generalMessage = {
         text: UIMessages.sign_in_button.value,
         url: '/login',
-        renderAs: 'button'
+        renderAs: 'button',
+        signup: content.is_free ? helper.isCodenameInMultipleChoice(content.is_free.value, 'yes') : false
       };
     }
   } else {
