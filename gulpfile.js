@@ -75,7 +75,8 @@ gulp.task('js-app', () => {
       'node_modules/basiclightbox/dist/basicLightbox.min.js',
       'public/js/src/app/lightbox.js',
       'public/js/src/app/kontent-smart-link.js',
-      'public/js/src/app/trigger-on-url-map.js'
+      'public/js/src/app/trigger-on-url-map.js',
+      'public/js/src/app/scrollto.js'
     ])
     .pipe(concat('app.js'))
     .pipe(babel({

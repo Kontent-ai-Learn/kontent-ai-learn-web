@@ -320,6 +320,26 @@ const helper = {
         }
 
         return uniqueUrls;
+    },
+    appendQueryParam: (url, paramName, paramVal) => {
+        let separator = '?';
+        let queryhash = '';
+        const urlSplit = url.split(separator);
+        let finalUrl = urlSplit[0];
+
+        if (urlSplit[1]) {
+            queryhash = urlSplit[1].split('#');
+            finalUrl += `?${queryhash[0]}`;
+            separator = '&';
+        }
+
+        finalUrl += `${separator}${encodeURIComponent(paramName)}=${encodeURIComponent(paramVal)}`
+
+        if (queryhash[1]) {
+            finalUrl += `#${queryhash[1]}`;
+        }
+
+        return finalUrl;
     }
 };
 

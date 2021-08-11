@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const session = require('express-session');
+const helper = require('../helpers/helperFunctions');
 
 // Auth0 authentication setup
 // Session
@@ -20,7 +21,7 @@ if (!process.env.baseURL.includes('localhost')) {
 router.get('/login', session(sess), (req, res) => {
   const returnTo = req.cookies.returnTo;
   res.clearCookie('returnTo');
-  return res.oidc.login({ returnTo: returnTo });
+  return res.oidc.login({ returnTo: helper.appendQueryParam(returnTo, 'scrollto', 'trainingaction') });
 });
 
 module.exports = router;

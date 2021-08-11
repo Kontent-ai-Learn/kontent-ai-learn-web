@@ -4,7 +4,7 @@ mixin lmsInfo(environment)
   - var isPreview = environment === 'preview'
   - var prefix = isPreview ? '(Preview) ' : ''
   if (lmsInfoEnv)
-    .article__row-links&attributes(smartLink?.itemId(UIMessages.system.id))
+    .article__row-links#trainingaction&attributes(smartLink?.itemId(UIMessages.system.id))
       if (lmsInfoEnv.renderAs === 'button')
         a.call-to-action&attributes({ 'href': lmsInfoEnv.url ? lmsInfoEnv.url : '#' })&attributes(lmsInfoEnv.target ? { 'target': lmsInfoEnv.target } : {})&attributes(lmsInfoEnv.action === 'intercom' ? { 'data-click': 'support' } : {})
           span !{prefix}!{lmsInfoEnv.text}
