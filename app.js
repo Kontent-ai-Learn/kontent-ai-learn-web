@@ -113,9 +113,7 @@ const config = {
   routes: {
     login: false,
     postLogoutRedirect: process.env.AUTH0_LOGOUT_URL
-  },
-  idpLogout: true,
-  attemptSilentLogin: true
+  }
 };
 
 app.use(auth(config));
