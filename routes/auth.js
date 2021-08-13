@@ -23,9 +23,8 @@ router.get('/login', session(sess), (req, res) => {
   const returnTo = req.cookies.returnTo;
   res.clearCookie('returnTo');
   return res.oidc.login({
-    returnTo: helper.appendQueryParam(returnTo, 'scrollto', 'trainingaction'),
-    silent: true
-   });
+    returnTo: helper.appendQueryParam(returnTo, 'scrollto', 'trainingaction')
+  });
 });
 
 router.get('/signup', session(sess), (req, res) => {

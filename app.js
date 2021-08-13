@@ -114,6 +114,7 @@ const config = {
     login: false,
     postLogoutRedirect: process.env.AUTH0_LOGOUT_URL
   },
+  idpLogout: true,
   attemptSilentLogin: true
 };
 
