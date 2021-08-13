@@ -18,10 +18,25 @@ if (!process.env.baseURL.includes('localhost')) {
   sess.proxy = true;
 }
 
+// Docs: https://auth0.github.io/express-openid-connect/
 router.get('/login', session(sess), (req, res) => {
   const returnTo = req.cookies.returnTo;
   res.clearCookie('returnTo');
-  return res.oidc.login({ returnTo: helper.appendQueryParam(returnTo, 'scrollto', 'trainingaction') });
+  return res.oidc.login({
+    returnTo: helper.appendQueryParam(returnTo, 'scrollto', 'trainingaction'),
+    silent: true
+   });
+});
+
+router.get('/signup', session(sess), (req, res) => {
+  const returnTo = req.cookies.returnTo;
+  res.clearCookie('returnTo');
+  return res.oidc.login({
+    returnTo: helper.appendQueryParam(returnTo, 'scrollto', 'trainingaction'),
+    authorizationParams: {
+      tab: 'signUp'
+    }
+   });
 });
 
 module.exports = router;

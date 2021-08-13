@@ -22,6 +22,7 @@ const urlWhitelist = [
   '/sitemap.xml',
   '/pdf',
   '/login',
+  '/signup',
   '/logout',
   '/callback',
   '/opensearch.xml'
