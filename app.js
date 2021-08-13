@@ -110,7 +110,6 @@ const config = {
   clientID: process.env.AUTH0_CLIENT_ID,
   issuerBaseURL: helper.ensureProtocol(process.env.AUTH0_DOMAIN),
   secret: process.env.AUTH0_SESSION_SECRET,
-  idpLogout: true,
   routes: {
     login: false,
     postLogoutRedirect: process.env.AUTH0_LOGOUT_URL
