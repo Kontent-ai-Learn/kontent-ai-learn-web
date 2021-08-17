@@ -12,7 +12,7 @@ mixin lmsInfo(environment)
       else
         span !{prefix}!{lmsInfoEnv.text}
       if (lmsInfoEnv.signup)
-        a.call-to-action(href='/signup', target='_blank')
+        a.call-to-action(href='/signup')
           span !{prefix}!{UIMessages.sign_up_button.value}
           span
       if (lmsInfoEnv.certificate)
