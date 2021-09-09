@@ -12,6 +12,37 @@ if (process.env.KK_NEW_STRUCTURE === 'true') {
   getUrlMap = require('./urlMap_Obsolete');
 }
 
+const getChangelogQueryStringCombinations = async (res) => {
+  const releaseNotes = await handleCache.evaluateSingle(res, 'releaseNotes', async () => {
+      return await commonContent.getReleaseNotes(res);
+  });
+  const releaseNoteContentType = await handleCache.evaluateSingle(res, 'releaseNoteContentType', async () => {
+      return await commonContent.getReleaseNoteType(res);
+  });
+
+  const releaseNotesPageCount = Math.ceil((releaseNotes?.length || 0) / 10);
+  const releaseNotesServices = releaseNoteContentType?.elements.filter(elem => elem.codename === 'affected_services')[0]?.options.map(item => item.codename) || [];
+  const combinations = [];
+
+  combinations.push('breaking=true');
+  for (let i = 2; i < releaseNotesPageCount; i++) {
+      combinations.push(`page=${i}`);
+      combinations.push(`breaking=true&page=${i}`);
+  }
+
+  for (let i = 0; i < releaseNotesServices.length; i++) {
+      const combinationServices = `show=${releaseNotesServices.slice(0, i + 1)}`;
+      combinations.push(combinationServices);
+
+      for (let j = 2; j < releaseNotesPageCount; j++) {
+          combinations.push(`${combinationServices}&page=${j}`);
+          combinations.push(`${combinationServices}&breaking=true&page=${j}`);
+      }
+  }
+
+  return combinations;
+};
+
 const axiosPurge = async (url) => {
   try {
     await axios({
@@ -128,6 +159,11 @@ const purgeFinal = async (itemsByTypes, req, res) => {
 
   if (itemsByTypes.releaseNotes.length && req.app.locals.changelogPath) {
     await axiosPurge(`${axiosDomain}${req.app.locals.changelogPath}`);
+
+    const changelogQueryStringCombinations = await getChangelogQueryStringCombinations(res);
+    for (let i = 0; i < changelogQueryStringCombinations.length; i++) {
+      await axiosPurge(`${axiosDomain}${req.app.locals.changelogPath}?${changelogQueryStringCombinations[i]}`);
+    }
   }
 
   if (itemsByTypes.termDefinitions.length && !allUrlsPurged) {
