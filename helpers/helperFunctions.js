@@ -322,6 +322,7 @@ const helper = {
         return uniqueUrls;
     },
     appendQueryParam: (url, paramName, paramVal) => {
+        if (!url) return '';
         let separator = '?';
         let queryhash = '';
         const urlSplit = url.split(separator);
