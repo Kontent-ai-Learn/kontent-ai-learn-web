@@ -31,6 +31,11 @@ block content
                 include ../includes/sub-navigation.pug
             .article__right
                 .article__content&attributes(smartLink?.itemId(itemId))
+                    if termDefinitions
+                      .term-tooltip-container(aria-hidden='true')
+                        .term-tooltip-content
+                        .term-tooltip-close
+                        .term-tooltip-arrow
                     h1&attributes(smartLink?.elementCodename('title')) !{content.title.value}
                       - const isFree = content.is_free ? helper.isCodenameInMultipleChoice(content.is_free.value, 'yes') : false;
                       if (isFree)
