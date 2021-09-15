@@ -23,7 +23,7 @@ block content
                     else
                         div There are no Redirect rules set up in the current project.
                             
-                h2 Redirect URLs for articles and scenarios
+                h2 Redirect URLs for articles
                 table
                     tr
                         td Redirect to
@@ -40,5 +40,5 @@ block content
                                     if (isPreview && !req.query.pdf)
                                         a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${url.id}/element/redirect_urls`, target='_blank', rel='noopener').utilities-table-cell-edit-link Edit
                     else
-                        div There are no redirects in articles or scenarios.
+                        div There are no redirects in articles.
             

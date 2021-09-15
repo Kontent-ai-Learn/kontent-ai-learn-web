@@ -1,13 +1,7 @@
 const commonContent = require('../helpers/commonContent');
 const handleCache = require('../helpers/handleCache');
 const helper = require('../helpers/helperFunctions');
-
-let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  getUrlMap = require('../helpers/urlMap');
-} else {
-  getUrlMap = require('../helpers/urlMap_Obsolete');
-}
+const getUrlMap = require('../helpers/urlMap');
 
 const urlAliases = async (req, res, next) => {
     const urlSplit = req.originalUrl.split('?');
@@ -16,9 +10,6 @@ const urlAliases = async (req, res, next) => {
     const articles = await handleCache.ensureSingle(res, 'articles', async () => {
         return commonContent.getArticles(res);
     });
-    const scenarios = await handleCache.ensureSingle(res, 'scenarios', async () => {
-        return await commonContent.getScenarios(res);
-    });
     const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
         return await commonContent.getTraniningCourse(res);
     });
@@ -26,7 +17,7 @@ const urlAliases = async (req, res, next) => {
         return commonContent.getReferences(res);
     });
 
-    const items = [...articles, ...references, ...scenarios, ...trainingCourses];
+    const items = [...articles, ...references, ...trainingCourses];
     const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });

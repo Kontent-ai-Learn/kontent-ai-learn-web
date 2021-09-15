@@ -7,13 +7,7 @@ const handleCache = require('./handleCache');
 const isPreview = require('./isPreview');
 const helper = require('./helperFunctions');
 const fastly = require('./fastly');
-
-let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  getUrlMap = require('./urlMap');
-} else {
-  getUrlMap = require('./urlMap_Obsolete');
-}
+const getUrlMap = require('./urlMap');
 
 const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
     const originalItem = handleCache.getCache(codename, KCDetails);
@@ -74,8 +68,6 @@ const splitPayloadByContentType = (items) => {
         footer: [],
         UIMessages: [],
         articles: [],
-        scenarios: [],
-        topics: [],
         notFound: [],
         picker: [],
         navigationItems: [],
@@ -96,10 +88,6 @@ const splitPayloadByContentType = (items) => {
             itemsByTypes.UIMessages.push(item);
         } else if (item.type === 'article') {
             itemsByTypes.articles.push(item);
-        } else if (item.type === 'scenario') {
-            itemsByTypes.scenarios.push(item);
-        } else if (item.type === 'topic') {
-            itemsByTypes.topics.push(item);
         } else if (item.type === 'not_found') {
             itemsByTypes.notFound.push(item);
         } else if (item.type === 'platform_picker' || item.type === 'platform_option') {
@@ -108,7 +96,6 @@ const splitPayloadByContentType = (items) => {
             itemsByTypes.navigationItems.push(item);
         } else if (item.type === 'multiplatform_article') {
             itemsByTypes.articles.push(item);
-            itemsByTypes.scenarios.push(item);
         } else if (item.type === 'zapi_specification') {
             itemsByTypes.apiSpecifications.push(item);
         } else if (item.type === 'redirect_rule') {
@@ -126,7 +113,7 @@ const splitPayloadByContentType = (items) => {
 };
 
 const getRootItems = async (items, KCDetails) => {
-    const typesToSearch = ['article', 'scenario', 'callout', 'content_chunk', 'code_sample', 'code_samples'];
+    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples'];
     const allItems = await requestDelivery({
         types: typesToSearch,
         depth: 0,
@@ -189,23 +176,6 @@ const invalidateArticles = async (itemsByTypes, KCDetails, res) => {
         await deleteSpecificKeys(KCDetails, itemsByTypes.articles, res);
         handleCache.deleteCache('articles', KCDetails);
         await handleCache.evaluateCommon(res, ['articles']);
-    }
-
-    return false;
-};
-
-const invalidateScenarios = async (itemsByTypes, KCDetails, res) => {
-    if (itemsByTypes.home.length) {
-        const scenarios = handleCache.getCache('scenarios', KCDetails);
-        for (let i = 0; i < scenarios.length; i++) {
-            itemsByTypes.scenarios.push({ codename: scenarios[i].system.codename })
-        }
-    }
-
-    if (itemsByTypes.scenarios.length) {
-        await deleteSpecificKeys(KCDetails, itemsByTypes.scenarios, res);
-        handleCache.deleteCache('scenarios', KCDetails);
-        await handleCache.evaluateCommon(res, ['scenarios']);
     }
 
     return false;
@@ -277,8 +247,6 @@ const processInvalidation = async (req, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'navigationItems');
         await invalidateSubNavigation(res, keys, KCDetails);
         await invalidateArticles(itemsByTypes, KCDetails, res);
-        await invalidateScenarios(itemsByTypes, KCDetails, res);
-        await invalidateMultiple(itemsByTypes, KCDetails, 'topics', res);
         await invalidateElearning(itemsByTypes, KCDetails, res);
         await fastly.purgeFinal(itemsByTypes, req, res);
 

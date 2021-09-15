@@ -294,7 +294,6 @@ const getContent = async (req, res) => {
         moment: moment,
         minify: minify,
         urlMap: urlMap,
-        tempNewStructure: process.env.KK_NEW_STRUCTURE === 'true',
         slug: content && content.length ? content[0].url.value : '',
         isPreview: KCDetails.isPreview,
         projectId: res.locals.projectid,

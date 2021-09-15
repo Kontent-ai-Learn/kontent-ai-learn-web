@@ -2,13 +2,7 @@ const cache = require('memory-cache');
 const requestDelivery = require('./requestDelivery');
 const ensureSingle = require('./ensureSingle');
 const isPreview = require('./isPreview');
-
-let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  getUrlMap = require('./urlMap');
-} else {
-  getUrlMap = require('./urlMap_Obsolete');
-}
+const getUrlMap = require('./urlMap');
 
 const commonContent = {
     getKCDetails: (res) => {
@@ -75,7 +69,7 @@ const commonContent = {
             return await getUrlMap(res);
         });
         return await requestDelivery({
-            type: process.env.KK_NEW_STRUCTURE === 'true' ? 'homepage' : 'home',
+            type: 'homepage',
             depth: 4,
             resolveRichText: true,
             urlMap: urlMap,
@@ -85,12 +79,6 @@ const commonContent = {
     getArticles: async (res) => {
         return await requestDelivery({
             type: ['article', 'multiplatform_article'],
-            ...commonContent.getKCDetails(res)
-        });
-    },
-    getScenarios: async (res) => {
-        return await requestDelivery({
-            type: 'scenario',
             ...commonContent.getKCDetails(res)
         });
     },

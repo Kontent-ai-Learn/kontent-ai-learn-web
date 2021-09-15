@@ -38,13 +38,7 @@ const redirectRules = require('./routes/redirectRules');
 const generatePDF = require('./routes/generatePDF');
 const authorize = require('./routes/auth');
 const urlMap = require('./routes/urlMap');
-
-let articles;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  articles = require('./routes/articles');
-} else {
-  articles = require('./routes/articles_Obsolete');
-}
+const articles = require('./routes/articles');
 
 const app = express();
 
@@ -131,7 +125,7 @@ app.use('/form', express.text({
   type: '*/*'
 }), form);
 app.use('/', asyncHandler(async (req, res, next) => {
-  await handleCache.evaluateCommon(res, ['platformsConfig', 'urlMap', 'footer', 'UIMessages', 'home', 'navigationItems', 'articles', 'scenarios', 'termDefinitions']);
+  await handleCache.evaluateCommon(res, ['platformsConfig', 'urlMap', 'footer', 'UIMessages', 'home', 'navigationItems', 'articles', 'termDefinitions']);
 
   const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
     return await commonContent.getUIMessages(res);

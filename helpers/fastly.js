@@ -4,13 +4,7 @@ const isPreview = require('./isPreview');
 const handleCache = require('./handleCache');
 const helper = require('./helperFunctions');
 const commonContent = require('./commonContent');
-
-let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  getUrlMap = require('./urlMap');
-} else {
-  getUrlMap = require('./urlMap_Obsolete');
-}
+const getUrlMap = require('./urlMap');
 
 const getChangelogQueryStringCombinations = async (res) => {
   const releaseNoteContentType = await handleCache.evaluateSingle(res, 'releaseNoteContentType', async () => {
@@ -163,7 +157,7 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     await axiosPurge(`${axiosDomain}${req.app.locals.elearningPath}`);
   }
 
-  if (itemsByTypes.articles.length || itemsByTypes.scenarios.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
+  if (itemsByTypes.articles.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
     await axiosPurge(`${axiosDomain}/redirect-urls`);
   }
 

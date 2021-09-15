@@ -27,8 +27,7 @@ block content
     main(id='main')
         .article
             .article__left
-              if (tempNewStructure)
-                include ../includes/sub-navigation.pug
+              include ../includes/sub-navigation.pug
             .article__right
                 .article__content&attributes(smartLink?.itemId(itemId))
                     if termDefinitions

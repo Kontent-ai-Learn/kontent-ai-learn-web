@@ -35,7 +35,7 @@ const error = asyncHandler(async (req, res) => {
         slug: '404',
         isPreview: siteIsPreview,
         language: res.locals.language,
-        navigation: process.env.KK_NEW_STRUCTURE === 'true' ? home[0].subpages.value : home[0].navigation.value,
+        navigation: home[0].subpages.value,
         itemId: content && content.length ? content[0].system.id : null,
         title: content && content.length ? content[0].title.value : '',
         content: content && content.length ? content[0].content.value : '',
