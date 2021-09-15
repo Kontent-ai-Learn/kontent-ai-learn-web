@@ -151,6 +151,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
       renderGeneralMessage = true;
       generalMessage = {
         text: UIMessages.training___cta_coming_soon.value,
+        textUIMessageCodename: 'training___cta_coming_soon',
         renderAs: 'text'
       };
     } else {
@@ -158,6 +159,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
       renderGeneralMessage = true;
       generalMessage = {
         text: UIMessages.sign_in_button.value,
+        textUIMessageCodename: 'sign_in_button',
         url: '/login',
         renderAs: 'button',
         signup: content.is_free ? helper.isCodenameInMultipleChoice(content.is_free.value, 'yes') : false
@@ -171,6 +173,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
         renderGeneralMessage = true;
         generalMessage = {
           text: errCode === 'CR404' ? UIMessages.sign_in_error_subscription_missing_text.value : UIMessages.sign_in_error_text.value,
+          textUIMessageCodename: errCode === 'CR404' ? 'sign_in_error_subscription_missing_text' : 'sign_in_error_text',
           renderAs: 'text',
           signedIn: true
         };
@@ -179,6 +182,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
         forcePreviewRender = true;
         generalMessage = {
           text: UIMessages.training___cta_coming_soon.value,
+          textUIMessageCodename: 'training___cta_coming_soon',
           renderAs: 'text',
           signedIn: true
         };
@@ -186,6 +190,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
         renderGeneralMessage = true;
         generalMessage = {
           text: UIMessages.training___cta_buy_course.value,
+          textUIMessageCodename: 'training___cta_buy_course',
           action: 'intercom',
           renderAs: 'button',
           signedIn: true,

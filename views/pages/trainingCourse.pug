@@ -6,13 +6,13 @@ mixin lmsInfo(environment)
   if (lmsInfoEnv)
     .article__row-links#trainingaction&attributes(smartLink?.itemId(UIMessages.system.id))
       if (lmsInfoEnv.renderAs === 'button')
-        a.call-to-action&attributes({ 'href': lmsInfoEnv.url ? lmsInfoEnv.url : '#' })&attributes(lmsInfoEnv.target ? { 'target': lmsInfoEnv.target } : {})&attributes(lmsInfoEnv.action === 'intercom' ? { 'data-click': 'support' } : {})
+        a.call-to-action&attributes({ 'href': lmsInfoEnv.url ? lmsInfoEnv.url : '#' })&attributes(lmsInfoEnv.target ? { 'target': lmsInfoEnv.target } : {})&attributes(lmsInfoEnv.action === 'intercom' ? { 'data-click': 'support' } : {})&attributes(smartLink?.elementCodename(lmsInfoEnv.textUIMessageCodename))
           span !{prefix}!{lmsInfoEnv.text}
           span
       else
-        span !{prefix}!{lmsInfoEnv.text}
+        span&attributes(smartLink?.elementCodename(lmsInfoEnv.textUIMessageCodename)) !{prefix}!{lmsInfoEnv.text}
       if (lmsInfoEnv.signup)
-        a.call-to-action(href='/signup')
+        a.call-to-action(href='/signup')&attributes(smartLink?.elementCodename('sign_up_button'))
           span !{prefix}!{UIMessages.sign_up_button.value}
           span
       if (lmsInfoEnv.certificate)

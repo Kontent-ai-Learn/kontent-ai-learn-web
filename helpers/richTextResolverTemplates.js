@@ -550,7 +550,7 @@ const richTextResolverTemplates = {
 : '';
 
         return `
-            <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}"${getSmartLinkAttr(config, item.system.id, 'undecided')}>
+            <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                 <h3${getSmartLinkAttr(config, 'title', 'element')}>${url ? `<a href="${url}">${item.title.value}</a>` : `${item.title.value}`}${isFree ? `<span class="article__tag article__tag--blue">${config.UIMessages.training___free_course_label.value}</span>` : ''}</h3>
                 ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                 <div class="article__introduction">
