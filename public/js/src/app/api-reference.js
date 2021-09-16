@@ -367,8 +367,19 @@
     }
   };
 
+  var createMarkupForButtons = function () {
+    setTimeout(function () {
+      var btns = document.querySelectorAll('[class*="DownloadButton"]');
+      for (var i = 0; i < btns.length; i++) {
+        var text = btns[i].innerText;
+        btns[i].innerHTML = '<span>'+ text +'</span><span></span>';
+      }
+    }, 0);
+  };
+
   createSelectLanguageSelector('.language-selector__list');
   // createSelectLanguageSelector('.react-tabs__tab-list');
   interactSelectLanguageSelector();
   removeLinksFromJSON();
+  createMarkupForButtons();
 })();

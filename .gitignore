@@ -66,3 +66,4 @@ typings/
 public/docs
 public/js/*.min.js
 public/css/*.min.css
+helpers/delivery_api.html
