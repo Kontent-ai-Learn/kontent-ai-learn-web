@@ -17,7 +17,7 @@ const getChangelogQueryStringCombinations = async (res) => {
   combinations.push('breaking=true');
 
   for (let i = 0; i < releaseNotesServices.length; i++) {
-      const combinationServices = `show=${releaseNotesServices.slice(0, i + 1)}`;
+      const combinationServices = `show=${releaseNotesServices[i]}`;
       combinations.push(combinationServices);
       combinations.push(`${combinationServices}&breaking=true`);
   }
@@ -26,6 +26,7 @@ const getChangelogQueryStringCombinations = async (res) => {
 };
 
 const axiosPurge = async (url) => {
+  console.log(url);
   try {
     await axios({
       method: 'purge',
