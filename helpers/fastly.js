@@ -26,18 +26,28 @@ const getChangelogQueryStringCombinations = async (res) => {
 };
 
 const axiosPurge = async (url) => {
-  console.log(url);
+  const log = {
+    url: url,
+    timestamp: (new Date()).toISOString(),
+    isError: false
+  };
+
   try {
-    await axios({
+    const purgeResponse = await axios({
       method: 'purge',
       url: url,
       headers: {
           'Fastly-Soft-Purge': '1'
       }
     });
+    log.data = purgeResponse.data;
   } catch (error) {
+    log.isError = true;
+    log.data = error;
     consola.error('Fastly not available');
   }
+
+  helper.logInCacheKey('fastly-purge', log);
 };
 
 const purge = async (key, res) => {
