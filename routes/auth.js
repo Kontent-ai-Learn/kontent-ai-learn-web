@@ -1,4 +1,4 @@
-const express = require('express');
+/* const express = require('express');
 const router = express.Router();
 const session = require('express-session');
 const helper = require('../helpers/helperFunctions');
@@ -38,4 +38,4 @@ router.get('/signup', session(sess), (req, res) => {
    });
 });
 
-module.exports = router;
+module.exports = router; */

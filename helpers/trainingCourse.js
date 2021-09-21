@@ -146,7 +146,7 @@ const getTrainingCourseInfo = async (content, req, res) => {
   let errCode;
 
   // If user is not authenticated
-  if (!req.oidc.isAuthenticated()) {
+  if (!req?.oidc?.isAuthenticated()) {
     if (hideCta) {
       renderGeneralMessage = true;
       generalMessage = {

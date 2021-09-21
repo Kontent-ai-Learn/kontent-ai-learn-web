@@ -1,5 +1,5 @@
 extends ../includes/layout.pug
-mixin lmsInfo(environment)
+//-mixin lmsInfo(environment)
   - var lmsInfoEnv = trainingCourseInfo[environment]
   - var isPreview = environment === 'preview'
   - var prefix = isPreview ? '(Preview) ' : ''
@@ -53,7 +53,7 @@ block content
                       div&attributes(smartLink?.elementCodename('introduction')) !{minify(content.introduction.value)}
                     if helper.isNotEmptyRichText(content.description.value)
                       div&attributes(smartLink?.elementCodename('description')) !{minify(content.description.value)}
-                    +lmsInfo('general')
-                    +lmsInfo('production')
-                    +lmsInfo('preview')
+                    //-+lmsInfo('general')
+                    //-+lmsInfo('production')
+                    //-+lmsInfo('preview')
                     
