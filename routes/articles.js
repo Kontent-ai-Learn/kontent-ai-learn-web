@@ -324,7 +324,8 @@ const getContent = async (req, res) => {
         trainingCourseContentType: trainingCourseContentType,
         trainingCourseInfo: trainingCourseInfo,
         hideAuthorLastModified: content && content.length && content[0].display_options ? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_metadata') : false,
-        hideFeedback: content && content.length && content[0].display_options? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_feedback') : false
+        hideFeedback: content && content.length && content[0].display_options? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_feedback') : false,
+        readingTime: content && content.length && content[0].content ? helper.getReadingTime(content[0].content.value) : null
     };
 };
 

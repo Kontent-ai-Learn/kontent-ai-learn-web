@@ -22,6 +22,8 @@ block content
                                         span&attributes(smartLink?.itemId(content.system.id))&attributes(smartLink?.elementCodename('author')) !{author.name.value}!{separator}                                  
                                 else
                                     span&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___no_author')) !{UIMessages.article___no_author.value}
+                            if (readingTime)
+                                .article__reading-time !{readingTime} min read
                         if (req.query.pdf)
                             .article__tech(data-platform-note)
                         if (isPreview && !req.query.pdf)
