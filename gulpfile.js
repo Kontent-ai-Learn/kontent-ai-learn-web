@@ -79,7 +79,8 @@ gulp.task('js-app', () => {
       'public/js/src/app/trigger-on-url-map.js',
       'public/js/src/app/scrollto.js',
       'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
-      'public/js/src/app/auth0.js'
+      'public/js/src/app/training-course.js',
+      'public/js/src/app/auth0.js',
     ])
     .pipe(concat('app.js'))
     .pipe(uglify())

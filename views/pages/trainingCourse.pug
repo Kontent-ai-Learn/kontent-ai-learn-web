@@ -53,6 +53,7 @@ block content
                       div&attributes(smartLink?.elementCodename('introduction')) !{minify(content.introduction.value)}
                     if helper.isNotEmptyRichText(content.description.value)
                       div&attributes(smartLink?.elementCodename('description')) !{minify(content.description.value)}
+                    script var trainingCourseCodename='!{content.system.codename}';
                     //-+lmsInfo('general')
                     //-+lmsInfo('production')
                     //-+lmsInfo('preview')

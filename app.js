@@ -40,6 +40,7 @@ const generatePDF = require('./routes/generatePDF');
 const urlMap = require('./routes/urlMap');
 const articles = require('./routes/articles');
 const auth0Callback = require('./routes/auth0Callback');
+const api = require('./routes/api');
 
 const app = express();
 
@@ -114,6 +115,9 @@ app.use(async (req, res, next) => {
 app.use(auth(config)); */
 
 // Routes
+app.use('/api', express.json({
+  type: '*/*'
+}), api);
 app.use('/callback', auth0Callback);
 app.use('/link-to', linkUrls);
 app.use('/reference-updated', express.json({

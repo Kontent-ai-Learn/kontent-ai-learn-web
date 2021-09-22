@@ -1,73 +1,63 @@
-let auth0 = null;
-
-window.onload = async () => {
-    await configureClient();
-    await processLoginState();
-    updateUI();
-};
+const auth0 = {};
 
 const auth0Settings = {
-  domain: window.auth0Config.domain,
-  client_id: window.auth0Config.clientID,
-  redirect_uri: `${location.protocol}//${location.host}/callback`,
+    domain: window.auth0Config.domain,
+    client_id: window.auth0Config.clientID,
+    redirect_uri: `${location.protocol}//${location.host}/callback`,
+    scope: 'openid email profile'
 };
 
 const configureClient = async () => {
-    auth0 = await createAuth0Client(auth0Settings);
+    auth0.client = await createAuth0Client(auth0Settings);
 };
 
 const processLoginState = async () => {
-    // Check code and state parameters
     const query = window.location.search;
-    if (query.includes("code=") && query.includes("state=")) {
-        // Process the login state
-        
-        await auth0.handleRedirectCallback();
-        console.log('y');
-        // Use replaceState to redirect the user away and remove the querystring parameters
+    if (query.includes('code=') && query.includes('state=')) {
+        await auth0.client.handleRedirectCallback();
         window.history.replaceState({}, document.title, window.location.pathname);
+        const returnUrl = localStorage.getItem('auth0ReturnUrl');
+        localStorage.removeItem('auth0ReturnUrl');
+        window.location.replace(returnUrl);
     }
 };
-
-const updateUI = async () => {
-    let isAuthenticated = await auth0.isAuthenticated();
-    document.getElementById("btn-logout").disabled = !isAuthenticated;
-    document.getElementById("btn-login").disabled = isAuthenticated;
-    // NEW - add logic to show/hide gated content after authentication
+/*
+const provideInfo = async () => {
+    let isAuthenticated = await auth0.client.isAuthenticated();
+    
     if (isAuthenticated) {
-        document.getElementById("gated-content").classList.remove("hidden");
-        document.getElementById("ipt-access-token").innerHTML = await auth0.getTokenSilently();
-        document.getElementById("ipt-user-profile").innerHTML = JSON.stringify(await auth0.getUser());
+        console.log('User is authenticated on the site.')
     } else {
-        console.log('x');
         try {
-          await auth0.getTokenSilently();
-        } catch (e) {
-          
-        }
-        
-        console.log('y');
-        isAuthenticated = await auth0.isAuthenticated();
-        console.log('u');
-        document.getElementById("btn-logout").disabled = !isAuthenticated;
-        document.getElementById("btn-login").disabled = isAuthenticated;
+            await auth0.client.getTokenSilently();
+        } 
+        catch (e) { }
+        finally {
+            isAuthenticated = await auth0.client.isAuthenticated();
 
-        if (isAuthenticated) {
-          document.getElementById("gated-content").classList.remove("hidden");
-          document.getElementById("ipt-access-token").innerHTML = await auth0.getTokenSilently();
-          document.getElementById("ipt-user-profile").innerHTML = JSON.stringify(await auth0.getUser());
-        } else {
-          document.getElementById("gated-content").classList.add("hidden");
+            if (isAuthenticated) {
+                console.log('User is authenticated through the app.')
+            } else {
+                console.log('User is not authenticated.')
+            }   
         }
     }
 };
-
-const login = async () => {
-    await auth0.loginWithRedirect(auth0Settings);
+*/
+auth0.login = async () => {
+    localStorage.setItem('auth0ReturnUrl', window.location.href);
+    await auth0.client.loginWithRedirect(auth0Settings);
 };
 
-const logout = () => {
-    auth0.logout({
+auth0.logout = () => {
+    auth0.client.logout({
         returnTo: `${location.protocol}//${location.host}/e-learning/overview`
     });
 };
+
+window.addEventListener('load', async () => {
+    await configureClient();
+    await processLoginState();
+    // provideInfo();
+    await trainingCourse.getInfo();
+});
