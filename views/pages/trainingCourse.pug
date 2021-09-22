@@ -54,6 +54,7 @@ block content
                     if helper.isNotEmptyRichText(content.description.value)
                       div&attributes(smartLink?.elementCodename('description')) !{minify(content.description.value)}
                     script var trainingCourseCodename='!{content.system.codename}';
+                    .article__row-links#trainingaction&attributes(smartLink?.itemId(UIMessages.system.id))
                     //-+lmsInfo('general')
                     //-+lmsInfo('production')
                     //-+lmsInfo('preview')

@@ -1,4 +1,18 @@
 const trainingCourse = (() => {
+  const isPreview = document.querySelector('body').classList.contains('preview-key');
+
+  const renderData = (data) => {
+    const container = document.querySelector('#trainingaction');
+    if (!container) return;
+    const prefix = isPreview ? '(Preview) ' : '';
+    const markup = `
+      ${data.renderAs === 'button' ? `<span class="call-to-action" ${data.id ? `id="${data.id}"` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${prefix}${data.text}</span><span></span></span>` : `<span>${prefix}${data.text}</span>`}
+      ${data.signup ? `<span class="call-to-action" id="signup" ${isPreview ? window.resolveSmartLink.elementCodename('sign_out_button') : ''}><span>${UIMessages.signUp}</span><span></span></span>` : ''}
+    `;
+    container.innerHTML = markup;
+    auth0.eventListeners();
+  };
+
   const requestInfo = async (trainingCodename, token) => {
     let access = 'public';
     const fetchOptions = {
@@ -15,7 +29,7 @@ const trainingCourse = (() => {
 
     const result = await fetch(`/api/training-course/detail/${access}`, fetchOptions);
     const data = await result.json();
-    console.log(data);
+    renderData(data);
   };
 
   const getInfo = async () => {

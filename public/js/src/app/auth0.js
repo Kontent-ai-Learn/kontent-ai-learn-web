@@ -55,6 +55,38 @@ auth0.logout = () => {
     });
 };
 
+auth0.signup = async () => {
+    localStorage.setItem('auth0ReturnUrl', window.location.href);
+    await auth0.client.loginWithRedirect({ tab: 'signUp' });
+};
+
+auth0.eventListeners = () => {
+    const login = document.querySelector('#login');
+    const logout = document.querySelector('#logout');
+    const signup = document.querySelector('#signup');
+
+    if (login) {
+        login.addEventListener('click', (e) => {
+            e.preventDefault();
+            auth0.login();
+        });
+    }
+
+    if (logout) {
+        logout.addEventListener('click', (e) => {
+            e.preventDefault();
+            auth0.logout();
+        });
+    }
+
+    if (signup) {
+        signup.addEventListener('click', (e) => {
+            e.preventDefault();
+            auth0.signup();
+        });
+    }
+}
+
 window.addEventListener('load', async () => {
     await configureClient();
     await processLoginState();

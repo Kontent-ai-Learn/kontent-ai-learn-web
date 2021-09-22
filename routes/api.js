@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const router = express.Router();
+const trainingCourseDetail = require('../helpers/trainingCourseDetail');
 
 const jwtCheck = jwt({
   secret: jwksRsa.expressJwtSecret({
@@ -15,12 +16,14 @@ const jwtCheck = jwt({
   algorithms: ['RS256']
 });
 
-router.post('/training-course/detail/public', (req, res) => {
-  return res.status(201).send({ codename: req.body.codename, public: true });
+router.post('/training-course/detail/public', async (req, res) => {
+  const data = await trainingCourseDetail(req.body.codename, null, res);
+  return res.send(data);
 });
 
-router.post('/training-course/detail/private', jwtCheck, (req, res) => {
-  return res.status(201).send({ token: req.headers.authorization, codename: req.body.codename, public: false });
+router.post('/training-course/detail/private', jwtCheck, async (req, res) => {
+  const data = await trainingCourseDetail(req.body.codename, req.headers.authorization, res);
+  return res.send(data);
 });
 
 module.exports = router;
