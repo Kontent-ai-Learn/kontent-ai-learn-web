@@ -14,8 +14,6 @@ const cache = require('memory-cache');
 const util = require('util');
 const { setIntervalAsync } = require('set-interval-async/dynamic')
 
-const { auth } = require('express-openid-connect');
-
 const helper = require('./helpers/helperFunctions');
 const appHelper = require('./helpers/app');
 const handleCache = require('./helpers/handleCache');
@@ -36,9 +34,10 @@ const error = require('./routes/error');
 const form = require('./routes/form');
 const redirectRules = require('./routes/redirectRules');
 const generatePDF = require('./routes/generatePDF');
-const authorize = require('./routes/auth');
 const urlMap = require('./routes/urlMap');
 const articles = require('./routes/articles');
+const auth0Callback = require('./routes/auth0Callback');
+const api = require('./routes/api');
 
 const app = express();
 
@@ -96,23 +95,11 @@ app.use(async (req, res, next) => {
   return next();
 });
 
-// Auth0
-const config = {
-  authRequired: false,
-  auth0Logout: true,
-  baseURL: process.env.AUTH0_BASE_URL,
-  clientID: process.env.AUTH0_CLIENT_ID,
-  issuerBaseURL: helper.ensureProtocol(process.env.AUTH0_DOMAIN),
-  secret: process.env.AUTH0_SESSION_SECRET,
-  routes: {
-    login: false,
-    postLogoutRedirect: process.env.AUTH0_LOGOUT_URL
-  }
-};
-
-app.use(auth(config));
-
 // Routes
+app.use('/api', express.json({
+  type: '*/*'
+}), api);
+app.use('/callback', auth0Callback);
 app.use('/link-to', linkUrls);
 app.use('/reference-updated', express.json({
   type: '*/*'
@@ -149,7 +136,7 @@ app.use('/robots.txt', robots);
 app.use('/opensearch.xml', opensearch);
 app.use('/pdf', generatePDF);
 app.get('/urlmap', urlMap);
-app.use('/', home, authorize, articles);
+app.use('/', home, articles);
 
 // Check aliases on whitelisted url paths that do not match any routing above
 app.use('/', asyncHandler(async (req, res, next) => {
