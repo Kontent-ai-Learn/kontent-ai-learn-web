@@ -1,9 +1,174 @@
+const axios = require('axios');
+const app = require('../app');
 const handleCache = require('./handleCache');
 const commonContent = require('./commonContent');
 const helper = require('./helperFunctions');
+const lms = require('./lms');
+const sendSendGridEmail = require('./sendgrid');
+const isPreview = require('./isPreview');
 
-const getPrivate = (UIMessages, course, token) => {
-  return course;
+const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPreviewCourse, req) => {
+  if (!courseId && courseId !== 0) return null;
+  let courseInfo = null;
+  let redirectToLMS = false;
+
+  // Register user in LMS and course and get info about course url and completion
+  if ((typeof req.query.enroll !== 'undefined' && req.query.enroll !== 'preview' && !isPreviewCourse) || (typeof req.query.enroll !== 'undefined' && req.query.enroll === 'preview' && isPreviewCourse)) {
+    courseInfo = await lms.enrollTrainingCourse(user, courseId, req);
+    redirectToLMS = true;
+  } else {
+    courseInfo = await lms.handleTrainingCourse(user, courseId, req, isPreviewCourse);
+  }
+
+  let textUIMessageCodename = '';
+  let renderAs = 'button';
+
+  if (courseInfo.err && !isPreviewCourse) {
+    const notification = lms.composeNotification('A user attempt to access to LMS in Kentico Kontent Docs failed with the following error:', courseInfo.err);
+    const emailInfo = {
+      recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
+      subject: 'LMS error notification',
+      text: lms.composeNotification('A user attempt to access to LMS in Kentico Kontent Docs failed with the following error:', courseInfo.err)
+    };
+    sendSendGridEmail(emailInfo);
+
+    if (app.appInsights) {
+      app.appInsights.defaultClient.trackTrace({ message: `LMS_ERROR: ${notification}` });
+    }
+  }
+
+  if (courseInfo.completion === 0) {
+    textUIMessageCodename = 'training___cta_start_course';
+  } else if (courseInfo.completion === 100) {
+    textUIMessageCodename = 'training___cta_revisit_course';
+  } else if (courseInfo.completion === 101) {
+    textUIMessageCodename = 'sign_in_error_text'; // 'User info is not available in LMS.';
+    renderAs = 'text';
+  } else if (courseInfo.completion === 102) {
+    textUIMessageCodename = 'sign_in_error_text'; // 'Course info is not available in LMS.';
+    renderAs = 'text';
+  } else if (courseInfo.completion === 103) {
+    textUIMessageCodename = 'sign_in_error_text'; // 'Course ID does not exist in LMS.';
+    renderAs = 'text';
+  } else {
+    textUIMessageCodename = 'training___cta_resume_course';
+  }
+
+  return {
+    text: UIMessages[textUIMessageCodename].value,
+    textUIMessageCodename: textUIMessageCodename,
+    url: courseInfo.url,
+    id: courseInfo.id,
+    qs: courseInfo.qs,
+    completion: courseInfo.completion.toString(),
+    certificate: courseInfo.certificate,
+    target: courseInfo.target,
+    signedIn: true,
+    renderAs: renderAs,
+    redirectToLMS: redirectToLMS,
+    isPreviewCourse: isPreviewCourse
+  };
+};
+
+const isCourseAvailable = (user, content) => {
+  const isFreeCourse = content.is_free ? helper.isCodenameInMultipleChoice(content.is_free.value, 'yes') : false;
+  if (user.email.endsWith('@kentico.com') || isFreeCourse) {
+    return true;
+  }
+
+  const userSubscriptions = user.customerSuccessSubscriptions;
+
+  for (let i = 0; i < userSubscriptions.length; i++) {
+    if (userSubscriptions[i].isPartner || userSubscriptions[i].isMvp) {
+      return true;
+    }
+
+    for (let j = 0; j < userSubscriptions[i].activePackages.length; j++) {
+      if (userSubscriptions[i].activePackages[j].name.includes('elearning')) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
+
+const getUserFromSubscriptionService = async (req) => {
+  const url = `${process.env['SubscriptionService.Url']}${req?.user.email}/`;
+  let user;
+  let errCode;
+
+  try {
+    user = await axios({
+      method: 'get',
+      url: url,
+      headers: {
+        Authorization: `Bearer ${process.env['SubscriptionService.Bearer']}`
+      }
+    });
+  } catch (err) {
+    if (!err.response) {
+      err.response = {
+        data: {
+          message: `Invalid request to ${url}`
+        }
+      };
+    }
+    if (typeof err.response.data === 'string') {
+      err.response.data = { message: err.response.data };
+    }
+    err.response.data.userEmail = req.oidc.user.email;
+    err.response.data.file = 'helpers/trainingCourseDetail.js';
+    err.response.data.method = 'getPrivate';
+    const notification = lms.composeNotification('A user attempt to sign in to Kentico Kontent Docs failed in the Subscription service with the following error:', err.response.data);
+    const emailInfo = {
+      recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
+      subject: 'Failed user sign in notification',
+      text: notification
+    };
+    sendSendGridEmail(emailInfo);
+
+    if (app.appInsights) {
+      app.appInsights.defaultClient.trackTrace({ message: `SUBSCRIPTION_SERVICE_ERROR: ${notification}` });
+    }
+
+    errCode = err.response.data.code;
+  }
+  return { user, errCode };
+};
+
+const getPrivate = async (UIMessages, course, req, res) => {
+  const hideCta = helper.isCodenameInMultipleChoice(course.display_options.value, 'hide_cta');
+  const data = {};
+
+  const { user, errCode } = await getUserFromSubscriptionService(req);
+
+  if (!user) {
+    data.renderGeneralMessage = true;
+    data.textUIMessageCodename = errCode === 'CR404' ? 'sign_in_error_subscription_missing_text' : 'sign_in_error_text';
+    data.renderAs = 'text';
+  } else if (hideCta) {
+    data.renderGeneralMessage = true;
+    data.forcePreviewRender = true;
+    data.textUIMessageCodename = 'training___cta_coming_soon';
+    data.renderAs = 'text';
+    data.signedIn = true;
+  } else if (!isCourseAvailable(user.data, course)) {
+    data.renderGeneralMessage = true;
+    data.textUIMessageCodename = 'training___cta_buy_course';
+    data.action = 'intercom';
+    data.renderAs = 'button';
+    data.certificate = await lms.getUserCourseCertificate(user.data, course.talentlms_course_id.value);
+    data.signedIn = true;
+  }
+
+  data.text = data.textUIMessageCodename ? UIMessages[data.textUIMessageCodename].value : '';
+
+  return {
+    general: data.renderGeneralMessage ? data : null,
+    production: !data.renderGeneralMessage && user ? await getTrainingCourseInfoFromLMS(user.data, course.talentlms_course_id.value, UIMessages, false, req) : null,
+    preview: (!data.renderGeneralMessage || data.forcePreviewRender) && isPreview(res.locals.previewapikey) && user ? await getTrainingCourseInfoFromLMS(user.data, course.talentlms_course_id_preview.value, UIMessages, true, req) : null
+  }
 };
 
 const getPublic = (UIMessages, course) => {
@@ -22,10 +187,10 @@ const getPublic = (UIMessages, course) => {
     data.signup = course.is_free ? helper.isCodenameInMultipleChoice(course.is_free.value, 'yes') : false;
   }
 
-  return data;
+  return { general: data };
 };
 
-const getTrainingCourseDetail = async (codename, token, res) => {
+const getTrainingCourseDetail = async (codename, req, res) => {
   let data = null;
   const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
     return await commonContent.getTraniningCourse(res);
@@ -38,8 +203,8 @@ const getTrainingCourseDetail = async (codename, token, res) => {
 
   const course = trainingCourses.find(item => item.system.codename === codename);
 
-  if (token) {
-    data = getPrivate(UIMessages, course, token);
+  if (req.user) {
+    data = await getPrivate(UIMessages, course, req, res);
   } else {
     data = getPublic(UIMessages, course);
   }

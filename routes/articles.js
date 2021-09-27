@@ -11,10 +11,8 @@ const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
 const handleCache = require('../helpers/handleCache');
 const platforms = require('../helpers/platforms');
-const getTrainingCourseInfo = require('../helpers/trainingCourse');
 const customRichTextResolver = require('../helpers/customRichTextResolver');
 const smartLink = require('../helpers/smartLink');
-const fastly = require('../helpers/fastly');
 
 const getUrlMap = require('../helpers/urlMap');
 
@@ -144,7 +142,6 @@ const getContent = async (req, res) => {
 
     let view = 'pages/article';
     let availablePlatforms;
-    let trainingCourseInfo;
 
     const pathUrl = req.originalUrl.split('?')[0];
     const queryHash = req.url.split('?')[1];
@@ -161,19 +158,6 @@ const getContent = async (req, res) => {
             }
         } else if (content[0].system.type === 'training_course') {
             view = 'pages/trainingCourse';
-            res = fastly.preventCaching(res);
-            trainingCourseInfo = await getTrainingCourseInfo(content[0], req, res);
-
-            for (const key in trainingCourseInfo) {
-                if (Object.prototype.hasOwnProperty.call(trainingCourseInfo, key)) {
-                    if (trainingCourseInfo[key] && trainingCourseInfo[key].redirectToLMS) {
-                        return {
-                            redirectCode: 302,
-                            redirectUrl: trainingCourseInfo[key].url
-                        };
-                    }
-                }
-            }
         } else if (content[0].system.type === 'zapi_specification') {
             view = 'pages/redoc';
             let contentReference = await getRedocReference(content[0].system.codename, res, KCDetails);
@@ -322,7 +306,6 @@ const getContent = async (req, res) => {
         releaseNoteContentType: releaseNoteContentType,
         containsTrainingCourse: containsTrainingCourse,
         trainingCourseContentType: trainingCourseContentType,
-        trainingCourseInfo: trainingCourseInfo,
         hideAuthorLastModified: content && content.length && content[0].display_options ? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_metadata') : false,
         hideFeedback: content && content.length && content[0].display_options? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_feedback') : false,
         readingTime: content && content.length && content[0].content ? helper.getReadingTime(content[0].content.value) : null

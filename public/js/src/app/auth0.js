@@ -4,7 +4,8 @@ const auth0Settings = {
     domain: window.auth0Config.domain,
     client_id: window.auth0Config.clientID,
     redirect_uri: `${location.protocol}//${location.host}/callback`,
-    scope: 'openid email profile'
+    scope: 'openid email profile',
+    //cacheLocation: 'localstorage'
 };
 
 const configureClient = async () => {
@@ -18,7 +19,7 @@ const processLoginState = async () => {
         window.history.replaceState({}, document.title, window.location.pathname);
         const returnUrl = localStorage.getItem('auth0ReturnUrl');
         localStorage.removeItem('auth0ReturnUrl');
-        window.location.replace(returnUrl);
+        window.location.replace(`${returnUrl.split('#')[0]}#trainingAction`);
     }
 };
 /*
@@ -51,7 +52,7 @@ auth0.login = async () => {
 
 auth0.logout = () => {
     auth0.client.logout({
-        returnTo: `${location.protocol}//${location.host}/e-learning/overview`
+        returnTo: `${location.protocol}//${location.host}${window.auth0Config.logoutUrl}`
     });
 };
 
@@ -64,6 +65,7 @@ auth0.eventListeners = () => {
     const login = document.querySelector('#login');
     const logout = document.querySelector('#logout');
     const signup = document.querySelector('#signup');
+    const intercom = document.querySelector('[data-click="support-async"]');
 
     if (login) {
         login.addEventListener('click', (e) => {
@@ -83,6 +85,14 @@ auth0.eventListeners = () => {
         signup.addEventListener('click', (e) => {
             e.preventDefault();
             auth0.signup();
+        });
+    }
+
+    if (intercom) {
+        intercom.addEventListener('click', () => {
+            if (window.Intercom && !window.kontentSmartLinkEnabled) {
+                window.Intercom('show');
+            }
         });
     }
 }

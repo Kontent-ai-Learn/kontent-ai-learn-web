@@ -1,20 +1,57 @@
 const trainingCourse = (() => {
   const isPreview = document.querySelector('body').classList.contains('preview-key');
 
-  const renderData = (data) => {
-    const container = document.querySelector('#trainingaction');
-    if (!container) return;
-    const prefix = isPreview ? '(Preview) ' : '';
+  const getLinkedInLink = (certificate) => {
+    if (!certificate) return '';
+    const certIssue = certificate.issued_date.split('/').map(x => parseInt(x));
+    const certExpiration = certificate.expiration_date.split('/').map(x => parseInt(x));
+    const certName = encodeURIComponent(certificate.course_name);
+
+    return `<a href=${`https://www.linkedin.com/profile/add?startTask=${certName}&name=${certName}&organizationId=373060&issueYear=${certIssue[0]}&issueMonth=${certIssue[1]}&expirationYear=${certExpiration[0]}&expirationMonth=${certExpiration[1]}&certUrl=${certificate.public_url}`} target='_blank' ${isPreview ? window.resolveSmartLink.elementCodename('training___add_to_linkedin') : ''}>${UIMessages.addToLikedIn}</a>`;
+  };
+
+  const renderCourseInfo = (data) => {
+    const container = document.querySelector('#trainingAction');
+    if (!container || !data) return;
+    const originalInnerHTML = container.innerHTML;
+    const prefix = data.isPreviewCourse ? '(Preview) ' : '';
     const markup = `
-      ${data.renderAs === 'button' ? `<span class="call-to-action" ${data.id ? `id="${data.id}"` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${prefix}${data.text}</span><span></span></span>` : `<span>${prefix}${data.text}</span>`}
-      ${data.signup ? `<span class="call-to-action" id="signup" ${isPreview ? window.resolveSmartLink.elementCodename('sign_out_button') : ''}><span>${UIMessages.signUp}</span><span></span></span>` : ''}
+      <div class="article__row-links">
+        ${data.renderAs === 'text' ? `<span>${prefix}${data.text}</span>` : ''}
+        ${data.renderAs === 'button' && (data.id || data.action) ? `<span class="call-to-action" ${data.id ? `id="${data.id}"` : ''} ${data.action === 'intercom' ? `data-click="support-async"` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${prefix}${data.text}</span><span></span></span>` : ''}
+        ${data.renderAs === 'button' && data.url ? `<a class="call-to-action" href="${data.url}" ${data.target ? `target=${data.target}` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${prefix}${data.text}</span><span></span></a>` : ''}
+        ${data.renderAs === 'button' && data.qs ? `<a class="call-to-action" href="${window.location.href.split('#')[0].split('?')[0]}?${data.qs}" ${data.target ? `target=${data.target}` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${prefix}${data.text}</span><span></span></a>` : ''}
+        ${data.signup ? `<span class="call-to-action" id="signup" ${isPreview ? window.resolveSmartLink.elementCodename('sign_out_button') : ''}><span>${UIMessages.signUp}</span><span></span></span>` : ''}
+        ${data.certificate ? `<a class="link" href="${data.certificate.public_url}" target="_blank" ${isPreview ? window.resolveSmartLink.elementCodename('training___download_certificate') : ''}>${UIMessages.downloadCertificate}</a>${getLinkedInLink(data.certificate)}` : ''}
+        ${data.signedIn ? `<span class="link" id="logout" ${isPreview ? window.resolveSmartLink.elementCodename('sign_out_button') : ''}>${UIMessages.signOut}</span>` : ''}
+      </div>
     `;
-    container.innerHTML = markup;
+    container.innerHTML = `${originalInnerHTML}${markup}`;
+  };
+
+  const renderCourseNotes = (data) => {
+    const container = document.querySelector('#trainingNotes');
+    if (!container || !data) return;
+
+    if (data.completion && !data.isPreviewCourse) {
+      const elem = document.createElement('span');
+      elem.innerHTML = `${data.completion}% complete`;
+      container.appendChild(elem);
+    }
+  };
+
+  const renderData = (data) => {
+    if (!data) return;
+    if (data.redirectToLMS && data.url) {
+      window.location.replace(data.url);
+    }
+    renderCourseInfo(data);
+    renderCourseNotes(data);
     auth0.eventListeners();
   };
 
   const requestInfo = async (trainingCodename, token) => {
-    let access = 'public';
+    let accessType = 'public';
     const fetchOptions = {
       method: 'POST',
       body: JSON.stringify({
@@ -24,12 +61,17 @@ const trainingCourse = (() => {
 
     if (token) {
       fetchOptions.headers = { Authorization: `Bearer ${token}` };
-      access = 'private'
+      accessType = 'private';
     }
 
-    const result = await fetch(`/api/training-course/detail/${access}`, fetchOptions);
+    const result = await fetch(`/api/training-course/detail/${accessType}${encodeURI(window.location.search)}`, fetchOptions);
     const data = await result.json();
-    renderData(data);
+
+    for (var item in data) {
+      if (Object.prototype.hasOwnProperty.call(data, item)) {
+        renderData(data[item]);
+      }
+    }
   };
 
   const getInfo = async () => {

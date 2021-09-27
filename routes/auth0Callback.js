@@ -28,7 +28,7 @@ const auth0Callback = asyncHandler(async (req, res) => {
     return res.render('pages/auth0Callback', {
         req: req,
         minify: minify,
-        slug: '404',
+        slug: '',
         isPreview: siteIsPreview,
         language: res.locals.language,
         navigation: home[0].subpages.value,

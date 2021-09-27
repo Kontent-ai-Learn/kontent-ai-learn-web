@@ -3,6 +3,7 @@ const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const router = express.Router();
 const trainingCourseDetail = require('../helpers/trainingCourseDetail');
+const fastly = require('../helpers/fastly');
 
 const jwtCheck = jwt({
   secret: jwksRsa.expressJwtSecret({
@@ -16,13 +17,15 @@ const jwtCheck = jwt({
   algorithms: ['RS256']
 });
 
-router.post('/training-course/detail/public', async (req, res) => {
-  const data = await trainingCourseDetail(req.body.codename, null, res);
+router.post('/training-course/detail/private', jwtCheck, async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await trainingCourseDetail(req.body.codename, req, res);
   return res.send(data);
 });
 
-router.post('/training-course/detail/private', jwtCheck, async (req, res) => {
-  const data = await trainingCourseDetail(req.body.codename, req.headers.authorization, res);
+router.post('/training-course/detail/public', async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await trainingCourseDetail(req.body.codename, req, res);
   return res.send(data);
 });
 
