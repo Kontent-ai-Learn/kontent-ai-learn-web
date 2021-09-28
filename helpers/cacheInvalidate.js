@@ -113,7 +113,7 @@ const splitPayloadByContentType = (items) => {
 };
 
 const getRootItems = async (items, KCDetails) => {
-    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples'];
+    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_course'];
     const allItems = await requestDelivery({
         types: typesToSearch,
         depth: 0,

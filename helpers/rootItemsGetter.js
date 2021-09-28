@@ -1,4 +1,4 @@
-const ROOT_CONTENT_TYPES = ['article'];
+const ROOT_CONTENT_TYPES = ['article', 'training_course'];
 
 function getRootCodenamesOfSingleItem(item, allItems) {
     if (ROOT_CONTENT_TYPES.includes(item.type)) {
@@ -51,6 +51,9 @@ function checkIfItemIsParent(item, codename) {
             return item.code_samples.itemCodenames.includes(codename);
         case 'article':
             return item.content.linkedItemCodenames.includes(codename) ||
+                   item.introduction.linkedItemCodenames.includes(codename);
+        case 'training_course':
+            return item.description.linkedItemCodenames.includes(codename) ||
                    item.introduction.linkedItemCodenames.includes(codename);
         case 'callout':
         case 'content_chunk':
