@@ -351,7 +351,7 @@ const helper = {
         const text = $.text();
         const pureText = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.stripTags(text))).trim();
         const wordsCount = pureText.split(' ').length;
-        return Math.round(wordsCount / 200) || 1;
+        return Math.round(wordsCount / 125) || 1;
     }
 };
 
