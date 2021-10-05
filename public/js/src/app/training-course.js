@@ -15,6 +15,7 @@ const trainingCourse = (() => {
     if (!container || !data) return;
     const originalInnerHTML = container.innerHTML;
     const prefix = data.isPreviewCourse ? '(Preview) ' : '';
+    const logoutBtnExists = document.querySelector('#logout') != null;
     const markup = `
       <div class="article__row-links">
         ${data.renderAs === 'text' ? `<span>${prefix}${data.text}</span>` : ''}
@@ -23,7 +24,7 @@ const trainingCourse = (() => {
         ${data.renderAs === 'button' && data.qs ? `<a class="call-to-action" href="${window.location.href.split('#')[0].split('?')[0]}?${data.qs}" ${data.target ? `target=${data.target}` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${prefix}${data.text}</span><span></span></a>` : ''}
         ${data.signup ? `<span class="call-to-action" id="signup" ${isPreview ? window.resolveSmartLink.elementCodename('sign_out_button') : ''}><span>${UIMessages.signUp}</span><span></span></span>` : ''}
         ${data.certificate ? `<a class="link" href="${data.certificate.public_url}" target="_blank" ${isPreview ? window.resolveSmartLink.elementCodename('training___download_certificate') : ''}>${UIMessages.downloadCertificate}</a>${getLinkedInLink(data.certificate)}` : ''}
-        ${data.signedIn ? `<span class="link" id="logout" ${isPreview ? window.resolveSmartLink.elementCodename('sign_out_button') : ''}>${UIMessages.signOut}</span>` : ''}
+        ${data.signedIn && !logoutBtnExists ? `<span class="link" id="logout" ${isPreview ? window.resolveSmartLink.elementCodename('sign_out_button') : ''}>${UIMessages.signOut}</span>` : ''}
       </div>
     `;
     container.innerHTML = `${originalInnerHTML}${markup}`;

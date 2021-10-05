@@ -54,6 +54,15 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPrevie
     textUIMessageCodename = 'training___cta_resume_course';
   }
 
+  if (courseInfo.completion > 100 && courseInfo.err) {
+    const emailInfo = {
+        recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
+        subject: courseInfo.err.message,
+        text: JSON.stringify(courseInfo.err)
+    };
+    sendSendGridEmail(emailInfo);
+  }
+
   return {
     text: UIMessages[textUIMessageCodename].value,
     textUIMessageCodename: textUIMessageCodename,
@@ -117,7 +126,7 @@ const getUserFromSubscriptionService = async (req) => {
     if (typeof err.response.data === 'string') {
       err.response.data = { message: err.response.data };
     }
-    err.response.data.userEmail = req.oidc.user.email;
+    err.response.data.userEmail = req?.user.email;
     err.response.data.file = 'helpers/trainingCourseDetail.js';
     err.response.data.method = 'getPrivate';
     const notification = lms.composeNotification('A user attempt to sign in to Kentico Kontent Docs failed in the Subscription service with the following error:', err.response.data);
