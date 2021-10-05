@@ -5,30 +5,29 @@ const commonContent = require('./commonContent');
 const helper = require('./helperFunctions');
 const lms = require('./lms');
 const sendSendGridEmail = require('./sendgrid');
-const isPreview = require('./isPreview');
 
-const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPreviewCourse, req) => {
+const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => {
   if (!courseId && courseId !== 0) return null;
   let courseInfo = null;
   let redirectToLMS = false;
 
   // Register user in LMS and course and get info about course url and completion
-  if ((typeof req.query.enroll !== 'undefined' && req.query.enroll !== 'preview' && !isPreviewCourse) || (typeof req.query.enroll !== 'undefined' && req.query.enroll === 'preview' && isPreviewCourse)) {
+  if (typeof req.query.enroll !== 'undefined') {
     courseInfo = await lms.enrollTrainingCourse(user, courseId, req);
     redirectToLMS = true;
   } else {
-    courseInfo = await lms.handleTrainingCourse(user, courseId, req, isPreviewCourse);
+    courseInfo = await lms.handleTrainingCourse(user, courseId, req);
   }
 
   let textUIMessageCodename = '';
   let renderAs = 'button';
 
-  if (courseInfo.err && !isPreviewCourse) {
+  if (courseInfo.err) {
     const notification = lms.composeNotification('A user attempt to access to LMS in Kentico Kontent Docs failed with the following error:', courseInfo.err);
     const emailInfo = {
       recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
       subject: 'LMS error notification',
-      text: lms.composeNotification('A user attempt to access to LMS in Kentico Kontent Docs failed with the following error:', courseInfo.err)
+      text: notification
     };
     sendSendGridEmail(emailInfo);
 
@@ -54,15 +53,6 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPrevie
     textUIMessageCodename = 'training___cta_resume_course';
   }
 
-  if (courseInfo.completion > 100 && courseInfo.err) {
-    const emailInfo = {
-        recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
-        subject: courseInfo.err.message,
-        text: JSON.stringify(courseInfo.err)
-    };
-    sendSendGridEmail(emailInfo);
-  }
-
   return {
     text: UIMessages[textUIMessageCodename].value,
     textUIMessageCodename: textUIMessageCodename,
@@ -74,8 +64,7 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, isPrevie
     target: courseInfo.target,
     signedIn: true,
     renderAs: renderAs,
-    redirectToLMS: redirectToLMS,
-    isPreviewCourse: isPreviewCourse
+    redirectToLMS: redirectToLMS
   };
 };
 
@@ -158,7 +147,6 @@ const getPrivate = async (UIMessages, course, req, res) => {
     data.renderAs = 'text';
   } else if (hideCta) {
     data.renderGeneralMessage = true;
-    data.forcePreviewRender = true;
     data.textUIMessageCodename = 'training___cta_coming_soon';
     data.renderAs = 'text';
     data.signedIn = true;
@@ -175,8 +163,7 @@ const getPrivate = async (UIMessages, course, req, res) => {
 
   return {
     general: data.renderGeneralMessage ? data : null,
-    production: !data.renderGeneralMessage && user ? await getTrainingCourseInfoFromLMS(user.data, course.talentlms_course_id.value, UIMessages, false, req) : null,
-    preview: (!data.renderGeneralMessage || data.forcePreviewRender) && isPreview(res.locals.previewapikey) && user ? await getTrainingCourseInfoFromLMS(user.data, course.talentlms_course_id_preview.value, UIMessages, true, req) : null
+    production: !data.renderGeneralMessage && user ? await getTrainingCourseInfoFromLMS(user.data, course.talentlms_course_id.value, UIMessages, req) : null
   }
 };
 

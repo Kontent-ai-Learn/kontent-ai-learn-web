@@ -300,7 +300,7 @@ const lms = {
             target: '_blank'
         }
     },
-    handleTrainingCourse: async (data, courseId, req, isPreviewCourse) => {
+    handleTrainingCourse: async (data, courseId, req) => {
         let isNewUser = false;
         let goTo = null;
         let certificate = null;
@@ -360,7 +360,7 @@ const lms = {
         if (goTo) {
             url = goTo.goto_url;
         } else {
-            qs = `enroll${isPreviewCourse ? '=preview' : ''}`;
+            qs = 'enroll';
         }
 
         return {
