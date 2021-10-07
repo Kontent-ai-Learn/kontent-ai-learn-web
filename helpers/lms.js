@@ -300,12 +300,13 @@ const lms = {
             target: '_blank'
         }
     },
-    handleTrainingCourse: async (data, courseId, req, isPreviewCourse) => {
+    handleTrainingCourse: async (data, courseId, req) => {
         let isNewUser = false;
         let goTo = null;
         let certificate = null;
         let status = null;
-        let url = '#';
+        let url = null;
+        let qs = null;
 
         const user = {};
         user.login = data.email;
@@ -359,11 +360,12 @@ const lms = {
         if (goTo) {
             url = goTo.goto_url;
         } else {
-            url = `${req.originalUrl.split('?')[0]}?enroll${isPreviewCourse ? '=preview' : ''}`;
+            qs = 'enroll';
         }
 
         return {
             url: url,
+            qs: qs,
             completion: status && status.completion_percentage ? parseInt(status.completion_percentage) : 0,
             certificate: certificate,
             target: '_blank'

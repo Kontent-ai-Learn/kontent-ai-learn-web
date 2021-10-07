@@ -594,6 +594,27 @@
         .link {
             margin-top: .5em;
             margin-bottom: .5em;
+            cursor: pointer;
+            color: #f05a22;
+            text-decoration: underline;
+
+            &:hover,
+            &:active {
+                text-decoration: none;
+            }
+        }
+    }
+
+    &__training-action {
+        &:empty {
+            width: 48px;
+            height: 48px;
+            background-image: url('/img/loader.gif');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-color: #fff;
+            background-size: contain;
+            margin: 0 24px;
         }
     }
 }

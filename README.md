@@ -30,11 +30,10 @@ Kentico Kontent documentation portal, which utilizes [Kentico Kontent](https://a
 
 To start the application correctly, the following environment variables must be specified.
 
-* `AUTH0_BASE_URL` - URL of the environment where authentication takes place, can be different from `baseUrl`
+* `AUTH0_ISSUER_BASE_URL` - Auth0 Domain
 * `AUTH0_CLIENT_ID` - Auth0 Client ID
 * `AUTH0_LOGOUT_URL` - Relative URL the user is redirected to after logging out
 * `AUTH0_DOMAIN` - Auth0 authentication domain
-* `AUTH0_SESSION_SECRET` - Auth0 session secret
 * `baseURL` - URL of the current environment (for example, http://localhost:3000) (used for webhooks pooling)
 * `KC.ProjectId` - Kentico Kontent project ID
 * One of the following:

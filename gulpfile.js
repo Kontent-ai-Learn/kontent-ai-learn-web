@@ -1,6 +1,8 @@
 const gulp = require('gulp');
 const nodemon = require('gulp-nodemon');
-const uglify = require('gulp-uglify');
+const uglifyes = require('uglify-es');
+const composer = require('gulp-uglify/composer');
+const uglify = composer(uglifyes, console);
 const babel = require('gulp-babel');
 const rename = require('gulp-rename');
 const concat = require('gulp-concat');
@@ -75,12 +77,12 @@ gulp.task('js-app', () => {
       'public/js/src/app/lightbox.js',
       'public/js/src/app/kontent-smart-link.js',
       'public/js/src/app/trigger-on-url-map.js',
-      'public/js/src/app/scrollto.js'
+      'public/js/src/app/scrollto.js',
+      'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
+      'public/js/src/app/training-course.js',
+      'public/js/src/app/auth0.js',
     ])
     .pipe(concat('app.js'))
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
