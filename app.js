@@ -14,8 +14,6 @@ const cache = require('memory-cache');
 const util = require('util');
 const { setIntervalAsync } = require('set-interval-async/dynamic')
 
-const { auth } = require('express-openid-connect');
-
 const helper = require('./helpers/helperFunctions');
 const appHelper = require('./helpers/app');
 const handleCache = require('./helpers/handleCache');
@@ -36,16 +34,11 @@ const error = require('./routes/error');
 const form = require('./routes/form');
 const redirectRules = require('./routes/redirectRules');
 const generatePDF = require('./routes/generatePDF');
-const authorize = require('./routes/auth');
 const urlMap = require('./routes/urlMap');
 const serviceCheck = require('./routes/serviceCheck');
-
-let articles;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  articles = require('./routes/articles');
-} else {
-  articles = require('./routes/articles_Obsolete');
-}
+const articles = require('./routes/articles');
+const auth0Callback = require('./routes/auth0Callback');
+const api = require('./routes/api');
 
 const app = express();
 
@@ -104,23 +97,11 @@ app.use(async (req, res, next) => {
   return next();
 });
 
-// Auth0
-const config = {
-  authRequired: false,
-  auth0Logout: true,
-  baseURL: process.env.AUTH0_BASE_URL,
-  clientID: process.env.AUTH0_CLIENT_ID,
-  issuerBaseURL: helper.ensureProtocol(process.env.AUTH0_DOMAIN),
-  secret: process.env.AUTH0_SESSION_SECRET,
-  routes: {
-    login: false,
-    postLogoutRedirect: process.env.AUTH0_LOGOUT_URL
-  }
-};
-
-app.use(auth(config));
-
 // Routes
+app.use('/api', express.json({
+  type: '*/*'
+}), api);
+app.use('/callback', auth0Callback);
 app.use('/link-to', linkUrls);
 app.use('/reference-updated', express.json({
   type: '*/*'
@@ -133,7 +114,7 @@ app.use('/form', express.text({
   type: '*/*'
 }), form);
 app.use('/', asyncHandler(async (req, res, next) => {
-  await handleCache.evaluateCommon(res, ['platformsConfig', 'urlMap', 'footer', 'UIMessages', 'home', 'navigationItems', 'articles', 'scenarios', 'termDefinitions']);
+  await handleCache.evaluateCommon(res, ['platformsConfig', 'urlMap', 'footer', 'UIMessages', 'home', 'navigationItems', 'articles', 'termDefinitions']);
 
   const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
     return await commonContent.getUIMessages(res);
@@ -157,7 +138,7 @@ app.use('/robots.txt', robots);
 app.use('/opensearch.xml', opensearch);
 app.use('/pdf', generatePDF);
 app.get('/urlmap', urlMap);
-app.use('/', home, authorize, articles);
+app.use('/', home, articles);
 
 // Check aliases on whitelisted url paths that do not match any routing above
 app.use('/', asyncHandler(async (req, res, next) => {

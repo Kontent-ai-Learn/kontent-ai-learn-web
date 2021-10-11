@@ -1,6 +1,8 @@
 const gulp = require('gulp');
 const nodemon = require('gulp-nodemon');
-const uglify = require('gulp-uglify');
+const uglifyes = require('uglify-es');
+const composer = require('gulp-uglify/composer');
+const uglify = composer(uglifyes, console);
 const babel = require('gulp-babel');
 const rename = require('gulp-rename');
 const concat = require('gulp-concat');
@@ -48,7 +50,6 @@ gulp.task('js-app', () => {
       'public/js/src/app/items-to-show.js',
       'public/js/src/app/data-toggle.js',
       'public/js/src/app/sub-navigation.js',
-      'public/js/src/app/sub-navigation_Obsolete.js',
       'public/js/src/app/language-selector.js',
       'public/js/src/app/tables.js',
       ...prismFiles,
@@ -75,12 +76,13 @@ gulp.task('js-app', () => {
       'node_modules/basiclightbox/dist/basicLightbox.min.js',
       'public/js/src/app/lightbox.js',
       'public/js/src/app/kontent-smart-link.js',
-      'public/js/src/app/trigger-on-url-map.js'
+      'public/js/src/app/trigger-on-url-map.js',
+      'public/js/src/app/scrollto.js',
+      'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
+      'public/js/src/app/training-course.js',
+      'public/js/src/app/auth0.js',
     ])
     .pipe(concat('app.js'))
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
@@ -215,7 +217,6 @@ gulp.task('css-app', () => {
       'public/css/src/components/navigation.less',
       'public/css/src/components/footer.less',
       'public/css/src/components/data-toggle.less',
-      'public/css/src/components/sub-navigation_Obsolete.less',
       'public/css/src/components/sub-navigation.less',
       'public/css/src/components/article.less',
       'public/css/src/components/basic-lightbox.less',

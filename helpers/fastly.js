@@ -4,26 +4,50 @@ const isPreview = require('./isPreview');
 const handleCache = require('./handleCache');
 const helper = require('./helperFunctions');
 const commonContent = require('./commonContent');
+const getUrlMap = require('./urlMap');
 
-let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  getUrlMap = require('./urlMap');
-} else {
-  getUrlMap = require('./urlMap_Obsolete');
-}
+const getChangelogQueryStringCombinations = async (res) => {
+  const releaseNoteContentType = await handleCache.evaluateSingle(res, 'releaseNoteContentType', async () => {
+      return await commonContent.getReleaseNoteType(res);
+  });
+
+  const releaseNotesServices = releaseNoteContentType?.elements.filter(elem => elem.codename === 'affected_services')[0]?.options.map(item => item.codename) || [];
+  const combinations = [];
+
+  combinations.push('breaking=true');
+
+  for (let i = 0; i < releaseNotesServices.length; i++) {
+      const combinationServices = `show=${releaseNotesServices[i]}`;
+      combinations.push(combinationServices);
+      combinations.push(`${combinationServices}&breaking=true`);
+  }
+
+  return combinations;
+};
 
 const axiosPurge = async (url) => {
+  const log = {
+    url: url,
+    timestamp: (new Date()).toISOString(),
+    isError: false
+  };
+
   try {
-    await axios({
+    const purgeResponse = await axios({
       method: 'purge',
       url: url,
       headers: {
           'Fastly-Soft-Purge': '1'
       }
     });
+    log.data = purgeResponse.data;
   } catch (error) {
+    log.isError = true;
+    log.data = error;
     consola.error('Fastly not available');
   }
+
+  helper.logInCacheKey('fastly-purge', log);
 };
 
 const purge = async (key, res) => {
@@ -128,6 +152,11 @@ const purgeFinal = async (itemsByTypes, req, res) => {
 
   if (itemsByTypes.releaseNotes.length && req.app.locals.changelogPath) {
     await axiosPurge(`${axiosDomain}${req.app.locals.changelogPath}`);
+
+    const changelogQueryStringCombinations = await getChangelogQueryStringCombinations(res);
+    for (let i = 0; i < changelogQueryStringCombinations.length; i++) {
+      await axiosPurge(`${axiosDomain}${req.app.locals.changelogPath}?${changelogQueryStringCombinations[i]}`);
+    }
   }
 
   if (itemsByTypes.termDefinitions.length && !allUrlsPurged) {
@@ -139,7 +168,7 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     await axiosPurge(`${axiosDomain}${req.app.locals.elearningPath}`);
   }
 
-  if (itemsByTypes.articles.length || itemsByTypes.scenarios.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
+  if (itemsByTypes.articles.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
     await axiosPurge(`${axiosDomain}/redirect-urls`);
   }
 

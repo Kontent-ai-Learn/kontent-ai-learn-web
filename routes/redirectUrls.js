@@ -6,20 +6,11 @@ const isPreview = require('../helpers/isPreview');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
 const handleCache = require('../helpers/handleCache');
-
-let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  getUrlMap = require('../helpers/urlMap');
-} else {
-  getUrlMap = require('../helpers/urlMap_Obsolete');
-}
+const getUrlMap = require('../helpers/urlMap');
 
 const getRedirectUrls = async (res) => {
   const articles = await handleCache.evaluateSingle(res, 'articles', async () => {
     return await commonContent.getArticles(res);
-  });
-  const scenarios = await handleCache.evaluateSingle(res, 'scenarios', async () => {
-    return await commonContent.getScenarios(res);
   });
   const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
     return await commonContent.getTraniningCourse(res);
@@ -31,7 +22,7 @@ const getRedirectUrls = async (res) => {
     return await getUrlMap(res);
   });
 
-  const items = [...articles, ...references, ...scenarios, ...trainingCourses];
+  const items = [...articles, ...references, ...trainingCourses];
   const redirectMap = [];
 
   items.forEach(item => {
@@ -110,7 +101,7 @@ router.get('/', async (req, res) => {
     projectId: res.locals.projectid,
     language: res.locals.language,
     title: 'Redirect URLs',
-    navigation: process.env.KK_NEW_STRUCTURE === 'true' ? home[0].subpages.value : home[0].navigation.value,
+    navigation: home[0].subpages.value,
     redirectRules: redirectRules,
     redirectMap: redirectMap,
     footer: footer[0] ? footer[0] : null,

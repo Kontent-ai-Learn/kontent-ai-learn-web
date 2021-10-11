@@ -102,6 +102,9 @@ const helper = {
     replaceWhitespaceWithDash: (text) => {
         return text.replace(/\s/g, '-');
     },
+    removeUnnecessaryWhitespace: (text) => {
+        return text.replace(/\s\s+/g, ' ');
+    },
     removeUnderscoreElems: (elems) => {
         for (let i = 0; i < elems.length; i++) {
             if (elems[i].startsWith('_')) {
@@ -320,6 +323,35 @@ const helper = {
         }
 
         return uniqueUrls;
+    },
+    appendQueryParam: (url, paramName, paramVal) => {
+        if (!url) return '';
+        let separator = '?';
+        let queryhash = '';
+        const urlSplit = url.split(separator);
+        let finalUrl = urlSplit[0];
+
+        if (urlSplit[1]) {
+            queryhash = urlSplit[1].split('#');
+            finalUrl += `?${queryhash[0]}`;
+            separator = '&';
+        }
+
+        finalUrl += `${separator}${encodeURIComponent(paramName)}=${encodeURIComponent(paramVal)}`
+
+        if (queryhash[1]) {
+            finalUrl += `#${queryhash[1]}`;
+        }
+
+        return finalUrl;
+    },
+    getReadingTime: (content) => {
+        const $ = cheerio.load(content);
+        $('[data-platform-code]').remove();
+        const text = $.text();
+        const pureText = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.stripTags(text))).trim();
+        const wordsCount = pureText.split(' ').length;
+        return Math.round(wordsCount / 125) || 1;
     }
 };
 

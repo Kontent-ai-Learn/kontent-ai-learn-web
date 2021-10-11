@@ -6,7 +6,7 @@ const smartLink = require('../helpers/smartLink');
 const isPreview = require('../helpers/isPreview');
 const asyncHandler = require('express-async-handler');
 
-const error = asyncHandler(async (req, res) => {
+const auth0Callback = asyncHandler(async (req, res) => {
     const footer = await handleCache.ensureSingle(res, 'footer', async (res) => {
         return commonContent.getFooter(res);
     });
@@ -16,29 +16,25 @@ const error = asyncHandler(async (req, res) => {
 
     const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
 
-    const content = await handleCache.ensureSingle(res, 'notFound', async () => {
-        return commonContent.getNotFound(res);
-    });
-
     const home = await handleCache.ensureSingle(res, 'home', async () => {
         return commonContent.getHome(res);
     });
 
-    if (!footer || !UIMessages || !content || !home) {
+    if (!footer || !UIMessages || !home) {
         return res.status(500).send('Unexpected error, please check site logs.');
     }
     const siteIsPreview = isPreview(res.locals.previewapikey);
 
-    return res.render('pages/error', {
+    return res.render('pages/auth0Callback', {
         req: req,
         minify: minify,
-        slug: '404',
+        slug: '',
         isPreview: siteIsPreview,
         language: res.locals.language,
         navigation: home[0].subpages.value,
-        itemId: content && content.length ? content[0].system.id : null,
-        title: content && content.length ? content[0].title.value : '',
-        content: content && content.length ? content[0].content.value : '',
+        itemId: null,
+        title: 'Login processing...',
+        content: '',
         footer: footer && footer.length ? footer[0] : null,
         UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
         platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
@@ -48,4 +44,4 @@ const error = asyncHandler(async (req, res) => {
     });
 });
 
-module.exports = error;
+module.exports = auth0Callback;

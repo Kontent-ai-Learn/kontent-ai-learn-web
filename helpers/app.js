@@ -1,12 +1,6 @@
 const handleCache = require('./handleCache');
 const commonContent = require('./commonContent');
-
-let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  getUrlMap = require('./urlMap');
-} else {
-  getUrlMap = require('./urlMap_Obsolete');
-}
+const getUrlMap = require('./urlMap');
 
 // URLs allowed in the application
 const urlWhitelist = [
@@ -23,6 +17,7 @@ const urlWhitelist = [
   '/sitemap.xml',
   '/pdf',
   '/login',
+  '/signup',
   '/logout',
   '/callback',
   '/opensearch.xml'

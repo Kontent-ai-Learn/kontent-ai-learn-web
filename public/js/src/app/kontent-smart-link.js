@@ -52,3 +52,9 @@ window.initSmartLink = (() => {
     }
   };
 })();
+
+window.resolveSmartLink = {
+  elementCodename: (codename) => {
+    return `data-kontent-element-codename="${codename}"`;
+  }
+};

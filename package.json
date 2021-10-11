@@ -32,6 +32,7 @@
     },
     "homepage": "https://github.com/KenticoDocs/kontent-docs-web#readme",
     "dependencies": {
+        "@auth0/auth0-spa-js": "^1.18.0",
         "@babel/core": "^7.13.16",
         "@babel/preset-env": "^7.13.15",
         "@kentico/kontent-delivery": "^10.4.1",
@@ -46,6 +47,7 @@
         "axios": "^0.21.1",
         "axios-retry": "^3.1.9",
         "basiclightbox": "^5.0.4",
+        "body-parser": "^1.19.0",
         "browser-sync": "^2.26.14",
         "cheerio": "^1.0.0-rc.3",
         "compression": "^1.7.4",
@@ -64,9 +66,8 @@
         "eslint-plugin-standard": "^4.1.0",
         "express": "^4.17.1",
         "express-async-handler": "^1.1.4",
-        "express-cache-controller": "^1.1.0",
-        "express-openid-connect": "^2.3.1",
-        "express-session": "^1.17.1",
+        "express-jwt": "^6.1.0",
+        "express-jwt-authz": "^2.4.1",
         "form-data": "^4.0.0",
         "generate-password": "^1.6.0",
         "gulp": "^4.0.2",
@@ -83,13 +84,14 @@
         "htmlparser2": "^6.1.0",
         "ig": "0.0.5",
         "instantsearch.js": "^4.21.0",
+        "jwks-rsa": "^2.0.4",
         "less-plugin-autoprefix": "^2.0.0",
         "memory-cache": "^0.2.0",
         "mixitup": "^3.3.1",
         "moment": "^2.29.1",
         "morgan": "~1.10.0",
         "ncu": "^0.2.1",
-        "prismjs": "^1.23.0",
+        "prismjs": "^1.24.1",
         "pug": "^3.0.2",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
@@ -99,6 +101,7 @@
         "set-interval-async": "2.0.3",
         "styled-components": "^5.2.3",
         "tslib": "^2.2.0",
-        "typescript": "^4.2.4"
+        "typescript": "^4.2.4",
+        "uglify-es": "^3.3.9"
     }
 }

@@ -4,7 +4,7 @@ urlset(xmlns='http://www.sitemaps.org/schemas/sitemap/0.9', xmlns:xhtml='http://
         - var isExcluded = false;
         - if (item.visibility && item.visibility.length && item.visibility.filter(elem => elem.codename === 'excluded_from_search').length) { isExcluded = true }
         if (!isExcluded)
-            if (item.type !== 'topic' && item.type !== 'navigation_item')
+            if (item.type !== 'navigation_item')
                 url
                     loc
                         | !{domain + item.url}

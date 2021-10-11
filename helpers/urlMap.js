@@ -243,30 +243,6 @@ const handleUnusedArtiles = async (deliveryClient, urlMap) => {
     return urlMap;
 };
 
-const handleTrainingCourses = async(deliveryClient, urlMap) => {
-    const eLearningItem = urlMap.filter(item => item.codename === 'e_learning');
-    const eLearningItemUrl = eLearningItem.length ? eLearningItem[0].url : null;
-    if (!eLearningItemUrl) return urlMap;
-
-    const { items, error } = await queryDeliveryType('training_course', 1, deliveryClient);
-
-    items.items.forEach((courseItem) => {
-        urlMap.push(getMapItem({
-            codename: courseItem.system.codename,
-            url: `${eLearningItemUrl}/${courseItem.url.value}`,
-            date: courseItem.system.lastModified,
-            visibility: courseItem.visibility && courseItem.visibility.value.length ? courseItem.visibility.value : null,
-            type: courseItem.system.type
-        }, fields));
-    });
-
-    if (error && app.appInsights) {
-        app.appInsights.defaultClient.trackTrace({ message: 'DELIVERY_API_ERROR: ' + error.message });
-    }
-
-    return urlMap;
-};
-
 const getUrlMap = async (res, isSitemap) => {
     deliveryConfig.projectId = res.locals.projectid;
     deliveryConfig.retryAttempts = 0;
@@ -306,7 +282,7 @@ const getUrlMap = async (res, isSitemap) => {
         cachedPlatforms: cachedPlatforms
     });
     urlMap = await handleUnusedArtiles(deliveryClient, urlMap);
-    urlMap = await handleTrainingCourses(deliveryClient, urlMap);
+
     return urlMap;
 };
 

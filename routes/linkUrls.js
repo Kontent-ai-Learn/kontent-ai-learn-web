@@ -3,13 +3,7 @@ const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const handleCache = require('../helpers/handleCache');
 const helper = require('../helpers/helperFunctions');
-
-let getUrlMap;
-if (process.env.KK_NEW_STRUCTURE === 'true') {
-  getUrlMap = require('../helpers/urlMap');
-} else {
-  getUrlMap = require('../helpers/urlMap_Obsolete');
-}
+const getUrlMap = require('../helpers/urlMap');
 
 router.get('/:codenames', asyncHandler(async (req, res, next) => {
     const codenames = req.params.codenames.split('/');

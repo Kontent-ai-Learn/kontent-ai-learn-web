@@ -177,15 +177,15 @@ const getDiagramsnetTemplate = (cssClass, item, config, elemId) => {
     return `
         ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
         <div class="embed embed--diagrams-net${cssClass}" id="embed-${elemId}">
-            <iframe width="2000" height="1125" class="lazy" frameborder="0" data-src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
-            <a data-lightbox-embed="embed-${elemId}" target="_blank" href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>
+            <iframe width="2000" height="1125" class="lazy" frameborder="0" data-src="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
+            <a data-lightbox-embed="embed-${elemId}" target="_blank" href="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>
             <noscript>
-                <iframe frameborder="0" src="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
+                <iframe frameborder="0" src="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
             </noscript>
         </div>
         ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
-            <i>See the diagram on <a href="https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}">https://app.diagrams.net?lightbox=1&nav=1#${item.id.value}</a></i>
+            <i>See the diagram on <a href="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}">https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}</a></i>
         </p>
         ${config.isPreview ? '</div>' : ''}
     `;
@@ -550,7 +550,7 @@ const richTextResolverTemplates = {
 : '';
 
         return `
-            <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}"${getSmartLinkAttr(config, item.system.id, 'undecided')}>
+            <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                 <h3${getSmartLinkAttr(config, 'title', 'element')}>${url ? `<a href="${url}">${item.title.value}</a>` : `${item.title.value}`}${isFree ? `<span class="article__tag article__tag--blue">${config.UIMessages.training___free_course_label.value}</span>` : ''}</h3>
                 ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                 <div class="article__introduction">

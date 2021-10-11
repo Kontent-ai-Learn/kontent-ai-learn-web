@@ -1,9 +1,17 @@
 (() => {
+    const isPreview = document.querySelector('body').classList.contains('preview-key');
+
     const addMoreLessButton = (list) => {
         const node = document.createElement('LI');
         node.classList.add('selection__item');
         node.setAttribute('data-items-more', `${window.UIMessages ? window.UIMessages.showMore : ''}`);
         node.setAttribute('data-items-less', `${window.UIMessages ? window.UIMessages.showLess : ''}`);
+        if (isPreview) {
+            node.setAttribute('data-kontent-item-id', `${window.UIMessages ? window.UIMessages.systemid : ''}`)
+            node.setAttribute('data-uimessage-more', 'home___show_more');
+            node.setAttribute('data-uimessage-less', 'home___show_less');
+            node.setAttribute('data-kontent-element-codename', node.getAttribute('data-uimessage-more'))
+        }
         node.setAttribute('data-items-expanded', 'false');
         node.innerHTML = node.getAttribute('data-items-more');
         list.appendChild(node);
@@ -43,6 +51,9 @@
                 const btnTextAttr = expanded ? 'more' : 'less';
                 moreLessButton.innerHTML = moreLessButton.getAttribute(`data-items-${btnTextAttr}`);
                 moreLessButton.setAttribute('data-items-expanded', (!expanded).toString());
+                if (isPreview) {
+                    moreLessButton.setAttribute('data-kontent-element-codename', moreLessButton.getAttribute(`data-uimessage-${btnTextAttr}`))
+                }
             }
         });
     };
