@@ -88,6 +88,7 @@ app.use(slashes(false));
 
 app.enable('trust proxy');
 
+app.use('/service-check', serviceCheck);
 app.use(async (req, res, next) => {
   res.locals.host = req.headers.host;
   res.locals.protocol = req.protocol;
@@ -120,7 +121,6 @@ const config = {
 app.use(auth(config));
 
 // Routes
-app.use('/service-check', serviceCheck);
 app.use('/link-to', linkUrls);
 app.use('/reference-updated', express.json({
   type: '*/*'
