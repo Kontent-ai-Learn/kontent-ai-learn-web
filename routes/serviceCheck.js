@@ -1,81 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
-const axios = require('axios');
+const checkKKProject = require('../helpers/serviceCheck/kkProject');
+const checkAlgolia = require('../helpers/serviceCheck/algolia');
 
-router.get('/', (req, res, next) => {
-  res.render('pages/serviceCheck');
+router.get('/', (req, res) => {
+  return res.render('pages/serviceCheck');
 });
 
-router.get('/kk-project', asyncHandler(async (req, res, next) => {
-  const projectId = process.env['KC.ProjectId'];
-  const securedApiKey = process.env['KC.SecuredApiKey'];
-  const previewApiKey = process.env['KC.PreviewApiKey'];
-  let host = '';
-  let apiKey = '';
+router.get('/:codename', asyncHandler(async (req, res) => {
   res.set('Content-Type', 'application/json');
+  let result;
 
-  if (!projectId) {
-    return res
-      .send({
+  switch (req.params.codename) {
+    case 'kk-project':
+      result = await checkKKProject();
+      break;
+    case 'algolia':
+      result = await checkAlgolia();
+      break;
+    default:
+      result = {
         isSuccess: false,
-        message: 'Missing Project ID'
-      });
-  }
-
-  if (!(securedApiKey || previewApiKey)) {
-    return res
-      .send({
-        isSuccess: false,
-        message: 'Missing one of the API keys for Secure access or Preview API'
-      });
-  }
-
-  if (securedApiKey && previewApiKey) {
-    return res
-      .send({
-        isSuccess: false,
-        message: 'There are both API keys for Secure access or Preview API, there must be only one of them.'
-      });
-  }
-
-  if (securedApiKey) {
-    host = 'https://deliver.kontent.ai';
-    apiKey = securedApiKey;
-  } else if (previewApiKey) {
-    host = 'https://preview-deliver.kontent.ai';
-    apiKey = previewApiKey;
-  }
-
-  try {
-    const url = `${host}/${projectId}/items?limit=1`;
-    const response = await axios({
-      method: 'get',
-      url: url,
-      headers: {
-        Authorization: `Bearer ${apiKey}`
-      }
-    });
-
-    if (response.data) {
-      return res
-        .send({
-          isSuccess: true
-        });
-    }
-  } catch (err) {
-    return res
-      .send({
-        isSuccess: false,
-        message: `There is a problem requesting Delivery API. Original message: ${err.message}`
-      });
+        message: 'Unknown service name'
+      };
   }
 
   return res
-    .send({
-      isSuccess: false,
-      message: 'Unknown problem'
-    });
+    .send(result);
 }));
 
 module.exports = router;

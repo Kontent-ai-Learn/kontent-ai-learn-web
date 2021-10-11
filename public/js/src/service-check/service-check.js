@@ -1,8 +1,13 @@
 (() => {
+
   const config = [{
     codename: 'kkproject',
     title: 'Kentico Kontent project',
     endpoint: '/service-check/kk-project'
+  }, {
+    codename: 'algolia',
+    title: 'Algolia search',
+    endpoint: '/service-check/algolia',
   }];
 
   const buidlUI = () => {
@@ -22,27 +27,42 @@
     body.innerHTML = markup;
   };
 
-  const runChecks = () => {
+  const runChecks = async () => {
     for (let i = 0; i < config.length; i++) {
       const liElem = document.querySelector(`[data-codename="${config[i].codename}"]`);
       const statusElem = liElem.querySelector('[data-status]');
       const messageElem = liElem.querySelector('[data-message]');
 
-      fetch(config[i].endpoint)
-        .then(response => response.json())
-        .then(data => {
-          if (data.isSuccess) {
-            statusElem.setAttribute('data-status', 'success');
-          } else {
-            statusElem.setAttribute('data-status', 'fail');
-          }
+      try {
+        const response = await fetch(config[i].endpoint);
+        const data = await response.json();
 
-          if (data.message) {
-            messageElem.innerHTML = data.message;
+        if (data.message) {
+          messageElem.innerHTML = data.message;
+        } else {
+          messageElem.innerHTML = '';
+        }
+
+        if (data.isSuccess) {
+          if (config[i].callback) {
+            const callbackResult = await config[i].callback();
+
+            if (callbackResult.isSuccess) {
+              statusElem.setAttribute('data-status', 'success');
+            } else {
+              statusElem.setAttribute('data-status', 'fail');
+              messageElem.innerHTML = callbackResult.message;
+            }
           } else {
-            messageElem.innerHTML = '';
-          }
-        });
+            statusElem.setAttribute('data-status', 'success');
+          }    
+        } else {
+          statusElem.setAttribute('data-status', 'fail');
+        }
+      } catch (error) {
+        statusElem.setAttribute('data-status', 'fail');
+        messageElem.innerHTML = `Unable to check service ${config[i].title}`;
+      }
     }
   };
 

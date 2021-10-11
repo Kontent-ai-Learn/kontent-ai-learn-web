@@ -162,9 +162,6 @@ gulp.task('js-service-check', () => {
       'public/js/src/service-check/service-check.js'
     ])
     .pipe(concat('service-check.js'))
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
