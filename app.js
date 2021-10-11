@@ -20,6 +20,7 @@ const handleCache = require('./helpers/handleCache');
 const commonContent = require('./helpers/commonContent');
 const isPreview = require('./helpers/isPreview');
 const fastly = require('./helpers/fastly');
+const serviceCheckAll = require('./helpers/serviceCheck/all');
 const home = require('./routes/home');
 const sitemap = require('./routes/sitemap');
 const rss = require('./routes/rss');
@@ -82,6 +83,23 @@ app.use(slashes(false));
 app.enable('trust proxy');
 
 app.use('/service-check', serviceCheck);
+
+app.use(async (req, res, next) => {
+  const serviceCheckResults = await serviceCheckAll();
+
+  for (let i = 0; i < serviceCheckResults.length; i++) {
+    if (!serviceCheckResults[i].result.isSuccess) {
+      app.set('serviceCheckError', true);
+    }
+  }
+
+  if (app.get('serviceCheckError') && appInsights && appInsights.defaultClient) {
+    appInsights.defaultClient.trackTrace({ message: `SERVICE_CHECK_ERROR: ${JSON.stringify(serviceCheckResults)}` });
+  }
+
+  next();
+});
+
 app.use(async (req, res, next) => {
   res.locals.host = req.headers.host;
   res.locals.protocol = req.protocol;
@@ -98,6 +116,12 @@ app.use(async (req, res, next) => {
 });
 
 // Routes
+app.use('/', (req, res, next) => {
+  if (app.get('serviceCheckError')) {
+    return res.redirect(302, `${process.env.baseURL}/service-check`);
+  }
+  next();
+});
 app.use('/api', express.json({
   type: '*/*'
 }), api);

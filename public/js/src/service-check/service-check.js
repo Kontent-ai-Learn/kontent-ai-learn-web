@@ -1,5 +1,4 @@
 (() => {
-
   const config = [{
     codename: 'kkproject',
     title: 'Kentico Kontent project',

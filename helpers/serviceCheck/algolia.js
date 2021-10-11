@@ -37,9 +37,9 @@ const checkAlgolia = async () => {
 
     if (response.status >= 200 && response.status <= 299) {
       data.isSuccess = true;
+      delete data.message;
     }
   } catch (error) {
-    console.log(error.response);
     if (!error.response) {
       data.message = 'Invalid Application-ID';
     } else if (error.response.data.status === 403) {
