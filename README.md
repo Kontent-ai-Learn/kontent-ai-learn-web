@@ -1,6 +1,5 @@
-| [master](https://github.com/KenticoDocs/kontent-docs-web/tree/master) | [develop](https://github.com/KenticoDocs/kontent-docs-web/tree/develop) |
-|:---:|:---:|
-| [![Build Status](https://travis-ci.com/KenticoDocs/kontent-docs-web.svg?branch=master)](https://travis-ci.com/KenticoDocs/kontent-docs-web/branches) | [![Build Status](https://travis-ci.com/KenticoDocs/kontent-docs-web.svg?branch=develop)](https://travis-ci.com/KenticoDocs/kontent-docs-web/branches) |
+![master](https://github.com/KenticoDocs/kontent-docs-web/actions/workflows/master_kcd-web-live-master(staging).yml/badge.svg)
+![develop](https://github.com/KenticoDocs/kontent-docs-web/actions/workflows/develop_kcd-web-live-dev(staging).yml/badge.svg)
 
 # Kentico Kontent Documentation - Website
 
