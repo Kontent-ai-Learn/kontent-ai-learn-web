@@ -34,8 +34,6 @@ const resolveLinkUrlsInElement = (element, item, urlMap) => {
 
         if (resolvedUrl.length > 0) {
             resolvedUrl = `${resolvedUrl[0].url}${getQueryString(resolvedUrl[0].type)}`;
-        } else if (link.type === 'article') {
-            resolvedUrl = `/other/${item.urlSlug}`;
         } else if (link.type === 'term_definition') {
             resolvedUrl = `#term-definition-${link.codename}`;
         } else {
@@ -58,8 +56,6 @@ const linksResolverTemplates = {
 
         if (url.length > 0) {
             return `${url[0].url}${getQueryString(url[0].type)}`;
-        } else if (item.type === 'article') {
-            return `/other/${item.urlSlug}`;
         } else if (item.type === 'term_definition') {
             return `#term-definition-${item.codename}`;
         } else {
