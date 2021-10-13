@@ -92,7 +92,7 @@ const isCourseAvailable = (user, content) => {
 };
 
 const getUserFromSubscriptionService = async (req) => {
-  const url = `${process.env['SubscriptionService.Url']}${req?.user.email}/`;
+  const url = `${process.env['SubscriptionService.Url']}${req?.user?.email}/`;
   let user;
   let errCode;
 
@@ -138,10 +138,19 @@ const getUserFromSubscriptionService = async (req) => {
 const getPrivate = async (UIMessages, course, req, res) => {
   const hideCta = helper.isCodenameInMultipleChoice(course.display_options.value, 'hide_cta');
   const data = {};
+  let user = {};
+  let errCode;
 
-  const { user, errCode } = await getUserFromSubscriptionService(req);
+  if (req?.user?.email.endsWith('@kentico.com')) {
+    user.data = {}
+    user.data.email = req.user.email;
+  } else {
+    const userSubscriptionService = await getUserFromSubscriptionService(req);
+    user = userSubscriptionService.user?.data;
+    errCode = userSubscriptionService.errCode;
+  }
 
-  if (!user) {
+  if (errCode) {
     data.renderGeneralMessage = true;
     data.textUIMessageCodename = errCode === 'CR404' ? 'sign_in_error_subscription_missing_text' : 'sign_in_error_text';
     data.renderAs = 'text';
@@ -150,12 +159,12 @@ const getPrivate = async (UIMessages, course, req, res) => {
     data.textUIMessageCodename = 'training___cta_coming_soon';
     data.renderAs = 'text';
     data.signedIn = true;
-  } else if (!isCourseAvailable(user.data, course)) {
+  } else if (!isCourseAvailable(user, course)) {
     data.renderGeneralMessage = true;
     data.textUIMessageCodename = 'training___cta_buy_course';
     data.action = 'intercom';
     data.renderAs = 'button';
-    data.certificate = await lms.getUserCourseCertificate(user.data, course.talentlms_course_id.value);
+    data.certificate = await lms.getUserCourseCertificate(user, course.talentlms_course_id.value);
     data.signedIn = true;
   }
 
@@ -163,7 +172,7 @@ const getPrivate = async (UIMessages, course, req, res) => {
 
   return {
     general: data.renderGeneralMessage ? data : null,
-    production: !data.renderGeneralMessage && user ? await getTrainingCourseInfoFromLMS(user.data, course.talentlms_course_id.value, UIMessages, req) : null
+    production: !data.renderGeneralMessage && !errCode ? await getTrainingCourseInfoFromLMS(user, course.talentlms_course_id.value, UIMessages, req) : null
   }
 };
 
