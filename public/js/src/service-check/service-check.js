@@ -7,6 +7,10 @@
     codename: 'algolia',
     title: 'Algolia search',
     endpoint: '/service-check/algolia',
+  }, {
+    codename: 'subscriptionService',
+    title: 'Subscription service',
+    endpoint: '/service-check/subscription-service',
   }];
 
   const buidlUI = () => {

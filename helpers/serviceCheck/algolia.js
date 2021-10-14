@@ -10,7 +10,7 @@ const checkAlgolia = async () => {
   }, {
     name: 'Search.IndexName',
     errMessage: 'Missing Index name',
-  }]
+  }];
 
   for (let i = 0; i < envs.length; i++) {
     if (!process.env[envs[i].name]) {

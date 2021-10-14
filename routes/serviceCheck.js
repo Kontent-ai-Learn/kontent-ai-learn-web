@@ -3,6 +3,7 @@ const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const checkKKProject = require('../helpers/serviceCheck/kkProject');
 const checkAlgolia = require('../helpers/serviceCheck/algolia');
+const checkSubscriptionService = require('../helpers/serviceCheck/subscription-service');
 
 router.get('/', (req, res) => {
   return res.render('pages/serviceCheck');
@@ -18,6 +19,9 @@ router.get('/:codename', asyncHandler(async (req, res) => {
       break;
     case 'algolia':
       result = await checkAlgolia();
+      break;
+    case 'subscription-service':
+      result = await checkSubscriptionService();
       break;
     default:
       result = {

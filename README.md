@@ -69,6 +69,7 @@ Without the following variables, certain features will not work on the website.
 * `SENDGRID_EMAIL_ADDRESS_TO` - SendGrid 
 * `SubscriptionService.Bearer` - Subscription service access token for Kentico Kontent (used for verifying users' access to e-learning)
 * `SubscriptionService.Url` - Subscription service URL (used for verifying users' access to e-learning)
+* `SubscriptionService.ServiceCheckerEmail` - Email address that has an existing record in the Subscription service
 * `Webhook.Cache.Invalidate.CommonContent` - Kentico Kontent Webhook token (used for common content cache invalidation)
 
 ## How To Contribute
