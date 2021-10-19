@@ -596,6 +596,16 @@ const richTextResolverTemplates = {
                     </div>
                 </div>`;
     },
+    carousel: (item, config) => {
+        const markupBefore = '<div class="carousel splide"><div class="splide__track"><ul class="splide__list">';
+        const markupAfter = '</ul></div></div>';
+        const carouselItems = helper.splitCarouselItems(item.content.value);
+
+        if (carouselItems.count > 1) {
+            return `${markupBefore}${carouselItems.markup}${markupAfter}`;
+        }
+        return carouselItems.markup;
+    },
 };
 
 module.exports = richTextResolverTemplates;

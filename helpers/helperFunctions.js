@@ -352,6 +352,22 @@ const helper = {
         const pureText = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.stripTags(text))).trim();
         const wordsCount = pureText.split(' ').length;
         return Math.round(wordsCount / 125) || 1;
+    },
+    splitCarouselItems: (content) => {
+        const $ = cheerio.load(content);
+        const $objects = $('object[type="application/kenticocloud"]');
+        const slidesCount = $objects.length;
+        if ($objects.length > 1) {
+            $objects.each(function () {
+                const $that = $(this);
+                $that.wrap('<li class="splide__slide"></li>');
+            });
+        }
+        const output = $.html();
+        return {
+            count: slidesCount,
+            markup: output.replace('<html><head></head><body>', '').replace('</body></html>', '')
+        }
     }
 };
 

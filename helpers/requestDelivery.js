@@ -134,6 +134,9 @@ const componentsResolvers = [{
 }, {
     type: 'quote',
     resolver: richTextResolverTemplates.quote
+}, {
+    type: 'carousel',
+    resolver: richTextResolverTemplates.carousel
 }];
 
 const resolveRichText = (item, config) => {

@@ -81,6 +81,8 @@ gulp.task('js-app', () => {
       'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
       'public/js/src/app/training-course.js',
       'public/js/src/app/auth0.js',
+      'node_modules/@splidejs/splide/dist/js/splide.js',
+      'public/js/src/app/carousel.js',
     ])
     .pipe(concat('app.js'))
     .pipe(uglify())
@@ -236,7 +238,9 @@ gulp.task('css-app', () => {
       'public/css/src/components/autocomplete.less',
       'public/css/src/components/video-controls.less',
       'public/css/src/components/quote.less',
-      'public/css/src/general/print.less'
+      'public/css/src/general/print.less',
+      'node_modules/@splidejs/splide/dist/css/splide-core.min.css',
+      'public/css/src/components/carousel.less',
     ])
     .pipe(concat('app.less'))
     .pipe(less({
