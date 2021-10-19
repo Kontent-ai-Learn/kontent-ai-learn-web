@@ -5,7 +5,7 @@ mixin navItem(nav)
             li.sub-navigation__item
                 - const url = urlMap.find(val => val.codename === item.system.codename).url;
                 if (item.system.type === 'navigation_item')
-                    a(href=`#`, class=`sub-navigation__link sub-navigation__link--collapse${pathUrl.includes(url) ? ' sub-navigation__link--active sub-navigation__link--on-path' : ''}`) !{item.title.value}
+                    a(href=url, class=`sub-navigation__link sub-navigation__link--collapse${pathUrl.includes(url) ? ' sub-navigation__link--active sub-navigation__link--on-path' : ''}`) !{item.title.value}
                     ul.sub-navigation
                         +navItem(item.subpages.value)
                 else 
