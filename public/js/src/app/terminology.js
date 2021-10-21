@@ -149,7 +149,7 @@ window.initTerminology = () => {
                 window.dataLayer.push({
                     event: 'event',
                     eventCategory: 'term--hover',
-                    eventAction: window.filterXSS(decodeURIComponent(term)),
+                    eventAction: decodeURIComponent(term),
                     eventLabel: window.helper.getAbsoluteUrl()
                 });
             }

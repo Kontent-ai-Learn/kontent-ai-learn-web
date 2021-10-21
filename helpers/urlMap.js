@@ -131,6 +131,9 @@ const handlePlatformArticle = (settings) => {
 
 const handleNodes = (settings) => {
     const item = settings.item;
+    if (item._raw.system.workflow_step === 'archived') {
+        return settings.urlMap;
+    }
 
     if (item.url) {
         settings.url.push(item.url.value);
@@ -148,7 +151,7 @@ const handleNodes = (settings) => {
 
     if (item.subpages) {
         for (let i = 0; i < item.subpages.value.length; i++) {
-            settings.item = item.subpages.value[i]
+            settings.item = item.subpages.value[i];
             handleNodes(settings);
         }
     } else if (item.children) {
@@ -224,7 +227,7 @@ const handleUnusedArtiles = async (deliveryClient, urlMap) => {
                 }
             });
 
-            if (!isInUrlMap) {
+            if (!isInUrlMap && articleItem._raw.system.workflow_step !== 'archived') {
                 urlMap.push(getMapItem({
                     codename: articleItem.system.codename,
                     url: `/other/${articleItem.url.value}`,

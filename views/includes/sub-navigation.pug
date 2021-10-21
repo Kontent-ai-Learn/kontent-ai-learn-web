@@ -3,15 +3,16 @@ mixin navItem(nav)
     each item in nav
         if ((item.visibility && !item.visibility.value.filter(val => val.codename === 'excluded_from_navigation').length) || !item.visibility)
             li.sub-navigation__item
-                - const url = urlMap.find(val => val.codename === item.system.codename).url;
+                - const urlItem = urlMap.find(val => val.codename === item.system.codename);
+                - const url = urlItem ? urlItem.url.split('?')[0] : '';
                 if (item.system.type === 'navigation_item')
-                    a(href=`#`, class=`sub-navigation__link sub-navigation__link--collapse${pathUrl.includes(url) ? ' sub-navigation__link--active sub-navigation__link--on-path' : ''}`) !{item.title.value}
+                    a(href=url, class=`sub-navigation__link sub-navigation__link--collapse${pathUrl.includes(url) ? ' sub-navigation__link--active sub-navigation__link--on-path' : ''}`) !{item.title.value}
                     ul.sub-navigation
                         +navItem(item.subpages.value)
                 else 
                     - let techArticle = item.platform && item.platform.value && item.platform.value.length;
                     - let tech = item.system.type === 'multiplatform_article' || (techArticle && selectedPlatform !== '{tech}');
-                    a(href=`${url}${tech ? '?tech=' + selectedPlatform : ''}`, class=`sub-navigation__link${pathUrl.includes(url) ? ' sub-navigation__link--active' : ''}`)&attributes(tech ? {'data-lang': ''} : {})&attributes(selectedPlatform === '{tech}' ? {'rel': 'nofollow'} : {}) !{item.short_title && item.short_title.value ? item.short_title.value : item.title.value}
+                    a(href=`${url}${tech ? '?tech=' + selectedPlatform : ''}`, class=`sub-navigation__link${pathUrl === url ? ' sub-navigation__link--active' : ''}`)&attributes(tech ? {'data-lang': ''} : {})&attributes(selectedPlatform === '{tech}' ? {'rel': 'nofollow'} : {}) !{item.short_title && item.short_title.value ? item.short_title.value : item.title.value}
 
 if !selectedPlatform 
     - selectedPlatform = '{tech}'

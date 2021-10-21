@@ -267,7 +267,8 @@ const richTextResolverTemplates = {
         const imageWidth = item.image.value[0] ? item.image.value[0].width || 0 : 0;
         const imageHeight = item.image.value[0] ? item.image.value[0].height || 0 : 0;
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
-        const imageSrc = item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=pjpg&auto=format` : ''
+        const imageSrc = item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=pjpg&auto=format` : '';
+        let target = 'self';
 
         if (item.link__link_to_content_item.value[0] && urlMap) {
             const matchUrlMapItem = urlMap.filter(elem => elem.codename === item.link__link_to_content_item.value[0].system.codename);
@@ -282,12 +283,16 @@ const richTextResolverTemplates = {
         }
 
         if (item.link__link_to_web_url.value) {
+            target = 'blank';
             resolvedUrl = item.link__link_to_web_url.value;
         }
 
         return `
             <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
-                <a class="selection__link" href="${resolvedUrl}"${resolvedUrl.indexOf('tech={tech}') > -1 ? ' rel="nofollow"' : ''}>
+                <div class="selection__link">
+                    <a target="_${target}" class="selection__a" href="${resolvedUrl}"${resolvedUrl.indexOf('tech={tech}') > -1 ? ' rel="nofollow"' : ''}>
+                        ${item.title.value ? `<div class="sr-only">${item.title.value}</div>` : ''}
+                    </a>
                     ${item.image.value[0]
 ? `
                         <div class="selection__img-sizer"${getSmartLinkAttr(config, 'image', 'element')}>
@@ -300,7 +305,7 @@ const richTextResolverTemplates = {
 : ''}
                     ${item.title.value ? `<div class="selection__title"${getSmartLinkAttr(config, 'title', 'element')}>${item.title.value}</div>` : ''}
                     ${helper.isNotEmptyRichText(item.description.value) ? `<div class="selection__description"${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</div>` : ''}
-                </a>
+                </div>
             </li>
         `;
     },
@@ -590,6 +595,16 @@ const richTextResolverTemplates = {
                         &mdash; ${item.author.value}
                     </div>
                 </div>`;
+    },
+    carousel: (item, config) => {
+        const markupBefore = '<div class="carousel splide"><div class="splide__track"><ul class="splide__list">';
+        const markupAfter = '</ul></div></div>';
+        const carouselItems = helper.splitCarouselItems(item.content.value);
+
+        if (carouselItems.count > 1) {
+            return `${markupBefore}${carouselItems.markup}${markupAfter}`;
+        }
+        return carouselItems.markup;
     },
 };
 

@@ -33,6 +33,21 @@
         }
     }
 
+    &__a {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+
+        &.a-blank {
+            &:after {
+                display: none;
+            }
+        }
+    }
+
     &__link {
         color: #262524;
         text-decoration: none;
@@ -106,6 +121,11 @@
         font-size: 1em; 
         line-height: 1.3125em;
         text-align: left;
+
+        a {
+            z-index: 2;  
+            position: relative;
+        }
     }
 
     &:not(.selection--platforms) {
@@ -119,6 +139,11 @@
             text-align: center;
             font-size: .875em;
             line-height: 1.375em;
+
+            a {
+                z-index: 2;  
+                position: relative;
+            }
         }
 
         .article__content & p {
