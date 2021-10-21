@@ -4,6 +4,7 @@ const checkSubscriptionService = require('./subscriptionService');
 const checkApiReferences = require('./apiReferences');
 const checkTlms = require('./tlms');
 const checkAuth0 = require('./auth0');
+const checkSendgrid = require('./sendgrid');
 
 const checkAll = async () => {
   const checkItems = [{
@@ -24,6 +25,9 @@ const checkAll = async () => {
   }, {
     name: 'Auth0',
     method: checkAuth0
+  }, {
+    name: 'Sendgrid',
+    method: checkSendgrid
   }];
   const resultItems = [];
 

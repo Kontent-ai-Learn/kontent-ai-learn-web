@@ -7,6 +7,7 @@ const checkSubscriptionService = require('../helpers/serviceCheck/subscriptionSe
 const checkApiReferences = require('../helpers/serviceCheck/apiReferences');
 const checkTlms = require('../helpers/serviceCheck/tlms');
 const checkAuth0 = require('../helpers/serviceCheck/auth0');
+const checkSendgrid = require('../helpers/serviceCheck/sendgrid');
 
 router.get('/', (req, res) => {
   return res.render('pages/serviceCheck');
@@ -34,6 +35,9 @@ router.get('/:codename', asyncHandler(async (req, res) => {
       break;
     case 'auth0':
       result = await checkAuth0();
+      break;
+    case 'sendgrid':
+      result = await checkSendgrid();
       break;
     default:
       result = {

@@ -54,6 +54,10 @@
     title: 'Auth0',
     endpoint: '/service-check/auth0',
     callback: initAuth0
+  }, {
+    codename: 'sendgrid',
+    title: 'Sendgrid',
+    endpoint: '/service-check/sendgrid',
   }];
 
   const buidlUI = () => {
