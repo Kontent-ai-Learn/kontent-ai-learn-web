@@ -159,6 +159,7 @@ gulp.task('js-elearning', () => {
 
 gulp.task('js-service-check', () => {
   return gulp.src([
+      'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
       'public/js/src/service-check/service-check.js'
     ])
     .pipe(concat('service-check.js'))

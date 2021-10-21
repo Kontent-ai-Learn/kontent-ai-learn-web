@@ -6,6 +6,7 @@ const checkAlgolia = require('../helpers/serviceCheck/algolia');
 const checkSubscriptionService = require('../helpers/serviceCheck/subscriptionService');
 const checkApiReferences = require('../helpers/serviceCheck/apiReferences');
 const checkTlms = require('../helpers/serviceCheck/tlms');
+const checkAuth0 = require('../helpers/serviceCheck/auth0');
 
 router.get('/', (req, res) => {
   return res.render('pages/serviceCheck');
@@ -30,6 +31,9 @@ router.get('/:codename', asyncHandler(async (req, res) => {
       break;
     case 'tlms':
       result = await checkTlms();
+      break;
+    case 'auth0':
+      result = await checkAuth0();
       break;
     default:
       result = {

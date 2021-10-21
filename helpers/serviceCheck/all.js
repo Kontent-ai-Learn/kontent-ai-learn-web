@@ -3,6 +3,7 @@ const checkAlgolia = require('./algolia');
 const checkSubscriptionService = require('./subscriptionService');
 const checkApiReferences = require('./apiReferences');
 const checkTlms = require('./tlms');
+const checkAuth0 = require('./auth0');
 
 const checkAll = async () => {
   const checkItems = [{
@@ -20,6 +21,9 @@ const checkAll = async () => {
   }, {
     name: 'TLMS',
     method: checkTlms
+  }, {
+    name: 'Auth0',
+    method: checkAuth0
   }];
   const resultItems = [];
 
