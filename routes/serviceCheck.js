@@ -5,6 +5,7 @@ const checkKKProject = require('../helpers/serviceCheck/kkProject');
 const checkAlgolia = require('../helpers/serviceCheck/algolia');
 const checkSubscriptionService = require('../helpers/serviceCheck/subscriptionService');
 const checkApiReferences = require('../helpers/serviceCheck/apiReferences');
+const checkTlms = require('../helpers/serviceCheck/tlms');
 
 router.get('/', (req, res) => {
   return res.render('pages/serviceCheck');
@@ -26,6 +27,9 @@ router.get('/:codename', asyncHandler(async (req, res) => {
       break;
     case 'api-references':
       result = await checkApiReferences();
+      break;
+    case 'tlms':
+      result = await checkTlms();
       break;
     default:
       result = {

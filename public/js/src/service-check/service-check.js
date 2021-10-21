@@ -15,6 +15,10 @@
     codename: 'apiReferences',
     title: 'API References',
     endpoint: '/service-check/api-references',
+  }, {
+    codename: 'tlms',
+    title: 'TLMS',
+    endpoint: '/service-check/tlms',
   }];
 
   const buidlUI = () => {
