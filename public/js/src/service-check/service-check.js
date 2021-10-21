@@ -11,6 +11,10 @@
     codename: 'subscriptionService',
     title: 'Subscription service',
     endpoint: '/service-check/subscription-service',
+  }, {
+    codename: 'apiReferences',
+    title: 'API References',
+    endpoint: '/service-check/api-references',
   }];
 
   const buidlUI = () => {

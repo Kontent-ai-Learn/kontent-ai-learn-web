@@ -10,21 +10,21 @@ const checkKKProject = async () => {
   if (!projectId) {
     return {
       isSuccess: false,
-      message: 'Missing Project ID'
+      message: 'Missing KC.ProjectId env'
     };
   }
 
   if (!(securedApiKey || previewApiKey)) {
     return {
       isSuccess: false,
-      message: 'Missing one of the API keys for Secure access or Preview API'
+      message: 'Missing one of the envs KC.SecuredApiKey or KC.PreviewApiKey'
     };
   }
 
   if (securedApiKey && previewApiKey) {
     return {
       isSuccess: false,
-      message: 'There are both API keys for Secure access or Preview API, there must be only one of them.'
+      message: 'There are both envs KC.SecuredApiKey and KC.PreviewApiKey specified, there must be only one of them.'
     };
   }
 

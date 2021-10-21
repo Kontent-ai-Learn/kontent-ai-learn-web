@@ -3,13 +3,13 @@ const axios = require('axios');
 const checkAlgolia = async () => {
   const envs = [{
     name: 'Search.AppId',
-    errMessage: 'Missing Application-ID'
+    errMessage: 'Missing Search.AppId env'
   }, {
     name: 'Search.ApiKey',
-    errMessage: 'Missing API key',
+    errMessage: 'Missing Search.ApiKey env',
   }, {
     name: 'Search.IndexName',
-    errMessage: 'Missing Index name',
+    errMessage: 'Missing Search.IndexName env',
   }];
 
   for (let i = 0; i < envs.length; i++) {
@@ -41,11 +41,11 @@ const checkAlgolia = async () => {
     }
   } catch (error) {
     if (!error.response) {
-      data.message = 'Invalid Application-ID';
+      data.message = 'Invalid Search.AppId env';
     } else if (error.response.data.status === 403) {
-      data.message = 'Invalid API key';
+      data.message = 'Invalid Search.ApiKey env';
     } else if (error.response.data.status === 404) {
-      data.message = 'Invalid Index name';
+      data.message = 'Invalid earch.IndexName env';
     } else {
       data.message = error.response.data.message
     }

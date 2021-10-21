@@ -1,6 +1,7 @@
 const checkKKProject = require('./kkProject');
 const checkAlgolia = require('./algolia');
-const checkSubscriptionService = require('./subscription-service');
+const checkSubscriptionService = require('./subscriptionService');
+const checkApiReferences = require('./apiReferences');
 
 const checkAll = async () => {
   const checkItems = [{
@@ -12,6 +13,9 @@ const checkAll = async () => {
   }, {
     name: 'Subscription Service',
     method: checkSubscriptionService
+  }, {
+    name: 'API References',
+    method: checkApiReferences
   }];
   const resultItems = [];
 

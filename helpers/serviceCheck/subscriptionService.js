@@ -3,13 +3,13 @@ const axios = require('axios');
 const checkSubscriptionService = async () => {
   const envs = [{
     name: 'SubscriptionService.Url',
-    errMessage: 'Missing URL'
+    errMessage: 'Missing SubscriptionService.Url env'
   }, {
     name: 'SubscriptionService.Bearer',
-    errMessage: 'Missing authorization token',
+    errMessage: 'Missing SubscriptionService.Bearer env',
   }, {
     name: 'SubscriptionService.ServiceCheckerEmail',
-    errMessage: 'Missing service checker email',
+    errMessage: 'Missing SubscriptionService.ServiceCheckerEmail env',
   }];
 
   for (let i = 0; i < envs.length; i++) {
