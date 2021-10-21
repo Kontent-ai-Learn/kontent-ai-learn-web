@@ -142,8 +142,7 @@ const getPrivate = async (UIMessages, course, req, res) => {
   let errCode;
 
   if (req?.user?.email.endsWith('@kentico.com')) {
-    user.data = {}
-    user.data.email = req.user.email;
+    user.email = req.user.email;
   } else {
     const userSubscriptionService = await getUserFromSubscriptionService(req);
     user = userSubscriptionService.user?.data;

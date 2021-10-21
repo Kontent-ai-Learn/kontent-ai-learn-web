@@ -250,7 +250,7 @@ const lms = {
             }
         }
 
-        const userToBeUpdated = !userCreated && !userLMS.err && (data.firstName !== userLMS.first_name || data.lastName !== userLMS.last_name);
+        const userToBeUpdated = !userCreated && !userLMS.err && (data.firstName !== userLMS.first_name || data.lastName !== userLMS.last_name) && (typeof data.firstName !== 'undefined' && typeof data.lastName !== 'undefined');
         if (userToBeUpdated) {
             await updateUser(userLMS, user);
         }
@@ -319,7 +319,7 @@ const lms = {
             isNewUser = true;
         }
 
-        const userToBeUpdated = !isNewUser && (data.firstName !== userLMS.first_name || data.lastName !== userLMS.last_name);
+        const userToBeUpdated = !isNewUser && (data.firstName !== userLMS.first_name || data.lastName !== userLMS.last_name) && (typeof data.firstName !== 'undefined' && typeof data.lastName !== 'undefined');
         if (userToBeUpdated) {
             await updateUser(userLMS, user);
         }
