@@ -227,8 +227,8 @@ const lms = {
         const user = {};
         user.login = data.email;
         user.email = data.email;
-        user.first_name = data.firstName;
-        user.last_name = data.lastName;
+        user.first_name = data.firstName || data.email.split('@')[0];
+        user.last_name = data.lastName || 'Kentico';
         user.password = generator.generate({
             length: 8,
             numbers: true
