@@ -1,0 +1,57 @@
+.service-check {
+  padding: 20px;
+
+  &__title {
+    padding: 0 6px 0 0;
+  }
+
+  &__message {
+    padding: 0 0 0 6px;
+  }
+
+  &__status {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+
+    &:after {
+      content: " ";
+      display: block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid #000;
+      border-color: #000 transparent #000 transparent;
+      animation: lds-dual-ring 1.2s linear infinite;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+
+    &[data-status="success"] {
+      &:after {
+        border-radius: 0;
+        border: none;
+        animation: none;
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSIxNXB4IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxOCAxNSIgd2lkdGg9IjE4cHgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48dGl0bGUvPjxkZXNjLz48ZGVmcy8+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSI+PGcgZmlsbD0iIzAwMDAwMCIgaWQ9IkNvcmUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00MjMuMDAwMDAwLCAtNDcuMDAwMDAwKSI+PGcgaWQ9ImNoZWNrIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0MjMuMDAwMDAwLCA0Ny41MDAwMDApIj48cGF0aCBkPSJNNiwxMC4yIEwxLjgsNiBMMC40LDcuNCBMNiwxMyBMMTgsMSBMMTYuNiwtMC40IEw2LDEwLjIgWiIgaWQ9IlNoYXBlIi8+PC9nPjwvZz48L2c+PC9zdmc+");
+      }
+    }
+
+    &[data-status="fail"] {
+      &:after {
+        border-radius: 0;
+        border: none;
+        animation: none;
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaWQ9Ik91dGxpbmVkIiB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRpdGxlLz48ZyBpZD0iRmlsbCI+PHBvbHlnb24gcG9pbnRzPSIyOC43MSA0LjcxIDI3LjI5IDMuMjkgMTYgMTQuNTkgNC43MSAzLjI5IDMuMjkgNC43MSAxNC41OSAxNiAzLjI5IDI3LjI5IDQuNzEgMjguNzEgMTYgMTcuNDEgMjcuMjkgMjguNzEgMjguNzEgMjcuMjkgMTcuNDEgMTYgMjguNzEgNC43MSIvPjwvZz48L3N2Zz4=");
+      }
+    }
+  }
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

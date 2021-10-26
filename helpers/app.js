@@ -11,6 +11,7 @@ const urlWhitelist = [
   '/rss/*',
   '/redirect-urls',
   '/cache-invalidate',
+  '/service-check/*',
   '/robots.txt',
   '/link-to',
   '/sitemap.xml',

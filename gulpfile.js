@@ -159,6 +159,19 @@ gulp.task('js-elearning', () => {
     .pipe(gulp.dest('public/js'))
 });
 
+gulp.task('js-service-check', () => {
+  return gulp.src([
+      'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
+      'public/js/src/service-check/service-check.js'
+    ])
+    .pipe(concat('service-check.js'))
+    .pipe(uglify())
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest('public/js'))
+});
+
 gulp.task('js-algolia', () => {
   return gulp.src([
       'node_modules/algoliasearch/dist/algoliasearch-lite.umd.js',
@@ -285,6 +298,21 @@ gulp.task('css-reference', () => {
     .pipe(gulp.dest('./public/css'));
 });
 
+gulp.task('css-service-check', () => {
+  return gulp.src([
+      'public/css/src/general/service-check.less',
+    ])
+    .pipe(concat('service-check.less'))
+    .pipe(less({
+      plugins: [autoprefix]
+    }))
+    .pipe(cleanCSS())
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest('./public/css'));
+});
+
 gulp.task('css-kontentsmartlink', () => {
   return gulp.src([
       'node_modules/@kentico/kontent-smart-link/dist/kontent-smart-link.styles.css'
@@ -307,11 +335,12 @@ gulp.task('reload', (done) => {
 
 gulp.task('build-js-app', gulp.parallel(['js-app', 'js-reference']));
 gulp.task('build-js-filer', gulp.parallel(['js-changelog', 'js-elearning']));
-gulp.task('build-css', gulp.parallel(['css-app', 'css-reference']));
+gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service-check']));
 
 gulp.task('watch', (done) => {
   gulp.watch('public/js/src/app/*.js', gulp.series(['build-js-app', 'reload']));
   gulp.watch('public/js/src/filter/*.js', gulp.series(['build-js-filer', 'reload']));
+  gulp.watch('public/js/src/service-check/*.js', gulp.series(['js-service-check', 'reload']));
   gulp.watch('public/css/src/**/*.less', gulp.series(['build-css', 'reload']));
   done();
 });
@@ -338,12 +367,12 @@ gulp.task('observe', async () => {
           })
           .catch(() => {
             console.log(`Error:  Unable to request ${localUrl} to be able to attach browser-sync.`);
-        });
+          });
       }
   })
 });
 
-gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-elearning', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'css-app', 'css-reference', 'css-kontentsmartlink']));
+gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-elearning', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'js-service-check', 'css-app', 'css-reference', 'css-kontentsmartlink', 'css-service-check']));
 
 gulp.task('develop', gulp.series(['build', 'observe']));
 
