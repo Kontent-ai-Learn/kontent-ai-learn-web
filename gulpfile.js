@@ -37,6 +37,7 @@ const prismFiles = [
   'node_modules/prismjs/components/prism-swift.js',
   'node_modules/prismjs/components/prism-rest.js',
   'node_modules/prismjs/components/prism-typescript.js',
+  'node_modules/prismjs/components/prism-graphql.js',
   'node_modules/prismjs/plugins/line-numbers/prism-line-numbers.min.js',
   'node_modules/prismjs/plugins/autolinker/prism-autolinker.min.js',
   'node_modules/prismjs/plugins/file-highlight/prism-file-highlight.js',
