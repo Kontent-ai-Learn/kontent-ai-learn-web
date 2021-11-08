@@ -41,7 +41,8 @@
       php: 'php',
       swift: 'swift',
       python: 'python',
-      ruby: 'ruby'
+      ruby: 'ruby',
+      graphql: 'graphql'
     };
 
     if (item) {
