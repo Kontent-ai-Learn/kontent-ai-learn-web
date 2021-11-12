@@ -102,7 +102,6 @@ if (process.env.isProduction === 'false') {
 
   app.use('/', asyncHandler(async (req, res, next) => {
     if (app.get('serviceCheckError') || !app.get('serviceCheckInitialialDone')) {
-      console.log('check')
       const serviceCheckResults = await serviceCheckAll();
       let errored = false;
 
