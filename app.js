@@ -82,24 +82,6 @@ app.use(slashes(false));
 
 app.enable('trust proxy');
 
-app.use('/service-check', serviceCheck);
-
-app.use(async (req, res, next) => {
-  const serviceCheckResults = await serviceCheckAll();
-
-  for (let i = 0; i < serviceCheckResults.length; i++) {
-    if (!serviceCheckResults[i].result.isSuccess) {
-      app.set('serviceCheckError', true);
-    }
-  }
-
-  if (app.get('serviceCheckError') && appInsights && appInsights.defaultClient) {
-    appInsights.defaultClient.trackTrace({ message: `SERVICE_CHECK_ERROR: ${JSON.stringify(serviceCheckResults)}` });
-  }
-
-  next();
-});
-
 app.use(async (req, res, next) => {
   res.locals.host = req.headers.host;
   res.locals.protocol = req.protocol;
@@ -115,13 +97,36 @@ app.use(async (req, res, next) => {
   return next();
 });
 
+if (process.env.isProduction === 'false') {
+  app.use('/service-check', serviceCheck);
+
+  app.use('/', asyncHandler(async (req, res, next) => {
+    if (app.get('serviceCheckError') || !app.get('serviceCheckInitialialDone')) {
+      console.log('check')
+      const serviceCheckResults = await serviceCheckAll();
+      let errored = false;
+
+      for (let i = 0; i < serviceCheckResults.length; i++) {
+        if (!serviceCheckResults[i].result.isSuccess) {
+          errored = true;
+        }
+      }
+
+      app.set('serviceCheckError', errored);
+      app.set('serviceCheckInitialialDone', true);
+
+      if (errored) {
+        if (appInsights && appInsights.defaultClient) {
+          appInsights.defaultClient.trackTrace({ message: `SERVICE_CHECK_ERROR: ${JSON.stringify(serviceCheckResults)}` });
+        }
+        return res.redirect(303, `${process.env.baseURL}/service-check`);
+      }
+    }
+    next();
+  }));
+}
+
 // Routes
-app.use('/', (req, res, next) => {
-  if (app.get('serviceCheckError')) {
-    return res.redirect(302, `${process.env.baseURL}/service-check`);
-  }
-  next();
-});
 app.use('/api', express.json({
   type: '*/*'
 }), api);
