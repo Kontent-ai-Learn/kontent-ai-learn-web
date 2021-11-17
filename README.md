@@ -44,6 +44,7 @@ To start the application correctly, the following environment variables must be 
 Without the following variables, certain features will not work on the website.
 
 * `aliasUrl` - URL specifying there the app is available, can be different from `baseUrl`
+* `appUrl` - URL specifying Kontent application related to the current environment
 * `Api2Pdf.ApiKey` - API key for the [api2PDF](https://www.api2pdf.com/) service
 * `APPINSIGHTS_INSTRUMENTATIONKEY` - Azure Application Insights key (used for application monitoring)
 * `GTM.id` - Google Tag Manager ID (used for analytics)

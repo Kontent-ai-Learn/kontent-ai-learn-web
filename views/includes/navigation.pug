@@ -19,7 +19,7 @@ nav.navigation
                         label.sr-only(for='nav-search') !{UIMessages ? UIMessages.search___placeholder.value : ''}
                         input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages ? UIMessages.search___placeholder.value : '')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
                         .autocomplete(data-search-autocomplete='')
-            a.navigation__app(href='https://app.kontent.ai', target='_blank', rel='noreferrer')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('link_to_app_tooltip'))
+            a.navigation__app(href=`${process.env.appUrl ? process.env.appUrl : 'https://app.kontent.ai'}`, target='_blank', rel='noreferrer')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('link_to_app_tooltip'))
                 .navigation__app-tooltip !{UIMessages ? UIMessages.link_to_app_tooltip.value : ''}
         if isNotHome
             .navigation__trigger(data-search-trigger='', aria-hidden='true')

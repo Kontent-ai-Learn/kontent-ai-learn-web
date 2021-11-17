@@ -191,6 +191,10 @@ const getPublic = (UIMessages, course) => {
     data.signup = course.is_free ? helper.isCodenameInMultipleChoice(course.is_free.value, 'yes') : false;
   }
 
+  if (data.signup) {
+    data.urlSignUp = process.env.appUrl;
+  }
+
   return { general: data };
 };
 
