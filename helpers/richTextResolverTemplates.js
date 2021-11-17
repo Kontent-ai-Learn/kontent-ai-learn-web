@@ -366,11 +366,14 @@ const richTextResolverTemplates = {
             if (item.image.value[0].url.endsWith('.gif')) {
                 return `
                     <figure${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
-                            <div class="video-controls"${zoomable && !url ? ' data-lightbox-video' : ''}${url ? ` data-video-url="${url}"` : ''}>
-                                <video class="article__image article__image--video lazy lazy--exclude-dnt ${attributes.cssClass}" preload="none" muted playsinline${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}>
-                                    <source src="${item.image.value[0].url}${attributes.transformationQueryString}" type="video/mp4">
-                                </video>
-                            </div>
+                        <div class="video-controls"${zoomable && !url ? ' data-lightbox-video' : ''}${url ? ` data-video-url="${url}"` : ''}>
+                            <video class="article__image article__image--video lazy lazy--exclude-dnt ${attributes.cssClass}" preload="none" muted playsinline${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}>
+                                <source src="${item.image.value[0].url}${attributes.transformationQueryString}" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="print-only"> 
+                            <img class="article__image ${attributes.cssClass}" alt="${alt}" data-src="${item.image.value[0].url}">
+                        </div>
                         ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</figcaption>` : ''}
                     </figure>`;
             }

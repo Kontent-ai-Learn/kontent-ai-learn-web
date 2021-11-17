@@ -39,9 +39,24 @@ main {
     display: none !important;
 }
 
-.article__image {
+.article img.article__image {
     border: 0.25em solid #D3D2D2 !important;
-    max-width: 80% !important;
+}
+
+.article img.article__image--100 {
+    max-width: 80%;
+}
+
+.article img.article__image--75 {
+    max-width: 75%;
+}
+
+.article img.article__image--50 {
+    max-width: 50%;
+}
+
+.article img.article__image--25 {
+    max-width: 25%;
 }
 
 .feedback,
@@ -99,9 +114,8 @@ div:not(.callout) a[href^="#term-definition-"] {
     color: #231F20;
 }
 
-.term-tooltip-container {
+.term-tooltip-container, .video-controls {
     display: none !important;
 }
-
 
 

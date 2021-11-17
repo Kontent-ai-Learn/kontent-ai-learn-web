@@ -12,7 +12,7 @@ const getConfig = (res) => {
     }
 };
 
-const resolveChangelog = async ($, req, res) => {
+const resolveChangelog = async ($, res) => {
     const $elem = $('#changelog-resolve');
     if (!$elem.length) return;
 
@@ -29,7 +29,7 @@ const resolveChangelog = async ($, req, res) => {
     $elem.html(html);
 };
 
-const resolveTerminology = async ($, req, res) => {
+const resolveTerminology = async ($, res) => {
     const $elem = $('#terminology-resolve');
     if (!$elem.length) return;
 
@@ -46,11 +46,11 @@ const resolveTerminology = async ($, req, res) => {
     $elem.html(html);
 };
 
-const customRichTextResolver = async (text, req, res) => {
+const customRichTextResolver = async (text, res) => {
     const $ = cheerio.load(text);
 
-    await resolveChangelog($, req, res);
-    await resolveTerminology($, req, res);
+    await resolveChangelog($, res);
+    await resolveTerminology($, res);
 
     const output = $.html();
     return output.replace('<html><head></head><body>', '').replace('</body></html>', '');

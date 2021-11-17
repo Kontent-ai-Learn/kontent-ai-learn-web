@@ -220,23 +220,39 @@ const getContent = async (req, res) => {
         return null;
     }
 
+    let introduction;
+    let body;
+    let nextSteps;
+
     if (content && content.length) {
         const titleItems = [...articles, ...references];
 
-        if (content[0].introduction) {
-            content[0].introduction.value = helper.addTitlesToLinks(content[0].introduction.value, urlMap, titleItems);
+        introduction = content[0]?.introduction?.value;
+        body = content[0]?.content?.value;
+        nextSteps = content[0]?.next_steps?.value;
+
+        if (introduction) {
+            introduction = helper.addTitlesToLinks(introduction, urlMap, titleItems);
+
+            if (req.query.pdf) {
+                introduction = helper.resolvePdfImages(introduction);
+            }
         }
 
-        if (content[0].description) {
-            content[0].description.value = helper.addTitlesToLinks(content[0].description.value, urlMap, titleItems);
+        if (body) {
+            body = helper.addTitlesToLinks(body, urlMap, titleItems);
+
+            if (req.query.pdf) {
+                body = helper.resolvePdfImages(body);
+            }
         }
 
-        if (content[0].content) {
-            content[0].content.value = helper.addTitlesToLinks(content[0].content.value, urlMap, titleItems);
-        }
+        if (nextSteps) {
+            nextSteps = helper.addTitlesToLinks(nextSteps, urlMap, titleItems);
 
-        if (content[0].next_steps) {
-            content[0].next_steps.value = helper.addTitlesToLinks(content[0].next_steps.value, urlMap, titleItems);
+            if (req.query.pdf) {
+                nextSteps = helper.resolvePdfImages(nextSteps);
+            }
         }
     }
 
@@ -268,7 +284,7 @@ const getContent = async (req, res) => {
             });
         }
 
-        content[0].content.value = await customRichTextResolver(content[0].content.value, req, res);
+        body = await customRichTextResolver(body, req, res);
     }
 
     return {
@@ -284,16 +300,17 @@ const getContent = async (req, res) => {
         language: res.locals.language,
         itemId: content && content.length ? content[0].system.id : null,
         title: content && content.length ? content[0].title.value : '',
-        description: content && content.length && content[0].introduction ? helper.stripTags(content[0].introduction.value).substring(0, 300) : '',
+        description: introduction ? helper.stripTags(introduction).substring(0, 300) : '',
         platform: content && content.length && content[0].platform && content[0].platform.value.length ? await commonContent.normalizePlatforms(content[0].platform.value, res) : null,
         availablePlatforms: await commonContent.normalizePlatforms(availablePlatforms, res),
         selectedPlatform: platforms.getSelectedPlatform(platformsConfig, cookiesPlatform),
         canonicalUrl: canonicalUrl,
-        introduction: content && content.length && content[0].introduction ? content[0].introduction.value : '',
-        nextSteps: content && content.length && content[0].next_steps ? content[0].next_steps : '',
+        introduction: introduction || '',
+        nextSteps: nextSteps || '',
         navigation: home && home.length ? home[0].subpages.value : [],
         subNavigation: subNavigation && subNavigation.length ? subNavigation[0].subpages.value : [],
         content: content && content.length ? content[0] : null,
+        body: body || '',
         footer: footer && footer.length ? footer[0] : null,
         UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
         platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,

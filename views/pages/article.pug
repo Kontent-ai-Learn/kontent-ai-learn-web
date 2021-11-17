@@ -24,6 +24,8 @@ block content
                                     span&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___no_author')) !{UIMessages.article___no_author.value}
                             if (readingTime)
                                 .article__reading-time !{readingTime} min read
+                        if (!req.query.pdf && !containsChangelog && process.env['Api2Pdf.ApiKey'])
+                            a(href=`/pdf?url=${req.originalUrl}`, target='_blank')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___download_pdf')) #{UIMessages.article___download_pdf.value}
                         if (req.query.pdf)
                             .article__tech(data-platform-note)
                         if (isPreview && !req.query.pdf)
@@ -71,15 +73,15 @@ block content
                         div(data-aside-container='table-of-contents')
                             div(data-aside='table-of-contents')
                                 include ../includes/table-of-contents.pug
-                    if (content && content.content && content.content.value)
+                    if (body)
                         .article__body&attributes(smartLink?.elementCodename('content'))
-                            | !{minify(content.content.value)}
+                            | !{minify(body)}
                         if (containsChangelog)
                             .mixitup-page-list
-                    if (nextSteps.value !== '<p><br></p>')
+                    if (nextSteps !== '<p><br></p>')
                         .article__next-steps
                             h2.table-of-contents__whatsnext(id='a-whats-next')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___next_steps')) !{UIMessages && UIMessages.article___next_steps.value}
-                            div&attributes(smartLink?.elementCodename('next_steps')) !{minify(nextSteps.value)}
+                            div&attributes(smartLink?.elementCodename('next_steps')) !{minify(nextSteps)}
                     if (!hideFeedback)
                         div(data-aside-container='feedback')
                             div(data-aside='feedback')

@@ -166,6 +166,23 @@ const helper = {
 
         return domain;
     },
+    resolvePdfImages: (content) => {
+        const $ = cheerio.load(content);
+        const $elems = $('img[data-src]');
+
+        $elems.each(function () {
+            const $that = $(this);
+            $that.attr('src', $that.attr('data-src'));
+            $that.removeAttr('data-src');
+            $that.removeAttr('loading');
+            $that.removeAttr('data-lazy-onload');
+            $that.removeAttr('data-dpr');
+            $that.removeAttr('style');
+        });
+
+        const output = $.html();
+        return output.replace('<html><head></head><body>', '').replace('</body></html>', '');
+    },
     addTitlesToLinks: (content, urlMap, articles) => {
         const $ = cheerio.load(content);
         const $links = $('a:not(.call-to-action)');
