@@ -97,9 +97,9 @@ app.use(async (req, res, next) => {
   return next();
 });
 
-if (process.env.isProduction === 'false') {
-  app.use('/service-check', serviceCheck);
+app.use('/service-check', serviceCheck);
 
+if (process.env.isProduction === 'false') {
   app.use('/', asyncHandler(async (req, res, next) => {
     if (app.get('serviceCheckError') || !app.get('serviceCheckInitialialDone')) {
       const serviceCheckResults = await serviceCheckAll();
