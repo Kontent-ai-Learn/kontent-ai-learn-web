@@ -209,6 +209,9 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
             }
         }
     }
+
+    items.items = helper.removeLinkedItemsSelfReferences(items.items);
+
     return {
         items: items,
         error: error

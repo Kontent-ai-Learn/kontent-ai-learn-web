@@ -294,6 +294,7 @@ const requestDelivery = async (config) => {
     response = extendLinkedItems(response);
 
     if (response?.items) {
+        response.items = helpers.removeLinkedItemsSelfReferences(response.items);
         return response.items;
     }
     if (response?.type) {

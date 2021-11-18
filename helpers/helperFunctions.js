@@ -386,6 +386,26 @@ const helper = {
             count: slidesCount,
             markup: output.replace('<html><head></head><body>', '').replace('</body></html>', '')
         }
+    },
+    removeLinkedItemsSelfReferences: (items, codenames = []) => {
+        for (const item of items) {
+            if (item.subpages) {
+                codenames.push(item.system.codename);
+                let found = false;
+                for (let i = 0; i < codenames.length; i++) {
+                    if (item.subpages.itemCodenames.includes(codenames[i])) {
+                        item.subpages.value.length = 0;
+                        found = true;
+                        codenames.length = i;
+                    }
+                }
+                if (!found) {
+                    helper.removeLinkedItemsSelfReferences(item.subpages.value, codenames);
+                }
+            }
+        }
+
+        return items;
     }
 };
 

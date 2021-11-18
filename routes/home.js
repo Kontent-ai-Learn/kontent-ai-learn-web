@@ -14,7 +14,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
     return commonContent.getHome(res);
   });
 
-  if (!home[0]) {
+  if (!home.length) {
     return next();
   }
 
