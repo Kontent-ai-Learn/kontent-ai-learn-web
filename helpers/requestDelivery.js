@@ -244,9 +244,12 @@ const getResponse = async (query, config) => {
         }
     }
 
-    if (isPreview(config.previewapikey) && response && response.items) {
+    if (response && response.items) {
         response.items = helpers.removeLinkedItemsSelfReferences(response.items);
-        response.items = removeArchivedLinkedItems(response.items);
+
+        if (isPreview(config.previewapikey)) {
+            response.items = removeArchivedLinkedItems(response.items);
+        }
     }
 
     if (config.resolveRichText && response && response.items) {
