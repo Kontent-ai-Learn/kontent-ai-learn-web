@@ -1,5 +1,18 @@
 (() => {
   const elms = document.getElementsByClassName('carousel');
+
+  if (window.helper.getParameterByName('pdf')) {
+    for (let i = 0; i < elms.length; i++) {
+      elms[i].classList.add('carousel--pdf');
+
+      const slides = elms[i].querySelectorAll('.splide__slide');
+      for (let j = 1; j < slides.length; j++) {
+        slides[j].remove();
+      }
+    }
+    return;
+  }
+
   const options = {
     type: 'loop',
     autoplay: true,
