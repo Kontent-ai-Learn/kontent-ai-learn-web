@@ -284,7 +284,7 @@ const getContent = async (req, res) => {
             });
         }
 
-        body = await customRichTextResolver(body, req, res);
+        body = await customRichTextResolver(body, res);
     }
 
     return {
