@@ -322,13 +322,22 @@ const helper = {
     isAbsoluteUrl: (url) => {
         return /^(?:[a-z]+:)?\/\//.test(url);
     },
-    logInCacheKey: (key, log) => {
+    logInCacheKey: (key, log, limit = 200) => {
         const logs = cache.get(key) || [];
         logs.unshift(log);
-        if (logs.length > 200) {
-            logs.length = 200;
+        if (logs.length > limit) {
+            logs.length = limit;
         }
         cache.put(key, logs);
+    },
+    getLogItemCacheKey: (key, property, value) => {
+        const logs = cache.get(key) || [];
+        return logs.find(log => log[property] === value);
+    },
+    removeLogItemCacheKey: (key, property, value) => {
+        const logs = cache.get(key) || [];
+        const logsUpdated = logs.filter(log => log[property] !== value);
+        cache.put(key, logsUpdated);
     },
     getUniqueUrls: (urlMap) => {
         const uniqueUrls = [];
