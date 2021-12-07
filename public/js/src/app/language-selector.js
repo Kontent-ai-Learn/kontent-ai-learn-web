@@ -25,6 +25,18 @@
         });
     };
 
+    const updatePlatformInPDFLink = (platform) => {
+        const links = document.querySelectorAll('[data-pdf-link]');
+
+        links.forEach(item => {
+            let href = item.getAttribute('href');
+            let url = window.helper.getParameterByName('url', href);
+            url = window.helper.replaceUrlParam(url, 'tech', platform);
+            href = window.helper.replaceUrlParam(href, 'url', url);
+            item.setAttribute('href', href);
+        });
+    }
+
     const handleClickedTooltip = (elem) => {
         const selector = document.querySelector('.language-selector');
         const links = document.querySelectorAll('.language-selector__link');
@@ -57,6 +69,7 @@
             articleContent.querySelectorAll('.language-selector__link--active').forEach(item => item.classList.remove('language-selector__link--active'));
             articleContent.querySelectorAll(`[data-platform=${e.target.getAttribute('data-platform')}]`).forEach(item => item.classList.add('language-selector__link--active'));
             updatePlatformInUrls(e.target.getAttribute('data-slug'));
+            updatePlatformInPDFLink(e.target.getAttribute('data-slug'));
             textTofixedLabel = e.target.innerHTML;
             bgTofixedLabel = e.target.getAttribute('data-icon');
             handleClickedTooltip(e.target);
