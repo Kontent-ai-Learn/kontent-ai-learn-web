@@ -7,10 +7,24 @@ const Api2Pdf = require('api2pdf');
 const a2pClient = new Api2Pdf(process.env['Api2Pdf.ApiKey']);
 const download = require('download');
 
+const logRequest = (req) => {
+    const log = {
+        url: req.query.url,
+        timestamp: (new Date()).toISOString(),
+        useragent: req.get('User-Agent'),
+        referrer: req.headers.referrer || req.headers.referer,
+        ip: (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim(),
+    };
+
+    helper.logInCacheKey('generate-pdf', log);
+};
+
 router.get('/', asyncHandler(async (req, res, next) => {
     let url = req.query.url;
 
     if (!url) return res.end();
+
+    logRequest(req);
 
     if (url.indexOf('?') > -1) {
         url += '&';
