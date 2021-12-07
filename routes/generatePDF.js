@@ -4,6 +4,8 @@ const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const isPreview = require('../helpers/isPreview');
 const helper = require('../helpers/helperFunctions');
+const getUrlMap = require('../helpers/urlMap');
+const handleCache = require('../helpers/handleCache');
 const Api2Pdf = require('api2pdf');
 const a2pClient = new Api2Pdf(process.env['Api2Pdf.ApiKey']);
 const download = require('download');
@@ -34,11 +36,16 @@ const pdfIsCached = (fileName) => {
     };
 };
 
-const pdfAddCache = (api2pdfResult, fileName) => {
+const pdfAddCache = async (api2pdfResult, fileName, url, res) => {
+    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+        return await getUrlMap(res);
+    });
+
     const log = {
         api2pdf: api2pdfResult,
         filename: fileName,
         timestamp: (new Date()).toISOString(),
+        codename: helper.getCodenameByUrl(url, urlMap)
     }
 
     helper.logInCacheKey('api2pdf-cache', log, 9999);
@@ -119,7 +126,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
         .then(async () => {
             if (error) return next();
             logRequest(req, true);
-            pdfAddCache(pdfResult, fileName);
+            pdfAddCache(pdfResult, fileName, req.query.url, res);
             await download(pdfResult.pdf, 'public/docs');
             return res.redirect(303, `${baseURL}/docs/${fileName}.pdf`);
         })

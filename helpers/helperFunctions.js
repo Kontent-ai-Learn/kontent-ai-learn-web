@@ -233,14 +233,17 @@ const helper = {
             if (urlMap[i].url === url) {
                 codename = urlMap[i].codename;
             }
+        }
 
-            if (!codename) {
-                url = originalUrl.split('?')[0];
+        if (!codename) {
+            url = originalUrl.split('?')[0];
+            for (let i = 0; i < urlMap.length; i++) {
                 if (urlMap[i].url === url) {
                     codename = urlMap[i].codename;
                 }
             }
         }
+
         return codename;
     },
     getMapItemByUrl: (originalUrl, urlMap) => {
@@ -332,11 +335,23 @@ const helper = {
     },
     getLogItemCacheKey: (key, property, value) => {
         const logs = cache.get(key) || [];
-        return logs.find(log => log[property] === value);
+        return logs.find(log => {
+            let logValue = log[property];
+            if (property === 'codename') {
+                logValue = log[property]?.split('|')[0];
+            }
+            return logValue === value;
+        });
     },
     removeLogItemCacheKey: (key, property, value) => {
         const logs = cache.get(key) || [];
-        const logsUpdated = logs.filter(log => log[property] !== value);
+        const logsUpdated = logs.filter(log => {
+            let logValue = log[property];
+            if (property === 'codename') {
+                logValue = log[property]?.split('|')[0];
+            }
+            return logValue !== value;
+        });
         cache.put(key, logsUpdated);
     },
     getUniqueUrls: (urlMap) => {
