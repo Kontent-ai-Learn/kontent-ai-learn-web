@@ -36,11 +36,7 @@ const pdfIsCached = (fileName) => {
     };
 };
 
-const pdfAddCache = async (api2pdfResult, fileName, url, res) => {
-    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
-        return await getUrlMap(res);
-    });
-
+const pdfAddCache = async (api2pdfResult, fileName, url, urlMap) => {
     const log = {
         api2pdf: api2pdfResult,
         filename: fileName,
@@ -55,6 +51,13 @@ router.get('/', asyncHandler(async (req, res, next) => {
     let url = req.query.url;
 
     if (!url) return res.end();
+
+    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+        return await getUrlMap(res);
+    });
+
+    const codename = helper.getCodenameByUrl(req.query.url, urlMap);
+    if (!codename) return res.end();
 
     let baseURL;
 
@@ -126,7 +129,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
         .then(async () => {
             if (error) return next();
             logRequest(req, true);
-            pdfAddCache(pdfResult, fileName, req.query.url, res);
+            pdfAddCache(pdfResult, fileName, req.query.url, urlMap);
             await download(pdfResult.pdf, 'public/docs');
             return res.redirect(303, `${baseURL}/docs/${fileName}.pdf`);
         })
