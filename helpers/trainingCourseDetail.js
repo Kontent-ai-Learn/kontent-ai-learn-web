@@ -68,9 +68,18 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => 
   };
 };
 
-const isCourseAvailable = (user, content) => {
+const getTrainingUser = async (email, res) => {
+  const trainingUsers = await handleCache.evaluateSingle(res, 'trainingUsers', async () => {
+    return await commonContent.getTraniningUser(res);
+  });
+
+  return trainingUsers.find(item => item.email.value === email);
+};
+
+const isCourseAvailable = (user, content, trainingUser) => {
   const isFreeCourse = content.is_free ? helper.isCodenameInMultipleChoice(content.is_free.value, 'yes') : false;
-  if (user.email.endsWith('@kentico.com') || isFreeCourse) {
+
+  if (user.email.endsWith('@kentico.com') || isFreeCourse || trainingUser) {
     return true;
   }
 
@@ -137,12 +146,18 @@ const getUserFromSubscriptionService = async (req) => {
 
 const getPrivate = async (UIMessages, course, req, res) => {
   const hideCta = helper.isCodenameInMultipleChoice(course.display_options.value, 'hide_cta');
+  const trainingUser = await getTrainingUser(req?.user?.email, res);
   const data = {};
   let user = {};
   let errCode;
 
-  if (req?.user?.email.endsWith('@kentico.com')) {
+  if (req?.user?.email.endsWith('@kentico.com') || trainingUser) {
     user.email = req.user.email;
+
+    if (trainingUser) {
+      user.firstName = trainingUser.first_name.value;
+      user.lastName = trainingUser.last_name.value;
+    }
   } else {
     const userSubscriptionService = await getUserFromSubscriptionService(req);
     user = userSubscriptionService.user?.data;
@@ -158,7 +173,7 @@ const getPrivate = async (UIMessages, course, req, res) => {
     data.textUIMessageCodename = 'training___cta_coming_soon';
     data.renderAs = 'text';
     data.signedIn = true;
-  } else if (!isCourseAvailable(user, course)) {
+  } else if (!isCourseAvailable(user, course, trainingUser)) {
     data.renderGeneralMessage = true;
     data.textUIMessageCodename = 'training___cta_buy_course';
     data.action = 'intercom';

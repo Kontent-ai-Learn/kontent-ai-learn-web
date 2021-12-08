@@ -78,6 +78,9 @@ const cacheKeys = [{
     }, {
         name: 'termDefinitions',
         method: commonContent.getTermDefinitions
+    }, {
+        name: 'trainingUsers',
+        method: commonContent.getTraniningUser
     }
 ];
 

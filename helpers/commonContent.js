@@ -99,6 +99,12 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
+    getTraniningUser: async (res) => {
+        return await requestDelivery({
+            type: 'training_user',
+            ...commonContent.getKCDetails(res)
+        });
+    },
     getNotFound: async (res) => {
         const KCDetails = commonContent.getKCDetails(res);
         const urlMap = await ensureSingle(res, 'urlMap', async () => {

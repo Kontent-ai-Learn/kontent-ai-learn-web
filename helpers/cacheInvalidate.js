@@ -75,7 +75,8 @@ const splitPayloadByContentType = (items) => {
         redirectRules: [],
         releaseNotes: [],
         termDefinitions: [],
-        trainingCourses: []
+        trainingCourses: [],
+        trainingUsers: []
     };
 
     for (let i = 0; i < items.length; i++) {
@@ -106,6 +107,8 @@ const splitPayloadByContentType = (items) => {
             itemsByTypes.termDefinitions.push(item);
         } else if (item.type === 'training_course') {
             itemsByTypes.trainingCourses.push(item);
+        } else if (item.type === 'training_user') {
+            itemsByTypes.trainingUsers.push(item);
         }
     }
 
@@ -260,6 +263,7 @@ const processInvalidation = async (req, res) => {
         await invalidateSubNavigation(res, keys, KCDetails);
         await invalidateArticles(itemsByTypes, KCDetails, res);
         await invalidateElearning(itemsByTypes, KCDetails, res);
+        await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingUsers');
         await invalidatePDFs(items);
         await fastly.purgeFinal(itemsByTypes, req, res);
 
