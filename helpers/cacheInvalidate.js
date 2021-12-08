@@ -1,4 +1,5 @@
 const cache = require('memory-cache');
+const fs = require('fs');
 const commonContent = require('./commonContent');
 const app = require('../app');
 const requestDelivery = require('./requestDelivery');
@@ -116,7 +117,15 @@ const splitPayloadByContentType = (items) => {
 };
 
 const invalidatePDFItem = async (codename) => {
-    await fastly.purgePDF(codename);
+    const pdfs = helper.getLogItemCacheKey('api2pdf-cache', 'codename', codename);
+
+    for await (const pdf of pdfs) {
+        await fastly.purgePDF(pdf.filename);
+        fs.unlink(`./public/docs/${pdf.filename}.pdf`, (err) => {
+            return err;
+        });
+    }
+
     helper.removeLogItemCacheKey('api2pdf-cache', 'codename', codename);
 };
 

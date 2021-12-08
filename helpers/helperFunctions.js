@@ -335,7 +335,7 @@ const helper = {
     },
     getLogItemCacheKey: (key, property, value) => {
         const logs = cache.get(key) || [];
-        return logs.find(log => {
+        return logs.filter(log => {
             let logValue = log[property];
             if (property === 'codename') {
                 logValue = log[property]?.split('|')[0];

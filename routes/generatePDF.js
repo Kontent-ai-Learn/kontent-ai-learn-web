@@ -24,9 +24,9 @@ const logRequest = (req, api2pdfReached) => {
 };
 
 const pdfIsCached = (fileName) => {
-    const item = helper.getLogItemCacheKey('api2pdf-cache', 'filename', fileName);
+    const items = helper.getLogItemCacheKey('api2pdf-cache', 'filename', fileName);
 
-    if (!item) return false;
+    if (!(items && items.length)) return false;
 
     try {
         fs.statSync(`./public/docs/${fileName}.pdf`);

@@ -188,10 +188,7 @@ const purgeFinal = async (itemsByTypes, req, res) => {
   }
 };
 
-const purgePDF = async (codename) => {
-  const item = helper.getLogItemCacheKey('api2pdf-cache', 'codename', codename);
-  if (!item) return;
-  const filename = item.filename;
+const purgePDF = async (filename) => {
   const axiosDomain = helper.getDomain();
   await axiosPurge(`${axiosDomain}/docs/${filename}.pdf`);
 };
