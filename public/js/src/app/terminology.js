@@ -4,6 +4,8 @@ window.initTerminology = () => {
     let activeTooltip;
     let ticking = false;
     const visibleClassName = 'term-tooltip-container--visible';
+    const closingClassName = 'term-tooltip-container--closing';
+    const closedClassName = 'term-tooltip-container--closed';
     const wrapper = document.querySelector('.term-tooltip-container');
     if (!wrapper) return;
     const content = wrapper.querySelector('.term-tooltip-content');
@@ -193,10 +195,11 @@ window.initTerminology = () => {
                         activeTerm = window.termDefinitions[i].term;
                         setTooltipContent(content, window.termDefinitions[i]);
                         setTooltipPosition(e.target, wrapper, content);
-                        logHoveredTerm(window.termDefinitions[i].term)
+                        logHoveredTerm(window.termDefinitions[i].term);
+                        wrapper.classList.remove(closedClassName);
+                        wrapper.classList.add(visibleClassName);
                     }
                 }
-                wrapper.classList.add(visibleClassName);
             });
             terms[i].addEventListener('mouseleave', () => {
                 termHovered = false;
@@ -207,11 +210,14 @@ window.initTerminology = () => {
             });
         }
 
-        close.addEventListener('click', function () {
-            wrapper.classList.add('term-tooltip-container--closing');
+        close.addEventListener('click', function (e) {
+            e.preventDefault();
+            wrapper.classList.add(closingClassName);
+            wrapper.classList.add(closedClassName);
             wrapper.classList.remove(visibleClassName);
+            
             setTimeout(function() {
-                wrapper.classList.remove('term-tooltip-container--closing');
+                wrapper.classList.remove(closingClassName);
             }, 200);
         })
     };
