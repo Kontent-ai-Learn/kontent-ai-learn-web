@@ -37,6 +37,8 @@ const resolveTerminology = async ($, res) => {
         return await commonContent.getTermDefinitions(res);
     });
 
+    termDefinitions.sort((a, b) => a.term.value.localeCompare(b.term.value));
+
     let html = '';
 
     for (let i = 0; i < termDefinitions.length; i++) {
