@@ -156,15 +156,38 @@ window.initTerminology = () => {
         }, 1000);
     };
 
+    const resolveTermLink = (term, terminologyPageUrl) => {
+        const termCodename = term.getAttribute('href').replace('#term-definition-', '');
+        term.setAttribute('data-term-definition', termCodename);
+        if (!terminologyPageUrl) return;
+
+        let anchor = '';
+
+        for (let i = 0; i < window.termDefinitions.length; i++) {
+            if (termCodename === window.termDefinitions[i].codename) {
+                anchor = generateAnchor(window.termDefinitions[i].term);
+            }
+        }
+        
+        if (anchor) {
+            term.setAttribute('href', `${terminologyPageUrl}#a-${anchor}`);
+        }
+    };
+
     const initTooltips = () => {
         const terms = document.querySelectorAll('[href^="#term-definition-"]');
         const close = wrapper.querySelector('.term-tooltip-close');
         if (!wrapper && !terms.length) return;
 
         for (let i = 0; i < terms.length; i++) {
+            if (window.urlMap) {
+                const terminologyPage = window.urlMap.find(item => item.codename === 'terminology');
+                resolveTermLink(terms[i], terminologyPage.url);
+            }
+
             terms[i].addEventListener('mouseenter', function (e) {
                 for (let i = 0; i < window.termDefinitions.length; i++) {
-                    if (e.target.getAttribute('href').replace('#term-definition-', '') === window.termDefinitions[i].codename) {
+                    if (e.target.getAttribute('data-term-definition') === window.termDefinitions[i].codename) {
                         activeTooltip = e.target;
                         termHovered = true;
                         activeTerm = window.termDefinitions[i].term;

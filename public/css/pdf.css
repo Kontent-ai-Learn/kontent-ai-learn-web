@@ -106,11 +106,13 @@ h2, h3, h4 {
 }
 
 
-a[href^="#term-definition-"] {
+a[href^="#term-definition-"],
+a[data-term-definition] {
     border-bottom: none;   
 }
 
-div:not(.callout) a[href^="#term-definition-"] {
+div:not(.callout) a[href^="#term-definition-"],
+div:not(.callout) a[data-term-definition] {
     color: #231F20;
 }
 
