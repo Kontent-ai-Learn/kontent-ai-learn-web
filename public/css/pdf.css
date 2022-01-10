@@ -120,4 +120,11 @@ div:not(.callout) a[data-term-definition] {
     display: none !important;
 }
 
+.ch2 {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    z-index: -1 !important;
+}
+
 
