@@ -137,6 +137,9 @@ const componentsResolvers = [{
 }, {
     type: 'carousel',
     resolver: richTextResolverTemplates.carousel
+}, {
+    type: 'run_in_postman_button',
+    resolver: richTextResolverTemplates.runInPostmanButton
 }];
 
 const resolveRichText = (item, config) => {

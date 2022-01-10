@@ -599,7 +599,7 @@ const richTextResolverTemplates = {
                     </div>
                 </div>`;
     },
-    carousel: (item, config) => {
+    carousel: (item) => {
         const markupBefore = '<div class="carousel splide"><div class="splide__track"><ul class="splide__list">';
         const markupAfter = '</ul></div></div>';
         const carouselItems = helper.splitCarouselItems(item.content.value);
@@ -608,6 +608,22 @@ const richTextResolverTemplates = {
             return `${markupBefore}${carouselItems.markup}${markupAfter}`;
         }
         return carouselItems.markup;
+    },
+    runInPostmanButton: (item) => {
+        return `<div class="postman-run-button"
+                    data-postman-action="collection/fork"
+                    data-postman-var-1="${item.collection_id.value}"
+                    data-postman-collection-url="${item.collection_url.value}"${item.environment_id.value ? ` data-postman-param="${item.environment_id.value}"`: ''}>
+                </div>
+                <script type="text/javascript">
+                    (function (p,o,s,t,m,a,n) {
+                        !p[s] && (p[s] = function () { (p[t] || (p[t] = [])).push(arguments); });
+                        !o.getElementById(s+t) && o.getElementsByTagName("head")[0].appendChild((
+                        (n = o.createElement("script")),
+                        (n.id = s+t), (n.async = 1), (n.src = m), n
+                        ));
+                    }(window, document, "_pm", "PostmanRunObject", "https://run.pstmn.io/button.js"));
+                </script>`;
     },
 };
 
