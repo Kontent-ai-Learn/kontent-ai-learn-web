@@ -220,7 +220,9 @@
 
     const selectLanguageOnClick = (articleContent) => {
         articleContent.addEventListener('click', (e) => {
-            handleLanguageSelection(e, articleContent);
+            setTimeout(() => {
+                handleLanguageSelection(e, articleContent);
+            }, 20);
         });
     };
 
@@ -411,6 +413,71 @@
         }
     };
 
+    const getCodeSampleInViewport = (codeSamples) => {
+        for (let i = 0; i < codeSamples.length; i++) {
+            const rect = codeSamples[i].getBoundingClientRect();
+
+            if (
+                rect.top >= 0 && 
+                codeSamples[i].offsetParent !== null // is visble on screen
+            ) {
+                return {
+                    rect: rect,
+                    elem: codeSamples[i], 
+                    scrollPosition: document.documentElement.scrollTop,
+                    elemScrollTop: codeSamples[i].getBoundingClientRect().top + document.documentElement.scrollTop
+                }
+            }
+        }
+
+        return null;
+    };
+
+    const keepScrollPositionOnClick = (e, codeSampleInViewport) => {
+        if (e.target && e.target.matches('.language-selector__link')) {
+            const articleContent = document.querySelector('.article__content');
+            articleContent.style.opacity = 0;
+            setTimeout(() => {
+                if (codeSampleInViewport && codeSampleInViewport.elem) {
+                    elemCurrentScrollTop = codeSampleInViewport.elem.getBoundingClientRect().top + document.documentElement.scrollTop;
+                    elemScrollTop = codeSampleInViewport.elemScrollTop;
+                    document.documentElement.scrollTop = codeSampleInViewport.scrollPosition + elemCurrentScrollTop - elemScrollTop;
+                    articleContent.style.opacity = 1;
+                }
+            }, 40);
+            
+        }
+    };
+
+    const keepScrollPositionOnChange = () => {
+        const languageSelector = document.querySelector('.language-selector');
+        if (!languageSelector) return;
+
+        const codeSamples = document.querySelectorAll('.code-sample-standalone, .code-samples');
+        if (!codeSamples.length) return;
+
+        let codeSampleInViewport = null;
+
+        codeSampleInViewport = getCodeSampleInViewport(codeSamples);
+
+        document.addEventListener('scroll', () => { 
+            codeSampleInViewport = getCodeSampleInViewport(codeSamples);
+        }, {passive: true});
+
+        languageSelector.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (codeSampleInViewport !== null) {
+                keepScrollPositionOnClick(e, codeSampleInViewport);
+                setTimeout(() => {
+                    if (codeSampleInViewport !== null) {
+                        codeSampleInViewport = getCodeSampleInViewport([codeSampleInViewport.elem]);
+                    }
+                }, 45);
+            }  
+        });
+
+    };
+
     handleEmptyPlatforms();
     selectLanguage();
     addIcons();
@@ -422,6 +489,7 @@
         initNote();
         observeStickyState();
         scrollToLink();
+        keepScrollPositionOnChange();
     }, 0);
 
     window.addEventListener('resize', handleSizing);
