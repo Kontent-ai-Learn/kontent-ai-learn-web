@@ -372,7 +372,7 @@ const richTextResolverTemplates = {
                             </video>
                         </div>
                         <div class="print-only"> 
-                            <img class="article__image ${attributes.cssClass}" alt="${alt}" data-src="${item.image.value[0].url}">
+                            <img class="article__image ${attributes.cssClass}"${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''} alt="${alt}" data-src="${item.image.value[0].url}">
                         </div>
                         ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</figcaption>` : ''}
                     </figure>`;
@@ -381,7 +381,7 @@ const richTextResolverTemplates = {
             return `
                 <figure${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                     ${openLinkTag}
-                        <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src='${placeholderSrc}' data-src="${item.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-image' : ''}>
+                        <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src='${placeholderSrc}' data-src="${item.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-image' : ''}>
                     ${closeLinkTag}
                     <noscript>
                         ${openLinkTag}
@@ -550,9 +550,9 @@ const richTextResolverTemplates = {
         const image = item.thumbnail.value.length ? `${item.thumbnail.value[0].url}?auto=format&w=116&fm=pjpg` : null;
         const imageMarkup = image
 ? `
-            <img class="lazy lazy--exclude-dnt" src='${placeholderSrc}' data-src="${image}" alt="" data-dpr data-lazy-onload loading="lazy" ${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
+            <img class="lazy lazy--exclude-dnt" src='${placeholderSrc}' data-src="${image}" alt="" data-dpr data-lazy-onload loading="lazy" ${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
             <noscript>
-                <img src="${image}" ${imageWidth && imageHeight ? `style="max-width:${imageWidth}px;max-height:${imageHeight}px;width:100%" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
+                <img src="${image}" ${imageWidth && imageHeight ? `style=" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
             </noscript>
         `
 : '';
