@@ -29,7 +29,7 @@ jobs:
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
-        with:
+      with:
           app-name: 'learn-web-live-dev'
           slot-name: 'staging'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3790D73866FA4ACBA8DC994F79016834 }}
