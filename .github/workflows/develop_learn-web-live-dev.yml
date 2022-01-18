@@ -30,7 +30,7 @@ jobs:
       - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'kcd-web-live-dev'
+        app-name: 'learn-web-live-dev'
         slot-name: 'staging'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_282ed906c3ca4533835c13540e76e202 }}
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DF49811BE881483984D1AE04CD641CD2 }}
         package: .
