@@ -97,7 +97,7 @@ app.use(async (req, res, next) => {
   return next();
 });
 
-app.use('/service-check', serviceCheck);
+app.use(['/service-check', '/learn/service-check'], serviceCheck);
 
 if (process.env.isProduction === 'false') {
   app.use('/', asyncHandler(async (req, res, next) => {
