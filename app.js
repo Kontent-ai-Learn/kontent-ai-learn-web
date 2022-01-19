@@ -12,7 +12,8 @@ const consola = require('consola');
 const axios = require('axios');
 const cache = require('memory-cache');
 const util = require('util');
-const { setIntervalAsync } = require('set-interval-async/dynamic')
+const { setIntervalAsync } = require('set-interval-async/dynamic');
+const rewrite = require('express-urlrewrite');
 
 const helper = require('./helpers/helperFunctions');
 const appHelper = require('./helpers/app');
@@ -42,6 +43,18 @@ const auth0Callback = require('./routes/auth0Callback');
 const api = require('./routes/api');
 
 const app = express();
+
+app.use(async (req, res, next) => {
+  if (req.originalUrl.startsWith('/learn')) {
+    res.locals.urlPathPrefix = '/learn';
+  } else {
+    res.locals.urlPathPrefix = '';
+  }
+  next();
+});
+
+app.use(rewrite(/^\/learn(.+)/, '$1'));
+app.use(rewrite(/^\/learn/, '/'));
 
 // Azure Application Insights monitors
 if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
@@ -97,7 +110,7 @@ app.use(async (req, res, next) => {
   return next();
 });
 
-app.use(['/service-check', '/learn/service-check'], serviceCheck);
+app.use('/service-check', serviceCheck);
 
 if (process.env.isProduction === 'false') {
   app.use('/', asyncHandler(async (req, res, next) => {
@@ -153,6 +166,7 @@ app.use('/', asyncHandler(async (req, res, next) => {
 
   await handleCache.cacheAllAPIReferences(res);
   const exists = await appHelper.pageExists(req, res, next);
+
   if (!exists) {
     return await urlAliases(req, res, next);
   }
