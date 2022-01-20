@@ -25,7 +25,7 @@ block content
                             if (readingTime)
                                 .article__reading-time !{readingTime} min read
                         if (!req.query.pdf && !containsChangelog && process.env['Api2Pdf.ApiKey'])
-                            a(data-pdf-link, href=`${urlPathPrefix}/pdf?url=${req.originalUrl}`, target='_blank')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___download_pdf')) #{UIMessages.article___download_pdf.value}
+                            a(data-pdf-link, href=`${urlPathPrefix}/pdf?url=${urlPathPrefix}${req.originalUrl}`, target='_blank')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___download_pdf')) #{UIMessages.article___download_pdf.value}
                         if (req.query.pdf)
                             .article__tech(data-platform-note)
                         if (isPreview && !req.query.pdf)

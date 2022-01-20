@@ -1,10 +1,14 @@
 (() => {
+  const setUrlPathPrefix = () => {
+    return window.location.pathname.startsWith('/learn') ? '/learn' : '';
+  };
+
   const initAuth0 = async () => {
     const auth0 = {};
     const auth0Settings = {
         domain: window.auth0Config.domain,
         client_id: window.auth0Config.clientID,
-        redirect_uri: `${location.protocol}//${location.host}${window.helper.setUrlPathPrefix()}/callback`,
+        redirect_uri: `${location.protocol}//${location.host}${setUrlPathPrefix()}/callback`,
         scope: 'openid email profile'
     };
     auth0.client = await createAuth0Client(auth0Settings);
@@ -32,32 +36,32 @@
   const config = [{
     codename: 'kkproject',
     title: 'Kentico Kontent project',
-    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/kk-project`
+    endpoint: `${setUrlPathPrefix()}/service-check/kk-project`
   }, {
     codename: 'algolia',
     title: 'Algolia search',
-    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/algolia`,
+    endpoint: `${setUrlPathPrefix()}/service-check/algolia`,
   }, {
     codename: 'subscriptionService',
     title: 'Subscription service',
-    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/subscription-service`,
+    endpoint: `${setUrlPathPrefix()}/service-check/subscription-service`,
   }, {
     codename: 'apiReferences',
     title: 'API References',
-    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/api-references`,
+    endpoint: `${setUrlPathPrefix()}/service-check/api-references`,
   }, {
     codename: 'tlms',
     title: 'TLMS',
-    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/tlms`,
+    endpoint: `${setUrlPathPrefix()}/service-check/tlms`,
   }, {
     codename: 'auth0',
     title: 'Auth0',
-    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/auth0`,
+    endpoint: `${setUrlPathPrefix()}/service-check/auth0`,
     callback: initAuth0
   }, {
     codename: 'sendgrid',
     title: 'Sendgrid',
-    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/sendgrid`,
+    endpoint: `${setUrlPathPrefix()}/service-check/sendgrid`,
   }];
 
   const buidlUI = () => {

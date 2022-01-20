@@ -263,17 +263,18 @@ const richTextResolverTemplates = {
     },
     signpostItem: (item, config) => {
         const urlMap = config.urlMap;
-        let resolvedUrl = '/page-not-found';
+        let resolvedUrl = `${config.urlPathPrefix}/page-not-found`;
         const imageWidth = item.image.value[0] ? item.image.value[0].width || 0 : 0;
         const imageHeight = item.image.value[0] ? item.image.value[0].height || 0 : 0;
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
         const imageSrc = item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=pjpg&auto=format` : '';
         let target = 'self';
-
+        console.log(config.urlPathPrefix)
         if (item.link__link_to_content_item.value[0] && urlMap) {
             const matchUrlMapItem = urlMap.filter(elem => elem.codename === item.link__link_to_content_item.value[0].system.codename);
 
             if (matchUrlMapItem.length) {
+                console.log(config.urlPathPrefix + matchUrlMapItem[0].url);
                 resolvedUrl = config.urlPathPrefix + matchUrlMapItem[0].url;
 
                 if (matchUrlMapItem[0].type === 'multiplatform_article') {
