@@ -143,7 +143,7 @@ const componentsResolvers = [{
 }];
 
 const resolveRichText = (item, config) => {
-    item = linksResolverTemplates.resolveInnerRichTextLinks(item, config.urlMap);
+    item = linksResolverTemplates.resolveInnerRichTextLinks(item, config);
 
     for (let i = 0; i < config.componentsResolvers.length; i++) {
         if (item.system.type === config.componentsResolvers[i].type) {
@@ -170,7 +170,7 @@ const resolveRichText = (item, config) => {
 
 const resolveLink = (link, config) => {
     if (config.urlMap && config.urlMap.length) {
-        return linksResolverTemplates.resolve(link, config.urlMap);
+        return linksResolverTemplates.resolve(link, config);
     } else {
         return '/';
     }
@@ -265,7 +265,7 @@ const getResponse = async (query, config) => {
                     .forEach((key) => {
                         if (elem[key]) {
                             elem[key].resolveHtml();
-                            elem[key].value = enhanceMarkup(elem[key].resolvedData);
+                            elem[key].value = enhanceMarkup(elem[key].resolvedData, config);
                         }
                     });
             }

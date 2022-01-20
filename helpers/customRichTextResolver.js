@@ -8,7 +8,8 @@ const getConfig = (res) => {
     return {
         isPreview: isPreview(res.locals.previewapikey),
         projectid: res.locals.projectid,
-        language: res.locals.language
+        language: res.locals.language,
+        urlPathPrefix: res.locals.urlPathPrefix
     }
 };
 

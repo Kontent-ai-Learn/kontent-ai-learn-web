@@ -22,7 +22,8 @@ const commonContent = {
             host: res.locals.host,
             protocol: res.locals.protocol,
             isPreview: isPreview(res.locals.previewapikey),
-            UIMessages: UIMessages
+            UIMessages: UIMessages,
+            urlPathPrefix: res.locals.urlPathPrefix
         };
     },
     getTree: async (contentType, depth, res) => {

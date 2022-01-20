@@ -4,7 +4,7 @@
     const auth0Settings = {
         domain: window.auth0Config.domain,
         client_id: window.auth0Config.clientID,
-        redirect_uri: `${location.protocol}//${location.host}/callback`,
+        redirect_uri: `${location.protocol}//${location.host}${window.helper.setUrlPathPrefix()}/callback`,
         scope: 'openid email profile'
     };
     auth0.client = await createAuth0Client(auth0Settings);
@@ -32,32 +32,32 @@
   const config = [{
     codename: 'kkproject',
     title: 'Kentico Kontent project',
-    endpoint: '/service-check/kk-project'
+    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/kk-project`
   }, {
     codename: 'algolia',
     title: 'Algolia search',
-    endpoint: '/service-check/algolia',
+    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/algolia`,
   }, {
     codename: 'subscriptionService',
     title: 'Subscription service',
-    endpoint: '/service-check/subscription-service',
+    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/subscription-service`,
   }, {
     codename: 'apiReferences',
     title: 'API References',
-    endpoint: '/service-check/api-references',
+    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/api-references`,
   }, {
     codename: 'tlms',
     title: 'TLMS',
-    endpoint: '/service-check/tlms',
+    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/tlms`,
   }, {
     codename: 'auth0',
     title: 'Auth0',
-    endpoint: '/service-check/auth0',
+    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/auth0`,
     callback: initAuth0
   }, {
     codename: 'sendgrid',
     title: 'Sendgrid',
-    endpoint: '/service-check/sendgrid',
+    endpoint: `${window.helper.setUrlPathPrefix()}/service-check/sendgrid`,
   }];
 
   const buidlUI = () => {

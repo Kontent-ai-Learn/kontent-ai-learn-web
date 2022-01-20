@@ -9,6 +9,6 @@ html(lang='en')
                 tr
                     td !{name}
                     td 
-                        a(href=`/cache-invalidate/keys/${item}`, target='_blank') Inspect
+                        a(href=`${urlPathPrefix}/cache-invalidate/keys/${item}`, target='_blank') Inspect
                     td 
-                        a(href=`/cache-invalidate/keys/${item}/invalidate`) Invalidate
+                        a(href=`${urlPathPrefix}/cache-invalidate/keys/${item}/invalidate`) Invalidate

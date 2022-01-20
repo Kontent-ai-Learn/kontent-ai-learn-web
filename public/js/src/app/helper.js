@@ -432,6 +432,10 @@ window.helper = (() => {
         wrapper.parentNode.replaceChild(docFrag, wrapper);
     };
 
+    const setUrlPathPrefix = () => {
+        return window.location.pathname.startsWith('/learn') ? '/learn' : '';
+    };
+
     return {
         getParents: getParents,
         findAncestor: findAncestor,
@@ -459,7 +463,8 @@ window.helper = (() => {
         getTech: getTech,
         logAnchorUpdate: logAnchorUpdate,
         unwrapElement: unwrapElement,
-        updateParameter: updateParameter
+        updateParameter: updateParameter,
+        setUrlPathPrefix: setUrlPathPrefix
     }
 })();
 

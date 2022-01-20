@@ -24,20 +24,20 @@ const getQueryString = (type) => {
     return qs;
 };
 
-const resolveLinkUrlsInElement = (element, item, urlMap) => {
+const resolveLinkUrlsInElement = (element, config) => {
     element.links.forEach((link) => {
         let resolvedUrl = [];
 
-        if (urlMap) {
-            resolvedUrl = urlMap.filter(elem => elem.codename === link.codename);
+        if (config.urlMap) {
+            resolvedUrl = config.urlMap.filter(elem => elem.codename === link.codename);
         }
 
         if (resolvedUrl.length > 0) {
-            resolvedUrl = `${resolvedUrl[0].url}${getQueryString(resolvedUrl[0].type)}`;
+            resolvedUrl = `${config.urlPathPrefix}${resolvedUrl[0].url}${getQueryString(resolvedUrl[0].type)}`;
         } else if (link.type === 'term_definition') {
             resolvedUrl = `#term-definition-${link.codename}`;
         } else {
-            resolvedUrl = '/page-not-found';
+            resolvedUrl = `${config.urlPathPrefix}/page-not-found`;
         }
 
         if (element.value && resolvedUrl) {
@@ -47,22 +47,22 @@ const resolveLinkUrlsInElement = (element, item, urlMap) => {
 };
 
 const linksResolverTemplates = {
-    resolve: (item, urlMap) => {
+    resolve: (item, config) => {
         let url = [];
 
-        if (urlMap) {
-            url = urlMap.filter(elem => elem.codename === item.codename);
+        if (config.urlMap) {
+            url = config.urlMap.filter(elem => elem.codename === item.codename);
         }
 
         if (url.length > 0) {
-            return `${url[0].url}${getQueryString(url[0].type)}`;
+            return `${config.urlPathPrefix}${url[0].url}${getQueryString(url[0].type)}`;
         } else if (item.type === 'term_definition') {
             return `#term-definition-${item.codename}`;
         } else {
-            return '/page-not-found';
+            return `${config.urlPathPrefix}/page-not-found`;
         }
     },
-    resolveInnerRichTextLinks: (item, urlMap) => {
+    resolveInnerRichTextLinks: (item, config) => {
         const keys = helpers.removeUnderscoreElems(Object.keys(item));
         keys
             .filter((key) =>
@@ -70,7 +70,7 @@ const linksResolverTemplates = {
                 Object.prototype.hasOwnProperty.call(item[key], 'type') &&
                 Object.prototype.hasOwnProperty.call(item[key], 'links') &&
                 item[key].type === 'rich_text')
-            .forEach((key) => resolveLinkUrlsInElement(item[key], item, urlMap));
+            .forEach((key) => resolveLinkUrlsInElement(item[key], config));
 
         return item;
     }

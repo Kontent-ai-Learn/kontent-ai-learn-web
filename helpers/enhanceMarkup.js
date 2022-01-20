@@ -31,11 +31,11 @@ const removeEmptyParagraph = ($) => {
     $('p:empty').remove();
 };
 
-const processLinks = ($) => {
+const processLinks = ($, config) => {
     $('a[data-item-id][href=""]').each(function () {
         const $that = $(this);
         $that.removeAttr('data-item-id');
-        $that.attr('href', '/page-not-found');
+        $that.attr('href', `${config.urlPathPrefix}/page-not-found`);
     });
     $('a[target="_blank"]:not([data-lightbox-embed]):not(.edit-link)').each(function () {
         $(this).addClass('a-blank');
@@ -136,14 +136,14 @@ const kontentSmartLinksRemoveInnerDataAttributes = ($) => {
     $innerDefinitionElem.removeAttr('data-kk-rels');
 };
 
-const enhanceMarkup = (resolvedData) => {
+const enhanceMarkup = (resolvedData, config) => {
     let text = resolvedData.html;
     text = helper.resolveMacros(text);
     const $ = cheerio.load(text);
 
     replaceNodeWithItsContent($, 'p.kc-linked-item-wrapper, p:empty');
     setWidthToImages($);
-    processLinks($);
+    processLinks($, config);
     removeEmptyParagraph($);
     createAnchors($);
     replaceTooltipSpaces($);

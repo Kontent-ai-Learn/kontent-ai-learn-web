@@ -15,7 +15,7 @@
         return qString;
     })();
 
-    window.helper.ajaxGet(`${url.protocol}//${url.hostname + (location.port ? ':' + location.port : '')}/urlmap${queryString}`, (urlMap) => {
+    window.helper.ajaxGet(`${url.protocol}//${url.hostname + (location.port ? ':' + location.port : '')}${window.helper.setUrlPathPrefix()}/urlmap${queryString}`, (urlMap) => {
         window.urlMap = urlMap;
 
         if (window.initSearch) {

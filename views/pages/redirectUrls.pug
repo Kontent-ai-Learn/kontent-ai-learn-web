@@ -11,9 +11,10 @@ block content
                         td Redirect from
                     if redirectRules.length
                         each url in redirectRules   
+                            - const originalUrl = url.originalUrl === '/' ? '' : url.originalUrl;
                             tr
                                 td
-                                    a(href= `${url.originalUrl.includes('://') ? `${req.protocol}://${req.get('host')}` : ''}${url.originalUrl}`, target='_blank') #{url.originalUrl}
+                                    a(href= `${url.originalUrl.includes('://') ? `${req.protocol}://${req.get('host')}` : ''}${urlPathPrefix}${originalUrl}`, target='_blank') #{urlPathPrefix + originalUrl}
                                 td
                                     ol
                                         each redirect in url.redirectUrls
@@ -30,9 +31,10 @@ block content
                         td Redirect from
                     if redirectMap.length
                         each url in redirectMap    
+                            - const originalUrl = url.originalUrl === '/' ? '' : url.originalUrl;
                             tr
                                 td 
-                                    a(href= `${url.originalUrl.includes('://') ? `${req.protocol}://${req.get('host')}` : ''}${url.originalUrl}`, target='_blank') #{url.originalUrl}
+                                    a(href= `${url.originalUrl.includes('://') ? `${req.protocol}://${req.get('host')}` : ''}${urlPathPrefix}${originalUrl}`, target='_blank') #{urlPathPrefix + originalUrl}
                                 td(class=`${isPreview && !req.query.pdf ? 'utilities-table-cell-edit-link-wrapper' : ''}`)
                                     ol
                                         each redirect in url.redirectUrls

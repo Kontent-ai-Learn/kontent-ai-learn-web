@@ -274,7 +274,7 @@ const richTextResolverTemplates = {
             const matchUrlMapItem = urlMap.filter(elem => elem.codename === item.link__link_to_content_item.value[0].system.codename);
 
             if (matchUrlMapItem.length) {
-                resolvedUrl = matchUrlMapItem[0].url;
+                resolvedUrl = config.urlPathPrefix + matchUrlMapItem[0].url;
 
                 if (matchUrlMapItem[0].type === 'multiplatform_article') {
                     resolvedUrl += '?tech={tech}';
@@ -320,7 +320,7 @@ const richTextResolverTemplates = {
         if (item.linked_item.value[0] && urlMap) {
             const matchUrlMapItem = urlMap.filter(elem => elem.codename === item.link__link_to_content_item.value[0].system.codename);
             if (matchUrlMapItem.length) {
-                resolvedUrl = matchUrlMapItem[0].url;
+                resolvedUrl = config.urlPathPrefix + matchUrlMapItem[0].url;
 
                 if (matchUrlMapItem[0].type === 'multiplatform_article') {
                     resolvedUrl += '?tech={tech}';
@@ -413,7 +413,7 @@ const richTextResolverTemplates = {
         if (item.link__link_to_content_item.value[0] && urlMap) {
             const matchUrlMapItem = urlMap.filter(elem => elem.codename === item.link__link_to_content_item.value[0].system.codename);
             if (matchUrlMapItem.length) {
-                resolvedUrl = matchUrlMapItem[0].url;
+                resolvedUrl = config.urlPathPrefix + matchUrlMapItem[0].url;
 
                 if (matchUrlMapItem[0].type === 'multiplatform_article') {
                     resolvedUrl += '?tech={tech}';
@@ -542,7 +542,7 @@ const richTextResolverTemplates = {
     trainingCourse: (item, config) => {
         const personas = item.persona.value;
         const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
-        const url = urlMapItem.length ? urlMapItem[0].url : null;
+        const url = urlMapItem.length ? config.urlPathPrefix + urlMapItem[0].url : null;
         const isFree = item.is_free ? helper.isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
         const imageWidth = item.thumbnail.value[0] ? item.thumbnail.value[0].width || 0 : 0;
         const imageHeight = item.thumbnail.value[0] ? item.thumbnail.value[0].height || 0 : 0;

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
     channel
-        | <atom:link href="!{req.protocol + '://' + req.get('Host')}/rss/articles" rel="self" type="application/rss+xml"></atom:link>
+        | <atom:link href="!{req.protocol + '://' + req.get('Host') + urlPathPrefix}/rss/articles" rel="self" type="application/rss+xml"></atom:link>
         title !{home.title.value}
         language en-us
-        | <link>!{req.protocol + '://' + req.get('host')}</link>
+        | <link>!{req.protocol + '://' + req.get('host') + urlPathPrefix}</link>
         | <description><![CDATA[!{entities.decode(helper.stripTags(home.description.value).trim())}]]></description>
         each article in articles
             - var path = urlMap.filter((item) => { return item.codename === article.system.codename });
@@ -14,5 +14,5 @@ rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
                     pubDate !{moment(article.system.lastModified).format('ddd, DD MMM YYYY HH:mm:ss ZZ')}
                     atom:updated !{moment(article.system.lastModified).format('YYYY-MM-DDTHH:mm:ssZ')}
                     | <description><![CDATA[!{entities.decode(helper.stripTags(article.introduction.value).trim())}]]></description>
-                    | <link>!{domain + path[0].url}</link>
-                    | <guid isPermaLink="false">!{domain + path[0].url}</guid>
+                    | <link>!{domain + urlPathPrefix + path[0].url}</link>
+                    | <guid isPermaLink="false">!{domain + urlPathPrefix + path[0].url}</guid>

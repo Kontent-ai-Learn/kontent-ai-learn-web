@@ -7,6 +7,6 @@ urlset(xmlns='http://www.sitemaps.org/schemas/sitemap/0.9', xmlns:xhtml='http://
             if (item.type !== 'navigation_item')
                 url
                     loc
-                        | !{domain + item.url}
+                        | !{domain + urlPathPrefix + item.url}
                     lastmod
                         | !{moment(item.date).format("YYYY-MM-DD")}

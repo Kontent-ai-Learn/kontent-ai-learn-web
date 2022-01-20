@@ -154,7 +154,7 @@ const getContent = async (req, res) => {
         if (content[0].system.type === 'navigation_item' && content[0].subpages.value.length) {
             return {
                 redirectCode: 301,
-                redirectUrl: `${pathUrl}/${content[0].subpages.value[0].url.value}${queryHash ? '?' + queryHash : ''}`
+                redirectUrl: `${res.locals.urlPathPrefix}${pathUrl}/${content[0].subpages.value[0].url.value}${queryHash ? '?' + queryHash : ''}`
             }
         } else if (content[0].system.type === 'training_course') {
             view = 'pages/trainingCourse';

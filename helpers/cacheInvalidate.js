@@ -116,11 +116,11 @@ const splitPayloadByContentType = (items) => {
     return itemsByTypes;
 };
 
-const invalidatePDFItem = async (codename) => {
+const invalidatePDFItem = async (codename, res) => {
     const pdfs = helper.getLogItemCacheKey('api2pdf-cache', 'codename', codename);
 
     for await (const pdf of pdfs) {
-        await fastly.purgePDF(pdf.filename);
+        await fastly.purgePDF(pdf.filename, res);
         fs.unlink(`./public/docs/${pdf.filename}.pdf`, (err) => {
             return err;
         });
@@ -129,9 +129,9 @@ const invalidatePDFItem = async (codename) => {
     helper.removeLogItemCacheKey('api2pdf-cache', 'codename', codename);
 };
 
-const invalidatePDFs = async (items) => {
+const invalidatePDFs = async (items, res) => {
     for (let i = 0; i < items.length; i++) {
-        await invalidatePDFItem(items[i].codename);
+        await invalidatePDFItem(items[i].codename, res);
     }
 };
 
@@ -273,7 +273,7 @@ const processInvalidation = async (req, res) => {
         await invalidateArticles(itemsByTypes, KCDetails, res);
         await invalidateElearning(itemsByTypes, KCDetails, res);
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingUsers');
-        await invalidatePDFs(items);
+        await invalidatePDFs(items, res);
         await fastly.purgeFinal(itemsByTypes, req, res);
 
         if (app.appInsights) {

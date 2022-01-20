@@ -450,7 +450,7 @@
     };
 
     const keepScrollPositionOnChange = () => {
-        const languageSelector = document.querySelector('.language-selector');
+        const languageSelector = document.querySelector('.language-selector__list:not(.language-selector__list--static)');
         if (!languageSelector) return;
 
         const codeSamples = document.querySelectorAll('.code-sample-standalone, .code-samples');
