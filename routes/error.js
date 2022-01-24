@@ -1,5 +1,5 @@
 const commonContent = require('../helpers/commonContent');
-const minify = require('../helpers/minify');
+const postprocessMarkup = require('../helpers/postprocessMarkup');
 const helper = require('../helpers/helperFunctions');
 const handleCache = require('../helpers/handleCache');
 const smartLink = require('../helpers/smartLink');
@@ -31,7 +31,8 @@ const error = asyncHandler(async (req, res) => {
 
     return res.render('pages/error', {
         req: req,
-        minify: minify,
+        res: res,
+        postprocessMarkup: postprocessMarkup,
         slug: '404',
         isPreview: siteIsPreview,
         language: res.locals.language,

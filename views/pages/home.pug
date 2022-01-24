@@ -11,8 +11,8 @@ block content
                     .autocomplete(data-search-autocomplete='')
                 div.hero__note-link(href="#")&attributes(smartLink?.elementCodename('intro_note')) !{introNote}
         main(id='main')&attributes(smartLink?.elementCodename('signposts')).presentation
-            | !{minify(signposts)}
+            | !{postprocessMarkup(signposts, res)}
         aside.border-top&attributes(smartLink?.elementCodename('support'))
-            .cta !{minify(support)}
+            .cta !{postprocessMarkup(support, res)}
         
     

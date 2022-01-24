@@ -27,9 +27,9 @@ block content
                       if (isPreview)
                         a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${content.system.id}`, target='_blank', rel='noopener') Edit
                     if helper.isNotEmptyRichText(content.introduction.value)
-                      div&attributes(smartLink?.elementCodename('introduction')) !{minify(content.introduction.value)}
+                      div&attributes(smartLink?.elementCodename('introduction')) !{postprocessMarkup(content.introduction.value, res)}
                     if helper.isNotEmptyRichText(content.description.value)
-                      div&attributes(smartLink?.elementCodename('description')) !{minify(content.description.value)}
+                      div&attributes(smartLink?.elementCodename('description')) !{postprocessMarkup(content.description.value, res)}
                     script var trainingCourseCodename='!{content.system.codename}';
                     .article__training-action#trainingAction&attributes(smartLink?.itemId(UIMessages.system.id))
                     

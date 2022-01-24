@@ -6,7 +6,7 @@ const htmlparser2 = require('htmlparser2');
 const cheerio = require('cheerio');
 
 const requestDelivery = require('../helpers/requestDelivery');
-const minify = require('../helpers/minify');
+const postprocessMarkup = require('../helpers/postprocessMarkup');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
 const handleCache = require('../helpers/handleCache');
@@ -165,7 +165,8 @@ const getContent = async (req, res) => {
 
             return {
                 req: req,
-                minify: minify,
+                res: res,
+                postprocessMarkup: postprocessMarkup,
                 slug: slug,
                 isPreview: KCDetails.isPreview,
                 isReference: true,
@@ -292,7 +293,7 @@ const getContent = async (req, res) => {
         req: req,
         res: res,
         moment: moment,
-        minify: minify,
+        postprocessMarkup: postprocessMarkup,
         urlMap: urlMap,
         slug: content && content.length ? content[0].url.value : '',
         isPreview: KCDetails.isPreview,

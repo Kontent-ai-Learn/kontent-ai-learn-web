@@ -269,12 +269,12 @@ const richTextResolverTemplates = {
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
         const imageSrc = item.image.value[0] ? `${item.image.value[0].url}?w=290&fm=pjpg&auto=format` : '';
         let target = 'self';
-        console.log(config.urlPathPrefix)
+        // console.log(config.urlPathPrefix)
         if (item.link__link_to_content_item.value[0] && urlMap) {
             const matchUrlMapItem = urlMap.filter(elem => elem.codename === item.link__link_to_content_item.value[0].system.codename);
 
             if (matchUrlMapItem.length) {
-                console.log(config.urlPathPrefix + matchUrlMapItem[0].url);
+                // console.log(config.urlPathPrefix + matchUrlMapItem[0].url);
                 resolvedUrl = config.urlPathPrefix + matchUrlMapItem[0].url;
 
                 if (matchUrlMapItem[0].type === 'multiplatform_article') {
@@ -553,7 +553,7 @@ const richTextResolverTemplates = {
 ? `
             <img class="lazy lazy--exclude-dnt" src='${placeholderSrc}' data-src="${image}" alt="" data-dpr data-lazy-onload loading="lazy" ${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
             <noscript>
-                <img src="${image}" ${imageWidth && imageHeight ? `style=" width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
+                <img src="${image}" ${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
             </noscript>
         `
 : '';

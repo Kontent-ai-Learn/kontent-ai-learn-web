@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const minify = require('../helpers/minify');
+const postprocessMarkup = require('../helpers/postprocessMarkup');
 const isPreview = require('../helpers/isPreview');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
@@ -96,7 +96,7 @@ router.get('/', async (req, res) => {
 
   return res.render('pages/redirectUrls', {
     req: req,
-    minify: minify,
+    postprocessMarkup: postprocessMarkup,
     isPreview: isPreview(res.locals.previewapikey),
     projectId: res.locals.projectid,
     language: res.locals.language,

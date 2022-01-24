@@ -4,5 +4,5 @@ footer.footer&attributes(smartLink?.itemId(footer.system.id))
             img.footer__logo(src=`${urlPathPrefix}/img/ui/logo-kontent.svg`)
     .footer__wrapper
         if footer
-            .footer__note&attributes(smartLink?.elementCodename('copyright')) !{minify(footer.copyright.value)}
-            .footer__navigation&attributes(smartLink?.elementCodename('external_links')) !{minify(footer.external_links.value)}
+            .footer__note&attributes(smartLink?.elementCodename('copyright')) !{postprocessMarkup(footer.copyright.value, res)}
+            .footer__navigation&attributes(smartLink?.elementCodename('external_links')) !{postprocessMarkup(footer.external_links.value, res)}

@@ -68,20 +68,20 @@ block content
                         .article__introduction
                             if (content.display_mode.value.length && content.display_mode.value[0].name.toLowerCase() === 'step-by-step')
                                 h2.article__heading-introduction(id='a-introduction')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___introduction')) !{UIMessages && UIMessages.article___introduction.value}
-                            div&attributes(smartLink?.elementCodename('introduction')) !{minify(introduction)}
+                            div&attributes(smartLink?.elementCodename('introduction')) !{postprocessMarkup(introduction, res)}
                     if (!containsChangelog)
                         div(data-aside-container='table-of-contents')
                             div(data-aside='table-of-contents')
                                 include ../includes/table-of-contents.pug
                     if (body)
                         .article__body&attributes(smartLink?.elementCodename('content'))
-                            | !{minify(body)}
+                            | !{postprocessMarkup(body, res)}
                         if (containsChangelog)
                             .mixitup-page-list
                     if (nextSteps !== '<p><br></p>')
                         .article__next-steps
                             h2.table-of-contents__whatsnext(id='a-whats-next')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___next_steps')) !{UIMessages && UIMessages.article___next_steps.value}
-                            div&attributes(smartLink?.elementCodename('next_steps')) !{minify(nextSteps)}
+                            div&attributes(smartLink?.elementCodename('next_steps')) !{postprocessMarkup(nextSteps, res)}
                     if (!hideFeedback)
                         div(data-aside-container='feedback')
                             div(data-aside='feedback')

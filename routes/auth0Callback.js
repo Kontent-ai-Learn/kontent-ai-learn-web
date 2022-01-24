@@ -1,5 +1,5 @@
 const commonContent = require('../helpers/commonContent');
-const minify = require('../helpers/minify');
+const postprocessMarkup = require('../helpers/postprocessMarkup');
 const helper = require('../helpers/helperFunctions');
 const handleCache = require('../helpers/handleCache');
 const smartLink = require('../helpers/smartLink');
@@ -27,7 +27,7 @@ const auth0Callback = asyncHandler(async (req, res) => {
 
     return res.render('pages/auth0Callback', {
         req: req,
-        minify: minify,
+        postprocessMarkup: postprocessMarkup,
         slug: '',
         isPreview: siteIsPreview,
         language: res.locals.language,

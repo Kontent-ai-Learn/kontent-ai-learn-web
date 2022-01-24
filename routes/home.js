@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
-const minify = require('../helpers/minify');
+const postprocessMarkup = require('../helpers/postprocessMarkup');
 const isPreview = require('../helpers/isPreview');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
@@ -29,7 +29,8 @@ router.get('/', asyncHandler(async (req, res, next) => {
 
   return res.render('pages/home', {
     req: req,
-    minify: minify,
+    res: res,
+    postprocessMarkup: postprocessMarkup,
     slug: 'home',
     isPreview: siteIsPreview,
     language: res.locals.language,
