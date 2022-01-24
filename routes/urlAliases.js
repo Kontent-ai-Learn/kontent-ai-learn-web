@@ -37,7 +37,8 @@ const urlAliases = async (req, res, next) => {
     });
 
     if (redirectUrl.length) {
-        return res.redirect(301, `${redirectUrl[0].url}${queryParamater ? '?' + queryParamater : ''}`);
+        if (res.locals.urlPathPrefix && redirectUrl[0].url === '/') redirectUrl[0].url = '';
+        return res.redirect(301, `${res.locals.urlPathPrefix}${redirectUrl[0].url}${queryParamater ? '?' + queryParamater : ''}`);
     } else {
         const err = new Error('Not Found');
         err.status = 404;

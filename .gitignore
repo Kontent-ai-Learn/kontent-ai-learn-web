@@ -63,7 +63,7 @@ typings/
 # clinic.js diagnosis
 .clinic/*
 
-public/docs
+public/files
 public/js/*.min.js
 public/css/*.min.css
 helpers/delivery_api.html

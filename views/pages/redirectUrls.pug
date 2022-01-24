@@ -18,7 +18,7 @@ block content
                                 td
                                     ol
                                         each redirect in url.redirectUrls
-                                            li #{redirect.url} 
+                                            li #{urlPathPrefix + redirect.url} 
                                                 if (isPreview && !req.query.pdf)
                                                     a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${redirect.id}`, target='_blank', rel='noopener') Edit
                     else
@@ -38,7 +38,7 @@ block content
                                 td(class=`${isPreview && !req.query.pdf ? 'utilities-table-cell-edit-link-wrapper' : ''}`)
                                     ol
                                         each redirect in url.redirectUrls
-                                            li #{redirect} 
+                                            li #{urlPathPrefix + redirect} 
                                     if (isPreview && !req.query.pdf)
                                         a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${url.id}/element/redirect_urls`, target='_blank', rel='noopener').utilities-table-cell-edit-link Edit
                     else

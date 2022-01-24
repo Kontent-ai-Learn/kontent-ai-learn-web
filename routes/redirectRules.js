@@ -13,7 +13,8 @@ router.get('*', async (req, res, next) => {
     if (rules) {
         for (let i = 0; i < rules.length; i++) {
             if (rules[i].redirect_to && rules[i].redirect_to.value && rules[i].redirect_from && rules[i].redirect_from.value === normalizedUrlPath) {
-                return res.redirect(301, rules[i].redirect_to.value);
+                if (res.locals.urlPathPrefix && rules[i].redirect_to.value === '/') rules[i].redirect_to.value = '';
+                return res.redirect(301, res.locals.urlPathPrefix + rules[i].redirect_to.value);
             }
         }
     }

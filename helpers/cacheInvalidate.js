@@ -121,7 +121,7 @@ const invalidatePDFItem = async (codename, res) => {
 
     for await (const pdf of pdfs) {
         await fastly.purgePDF(pdf.filename, res);
-        fs.unlink(`./public/docs/${pdf.filename}.pdf`, (err) => {
+        fs.unlink(`./public/files/${pdf.filename}.pdf`, (err) => {
             return err;
         });
     }

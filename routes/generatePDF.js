@@ -29,7 +29,7 @@ const pdfIsCached = (fileName) => {
     if (!(items && items.length)) return false;
 
     try {
-        fs.statSync(`./public/docs/${fileName}.pdf`);
+        fs.statSync(`./public/files/${fileName}.pdf`);
         return true; // file exists
     } catch (err) {
         return false;
@@ -74,7 +74,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
 
     if (pfdInCache) {
         logRequest(req, false);
-        return res.redirect(303, `${baseURL}${res.locals.urlPathPrefix}/docs/${fileName}.pdf`);
+        return res.redirect(303, `${baseURL}${res.locals.urlPathPrefix}/files/${fileName}.pdf`);
     }
     helper.removeLogItemCacheKey('api2pdf-cache', 'filename', fileName);
 
@@ -130,8 +130,8 @@ router.get('/', asyncHandler(async (req, res, next) => {
             if (error) return next();
             logRequest(req, true);
             pdfAddCache(pdfResult, fileName, req.query.url, urlMap);
-            await download(pdfResult.pdf, 'public/docs');
-            return res.redirect(303, `${baseURL}${res.locals.urlPathPrefix}/docs/${fileName}.pdf`);
+            await download(pdfResult.pdf, 'public/files');
+            return res.redirect(303, `${baseURL}${res.locals.urlPathPrefix}/files/${fileName}.pdf`);
         })
 }));
 
