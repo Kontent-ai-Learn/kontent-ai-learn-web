@@ -25,29 +25,35 @@ const getChangelogQueryStringCombinations = async (res) => {
   return combinations;
 };
 
-const axiosPurge = async (url) => {
-  const log = {
-    url: url,
-    timestamp: (new Date()).toISOString(),
-    isError: false
-  };
+const axiosPurge = async (domain, path) => {
+  const urlPrefixes = ['', '/learn'];
 
-  try {
-    const purgeResponse = await axios({
-      method: 'purge',
+  for (let i = 0; i < urlPrefixes.length; i++) {
+    if (urlPrefixes[i] && path === '/') path = '';
+    const url = `${domain}${urlPrefixes[i]}${path}`;
+    const log = {
       url: url,
-      headers: {
-          'Fastly-Soft-Purge': '1'
-      }
-    });
-    log.data = purgeResponse.data;
-  } catch (error) {
-    log.isError = true;
-    log.data = error;
-    consola.error('Fastly not available');
-  }
+      timestamp: (new Date()).toISOString(),
+      isError: false
+    };
+    console.log(url);
+    try {
+      const purgeResponse = await axios({
+        method: 'purge',
+        url: url,
+        headers: {
+            'Fastly-Soft-Purge': '1'
+        }
+      });
+      log.data = purgeResponse.data;
+    } catch (error) {
+      log.isError = true;
+      log.data = error;
+      consola.error('Fastly not available');
+    }
 
-  helper.logInCacheKey('fastly-purge', log);
+    helper.logInCacheKey('fastly-purge', log);
+  }
 };
 
 const purge = async (key, res) => {
@@ -61,7 +67,7 @@ const purge = async (key, res) => {
     if (urlMap[i].codename === key) {
       const validDomain = helper.getDomain();
       if (!validDomain) return;
-      await axiosPurge(`${validDomain}${res.locals.urlPathPrefix}${urlMap[i].url}`);
+      await axiosPurge(validDomain, urlMap[i].url);
     }
   }
 };
@@ -76,7 +82,7 @@ const purgeToRedirectUrls = async (urls, res) => {
   if (!validDomain) return;
 
   for (let i = 0; i < redirectUrls.length; i++) {
-    await axiosPurge(`${validDomain}${res.locals.urlPathPrefix}${redirectUrls[i]}`);
+    await axiosPurge(validDomain, redirectUrls[i]);
   }
 };
 
@@ -90,9 +96,9 @@ const purgeRedirectRule = async (codename, res) => {
 
   for (let i = 0; i < redirectRules.length; i++) {
     if (redirectRules[i].system.codename === codename) {
-      await axiosPurge(`${validDomain}${res.locals.urlPathPrefix}${redirectRules[i].redirect_from.value}`);
+      await axiosPurge(validDomain, redirectRules[i].redirect_from.value);
       if (!helper.isAbsoluteUrl(redirectRules[i].redirect_to.value)) {
-        await axiosPurge(`${validDomain}${res.locals.urlPathPrefix}${redirectRules[i].redirect_to.value}`);
+        await axiosPurge(validDomain, redirectRules[i].redirect_to.value);
       }
     }
   }
@@ -107,9 +113,9 @@ const purgeAllUrls = async (res) => {
   if (!validDomain) return;
 
   for (let i = 0; i < uniqueUrls.length; i++) {
-    await axiosPurge(`${validDomain}${res.locals.urlPathPrefix}${uniqueUrls[i]}`);
+    await axiosPurge(validDomain, uniqueUrls[i]);
   }
-  await axiosPurge(`${validDomain}${res.locals.urlPathPrefix}/redirect-urls`);
+  await axiosPurge(validDomain, '/redirect-urls');
 };
 
 const purgeAllTechUrls = async (res) => {
@@ -122,7 +128,7 @@ const purgeAllTechUrls = async (res) => {
 
   for (let i = 0; i < urlMap.length; i++) {
     if (urlMap[i].url.includes('?tech=')) {
-      await axiosPurge(`${validDomain}${res.locals.urlPathPrefix}${urlMap[i].url}`);
+      await axiosPurge(validDomain, urlMap[i].url);
     }
   }
 };
@@ -151,11 +157,11 @@ const purgeFinal = async (itemsByTypes, req, res) => {
   const axiosDomain = helper.getDomain();
 
   if (itemsByTypes.releaseNotes.length && req.app.locals.changelogPath) {
-    await axiosPurge(`${axiosDomain}${res.locals.urlPathPrefix}${req.app.locals.changelogPath}`);
+    await axiosPurge(axiosDomain, req.app.locals.changelogPath);
 
     const changelogQueryStringCombinations = await getChangelogQueryStringCombinations(res);
     for (let i = 0; i < changelogQueryStringCombinations.length; i++) {
-      await axiosPurge(`${axiosDomain}${res.locals.urlPathPrefix}${req.app.locals.changelogPath}?${changelogQueryStringCombinations[i]}`);
+      await axiosPurge(axiosDomain, `${req.app.locals.changelogPath}?${changelogQueryStringCombinations[i]}`);
     }
   }
 
@@ -165,11 +171,11 @@ const purgeFinal = async (itemsByTypes, req, res) => {
   }
 
   if (itemsByTypes.trainingCourses.length && req.app.locals.elearningPath) {
-    await axiosPurge(`${axiosDomain}${res.locals.urlPathPrefix}${req.app.locals.elearningPath}`);
+    await axiosPurge(axiosDomain, req.app.locals.elearningPath);
   }
 
   if (itemsByTypes.articles.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
-    await axiosPurge(`${axiosDomain}${res.locals.urlPathPrefix}/redirect-urls`);
+    await axiosPurge(axiosDomain, '/redirect-urls');
   }
 
   if (itemsByTypes.redirectRules.length) {
@@ -188,9 +194,9 @@ const purgeFinal = async (itemsByTypes, req, res) => {
   }
 };
 
-const purgePDF = async (filename, res) => {
+const purgePDF = async (filename) => {
   const axiosDomain = helper.getDomain();
-  await axiosPurge(`${axiosDomain}${res.locals.urlPathPrefix}/docs/${filename}.pdf`);
+  await axiosPurge(axiosDomain, `/files/${filename}.pdf`);
 };
 
 const preventCaching = (res) => {
