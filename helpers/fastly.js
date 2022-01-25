@@ -36,7 +36,7 @@ const axiosPurge = async (domain, path) => {
       timestamp: (new Date()).toISOString(),
       isError: false
     };
-    console.log(url);
+
     try {
       const purgeResponse = await axios({
         method: 'purge',
