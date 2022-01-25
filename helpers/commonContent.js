@@ -83,6 +83,12 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
+    getTrainingSubscriptions: async (res) => {
+        return await requestDelivery({
+            type: 'training_subscriptions',
+            ...commonContent.getKCDetails(res)
+        });
+    },
     getChangelog: async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
