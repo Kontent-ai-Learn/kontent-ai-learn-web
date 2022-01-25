@@ -28,9 +28,9 @@ jobs:
         npm run test --if-present
 
     - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'learn-web-live-master'
-          slot-name: 'staging'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4ED47288EFBC4F64A76FB5428AAC90FF }}
-          package: .
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'learn-web-live-master'
+        slot-name: 'staging'
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4ED47288EFBC4F64A76FB5428AAC90FF }}
+        package: .
