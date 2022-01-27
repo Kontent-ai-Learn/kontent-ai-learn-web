@@ -48,7 +48,7 @@ const commonContent = {
     getSubNavigation: async (res, codename) => {
         return await requestDelivery({
             type: 'navigation_item',
-            depth: 3,
+            depth: 4,
             codename: codename,
             ...commonContent.getKCDetails(res)
         });

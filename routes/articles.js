@@ -330,7 +330,7 @@ const getContent = async (req, res) => {
     };
 };
 
-router.get(['/other/:article', '/:main', '/:main/:scenario', '/:main/:scenario/:topic', '/:main/:scenario/:topic/:article'], asyncHandler(async (req, res, next) => {
+router.get(['/other/:article', '/:main', '/:main/:scenario', '/:main/:scenario/:topic', '/:main/:scenario/:topic/:article', '/:main/:scenario/:topic/:article/:subarticle'], asyncHandler(async (req, res, next) => {
     const data = await getContent(req, res, next);
     if (data && data.redirectUrl && data.redirectCode) return res.redirect(data.redirectCode, data.redirectUrl);
     if (!data) return next();
