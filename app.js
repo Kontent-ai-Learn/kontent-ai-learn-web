@@ -44,6 +44,16 @@ const api = require('./routes/api');
 
 const app = express();
 
+app.use((req, res, next) => {
+  if (req.path.slice(-1) === '/' && req.path.length > 1) {
+    const query = req.url.slice(req.path.length);
+    const safepath = req.path.slice(0, -1).replace(/\/+/g, '/');
+    return res.redirect(301, `${safepath}${query}`);
+  } else {
+    next();
+  }
+});
+
 app.use(async (req, res, next) => {
   if (req.originalUrl.startsWith('/learn')) {
     res.locals.urlPathPrefix = '/learn';
