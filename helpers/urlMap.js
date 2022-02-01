@@ -131,7 +131,7 @@ const handlePlatformArticle = (settings) => {
 
 const handleNodes = (settings) => {
     const item = settings.item;
-    if (item._raw.system.workflow_step === 'archived') {
+    if (item._raw.system.workflow_step === 'archived' || item.system.type === 'navigation_link') {
         return settings.urlMap;
     }
 

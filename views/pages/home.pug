@@ -9,7 +9,7 @@ block content
                     label.sr-only(for='nav-search') !{UIMessages && UIMessages.search___placeholder.value}
                     input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages && UIMessages.search___placeholder.value)&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
                     .autocomplete(data-search-autocomplete='')
-                div.hero__note-link(href="#")&attributes(smartLink?.elementCodename('intro_note')) !{introNote}
+                div.hero__note-link&attributes(smartLink?.elementCodename('intro_note')) !{postprocessMarkup(introNote, res)}
         main(id='main')&attributes(smartLink?.elementCodename('signposts')).presentation
             | !{postprocessMarkup(signposts, res)}
         aside.border-top&attributes(smartLink?.elementCodename('support'))
