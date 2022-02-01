@@ -6,5 +6,5 @@ block content
                 h1&attributes(smartLink?.elementCodename('title')) !{title}
                 p(data-error-search-title)&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___404_page_results')) !{UIMessages.search___404_page_results.value}
                 .article__search(data-error-search) 
-                div&attributes(smartLink?.elementCodename('content')) !{content} 
+                div&attributes(smartLink?.elementCodename('content')) !{postprocessMarkup(content, res)} 
     script console.log(`#{req.err.stack.replace(/\\/g, '/')}`);
