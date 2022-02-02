@@ -25,7 +25,6 @@ const serviceCheckAll = require('./helpers/serviceCheck/all');
 const home = require('./routes/home');
 const sitemap = require('./routes/sitemap');
 const rss = require('./routes/rss');
-const robots = require('./routes/robots');
 const opensearch = require('./routes/opensearch');
 const urlAliases = require('./routes/urlAliases');
 const redirectUrls = require('./routes/redirectUrls');
@@ -186,7 +185,6 @@ app.use('/', asyncHandler(async (req, res, next) => {
 app.use('/redirect-urls', redirectUrls);
 app.use('/sitemap.xml', sitemap);
 app.use('/rss', rss);
-app.use('/robots.txt', robots);
 app.use('/opensearch.xml', opensearch);
 app.use('/pdf', generatePDF);
 app.get('/urlmap', urlMap);
