@@ -23,7 +23,7 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => 
   let renderAs = 'button';
 
   if (courseInfo.err) {
-    const notification = lms.composeNotification('A user attempt to access to LMS in Kentico Kontent Docs failed with the following error:', courseInfo.err);
+    const notification = lms.composeNotification('A user attempt to access to LMS in Kontent Learn failed with the following error:', courseInfo.err);
     const emailInfo = {
       recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
       subject: 'LMS error notification',
@@ -133,7 +133,7 @@ const getUserFromSubscriptionService = async (req) => {
     err.response.data.userEmail = req?.user.email;
     err.response.data.file = 'helpers/trainingCourseDetail.js';
     err.response.data.method = 'getPrivate';
-    const notification = lms.composeNotification('A user attempt to sign in to Kentico Kontent Docs failed in the Subscription service with the following error:', err.response.data);
+    const notification = lms.composeNotification('A user attempt to sign in to Kontent Learn failed in the Subscription service with the following error:', err.response.data);
     const emailInfo = {
       recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
       subject: 'Failed user sign in notification',

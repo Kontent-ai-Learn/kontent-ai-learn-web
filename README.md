@@ -1,9 +1,9 @@
 ![master](https://github.com/KenticoDocs/kontent-docs-web/actions/workflows/master_kcd-web-live-master(staging).yml/badge.svg)
 ![develop](https://github.com/KenticoDocs/kontent-docs-web/actions/workflows/develop_kcd-web-live-dev(staging).yml/badge.svg)
 
-# Kentico Kontent Documentation - Website
+# Kontent Learn - Website
 
-Kentico Kontent documentation portal, which utilizes [Kentico Kontent](https://app.kontent.ai/) as a source of its content.
+Kontent Learn is an educational portal that uses [Kontent by Kentico](https://app.kontent.ai/) as a source of its content.
 
 ## Overview
 
@@ -16,7 +16,7 @@ Kentico Kontent documentation portal, which utilizes [Kentico Kontent](https://a
 
 1. Node (+npm) installed
 1. Any JavaScript IDE installed
-1. Kentico Kontent account and subscription
+1. Kontent account and subscription
 
 ### Instructions
 
