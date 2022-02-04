@@ -228,9 +228,6 @@ const helper = {
     getCodenameByUrl: (originalUrl, urlMap) => {
         let codename = '';
         let url = originalUrl.split('#')[0];
-        if (url.startsWith('/learn')) {
-            url = url.replace('/learn', '');
-        }
 
         for (let i = 0; i < urlMap.length; i++) {
             if (urlMap[i].url === url) {
@@ -433,7 +430,8 @@ const helper = {
         }
 
         return items;
-    }
+    },
+    addTrailingSlash: (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? '/' : ''
 };
 
 module.exports = helper;

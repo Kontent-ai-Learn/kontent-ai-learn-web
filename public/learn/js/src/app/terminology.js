@@ -79,7 +79,7 @@ window.initTerminology = () => {
             }
 
             if (anchor) {
-                terms[i].setAttribute('href', `${window.helper.setUrlPathPrefix()}${terminologyPath}${anchor}`);
+                terms[i].setAttribute('href', `/learn${terminologyPath}${anchor}`);
                 terms[i].classList.add('term-definition');
             }
         }
@@ -172,7 +172,7 @@ window.initTerminology = () => {
         }
         
         if (anchor) {
-            term.setAttribute('href', `${window.helper.setUrlPathPrefix()}${terminologyPageUrl}#a-${anchor}`);
+            term.setAttribute('href', `/learn${terminologyPageUrl}#a-${anchor}`);
         }
     };
 

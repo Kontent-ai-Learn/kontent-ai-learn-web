@@ -227,7 +227,7 @@ const invalidateHome = async (res, KCDetails) => {
 const invalidateUrlMap = async (res, KCDetails) => {
     handleCache.deleteCache('urlMap', KCDetails);
     if (!isPreview(res.locals.previewapikey)) {
-        await fastly.axiosPurge(helper.getDomain(), '/urlmap');
+        await fastly.axiosPurge(helper.getDomain(), '/learn/urlmap/');
     }
     await handleCache.evaluateCommon(res, ['urlMap']);
 };

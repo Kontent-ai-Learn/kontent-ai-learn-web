@@ -6,7 +6,7 @@ const getUrlMap = require('../helpers/urlMap');
 const urlAliases = async (req, res, next) => {
     const urlSplit = req.originalUrl.split('?');
     const queryParamater = urlSplit[1] ? urlSplit[1] : '';
-    const originalUrl = urlSplit[0].trim().toLowerCase().replace(/\/\s*$/, '');
+    const originalUrl = urlSplit[0].trim().toLowerCase();
     const articles = await handleCache.ensureSingle(res, 'articles', async () => {
         return commonContent.getArticles(res);
     });
@@ -27,8 +27,8 @@ const urlAliases = async (req, res, next) => {
         const aliases = helper.getRedirectUrls(item.redirect_urls);
 
         aliases.forEach(alias => {
-            alias = alias.trim().toLowerCase().replace(/\/\s*$/, '');
-            if (alias === originalUrl) {
+            alias = alias.trim().toLowerCase();
+            if (`/learn${alias}${helper.addTrailingSlash(alias)}` === `${originalUrl}${helper.addTrailingSlash(originalUrl)}`) {
                 redirectUrl = urlMap.filter(url => {
                     return url.codename === item.system.codename;
                 });

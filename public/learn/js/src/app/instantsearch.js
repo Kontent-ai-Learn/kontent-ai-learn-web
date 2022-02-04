@@ -77,7 +77,7 @@ window.initSearch = (() => {
         anchor = '';
     }
     const tech = suggestion.platforms && suggestion.platforms.length === 1 ? `?tech=${window.helper.getTech(suggestion.platforms[0])}` : '';
-    suggestion.resolvedUrl = suggestionUrl.length ? `${window.helper.setUrlPathPrefix()}${suggestionUrl[0].url}${suggestionUrl[0].url.indexOf('?tech') === -1 ? tech : ''}${suggestion.section !== 'API' ? anchor : ''}` : '';
+    suggestion.resolvedUrl = suggestionUrl.length ? `${suggestionUrl[0].url}${suggestionUrl[0].url.indexOf('?tech') === -1 ? tech : ''}${suggestion.section !== 'API' ? anchor : ''}` : '';
     
     let section = "";
 
@@ -378,7 +378,7 @@ window.initSearch = (() => {
         for (let i = 0; i < iterations; i++) {
           const suggestionUrl = window.urlMap.filter(item => item.codename === hits[i].codename);
           if (suggestionUrl.length) {
-              hits[i].resolvedUrl = window.helper.setUrlPathPrefix() + suggestionUrl[0].url;
+              hits[i].resolvedUrl = suggestionUrl[0].url;
           }
           suggestionsHTML += `<li><a href="${hits[i].resolvedUrl}">${hits[i].title}</a></li>`;
         }

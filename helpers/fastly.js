@@ -26,11 +26,7 @@ const getChangelogQueryStringCombinations = async (res) => {
 };
 
 const axiosPurge = async (domain, path) => {
-  const urlPrefixes = ['', '/learn'];
-
-  for (let i = 0; i < urlPrefixes.length; i++) {
-    if (urlPrefixes[i] && path === '/') path = '';
-    const url = `${domain}${urlPrefixes[i]}${path}`;
+    const url = `${domain}${path}`;
     const log = {
       url: url,
       timestamp: (new Date()).toISOString(),
@@ -53,7 +49,6 @@ const axiosPurge = async (domain, path) => {
     }
 
     helper.logInCacheKey('fastly-purge', log);
-  }
 };
 
 const purge = async (key, res) => {
@@ -115,7 +110,7 @@ const purgeAllUrls = async (res) => {
   for (let i = 0; i < uniqueUrls.length; i++) {
     await axiosPurge(validDomain, uniqueUrls[i]);
   }
-  await axiosPurge(validDomain, '/redirect-urls');
+  await axiosPurge(validDomain, '/learn/redirect-urls');
 };
 
 const purgeAllTechUrls = async (res) => {
@@ -175,7 +170,7 @@ const purgeFinal = async (itemsByTypes, req, res) => {
   }
 
   if (itemsByTypes.articles.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
-    await axiosPurge(axiosDomain, '/redirect-urls');
+    await axiosPurge(axiosDomain, '/learn/redirect-urls');
   }
 
   if (itemsByTypes.redirectRules.length) {
@@ -208,13 +203,13 @@ const preventCaching = (res) => {
 const handleGlobalCaching = (req, res) => {
   res.setHeader('Arr-Disable-Session-Affinity', 'True');
 
-  if (req.originalUrl.startsWith('/cache-invalidate') || req.originalUrl.startsWith('/redirect-urls') || req.originalUrl.startsWith('/service-check')) {
+  if (req.originalUrl.startsWith('/learn/cache-invalidate') || req.originalUrl.startsWith('/learn/redirect-urls') || req.originalUrl.startsWith('/learn/service-check')) {
     res.setHeader('Cache-Control', 'no-store, max-age=0');
   } else {
     res.setHeader('Cache-Control', 'max-age=60');
   }
 
-  if (!(isPreview(res.locals.previewapikey) || (req.originalUrl.indexOf('/cache-invalidate') > -1))) {
+  if (!(isPreview(res.locals.previewapikey) || (req.originalUrl.indexOf('/learn/cache-invalidate') > -1))) {
     // https://docs.fastly.com/en/guides/serving-stale-content#manually-enabling-serve-stale
     // update the content after 24h; serve stale for 1d after max-age passes; show stale for 3d if origin down
     res.setHeader('Surrogate-Control', 'max-age=86400, stale-while-revalidate=86400, stale-if-error=259200');

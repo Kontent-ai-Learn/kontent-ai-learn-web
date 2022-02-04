@@ -108,9 +108,9 @@ const getContent = async (req, res) => {
         return await commonContent.getHome(res);
     });
 
-    let slug = req.originalUrl.split('/')[1];
+    let slug = req.originalUrl.split('/')[2];
     slug = slug.split('?')[0];
-    const subnavCodename = helper.getCodenameByUrl(`/${slug}`, urlMap);
+    const subnavCodename = helper.getCodenameByUrl(`/learn/${slug}/`, urlMap);
 
     let subNavigation;
     if (subnavCodename) {
@@ -154,7 +154,7 @@ const getContent = async (req, res) => {
         if (content[0].system.type === 'navigation_item' && content[0].subpages.value.length) {
             return {
                 redirectCode: 301,
-                redirectUrl: `${pathUrl}/${content[0].subpages.value[0].url.value}${queryHash ? '?' + queryHash : ''}`
+                redirectUrl: `${pathUrl}${content[0].subpages.value[0].url.value}/${queryHash ? '?' + queryHash : ''}`
             }
         } else if (content[0].system.type === 'training_course') {
             view = 'pages/trainingCourse';

@@ -1,14 +1,10 @@
 (() => {
-  const setUrlPathPrefix = () => {
-    return window.location.pathname.startsWith('/learn') ? '/learn' : '';
-  };
-
   const initAuth0 = async () => {
     const auth0 = {};
     const auth0Settings = {
         domain: window.auth0Config.domain,
         client_id: window.auth0Config.clientID,
-        redirect_uri: `${location.protocol}//${location.host}${setUrlPathPrefix()}/callback`,
+        redirect_uri: `${location.protocol}//${location.host}/learn/callback/`,
         scope: 'openid email profile'
     };
     auth0.client = await createAuth0Client(auth0Settings);
@@ -36,32 +32,32 @@
   const config = [{
     codename: 'kkproject',
     title: 'Kentico Kontent project',
-    endpoint: `${setUrlPathPrefix()}/service-check/kk-project`
+    endpoint: '/learn/service-check/kk-project/'
   }, {
     codename: 'algolia',
     title: 'Algolia search',
-    endpoint: `${setUrlPathPrefix()}/service-check/algolia`,
+    endpoint: '/learn/service-check/algolia/',
   }, {
     codename: 'subscriptionService',
     title: 'Subscription service',
-    endpoint: `${setUrlPathPrefix()}/service-check/subscription-service`,
+    endpoint: '/learn/service-check/subscription-service/',
   }, {
     codename: 'apiReferences',
     title: 'API References',
-    endpoint: `${setUrlPathPrefix()}/service-check/api-references`,
+    endpoint: '/learn/service-check/api-references/',
   }, {
     codename: 'tlms',
     title: 'TLMS',
-    endpoint: `${setUrlPathPrefix()}/service-check/tlms`,
+    endpoint: '/learn/service-check/tlms/',
   }, {
     codename: 'auth0',
     title: 'Auth0',
-    endpoint: `${setUrlPathPrefix()}/service-check/auth0`,
+    endpoint: '/learn/service-check/auth0/',
     callback: initAuth0
   }, {
     codename: 'sendgrid',
     title: 'Sendgrid',
-    endpoint: `${setUrlPathPrefix()}/service-check/sendgrid`,
+    endpoint: '/learn/service-check/sendgrid/',
   }];
 
   const buidlUI = () => {

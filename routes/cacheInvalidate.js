@@ -87,7 +87,7 @@ router.get('/keys/:key/invalidate', asyncHandler(async (req, res) => {
         await fastly.purgeAllUrls(res);
     }
 
-    return res.redirect(303, '/cache-invalidate/keys');
+    return res.redirect(303, '/learn/cache-invalidate/keys/');
 }));
 
 module.exports = router;

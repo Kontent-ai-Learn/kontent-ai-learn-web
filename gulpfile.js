@@ -45,72 +45,72 @@ const prismFiles = [
 
 gulp.task('js-app', () => {
   return gulp.src([
-      'public/js/src/app/polyfills.js',
-      'public/js/src/app/helper.js',
-      'public/js/src/app/dpr.js',
-      'public/js/src/app/items-to-show.js',
-      'public/js/src/app/data-toggle.js',
-      'public/js/src/app/sub-navigation.js',
-      'public/js/src/app/language-selector.js',
-      'public/js/src/app/tables.js',
+      'public/learn/js/src/app/polyfills.js',
+      'public/learn/js/src/app/helper.js',
+      'public/learn/js/src/app/dpr.js',
+      'public/learn/js/src/app/items-to-show.js',
+      'public/learn/js/src/app/data-toggle.js',
+      'public/learn/js/src/app/sub-navigation.js',
+      'public/learn/js/src/app/language-selector.js',
+      'public/learn/js/src/app/tables.js',
       ...prismFiles,
-      'public/js/src/app/lazy-load.js',
-      'public/js/src/app/table-of-contents.js',
-      'public/js/src/app/gtag-events.js',
-      'public/js/src/app/intercom.js',
-      'public/js/src/app/feedback.js',
-      'public/js/src/app/helper-form.js',
-      'public/js/src/app/form-labels.js',
-      'public/js/src/app/form-feedback.js',
-      'public/js/src/app/preview-warning.js',
-      'public/js/src/app/icon-tooltip.js',
-      'public/js/src/app/button.js',
-      'public/js/src/app/code-sample.js',
-      'public/js/src/app/terminology.js',
-      'public/js/src/app/display-mode.js',
-      'public/js/src/app/aside.js',
-      'public/js/src/app/pdf.js',
-      'public/js/src/app/instantsearch.js',
-      'public/js/src/app/multitech-articles.js',
-      'public/js/src/app/video.js',
+      'public/learn/js/src/app/lazy-load.js',
+      'public/learn/js/src/app/table-of-contents.js',
+      'public/learn/js/src/app/gtag-events.js',
+      'public/learn/js/src/app/intercom.js',
+      'public/learn/js/src/app/feedback.js',
+      'public/learn/js/src/app/helper-form.js',
+      'public/learn/js/src/app/form-labels.js',
+      'public/learn/js/src/app/form-feedback.js',
+      'public/learn/js/src/app/preview-warning.js',
+      'public/learn/js/src/app/icon-tooltip.js',
+      'public/learn/js/src/app/button.js',
+      'public/learn/js/src/app/code-sample.js',
+      'public/learn/js/src/app/terminology.js',
+      'public/learn/js/src/app/display-mode.js',
+      'public/learn/js/src/app/aside.js',
+      'public/learn/js/src/app/pdf.js',
+      'public/learn/js/src/app/instantsearch.js',
+      'public/learn/js/src/app/multitech-articles.js',
+      'public/learn/js/src/app/video.js',
       'node_modules/basiclightbox/dist/basicLightbox.min.js',
-      'public/js/src/app/lightbox.js',
-      'public/js/src/app/kontent-smart-link.js',
-      'public/js/src/app/trigger-on-url-map.js',
-      'public/js/src/app/scrollto.js',
+      'public/learn/js/src/app/lightbox.js',
+      'public/learn/js/src/app/kontent-smart-link.js',
+      'public/learn/js/src/app/trigger-on-url-map.js',
+      'public/learn/js/src/app/scrollto.js',
       'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
-      'public/js/src/app/training-course.js',
-      'public/js/src/app/auth0.js',
+      'public/learn/js/src/app/training-course.js',
+      'public/learn/js/src/app/auth0.js',
       'node_modules/@splidejs/splide/dist/js/splide.js',
-      'public/js/src/app/carousel.js',
+      'public/learn/js/src/app/carousel.js',
     ])
     .pipe(concat('app.js'))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/js'))
+    .pipe(gulp.dest('public/learn/js'))
 });
 
 gulp.task('js-reference', () => {
   return gulp.src([
-      'public/js/src/app/polyfills.js',
-      'public/js/src/app/helper.js',
-      'public/js/src/app/dpr.js',
-      'public/js/src/app/data-toggle.js',
-      'public/js/src/app/intercom.js',
+      'public/learn/js/src/app/polyfills.js',
+      'public/learn/js/src/app/helper.js',
+      'public/learn/js/src/app/dpr.js',
+      'public/learn/js/src/app/data-toggle.js',
+      'public/learn/js/src/app/intercom.js',
       ...prismFiles,
-      'public/js/src/app/preview-warning.js',
-      'public/js/src/app/icon-tooltip.js',
-      'public/js/src/app/api-reference.js',
-      'public/js/src/app/button.js',
-      'public/js/src/app/code-sample.js',
-      'public/js/src/app/instantsearch.js',
-      'public/js/src/app/video.js',
+      'public/learn/js/src/app/preview-warning.js',
+      'public/learn/js/src/app/icon-tooltip.js',
+      'public/learn/js/src/app/api-reference.js',
+      'public/learn/js/src/app/button.js',
+      'public/learn/js/src/app/code-sample.js',
+      'public/learn/js/src/app/instantsearch.js',
+      'public/learn/js/src/app/video.js',
       'node_modules/basiclightbox/dist/basicLightbox.min.js',
-      'public/js/src/app/lightbox.js',
-      'public/js/src/app/kontent-smart-link.js',
-      'public/js/src/app/trigger-on-url-map.js'
+      'public/learn/js/src/app/lightbox.js',
+      'public/learn/js/src/app/kontent-smart-link.js',
+      'public/learn/js/src/app/trigger-on-url-map.js'
     ])
     .pipe(concat('apireference.js'))
     .pipe(babel({
@@ -120,16 +120,16 @@ gulp.task('js-reference', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/js'))
+    .pipe(gulp.dest('public/learn/js'))
 });
 
 gulp.task('js-changelog', () => {
   return gulp.src([
       'node_modules/mixitup/dist/mixitup.min.js',
-      'public/js/src/filter/mixitup/mixitup-multifilter.js',
-      'public/js/src/filter/mixitup/mixitup-pagination.js',
-      'public/js/src/filter/helper-filter.js',
-      'public/js/src/filter/filter-changelog.js'
+      'public/learn/js/src/filter/mixitup/mixitup-multifilter.js',
+      'public/learn/js/src/filter/mixitup/mixitup-pagination.js',
+      'public/learn/js/src/filter/helper-filter.js',
+      'public/learn/js/src/filter/filter-changelog.js'
     ])
     .pipe(concat('changelog.js'))
     .pipe(babel({
@@ -139,14 +139,14 @@ gulp.task('js-changelog', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/js'))
+    .pipe(gulp.dest('public/learn/js'))
 });
 
 gulp.task('js-elearning', () => {
   return gulp.src([
       'node_modules/mixitup/dist/mixitup.min.js',
-      'public/js/src/filter/helper-filter.js',
-      'public/js/src/filter/filter-elearning.js'
+      'public/learn/js/src/filter/helper-filter.js',
+      'public/learn/js/src/filter/filter-elearning.js'
     ])
     .pipe(concat('elearning.js'))
     .pipe(babel({
@@ -156,20 +156,20 @@ gulp.task('js-elearning', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/js'))
+    .pipe(gulp.dest('public/learn/js'))
 });
 
 gulp.task('js-service-check', () => {
   return gulp.src([
       'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
-      'public/js/src/service-check/service-check.js'
+      'public/learn/js/src/service-check/service-check.js'
     ])
     .pipe(concat('service-check.js'))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/js'))
+    .pipe(gulp.dest('public/learn/js'))
 });
 
 gulp.task('js-algolia', () => {
@@ -182,7 +182,7 @@ gulp.task('js-algolia', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/js'))
+    .pipe(gulp.dest('public/learn/js'))
 });
 
 gulp.task('js-search-insights', () => {
@@ -193,7 +193,7 @@ gulp.task('js-search-insights', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/js'))
+    .pipe(gulp.dest('public/learn/js'))
 });
 
 gulp.task('js-kontentsmartlink', () => {
@@ -205,54 +205,54 @@ gulp.task('js-kontentsmartlink', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/js'))
+    .pipe(gulp.dest('public/learn/js'))
 });
 
 gulp.task('css-app', () => {
   return gulp.src([
-      'public/css/src/general/reset.less',
-      'public/css/src/general/fonts.less',
-      'public/css/src/general/kentico-icons.less',
-      'public/css/src/general/utilities.less',
-      'public/css/src/components/navigation.less',
-      'public/css/src/components/footer.less',
-      'public/css/src/components/data-toggle.less',
-      'public/css/src/components/sub-navigation.less',
-      'public/css/src/components/article.less',
-      'public/css/src/components/basic-lightbox.less',
-      'public/css/src/components/term-tooltip.less',
-      'public/css/src/components/callout.less',
-      'public/css/src/components/embed.less',
-      'public/css/src/components/table.less',
-      'public/css/src/components/table-of-contents.less',
-      'public/css/src/components/language-selector.less',
-      'public/css/src/components/code-samples.less',
-      'public/css/src/components/anchor-copy.less',
-      'public/css/src/components/prism.less',
-      'public/css/src/components/suggestion.less',
-      'public/css/src/components/hero.less',
-      'public/css/src/components/presentation.less',
-      'public/css/src/components/selection.less',
-      'public/css/src/components/cta.less',
-      'public/css/src/components/button.less',
-      'public/css/src/components/feedback.less',
-      'public/css/src/components/feedback-form.less',
-      'public/css/src/components/form.less',
-      'public/css/src/components/infobar.less',
-      'public/css/src/components/filter.less',
-      'public/css/src/components/icon.less',
-      'public/css/src/components/preview-warning.less',
-      'public/css/src/components/display-mode.less',
-      'public/css/src/components/aside.less',
-      'public/css/src/components/mixitup.less',
-      'public/css/src/components/items-to-show.less',
-      'public/css/src/components/edit-link.less',
-      'public/css/src/components/autocomplete.less',
-      'public/css/src/components/video-controls.less',
-      'public/css/src/components/quote.less',
-      'public/css/src/general/print.less',
+      'public/learn/css/src/general/reset.less',
+      'public/learn/css/src/general/fonts.less',
+      'public/learn/css/src/general/kentico-icons.less',
+      'public/learn/css/src/general/utilities.less',
+      'public/learn/css/src/components/navigation.less',
+      'public/learn/css/src/components/footer.less',
+      'public/learn/css/src/components/data-toggle.less',
+      'public/learn/css/src/components/sub-navigation.less',
+      'public/learn/css/src/components/article.less',
+      'public/learn/css/src/components/basic-lightbox.less',
+      'public/learn/css/src/components/term-tooltip.less',
+      'public/learn/css/src/components/callout.less',
+      'public/learn/css/src/components/embed.less',
+      'public/learn/css/src/components/table.less',
+      'public/learn/css/src/components/table-of-contents.less',
+      'public/learn/css/src/components/language-selector.less',
+      'public/learn/css/src/components/code-samples.less',
+      'public/learn/css/src/components/anchor-copy.less',
+      'public/learn/css/src/components/prism.less',
+      'public/learn/css/src/components/suggestion.less',
+      'public/learn/css/src/components/hero.less',
+      'public/learn/css/src/components/presentation.less',
+      'public/learn/css/src/components/selection.less',
+      'public/learn/css/src/components/cta.less',
+      'public/learn/css/src/components/button.less',
+      'public/learn/css/src/components/feedback.less',
+      'public/learn/css/src/components/feedback-form.less',
+      'public/learn/css/src/components/form.less',
+      'public/learn/css/src/components/infobar.less',
+      'public/learn/css/src/components/filter.less',
+      'public/learn/css/src/components/icon.less',
+      'public/learn/css/src/components/preview-warning.less',
+      'public/learn/css/src/components/display-mode.less',
+      'public/learn/css/src/components/aside.less',
+      'public/learn/css/src/components/mixitup.less',
+      'public/learn/css/src/components/items-to-show.less',
+      'public/learn/css/src/components/edit-link.less',
+      'public/learn/css/src/components/autocomplete.less',
+      'public/learn/css/src/components/video-controls.less',
+      'public/learn/css/src/components/quote.less',
+      'public/learn/css/src/general/print.less',
       'node_modules/@splidejs/splide/dist/css/splide-core.min.css',
-      'public/css/src/components/carousel.less',
+      'public/learn/css/src/components/carousel.less',
     ])
     .pipe(concat('app.less'))
     .pipe(less({
@@ -262,28 +262,28 @@ gulp.task('css-app', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('./public/css'));
+    .pipe(gulp.dest('./public/learn/css'));
 });
 
 gulp.task('css-reference', () => {
   return gulp.src([
-      'public/css/src/general/reset.less',
-      'public/css/src/general/fonts.less',
-      'public/css/src/general/kentico-icons.less',
-      'public/css/src/general/utilities.less',
-      'public/css/src/components/footer.less',
-      'public/css/src/components/data-toggle.less',
-      'public/css/src/components/api-reference.less',
-      'public/css/src/components/navigation.less',
-      'public/css/src/components/suggestion.less',
-      'public/css/src/components/basic-lightbox.less',
-      'public/css/src/components/callout.less',
-      'public/css/src/components/icon.less',
-      'public/css/src/components/prism-reference.less',
-      'public/css/src/components/preview-warning.less',
-      'public/css/src/components/autocomplete.less',
-      'public/css/src/components/video-controls.less',
-      'public/css/src/general/print.less'
+      'public/learn/css/src/general/reset.less',
+      'public/learn/css/src/general/fonts.less',
+      'public/learn/css/src/general/kentico-icons.less',
+      'public/learn/css/src/general/utilities.less',
+      'public/learn/css/src/components/footer.less',
+      'public/learn/css/src/components/data-toggle.less',
+      'public/learn/css/src/components/api-reference.less',
+      'public/learn/css/src/components/navigation.less',
+      'public/learn/css/src/components/suggestion.less',
+      'public/learn/css/src/components/basic-lightbox.less',
+      'public/learn/css/src/components/callout.less',
+      'public/learn/css/src/components/icon.less',
+      'public/learn/css/src/components/prism-reference.less',
+      'public/learn/css/src/components/preview-warning.less',
+      'public/learn/css/src/components/autocomplete.less',
+      'public/learn/css/src/components/video-controls.less',
+      'public/learn/css/src/general/print.less'
     ])
     .pipe(concat('apireference.less'))
     .pipe(less({
@@ -293,12 +293,12 @@ gulp.task('css-reference', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('./public/css'));
+    .pipe(gulp.dest('./public/learn/css'));
 });
 
 gulp.task('css-service-check', () => {
   return gulp.src([
-      'public/css/src/general/service-check.less',
+      'public/learn/css/src/general/service-check.less',
     ])
     .pipe(concat('service-check.less'))
     .pipe(less({
@@ -308,7 +308,7 @@ gulp.task('css-service-check', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('./public/css'));
+    .pipe(gulp.dest('./public/learn/css'));
 });
 
 gulp.task('css-kontentsmartlink', () => {
@@ -323,7 +323,7 @@ gulp.task('css-kontentsmartlink', () => {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('./public/css'));
+    .pipe(gulp.dest('./public/learn/css'));
 });
 
 gulp.task('reload', (done) => {
@@ -336,10 +336,10 @@ gulp.task('build-js-filer', gulp.parallel(['js-changelog', 'js-elearning']));
 gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service-check']));
 
 gulp.task('watch', (done) => {
-  gulp.watch('public/js/src/app/*.js', gulp.series(['build-js-app', 'reload']));
-  gulp.watch('public/js/src/filter/*.js', gulp.series(['build-js-filer', 'reload']));
-  gulp.watch('public/js/src/service-check/*.js', gulp.series(['js-service-check', 'reload']));
-  gulp.watch('public/css/src/**/*.less', gulp.series(['build-css', 'reload']));
+  gulp.watch('public/learn/js/src/app/*.js', gulp.series(['build-js-app', 'reload']));
+  gulp.watch('public/learn/js/src/filter/*.js', gulp.series(['build-js-filer', 'reload']));
+  gulp.watch('public/learn/js/src/service-check/*.js', gulp.series(['js-service-check', 'reload']));
+  gulp.watch('public/learn/css/src/**/*.less', gulp.series(['build-css', 'reload']));
   done();
 });
 
@@ -354,7 +354,7 @@ gulp.task('browser-sync', (done) => {
 gulp.task('observe', async () => {
   return nodemon({
     script: 'server.js',
-    ignore: ['helpers/redoc-cli/*.json', 'public/**', 'gulpfile.js']
+    ignore: ['helpers/redoc-cli/*.json', 'public/learn/**', 'gulpfile.js']
   }).on('start', () => {
       if (!nodemonStarted) {
         nodemonStarted = true;

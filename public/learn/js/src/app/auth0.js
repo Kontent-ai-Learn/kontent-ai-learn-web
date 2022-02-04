@@ -3,7 +3,7 @@ const auth0 = {};
 const auth0Settings = {
     domain: window.auth0Config.domain,
     client_id: window.auth0Config.clientID,
-    redirect_uri: `${location.protocol}//${location.host}${window.helper.setUrlPathPrefix()}/callback`,
+    redirect_uri: `${location.protocol}//${location.host}/learn/callback`,
     scope: 'openid email profile',
     //cacheLocation: 'localstorage'
 };
@@ -52,7 +52,7 @@ auth0.login = async () => {
 
 auth0.logout = () => {
     auth0.client.logout({
-        returnTo: `${location.protocol}//${location.host}${window.helper.setUrlPathPrefix()}${window.auth0Config.logoutUrl}`
+        returnTo: `${location.protocol}//${location.host}/learn${window.auth0Config.logoutUrl}`
     });
 };
 
