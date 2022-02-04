@@ -52,7 +52,7 @@ auth0.login = async () => {
 
 auth0.logout = () => {
     auth0.client.logout({
-        returnTo: `${location.protocol}//${location.host}/learn${window.auth0Config.logoutUrl}`
+        returnTo: `${location.protocol}//${location.host}${window.auth0Config.logoutUrl}`
     });
 };
 
