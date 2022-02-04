@@ -29,7 +29,7 @@ const pdfIsCached = (fileName) => {
     if (!(items && items.length)) return false;
 
     try {
-        fs.statSync(`./public/files/${fileName}.pdf`);
+        fs.statSync(`./public/learn/files/${fileName}.pdf`);
         return true; // file exists
     } catch (err) {
         return false;

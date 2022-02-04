@@ -79,7 +79,7 @@ window.initTerminology = () => {
             }
 
             if (anchor) {
-                terms[i].setAttribute('href', `/learn${terminologyPath}${anchor}`);
+                terms[i].setAttribute('href', `${terminologyPath}${anchor}`);
                 terms[i].classList.add('term-definition');
             }
         }
