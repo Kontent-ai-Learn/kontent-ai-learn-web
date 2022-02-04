@@ -3,7 +3,7 @@ const auth0 = {};
 const auth0Settings = {
     domain: window.auth0Config.domain,
     client_id: window.auth0Config.clientID,
-    redirect_uri: `${location.protocol}//${location.host}/learn/callback`,
+    redirect_uri: `${location.protocol}//${location.host}/learn/callback/`,
     scope: 'openid email profile',
     //cacheLocation: 'localstorage'
 };
