@@ -1,7 +1,7 @@
 footer.footer&attributes(smartLink?.itemId(footer.system.id))
     .footer__wrapper
         a(href='https://www.kontent.ai', rel='noreferrer', target='_blank')
-            img.footer__logo(src=`${urlPathPrefix}/img/ui/logo-kontent.svg`)
+            img.footer__logo(src='/img/ui/logo-kontent.svg')
     .footer__wrapper
         if footer
             .footer__note&attributes(smartLink?.elementCodename('copyright')) !{postprocessMarkup(footer.copyright.value, res)}

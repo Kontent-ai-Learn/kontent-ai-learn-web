@@ -74,7 +74,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
 
     if (pfdInCache) {
         logRequest(req, false);
-        return res.redirect(303, `${baseURL}${res.locals.urlPathPrefix}/files/${fileName}.pdf`);
+        return res.redirect(303, `${baseURL}/files/${fileName}.pdf`);
     }
     helper.removeLogItemCacheKey('api2pdf-cache', 'filename', fileName);
 
@@ -131,7 +131,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
             logRequest(req, true);
             pdfAddCache(pdfResult, fileName, req.query.url, urlMap);
             await download(pdfResult.pdf, 'public/files');
-            return res.redirect(303, `${baseURL}${res.locals.urlPathPrefix}/files/${fileName}.pdf`);
+            return res.redirect(303, `${baseURL}/files/${fileName}.pdf`);
         })
 }));
 

@@ -9,7 +9,6 @@ const getConfig = (res) => {
         isPreview: isPreview(res.locals.previewapikey),
         projectid: res.locals.projectid,
         language: res.locals.language,
-        urlPathPrefix: res.locals.urlPathPrefix
     }
 };
 

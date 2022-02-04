@@ -33,11 +33,11 @@ const resolveLinkUrlsInElement = (element, config) => {
         }
 
         if (resolvedUrl.length > 0) {
-            resolvedUrl = `${config.urlPathPrefix}${resolvedUrl[0].url}${getQueryString(resolvedUrl[0].type)}`;
+            resolvedUrl = `${resolvedUrl[0].url}${getQueryString(resolvedUrl[0].type)}`;
         } else if (link.type === 'term_definition') {
             resolvedUrl = `#term-definition-${link.codename}`;
         } else {
-            resolvedUrl = `${config.urlPathPrefix}/page-not-found`;
+            resolvedUrl = '/page-not-found';
         }
 
         if (element.value && resolvedUrl) {
@@ -55,11 +55,11 @@ const linksResolverTemplates = {
         }
 
         if (url.length > 0) {
-            return `${config.urlPathPrefix}${url[0].url}${getQueryString(url[0].type)}`;
+            return `${url[0].url}${getQueryString(url[0].type)}`;
         } else if (item.type === 'term_definition') {
             return `#term-definition-${item.codename}`;
         } else {
-            return `${config.urlPathPrefix}/page-not-found`;
+            return '/page-not-found';
         }
     },
     resolveInnerRichTextLinks: (item, config) => {

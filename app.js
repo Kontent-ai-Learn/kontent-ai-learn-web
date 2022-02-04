@@ -13,7 +13,6 @@ const axios = require('axios');
 const cache = require('memory-cache');
 const util = require('util');
 const { setIntervalAsync } = require('set-interval-async/dynamic');
-const rewrite = require('express-urlrewrite');
 
 const helper = require('./helpers/helperFunctions');
 const appHelper = require('./helpers/app');
@@ -42,28 +41,6 @@ const auth0Callback = require('./routes/auth0Callback');
 const api = require('./routes/api');
 
 const app = express();
-
-app.use((req, res, next) => {
-  if (req.path.slice(-1) === '/' && req.path.length > 1) {
-    const query = req.url.slice(req.path.length);
-    const safepath = req.path.slice(0, -1).replace(/\/+/g, '/');
-    return res.redirect(301, `${safepath}${query}`);
-  } else {
-    next();
-  }
-});
-
-app.use(async (req, res, next) => {
-  if (req.originalUrl.startsWith('/learn')) {
-    res.locals.urlPathPrefix = '/learn';
-  } else {
-    res.locals.urlPathPrefix = '';
-  }
-  next();
-});
-
-app.use(rewrite(/^\/learn(.+)/, '$1'));
-app.use(rewrite(/^\/learn/, '/'));
 
 // Azure Application Insights monitors
 if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
@@ -140,7 +117,7 @@ if (process.env.isProduction === 'false') {
         if (appInsights && appInsights.defaultClient) {
           appInsights.defaultClient.trackTrace({ message: `SERVICE_CHECK_ERROR: ${JSON.stringify(serviceCheckResults)}` });
         }
-        return res.redirect(303, `${process.env.baseURL}${res.locals.urlPathPrefix}/service-check`);
+        return res.redirect(303, `${process.env.baseURL}/service-check`);
       }
     }
     next();

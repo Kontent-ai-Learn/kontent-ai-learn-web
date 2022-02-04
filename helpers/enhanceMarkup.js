@@ -35,7 +35,7 @@ const processLinks = ($, config) => {
     $('a[data-item-id][href=""]').each(function () {
         const $that = $(this);
         $that.removeAttr('data-item-id');
-        $that.attr('href', `${config.urlPathPrefix}/page-not-found`);
+        $that.attr('href', '/page-not-found');
     });
     $('a[target="_blank"]:not([data-lightbox-embed]):not(.edit-link)').each(function () {
         $(this).addClass('a-blank');

@@ -25,7 +25,7 @@ block content
                             if (readingTime)
                                 .article__reading-time !{readingTime} min read
                         if (!req.query.pdf && !containsChangelog && process.env['Api2Pdf.ApiKey'])
-                            a(data-pdf-link, href=`${urlPathPrefix}/pdf?url=${urlPathPrefix}${req.originalUrl}`, target='_blank')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___download_pdf')) #{UIMessages.article___download_pdf.value}
+                            a(data-pdf-link, href=`/pdf?url=${req.originalUrl}`, target='_blank')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___download_pdf')) #{UIMessages.article___download_pdf.value}
                         if (req.query.pdf)
                             .article__tech(data-platform-note)
                         if (isPreview && !req.query.pdf)
@@ -63,7 +63,7 @@ block content
                                 - var highlighIndex = 0; availablePlatforms.forEach((item, index) => { if (preselectedPlatform === item.slug) { highlighIndex = index } });
                                 each item, index in availablePlatforms
                                     li.language-selector__item
-                                        a(href=`${urlPathPrefix}${req.path}?tech=${item.slug}`, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=UIMessages.technology_picker_tooltip.value.replace('{TechnologyName}', item.title), class=`language-selector__link${index === highlighIndex ? ' language-selector__link--active' : ''}`)
+                                        a(href=`${req.path}?tech=${item.slug}`, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=UIMessages.technology_picker_tooltip.value.replace('{TechnologyName}', item.title), class=`language-selector__link${index === highlighIndex ? ' language-selector__link--active' : ''}`)
                     if (introduction !== '<p><br></p>')
                         .article__introduction
                             if (content.display_mode.value.length && content.display_mode.value[0].name.toLowerCase() === 'step-by-step')

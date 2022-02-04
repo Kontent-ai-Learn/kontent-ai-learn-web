@@ -23,7 +23,7 @@ router.get('/:codenames', asyncHandler(async (req, res, next) => {
         resolvedUrl = helper.preserveQueryString(resolvedUrl, req.query);
 
         if (resolvedUrl) {
-            return res.redirect(303, `${res.locals.urlPathPrefix}${resolvedUrl}`);
+            return res.redirect(303, resolvedUrl);
         } else {
             return next();
         }

@@ -166,29 +166,6 @@ const helper = {
 
         return domain;
     },
-    urlPrefixLinks: (content, res) => {
-        const $ = cheerio.load(content);
-        const $elems = $('a[href^="/"]');
-
-        $elems.each(function () {
-            const $that = $(this);
-            let href = $that.attr('href');
-
-            if (res.locals.urlPathPrefix && !href.startsWith('/learn')) {
-                href = `/learn${href}`;
-            } else if (!res.locals.urlPathPrefix && href.startsWith('/learn')) {
-                href = href.replace('/learn', '');
-            }
-
-            if (href.endsWith('/')) href = href.slice(0, -1);
-            if (!href) href = '/';
-
-            $that.attr('href', href);
-        });
-
-        const output = $.html();
-        return output.replace('<html><head></head><body>', '').replace('</body></html>', '');
-    },
     resolvePdfImages: (content) => {
         const $ = cheerio.load(content);
         const $elems = $('img[data-src]');
