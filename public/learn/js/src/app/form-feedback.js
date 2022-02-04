@@ -48,7 +48,7 @@
                 processData: processFeedbackData,
                 submitButton: submitButtonFeedback,
                 collectData: collectFeedbackData,
-                endpoint: `${window.helper.setUrlPathPrefix()}/form/feedback`
+                endpoint: `/learn/form/feedback`
             });
         };
 

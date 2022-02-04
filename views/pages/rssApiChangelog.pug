@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
     channel
-        | <atom:link href="!{domain + urlPathPrefix}/rss/changelog" rel="self" type="application/rss+xml"></atom:link>
+        | <atom:link href="!{domain}/rss/changelog" rel="self" type="application/rss+xml"></atom:link>
         title !{home.title.value} - !{title}
         language en-us
-        | <link>!{domain + urlPathPrefix}</link>
+        | <link>!{domain}</link>
         | <description><![CDATA[!{decode(helper.stripTags(home.description.value).trim())}]]></description>
         each item in releaseNotes
             - const anchorName = helper.generateAnchor(item.title.value);
-            - const url = `${domain}${urlPathPrefix}${path}#a-${anchorName}`;
+            - const url = `${domain}${path}#a-${anchorName}`;
             item
                 title !{item.title.value}
                 pubDate !{moment(item.release_date.value).format('ddd, DD MMM YYYY HH:mm:ss ZZ')}

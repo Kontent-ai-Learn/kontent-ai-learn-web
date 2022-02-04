@@ -66,7 +66,7 @@ const handleMultihandlePlatformArticles = (set) => {
 
     settings.urlMap.push(getMapItem({
         codename: settings.item.system.codename,
-        url: `/${settings.url.join('/')}${queryString}`,
+        url: `/learn/${settings.url.join('/')}/${queryString}`,
         type: settings.item.system.type,
         date: settings.item.system.lastModified,
         visibility: settings.item.visibility && settings.item.visibility.value.length ? settings.item.visibility.value : null
@@ -88,7 +88,7 @@ const handleReferenceHash = (settings) => {
 
     settings.urlMap.push(getMapItem({
         codename: settings.item.system.codename,
-        url: `/${settings.url.join('/')}${hash}`,
+        url: `/learn/${settings.url.join('/')}/${hash}`,
         type: settings.item.system.type,
         date: settings.item.system.lastModified,
         visibility: settings.item.visibility && settings.item.visibility.value.length ? settings.item.visibility.value : null
@@ -119,7 +119,7 @@ const handlePlatformArticle = (settings) => {
 
         settings.urlMap.push(getMapItem({
             codename: `${settings.item.system.codename}|${platform}`,
-            url: `/${settings.url.join('/')}${queryString}`,
+            url: `/learn/${settings.url.join('/')}/${queryString}`,
             type: settings.item.system.type,
             date: settings.item.system.lastModified,
             visibility: settings.item.visibility && settings.item.visibility.value.length ? settings.item.visibility.value : null
@@ -142,7 +142,7 @@ const handleNodes = (settings) => {
     if (!(item.children && settings.isSitemap)) {
         settings.urlMap.push(getMapItem({
             codename: item.system.codename,
-            url: `/${settings.url.join('/')}`,
+            url: `/learn/${settings.url.join('/')}${settings.url.length ? '/' : ''}`,
             type: item.system.type,
             date: item.system.lastModified,
             visibility: item.visibility && item.visibility.value.length ? item.visibility.value : null
@@ -233,7 +233,7 @@ const handleUnusedArtiles = async (deliveryClient, urlMap) => {
             if (!isInUrlMap && articleItem._raw.system.workflow_step !== 'archived') {
                 urlMap.push(getMapItem({
                     codename: articleItem.system.codename,
-                    url: `/other/${articleItem.url.value}`,
+                    url: `/learn/other/${articleItem.url.value}/`,
                     date: articleItem.system.lastModified,
                     visibility: articleItem.visibility && articleItem.visibility.value.length ? articleItem.visibility.value : null,
                     type: 'article'

@@ -7,7 +7,7 @@ if description
     - description = description.trim().replace(/\s+/g, ' ').replace(/"/g, '&quot;')
     meta(name='description', content=description)
     meta(property='og:description', content=description)
-meta(property='og:image', content=`${helper.getDomain()}${urlPathPrefix}/img/kentico-kontent-og.jpg`)
+meta(property='og:image', content=`${helper.getDomain()}/learn/img/kentico-kontent-og.jpg`)
 if (process.env.isProduction !== 'false')
     if ((content && content.visibility && content.visibility.value.filter(item => item.codename === 'excluded_from_search').length) || status === 404)
         meta(name='robots', content='noindex,nofollow')
@@ -15,16 +15,16 @@ if (process.env.isProduction !== 'false')
         meta(name='robots', content='index,follow')
 else
     meta(name='robots', content='noindex,nofollow')
-link(rel='preload' as='font' href=`${urlPathPrefix}/fonts/GT-Walsheim-Regular.woff2` type='font/woff2' crossorigin='anonymous')
-link(rel='preload' as='font' href=`${urlPathPrefix}/fonts/GT-Walsheim-Regular.woff` type='font/woff' crossorigin='anonymous')
-link(rel='preload' as='font' href=`${urlPathPrefix}/fonts/GT-Walsheim-Bold.woff2` type='font/woff2' crossorigin='anonymous')
-link(rel='preload' as='font' href=`${urlPathPrefix}/fonts/GT-Walsheim-Bold.woff` type='font/woff' crossorigin='anonymous')
+link(rel='preload' as='font' href='/learn/fonts/GT-Walsheim-Regular.woff2' type='font/woff2' crossorigin='anonymous')
+link(rel='preload' as='font' href='/learn/fonts/GT-Walsheim-Regular.woff' type='font/woff' crossorigin='anonymous')
+link(rel='preload' as='font' href='/learn/fonts/GT-Walsheim-Bold.woff2' type='font/woff2' crossorigin='anonymous')
+link(rel='preload' as='font' href='/learn/fonts/GT-Walsheim-Bold.woff' type='font/woff' crossorigin='anonymous')
 if (isReference)
-    link(rel='stylesheet', href=`${urlPathPrefix}/css/apireference.min.css?v=${deployVersion}`)
+    link(rel='stylesheet', href=`/learn/css/apireference.min.css?v=${deployVersion}`)
 else 
-    link(rel='stylesheet', href=`${urlPathPrefix}/css/app.min.css?v=${deployVersion}`)
+    link(rel='stylesheet', href=`/learn/css/app.min.css?v=${deployVersion}`)
 if (req.query.pdf)
-    link(rel='stylesheet', href=`${urlPathPrefix}/css/pdf.css?v=${deployVersion}`)
+    link(rel='stylesheet', href=`/learn/css/pdf.css?v=${deployVersion}`)
 script var auth0Config = {domain:"#{process.env['AUTH0_DOMAIN']}",clientID:"#{process.env['AUTH0_CLIENT_ID']}",logoutUrl:"#{process.env['AUTH0_LOGOUT_URL']}"}
 if helper
     script var searchAPI={appid:"#{process.env['Search.AppId']}",apikey:"#{process.env['Search.ApiKey']}",indexname:"#{process.env['Search.IndexName']}"};
@@ -40,7 +40,7 @@ if platformsConfig
 if termDefinitions
     script var termDefinitions=[
         each item, index in termDefinitions
-            | {id:"#{item.system.id}",codename:"#{item.system.codename}",term:"#{item.term.value}",text:"!{helper.removeNewLines(helper.escapeQuotes(helper.urlPrefixLinks(item.definition.value, res)))}"}
+            | {id:"#{item.system.id}",codename:"#{item.system.codename}",term:"#{item.term.value}",text:"!{helper.removeNewLines(helper.escapeQuotes(item.definition.value, res))}"}
             if index < termDefinitions.length - 1
                 | ,
         | ]
@@ -49,37 +49,37 @@ if (process.env['GTM.id'])
 else 
     script function initGTM(){return false;}
 if isPreview
-    link(rel='stylesheet', href=`${urlPathPrefix}/css/kontentsmartlink.min.css?v=${deployVersion}`)
-    script(src=`${urlPathPrefix}/js/kontentsmartlink.min.js?v=${deployVersion}`, defer='')
-script(src=`${urlPathPrefix}/js/algolia.min.js?v=${deployVersion}`, defer='')
-script var ALGOLIA_INSIGHTS_SRC = "!{urlPathPrefix}/js/search-insights.min.js?v=!{deployVersion}";!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],i.async=1,i.src=n,c.parentNode.insertBefore(i,c)}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+    link(rel='stylesheet', href=`/learn/css/kontentsmartlink.min.css?v=${deployVersion}`)
+    script(src=`/learn/js/kontentsmartlink.min.js?v=${deployVersion}`, defer='')
+script(src=`/learn/js/algolia.min.js?v=${deployVersion}`, defer='')
+script var ALGOLIA_INSIGHTS_SRC = "/learn/js/search-insights.min.js?v=!{deployVersion}";!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],i.async=1,i.src=n,c.parentNode.insertBefore(i,c)}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
 
 if (isReference)
-    script(src=`${urlPathPrefix}/js/apireference.min.js?v=${deployVersion}`, defer='', onload='initGTM()')
+    script(src=`/learn/js/apireference.min.js?v=${deployVersion}`, defer='', onload='initGTM()')
 else
-    script(src=`${urlPathPrefix}/js/app.min.js?v=${deployVersion}`, defer='', onload='initGTM()')
+    script(src=`/learn/js/app.min.js?v=${deployVersion}`, defer='', onload='initGTM()')
 if (containsChangelog)
-    script(src=`${urlPathPrefix}/js/changelog.min.js?v=${deployVersion}`, defer='')
+    script(src=`/learn/js/changelog.min.js?v=${deployVersion}`, defer='')
 if (containsTrainingCourse)
-    script(src=`${urlPathPrefix}/js/elearning.min.js?v=${deployVersion}`, defer='')
+    script(src=`/learn/js/elearning.min.js?v=${deployVersion}`, defer='')
 if canonicalUrl
     link(rel='canonical', href=`${canonicalUrl}`)
-link(rel='apple-touch-icon', sizes='57x57', href=`${urlPathPrefix}/img/favicon/apple-icon-57x57.png`)
-link(rel='apple-touch-icon', sizes='60x60', href=`${urlPathPrefix}/img/favicon/apple-icon-60x60.png`)
-link(rel='apple-touch-icon', sizes='72x72', href=`${urlPathPrefix}/img/favicon/apple-icon-72x72.png`)
-link(rel='apple-touch-icon', sizes='76x76', href=`${urlPathPrefix}/img/favicon/apple-icon-76x76.png`)
-link(rel='apple-touch-icon', sizes='114x114', href=`${urlPathPrefix}/img/favicon/apple-icon-114x114.png`)
-link(rel='apple-touch-icon', sizes='120x120', href=`${urlPathPrefix}/img/favicon/apple-icon-120x120.png`)
-link(rel='apple-touch-icon', sizes='144x144', href=`${urlPathPrefix}/img/favicon/apple-icon-144x144.png`)
-link(rel='apple-touch-icon', sizes='152x152', href=`${urlPathPrefix}/img/favicon/apple-icon-152x152.png`)
-link(rel='apple-touch-icon', sizes='180x180', href=`${urlPathPrefix}/img/favicon/apple-icon-180x180.png`)
-link(rel='icon', type='image/png', sizes='192x192', href=`${urlPathPrefix}/img/favicon/android-icon-192x192.png`)
-link(rel='icon', type='image/png', sizes='32x32', href=`${urlPathPrefix}/img/favicon/favicon-32x32.png`)
-link(rel='icon', type='image/png', sizes='96x96', href=`${urlPathPrefix}/img/favicon/favicon-96x96.png`)
-link(rel='icon', type='image/png', sizes='16x16', href=`${urlPathPrefix}/img/favicon/favicon-16x16.png`)
-link(rel='manifest', href=`${urlPathPrefix}/img/favicon/manifest.json`)
-link(rel='search' type='application/opensearchdescription+xml' title=UIMessages.portal_name.value href=`${urlPathPrefix}/opensearch.xml`)
+link(rel='apple-touch-icon', sizes='57x57', href='/learn/img/favicon/apple-icon-57x57.png')
+link(rel='apple-touch-icon', sizes='60x60', href='/learn/img/favicon/apple-icon-60x60.png')
+link(rel='apple-touch-icon', sizes='72x72', href='/learn/img/favicon/apple-icon-72x72.png')
+link(rel='apple-touch-icon', sizes='76x76', href='/learn/img/favicon/apple-icon-76x76.png')
+link(rel='apple-touch-icon', sizes='114x114', href='/learn/img/favicon/apple-icon-114x114.png')
+link(rel='apple-touch-icon', sizes='120x120', href='/learn/img/favicon/apple-icon-120x120.png')
+link(rel='apple-touch-icon', sizes='144x144', href='/learn/img/favicon/apple-icon-144x144.png')
+link(rel='apple-touch-icon', sizes='152x152', href='/learn/img/favicon/apple-icon-152x152.png')
+link(rel='apple-touch-icon', sizes='180x180', href='/learn/img/favicon/apple-icon-180x180.png')
+link(rel='icon', type='image/png', sizes='192x192', href='/learn/img/favicon/android-icon-192x192.png')
+link(rel='icon', type='image/png', sizes='32x32', href='/learn/img/favicon/favicon-32x32.png')
+link(rel='icon', type='image/png', sizes='96x96', href='/learn/img/favicon/favicon-96x96.png')
+link(rel='icon', type='image/png', sizes='16x16', href='/learn/img/favicon/favicon-16x16.png')
+link(rel='manifest', href='/learn/img/favicon/manifest.json')
+link(rel='search' type='application/opensearchdescription+xml' title=UIMessages.portal_name.value href='/learn/opensearch.xml')
 meta(name='msapplication-TileColor', content='#ffffff')
-meta(name='msapplication-TileImage', content=`${urlPathPrefix}/img/favicon/ms-icon-144x144.png`)
+meta(name='msapplication-TileImage', content='/learn/img/favicon/ms-icon-144x144.png')
 meta(name='theme-color', content='#ffffff')
 meta(name='format-detection', content='telephone=no')

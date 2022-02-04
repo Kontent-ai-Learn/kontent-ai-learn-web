@@ -65,7 +65,7 @@ const trainingCourse = (() => {
       accessType = 'private';
     }
 
-    const result = await fetch(`${window.helper.setUrlPathPrefix()}/api/training-course/detail/${accessType}${encodeURI(window.location.search)}`, fetchOptions);
+    const result = await fetch(`/learn/api/training-course/detail/${accessType}${encodeURI(window.location.search)}`, fetchOptions);
     const data = await result.json();
 
     for (var item in data) {

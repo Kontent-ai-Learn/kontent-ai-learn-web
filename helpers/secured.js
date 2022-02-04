@@ -4,6 +4,6 @@ module.exports = function () {
       return next();
     }
     req.session.returnTo = req.originalUrl;
-    res.redirect(`${res.locals.urlPathPrefix}/login`);
+    res.redirect('/learn/login/');
   };
 };

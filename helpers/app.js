@@ -4,19 +4,19 @@ const getUrlMap = require('./urlMap');
 
 // URLs allowed in the application
 const urlWhitelist = [
-  '/other/*',
-  '/form/*',
-  '/urlmap',
-  '/favicon.ico',
-  '/rss/*',
-  '/redirect-urls',
-  '/cache-invalidate',
-  '/service-check/*',
-  '/link-to',
-  '/sitemap.xml',
-  '/pdf',
-  '/callback',
-  '/opensearch.xml'
+  '/learn/other/*',
+  '/learn/form/*',
+  '/learn/urlmap/',
+  '/learn/favicon.ico',
+  '/learn/rss/*',
+  '/learn/redirect-urls/',
+  '/learn/cache-invalidate/',
+  '/learn/service-check/*',
+  '/learn/link-to/',
+  '/learn/sitemap.xml',
+  '/learn/pdf/',
+  '/learn/callback/',
+  '/learn/opensearch.xml'
 ];
 
 const appHelper = {

@@ -11,14 +11,14 @@ block content
                         td Redirect from
                     if redirectRules.length
                         each url in redirectRules   
-                            - const originalUrl = url.originalUrl === '/' ? '' : url.originalUrl;
+                            - const originalUrl = `${url.originalUrl}${helper.addTrailingSlash(url.originalUrl)}`;
                             tr
                                 td
-                                    a(href= `${url.originalUrl.includes('://') ? '' : urlPathPrefix}${originalUrl}`, target='_blank') #{(originalUrl.includes('://') ? originalUrl : `${urlPathPrefix}${originalUrl}`)}
+                                    a(href=`${url.originalUrl.includes('://') ? '' : '/learn'}${originalUrl}`, target='_blank') #{(originalUrl.includes('://') ? originalUrl : `/learn${originalUrl}`)}
                                 td
                                     ol
                                         each redirect in url.redirectUrls
-                                            li #{`${urlPathPrefix}${redirect.url}`} 
+                                            li #{'/learn' + redirect.url + helper.addTrailingSlash(redirect.url)} 
                                                 if (isPreview && !req.query.pdf)
                                                     a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${redirect.id}`, target='_blank', rel='noopener') Edit
                     else
@@ -31,14 +31,14 @@ block content
                         td Redirect from
                     if redirectMap.length
                         each url in redirectMap    
-                            - const originalUrl = url.originalUrl === '/' ? '' : url.originalUrl;
+                            - const originalUrl = `${url.originalUrl}${helper.addTrailingSlash(url.originalUrl)}`;
                             tr
                                 td 
-                                    a(href= `${url.originalUrl.includes('://') ? '' : urlPathPrefix}${originalUrl}`, target='_blank') #{urlPathPrefix + originalUrl}
+                                    a(href=originalUrl, target='_blank') #{originalUrl}
                                 td(class=`${isPreview && !req.query.pdf ? 'utilities-table-cell-edit-link-wrapper' : ''}`)
                                     ol
                                         each redirect in url.redirectUrls
-                                            li #{urlPathPrefix + redirect} 
+                                            li #{'/learn' + redirect + helper.addTrailingSlash(redirect)} 
                                     if (isPreview && !req.query.pdf)
                                         a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${url.id}/element/redirect_urls`, target='_blank', rel='noopener').utilities-table-cell-edit-link Edit
                     else

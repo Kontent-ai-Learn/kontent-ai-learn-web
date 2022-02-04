@@ -5,7 +5,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const logger = require('morgan');
-const asyncHandler = require('express-async-handler');
 const serveStatic = require('serve-static');
 const slashes = require('connect-slashes');
 const consola = require('consola');
@@ -13,57 +12,22 @@ const axios = require('axios');
 const cache = require('memory-cache');
 const util = require('util');
 const { setIntervalAsync } = require('set-interval-async/dynamic');
-const rewrite = require('express-urlrewrite');
+const asyncHandler = require('express-async-handler');
 
 const helper = require('./helpers/helperFunctions');
 const appHelper = require('./helpers/app');
 const handleCache = require('./helpers/handleCache');
-const commonContent = require('./helpers/commonContent');
 const isPreview = require('./helpers/isPreview');
 const fastly = require('./helpers/fastly');
 const serviceCheckAll = require('./helpers/serviceCheck/all');
-const home = require('./routes/home');
-const sitemap = require('./routes/sitemap');
-const rss = require('./routes/rss');
-const opensearch = require('./routes/opensearch');
-const urlAliases = require('./routes/urlAliases');
-const redirectUrls = require('./routes/redirectUrls');
-const referenceUpdated = require('./routes/referenceUpdated');
-const linkUrls = require('./routes/linkUrls');
-const cacheInvalidate = require('./routes/cacheInvalidate');
-const error = require('./routes/error');
-const form = require('./routes/form');
-const redirectRules = require('./routes/redirectRules');
-const generatePDF = require('./routes/generatePDF');
-const urlMap = require('./routes/urlMap');
+
+const siteRouter = require('./routes/siteRouter');
 const serviceCheck = require('./routes/serviceCheck');
-const articles = require('./routes/articles');
-const auth0Callback = require('./routes/auth0Callback');
-const api = require('./routes/api');
+const error = require('./routes/error');
+const opensearch = require('./routes/opensearch');
+const sitemap = require('./routes/sitemap');
 
 const app = express();
-
-app.use((req, res, next) => {
-  if (req.path.slice(-1) === '/' && req.path.length > 1) {
-    const query = req.url.slice(req.path.length);
-    const safepath = req.path.slice(0, -1).replace(/\/+/g, '/');
-    return res.redirect(301, `${safepath}${query}`);
-  } else {
-    next();
-  }
-});
-
-app.use(async (req, res, next) => {
-  if (req.originalUrl.startsWith('/learn')) {
-    res.locals.urlPathPrefix = '/learn';
-  } else {
-    res.locals.urlPathPrefix = '';
-  }
-  next();
-});
-
-app.use(rewrite(/^\/learn(.+)/, '$1'));
-app.use(rewrite(/^\/learn/, '/'));
 
 // Azure Application Insights monitors
 if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
@@ -100,7 +64,6 @@ app.use(serveStatic(path.join(__dirname, 'public'), {
     }
   }
 }));
-app.use(slashes(false));
 
 app.enable('trust proxy');
 
@@ -119,10 +82,14 @@ app.use(async (req, res, next) => {
   return next();
 });
 
-app.use('/service-check', serviceCheck);
+app.use('/learn/sitemap.xml', sitemap);
+app.use('/learn/opensearch.xml', opensearch);
+app.use(slashes(true));
+
+app.use('/learn/service-check', serviceCheck);
 
 if (process.env.isProduction === 'false') {
-  app.use('/', asyncHandler(async (req, res, next) => {
+  app.use('/learn', asyncHandler(async (req, res, next) => {
     if (app.get('serviceCheckError') || !app.get('serviceCheckInitialialDone')) {
       const serviceCheckResults = await serviceCheckAll();
       let errored = false;
@@ -140,60 +107,15 @@ if (process.env.isProduction === 'false') {
         if (appInsights && appInsights.defaultClient) {
           appInsights.defaultClient.trackTrace({ message: `SERVICE_CHECK_ERROR: ${JSON.stringify(serviceCheckResults)}` });
         }
-        return res.redirect(303, `${process.env.baseURL}${res.locals.urlPathPrefix}/service-check`);
+        return res.redirect(303, `${process.env.baseURL}/learn/service-check/`);
       }
     }
     next();
   }));
 }
 
-// Routes
-app.use('/api', express.json({
-  type: '*/*'
-}), api);
-app.use('/callback', auth0Callback);
-app.use('/link-to', linkUrls);
-app.use('/reference-updated', express.json({
-  type: '*/*'
-}), referenceUpdated);
-app.use('/cache-invalidate', express.text({
-  type: '*/*'
-}), cacheInvalidate);
-app.use('/', redirectRules);
-app.use('/form', express.text({
-  type: '*/*'
-}), form);
-app.use('/', asyncHandler(async (req, res, next) => {
-  await handleCache.evaluateCommon(res, ['platformsConfig', 'urlMap', 'footer', 'UIMessages', 'home', 'navigationItems', 'articles', 'termDefinitions']);
-
-  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return await commonContent.getUIMessages(res);
-  });
-  if (UIMessages && UIMessages.length) {
-    res.locals.UIMessages = UIMessages[0];
-  }
-
-  await handleCache.cacheAllAPIReferences(res);
-  const exists = await appHelper.pageExists(req, res, next);
-
-  if (!exists) {
-    return await urlAliases(req, res, next);
-  }
-  return next();
-}));
-
-app.use('/redirect-urls', redirectUrls);
-app.use('/sitemap.xml', sitemap);
-app.use('/rss', rss);
-app.use('/opensearch.xml', opensearch);
-app.use('/pdf', generatePDF);
-app.get('/urlmap', urlMap);
-app.use('/', home, articles);
-
-// Check aliases on whitelisted url paths that do not match any routing above
-app.use('/', asyncHandler(async (req, res, next) => {
-  return await urlAliases(req, res, next);
-}));
+app.use('/learn', siteRouter);
+app.use('/', (req, res) => res.redirect(301, '/learn/'));
 
 setIntervalAsync(async () => {
   const log = {
@@ -204,7 +126,7 @@ setIntervalAsync(async () => {
   };
 
   try {
-    const response = await axios.post(`${process.env.baseURL}/cache-invalidate/pool`, {});
+    const response = await axios.post(`${process.env.baseURL}/learn/cache-invalidate/pool/`, {});
     log.url = response && response.config ? response.config.url : '';
   } catch (error) {
     log.error = error && error.response ? error.response.data : '';
