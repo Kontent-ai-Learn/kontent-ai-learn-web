@@ -362,7 +362,8 @@ window.initSearch = (() => {
     const title = document.querySelector('[data-error-search-title]');
     if (!container) return;
 
-    const searchTerm = window.location.pathname.split('/').pop().replace(/-/g, ' ');
+    const pathname = window.location.pathname.replace(/\/$/, '');
+    const searchTerm = pathname.split('/').pop().replace(/-/g, ' ');
     searchClient.search([{
       indexName: searchAPI.indexname,
       params: { 

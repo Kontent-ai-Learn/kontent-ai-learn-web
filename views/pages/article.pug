@@ -63,7 +63,7 @@ block content
                                 - var highlighIndex = 0; availablePlatforms.forEach((item, index) => { if (preselectedPlatform === item.slug) { highlighIndex = index } });
                                 each item, index in availablePlatforms
                                     li.language-selector__item
-                                        a(href=`${req.path}?tech=${item.slug}`, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=UIMessages.technology_picker_tooltip.value.replace('{TechnologyName}', item.title), class=`language-selector__link${index === highlighIndex ? ' language-selector__link--active' : ''}`)
+                                        a(href=`${req.originalUrl.split('?')[0]}?tech=${item.slug}`, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=UIMessages.technology_picker_tooltip.value.replace('{TechnologyName}', item.title), class=`language-selector__link${index === highlighIndex ? ' language-selector__link--active' : ''}`)
                     if (introduction !== '<p><br></p>')
                         .article__introduction
                             if (content.display_mode.value.length && content.display_mode.value[0].name.toLowerCase() === 'step-by-step')
