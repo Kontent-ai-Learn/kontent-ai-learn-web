@@ -69,7 +69,8 @@ router.get('/', asyncHandler(async (req, res, next) => {
         baseURL = process.env.baseURL;
     }
 
-    const fileName = req.query.url.split('/').slice(-2).join('-').replace(/[\W_]+/g, '-');
+    const pathname = req.query.url.replace(/\/$/, '').replace(/\/\?/, '-');
+    const fileName = pathname.split('/').slice(-2).join('-').replace(/[\W_]+/g, '-');
     const pfdInCache = pdfIsCached(fileName);
 
     if (pfdInCache) {
