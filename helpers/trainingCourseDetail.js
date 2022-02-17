@@ -4,6 +4,7 @@ const handleCache = require('./handleCache');
 const commonContent = require('./commonContent');
 const helper = require('./helperFunctions');
 const lms = require('./lms');
+const scorm = require('./scorm');
 const sendSendGridEmail = require('./sendgrid');
 
 const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => {
@@ -65,6 +66,69 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => 
     signedIn: true,
     renderAs: renderAs,
     redirectToLMS: redirectToLMS
+  };
+};
+
+const getTrainingCourseInfoFromScorm = async (user, course, UIMessages, req, res) => {
+  const courseId = course?.scorm_cloud_id?.value;
+  if (!courseId && courseId !== 0) return null;
+  let redirectToScorm = false;
+
+  // Register user in LMS and course and get info about course url and completion
+  if (typeof req.query.enroll !== 'undefined') {
+    redirectToScorm = true;
+  }
+
+  const courseInfo = await scorm.handleTrainingCourse(user, course, req, res);
+
+  let textUIMessageCodename = '';
+  let renderAs = 'button';
+
+  if (courseInfo.err) {
+    const notification = lms.composeNotification('A user attempt to access to Scorm Cloud in Kontent Learn failed with the following error:', courseInfo.err);
+    const emailInfo = {
+      recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
+      subject: 'Scorm Cloud error notification',
+      text: notification
+    };
+    sendSendGridEmail(emailInfo);
+
+    if (app.appInsights) {
+      app.appInsights.defaultClient.trackTrace({ message: `SCORM_ERROR: ${notification}` });
+    }
+  }
+
+  if (courseInfo.completion === 0 || courseInfo.completion === 'Not started') {
+    textUIMessageCodename = 'training___cta_start_course';
+  } else if (courseInfo.completion === 100 || courseInfo.completion === 'Completed') {
+    textUIMessageCodename = 'training___cta_revisit_course';
+  } else if (courseInfo.completion === 'Preview course') {
+    textUIMessageCodename = 'training___cta_preview_course';
+  } else if (courseInfo.completion === 101) {
+    textUIMessageCodename = 'sign_in_error_text'; // 'User info is not available in LMS.';
+    renderAs = 'text';
+  } else if (courseInfo.completion === 102) {
+    textUIMessageCodename = 'sign_in_error_text'; // 'Course info is not available in LMS.';
+    renderAs = 'text';
+  } else if (courseInfo.completion === 103) {
+    textUIMessageCodename = 'sign_in_error_text'; // 'Course ID does not exist in LMS.';
+    renderAs = 'text';
+  } else {
+    textUIMessageCodename = 'training___cta_resume_course';
+  }
+
+  return {
+    text: UIMessages[textUIMessageCodename].value,
+    textUIMessageCodename: textUIMessageCodename,
+    url: courseInfo.url,
+    id: courseInfo.id,
+    qs: courseInfo.qs,
+    completion: courseInfo.completion.toString(),
+    certificate: courseInfo.certificate,
+    target: courseInfo.target,
+    signedIn: true,
+    renderAs: renderAs,
+    redirectToLMS: redirectToScorm
   };
 };
 
@@ -150,12 +214,23 @@ const getUserFromSubscriptionService = async (req) => {
   return { user, errCode };
 };
 
+const getLmsServiceName = (course) => {
+  let serviceName = null;
+
+  if (course.talentlms_course_id.value) serviceName = 'tlms';
+  if (course.scorm_cloud_id.value) serviceName = 'scorm';
+
+  return serviceName;
+}
+
 const getPrivate = async (UIMessages, course, req, res) => {
   const hideCta = helper.isCodenameInMultipleChoice(course.display_options.value, 'hide_cta');
   const trainingUser = await getTrainingUser(req?.user?.email, res);
+  const serviceName = getLmsServiceName(course);
   const data = {};
   let user = {};
   let errCode;
+  let trainingCourseInfo;
 
   if (req?.user?.email.endsWith('@kentico.com') || trainingUser) {
     user.email = req.user.email;
@@ -186,13 +261,27 @@ const getPrivate = async (UIMessages, course, req, res) => {
     data.renderAs = 'button';
     data.certificate = await lms.getUserCourseCertificate(user, course.talentlms_course_id.value);
     data.signedIn = true;
+
+    data.certificate = null;
+
+    if (serviceName === 'tlms') {
+      data.certificate = await lms.getUserCourseCertificate(user, course.talentlms_course_id.value);
+    } else if (serviceName === 'scorm') {
+      data.certificate = '#TBD';
+    }
   }
 
   data.text = data.textUIMessageCodename ? UIMessages[data.textUIMessageCodename].value : '';
 
+  if (serviceName === 'tlms') {
+    trainingCourseInfo = await getTrainingCourseInfoFromLMS(user, course.talentlms_course_id.value, UIMessages, req);
+  } else if (serviceName === 'scorm') {
+    trainingCourseInfo = await getTrainingCourseInfoFromScorm(user, course, UIMessages, req, res);
+  }
+
   return {
     general: data.renderGeneralMessage ? data : null,
-    production: !data.renderGeneralMessage && !errCode ? await getTrainingCourseInfoFromLMS(user, course.talentlms_course_id.value, UIMessages, req) : null
+    production: !data.renderGeneralMessage && !errCode ? trainingCourseInfo : null
   }
 };
 

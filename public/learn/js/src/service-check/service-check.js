@@ -50,6 +50,10 @@
     title: 'TLMS',
     endpoint: '/learn/service-check/tlms/',
   }, {
+    codename: 'scorm',
+    title: 'Scorm',
+    endpoint: '/learn/service-check/scorm/',
+  }, {
     codename: 'auth0',
     title: 'Auth0',
     endpoint: '/learn/service-check/auth0/',

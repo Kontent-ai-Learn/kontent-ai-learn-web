@@ -17,7 +17,7 @@ const trainingCourse = (() => {
     const logoutBtnExists = document.querySelector('#logout') != null;
     const markup = `
       <div class="article__row-links">
-        ${data.renderAs === 'text' ? `<span>${data.text}</span>` : ''}
+        ${data.renderAs === 'text' ? `<div class="callout callout--warning">${data.text}</div>` : ''}
         ${data.renderAs === 'button' && (data.id || data.action) ? `<span class="call-to-action" ${data.id ? `id="${data.id}"` : ''} ${data.action === 'intercom' ? `data-click="support-async"` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${data.text}</span><span></span></span>` : ''}
         ${data.renderAs === 'button' && data.url ? `<a class="call-to-action" href="${data.url}" ${data.target ? `target=${data.target}` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${data.text}</span><span></span></a>` : ''}
         ${data.renderAs === 'button' && data.qs ? `<a class="call-to-action" href="${window.location.href.split('#')[0].split('?')[0]}?${data.qs}" ${data.target ? `target=${data.target}` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${data.text}</span><span></span></a>` : ''}
@@ -34,9 +34,10 @@ const trainingCourse = (() => {
     const container = document.querySelector('#trainingNotes');
     if (!container || !data) return;
 
-    if (data.completion) {
+    const completionInt = parseInt(data.completion);
+    if ((isNaN(completionInt) || completionInt <= 100) && typeof data.completion !== 'undefined') {
       const elem = document.createElement('span');
-      elem.innerHTML = `${data.completion}% complete`;
+      elem.innerHTML = `${data.completion}${isNaN(completionInt) ? '' : '% complete'}`;
       container.appendChild(elem);
     }
   };
