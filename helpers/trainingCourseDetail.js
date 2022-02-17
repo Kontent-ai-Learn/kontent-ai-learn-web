@@ -267,7 +267,7 @@ const getPrivate = async (UIMessages, course, req, res) => {
     if (serviceName === 'tlms') {
       data.certificate = await lms.getUserCourseCertificate(user, course.talentlms_course_id.value);
     } else if (serviceName === 'scorm') {
-      data.certificate = '#TBD';
+      data.certificate = null;
     }
   }
 
