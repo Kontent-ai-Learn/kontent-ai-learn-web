@@ -138,8 +138,14 @@ const componentsResolvers = [{
     type: 'carousel',
     resolver: richTextResolverTemplates.carousel
 }, {
-    type: 'run_in_postman_button',
-    resolver: richTextResolverTemplates.runInPostmanButton
+    type: 'training_question',
+    resolver: richTextResolverTemplates.question
+}, {
+    type: 'training_question_free_text',
+    resolver: richTextResolverTemplates.questionFreeText
+}, {
+    type: 'training_answer',
+    resolver: richTextResolverTemplates.answer
 }];
 
 const resolveRichText = (item, config) => {

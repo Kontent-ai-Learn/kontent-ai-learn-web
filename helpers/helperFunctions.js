@@ -431,7 +431,20 @@ const helper = {
 
         return items;
     },
-    addTrailingSlash: (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? '/' : ''
+    addTrailingSlash: (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? '/' : '',
+    injectHTMLAttr: (options) => {
+        if (!options.markup || !options.selector || !options.attr || !options.attrValue) return `Invalid HTML attribute injection: ${options}`;
+        const $ = cheerio.load(options.markup);
+        const $elems = $(options.selector);
+
+        $elems.each(function () {
+            const $that = $(this);
+            $that.attr(options.attr, options.attrValue);
+        });
+
+        const output = $.html();
+        return output.replace('<html><head></head><body>', '').replace('</body></html>', '');
+    }
 };
 
 module.exports = helper;

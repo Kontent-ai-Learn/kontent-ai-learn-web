@@ -13,7 +13,6 @@ const handleCache = require('../helpers/handleCache');
 const platforms = require('../helpers/platforms');
 const customRichTextResolver = require('../helpers/customRichTextResolver');
 const smartLink = require('../helpers/smartLink');
-
 const getUrlMap = require('../helpers/urlMap');
 
 let cookiesPlatform;
@@ -138,6 +137,7 @@ const getContent = async (req, res) => {
     const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
 
     const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
+    if (!urlMapItem) return null;
     let content = await getItemContent(urlMapItem, urlMap, res);
 
     let view = 'pages/article';

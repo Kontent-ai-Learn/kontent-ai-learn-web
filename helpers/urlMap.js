@@ -249,6 +249,30 @@ const handleUnusedArtiles = async (deliveryClient, urlMap) => {
     return urlMap;
 };
 
+const handleSurveys = async (deliveryClient, urlMap) => {
+    const { items, error } = await queryDeliveryType('training_survey', 1, deliveryClient);
+
+    if (items && items.items) {
+        items.items.forEach((surveyItem) => {
+            if (!surveyItem._raw.system.workflow_step !== 'archived') {
+                urlMap.push(getMapItem({
+                    codename: surveyItem.system.codename,
+                    url: `/learn/survey/${surveyItem.url.value}/`,
+                    date: surveyItem.system.lastModified,
+                    visibility: [{ codename: 'excluded_from_search' }],
+                    type: surveyItem.system.type
+                }, fields));
+            }
+        });
+    }
+
+    if (error && app.appInsights) {
+        app.appInsights.defaultClient.trackTrace({ message: 'DELIVERY_API_ERROR: ' + error.message });
+    }
+
+    return urlMap;
+};
+
 const getUrlMap = async (res, isSitemap) => {
     deliveryConfig.projectId = res.locals.projectid;
     deliveryConfig.retryAttempts = 0;
@@ -288,6 +312,7 @@ const getUrlMap = async (res, isSitemap) => {
         cachedPlatforms: cachedPlatforms
     });
     urlMap = await handleUnusedArtiles(deliveryClient, urlMap);
+    urlMap = await handleSurveys(deliveryClient, urlMap);
 
     return urlMap;
 };
