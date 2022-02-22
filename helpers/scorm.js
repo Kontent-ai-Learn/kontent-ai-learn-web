@@ -4,6 +4,7 @@ const isPreview = require('./isPreview');
 const getUrlMap = require('./urlMap');
 const handleCache = require('./handleCache');
 const helper = require('./helperFunctions');
+const commonContent = require('./commonContent');
 
 const settings = {
   auth: {
@@ -157,12 +158,12 @@ const getCertificate = () => {
   return null;
 };
 
-const getCompletion = (codename) => {
+const getCompletion = (codename, UIMessages) => {
   switch (codename) {
-    case 'PREVIEW': return 'Preview course'
-    case 'COMPLETED': return 'Completed';
-    case 'INCOMPLETE': return 'Incomplete';
-    default: return 'Not started';
+    case 'PREVIEW': return UIMessages.training___course_status_preview.value
+    case 'COMPLETED': return UIMessages.training___course_status_completed.value;
+    case 'INCOMPLETE': return UIMessages.training___course_status_incomplete.value;
+    default: return UIMessages.training___course_status_unknown.value;
   }
 }
 
@@ -175,6 +176,10 @@ const scorm = {
     let qs = null;
     let url = null;
     let progress = null;
+
+    const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
+      return await commonContent.getUIMessages(res);
+    });
 
     if (!isPreview(res.locals.previewapikey)) {
       const registrationId = getRegistrationId(user.email, courseId);
@@ -240,7 +245,7 @@ const scorm = {
 
     return {
       url: url,
-      completion: getCompletion(progress),
+      completion: getCompletion(progress, UIMessages[0]),
       certificate: certificate,
       qs: qs,
       target: '_self'
