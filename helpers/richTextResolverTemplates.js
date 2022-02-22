@@ -645,12 +645,17 @@ const richTextResolverTemplates = {
     },
     answer: (item) => {
         return `<div class="answer">
-                    <div class="answer__form-elements">
-                        <input class="answer__radio" type="radio" name="xxx" value="${item.system.name}" id="${item.system.codename}" />
-                        <label class="answer__radio-label" for="${item.system.codename}">${item.system.name}</label>
-                    </div>
-                    <div class="answer__visual-elements" data-form-select="${item.system.codename}">
-                        ${item.answer.resolveHtml()}
+                    <div class="answer__wrapper">
+                        <div class="answer__form-elements">
+                            <input class="answer__radio" type="radio" tabIndex="-1" value="${item.system.name}" id="${item.system.codename}" />
+                            <label class="answer__radio-label" for="${item.system.codename}">${item.system.name}</label>
+                        </div>
+                        <div class="answer__visual-elements">
+                            <div class="answer__content">
+                                ${item.answer.resolveHtml()}
+                            </div>
+                            <a data-form-answer href="#${item.system.codename}" class="answer__link"></a>
+                        </div>
                     </div>
                 </div>`;
     }

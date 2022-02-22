@@ -1,6 +1,11 @@
 (() => {
   const surveyForm = document.querySelector('[data-survey-form]');
   if (!surveyForm) return;
+
+  const setSurveyEmailUnknown = (input, interval) => {
+    input.value = 'unknown';
+    clearInterval(interval);
+  };
   
   const setSurveyEmailInput = async () => {
     const emailInput = surveyForm.querySelector('input[name="email"]');
@@ -8,18 +13,25 @@
 
     let ktcCounter = 0; // Interval counter
     let user;
-    const interval = setInterval(async () => { // Start interval with 500ms timer
+
+    // Wait until auth0.client is available
+    const interval = setInterval(async () => {
         const auth0Client = auth0.client;
-        if (auth0Client) { // If client is available
+        if (auth0Client) {
+          try {
+            await auth0.client.getTokenSilently();
+            await auth0.client.getIdTokenClaims();
             user = await auth0.client.getUser(); // Get user
-            if (typeof user !== 'undefined') {
-              emailInput.value = user.email;
-              clearInterval(interval); // Stop the interval
-            }
+          } catch (err) {
+            setSurveyEmailUnknown(emailInput, interval);
+          }
+          if (typeof user !== 'undefined') {
+            emailInput.value = user.email;
+            clearInterval(interval);
+          }
         }
         if (ktcCounter > 10) {
-          emailInput.value = 'User is not signed in';
-          clearInterval(interval); // Stop the interval
+          setSurveyEmailUnknown(emailInput, interval);
         } 
         ktcCounter++;
     }, 500);
@@ -31,13 +43,27 @@
 
     const courseIdQS = window.helper.getParameterByName('courseid');
     if (!courseIdQS) {
-      courseIdInput.value = 'Course ID unavailable';
+      courseIdInput.value = 'unknown';
       return;
     }
     courseIdInput.value = courseIdQS;
   };
+
+  const makeAnswersInteractive = () => {
+    const survey = document.querySelector('[data-form-survey]');
+    if (!survey) return;
+    survey.delegateEventListener('click', '[data-form-answer]', function (e) {
+      e.preventDefault();
+      const answserCodename = this.getAttribute('href');
+      const answerInput = document.querySelector(answserCodename);
+      if (!answerInput) return;
+      answerInput.checked = true;
+      e.stopPropagation();
+    });
+  };
   
   window.addEventListener('load', async () => {
+    makeAnswersInteractive();
     setCourseIdInput();
     await setSurveyEmailInput();
   });

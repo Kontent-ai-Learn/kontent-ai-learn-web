@@ -1,6 +1,6 @@
 extends ../includes/layout.pug
 block content
-    main(id='main').survey&attributes(smartLink?.itemId(itemId))
+    main(id='main', data-form-survey).survey&attributes(smartLink?.itemId(itemId))
       h1.survey__heading&attributes(smartLink?.elementCodename('title')) !{title}
       .survey__introduction&attributes(smartLink?.elementCodename('short_introduction'))
         | !{postprocessMarkup(introduction, res)}
