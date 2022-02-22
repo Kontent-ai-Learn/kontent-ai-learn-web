@@ -624,6 +624,36 @@ const richTextResolverTemplates = {
                     }(window, document, "_pm", "PostmanRunObject", "https://run.pstmn.io/button.js"));
                 </script>`;
     },
+    question: (item) => {
+        return `<fieldset class="question">
+                    <legend class="question__legend">${item.question.value}</legend>
+                    <div class="question__answers">
+                        ${helper.injectHTMLAttr({
+                            markup: item.answers.resolveHtml(),
+                            selector: '.answer__radio',
+                            attr: 'name',
+                            attrValue: item.system.codename
+                        })}
+                    </div>
+                </fieldset>`;
+    },
+    questionFreeText: (item) => {
+        return `<fieldset class="question">
+                    <label class="question__label" for="${item.system.codename}">${item.question.value}</label>
+                    <textarea for="${item.system.codename}"></textarea>
+                </fieldset>`;
+    },
+    answer: (item) => {
+        return `<div class="answer">
+                    <div class="answer__form-elements">
+                        <input class="answer__radio" type="radio" name="xxx" value="${item.system.name}" id="${item.system.codename}" />
+                        <label class="answer__radio-label" for="${item.system.codename}">${item.system.name}</label>
+                    </div>
+                    <div class="answer__visual-elements" data-form-select="${item.system.codename}">
+                        ${item.answer.resolveHtml()}
+                    </div>
+                </div>`;
+    }
 };
 
 module.exports = richTextResolverTemplates;

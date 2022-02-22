@@ -99,6 +99,19 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
+    getSurvey: async (res, codename) => {
+        const urlMap = await ensureSingle(res, 'urlMap', async () => {
+            return await getUrlMap(res);
+        });
+        return await requestDelivery({
+            type: 'training_survey',
+            codename: codename,
+            resolveRichText: true,
+            depth: 2,
+            urlMap: urlMap,
+            ...commonContent.getKCDetails(res)
+        });
+    },
     getTraniningCourse: async (res) => {
         return await requestDelivery({
             type: 'training_course',
