@@ -98,11 +98,11 @@ const getTrainingCourseInfoFromScorm = async (user, course, UIMessages, req, res
     }
   }
 
-  if (courseInfo.completion === 0 || courseInfo.completion === 'Not started') {
+  if (courseInfo.completion === 0 || courseInfo.completion === UIMessages.training___course_status_unknown.value) {
     textUIMessageCodename = 'training___cta_start_course';
-  } else if (courseInfo.completion === 100 || courseInfo.completion === 'Completed') {
+  } else if (courseInfo.completion === 100 || courseInfo.completion === UIMessages.training___course_status_completed.value) {
     textUIMessageCodename = 'training___cta_revisit_course';
-  } else if (courseInfo.completion === 'Preview course') {
+  } else if (courseInfo.completion === UIMessages.training___course_status_preview.value) {
     textUIMessageCodename = 'training___cta_preview_course';
   } else if (courseInfo.completion === 101) {
     textUIMessageCodename = 'sign_in_error_text'; // 'User info is not available in LMS.';
