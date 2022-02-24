@@ -21,6 +21,10 @@ const helper = {
         return unsafe
             .replace(/"/g, '&quot;')
     },
+    removeQuotes: (unsafe) => {
+        return unsafe
+            .replace(/"/g, '')
+    },
     removeNewLines: (unsafe) => {
         return unsafe.replace(/\r?\n|\r/g, '');
     },

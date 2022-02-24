@@ -625,7 +625,7 @@ const richTextResolverTemplates = {
                 </script>`;
     },
     question: (item) => {
-        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.stripTags(item.question.value))).trim();
+        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(item.question.value)))).trim();
         return `<fieldset class="question">
                     <legend class="question__legend">${item.question.value}</legend>
                     <div class="question__answers">
@@ -639,7 +639,7 @@ const richTextResolverTemplates = {
                 </fieldset>`;
     },
     questionFreeText: (item) => {
-        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.stripTags(item.question.value))).trim();
+        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(item.question.value)))).trim();
         return `<fieldset class="question">
                     <label class="question__legend" for="${item.system.codename}">${item.question.value}</label>
                     <textarea class="question__textarea" name="${name}|${item.system.id}|textarea" for="${item.system.codename}"></textarea>
@@ -647,12 +647,12 @@ const richTextResolverTemplates = {
     },
     answer: (item) => {
         const content = item.answer.resolveHtml();
-        const value = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.stripTags(content))).trim();
+        const value = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(content)))).trim();
         return `<div class="answer">
                     <div class="answer__wrapper">
                         <div class="answer__form-elements">
                             <input class="answer__radio" type="radio" tabIndex="-1" value="${value}|${item.system.id}" id="${item.system.codename}" />
-                            <label class="answer__radio-label" for="${item.system.codename}">${item.system.name}</label>
+                            <label class="answer__radio-label" for="${item.system.codename}">${value}</label>
                         </div>
                         <div class="answer__visual-elements">
                             <div class="answer__content">
