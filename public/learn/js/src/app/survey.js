@@ -2,9 +2,15 @@
   const surveyForm = document.querySelector('[data-survey-form]');
   if (!surveyForm) return;
 
-  const setSurveyEmailUnknown = (input, interval) => {
-    input.value = 'unknown';
-    clearInterval(interval);
+  const hideOverlay = () => {
+    const overlay = document.querySelector('.survey__overlay');
+    if (!overlay) return;
+
+    overlay.classList.add('survey__overlay--hidden');
+  };
+
+  const makeUserSignIn = () => {
+    auth0.login();
   };
   
   const setSurveyEmailInput = async () => {
@@ -17,22 +23,28 @@
     // Wait until auth0.client is available
     const interval = setInterval(async () => {
         const auth0Client = auth0.client;
+        let success = true;
         if (auth0Client) {
           try {
             await auth0.client.getTokenSilently();
             await auth0.client.getIdTokenClaims();
-            user = await auth0.client.getUser(); // Get user
+            user = await auth0.client.getUser();
           } catch (err) {
-            setSurveyEmailUnknown(emailInput, interval);
+            success = false;
           }
           if (typeof user !== 'undefined') {
             emailInput.value = user.email;
             clearInterval(interval);
+            hideOverlay();
           }
         }
         if (ktcCounter > 10) {
-          setSurveyEmailUnknown(emailInput, interval);
-        } 
+          success = false;
+        }
+        if (!success) {
+          clearInterval(interval);
+          makeUserSignIn();
+        }
         ktcCounter++;
     }, 500);
   };

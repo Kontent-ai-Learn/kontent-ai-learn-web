@@ -1,4 +1,22 @@
 .survey {
+  position: relative;
+
+  &__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+    background-image: url('../img/loader.gif');
+    background-position: center center;
+    background-repeat: no-repeat;
+    z-index: 9999;
+
+    &--hidden {
+      display: none;
+    }
+  }
 
 	&__heading {
     font-size: 1.75em;
@@ -7,11 +25,11 @@
     font-weight: 500;
 
     @media screen and (min-width: 480px) {
-        font-size: 2em;
+      font-size: 2em;
     }
 
     @media screen and (min-width: 768px) {
-        font-size: 2.5em;
+      font-size: 2.5em;
     }
 	}
 

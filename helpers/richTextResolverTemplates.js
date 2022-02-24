@@ -639,20 +639,22 @@ const richTextResolverTemplates = {
     },
     questionFreeText: (item) => {
         return `<fieldset class="question">
-                    <label class="question__label" for="${item.system.codename}">${item.question.value}</label>
-                    <textarea for="${item.system.codename}"></textarea>
+                    <label class="question__legend" for="${item.system.codename}">${item.question.value}</label>
+                    <textarea class="question__textarea" name="${item.system.codename}" for="${item.system.codename}"></textarea>
                 </fieldset>`;
     },
     answer: (item) => {
+        const content = item.answer.resolveHtml();
+        const value = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.stripTags(content))).trim();
         return `<div class="answer">
                     <div class="answer__wrapper">
                         <div class="answer__form-elements">
-                            <input class="answer__radio" type="radio" tabIndex="-1" value="${item.system.name}" id="${item.system.codename}" />
+                            <input class="answer__radio" type="radio" tabIndex="-1" value="${value}" id="${item.system.codename}" />
                             <label class="answer__radio-label" for="${item.system.codename}">${item.system.name}</label>
                         </div>
                         <div class="answer__visual-elements">
                             <div class="answer__content">
-                                ${item.answer.resolveHtml()}
+                                ${content}
                             </div>
                             <a data-form-answer href="#${item.system.codename}" class="answer__link"></a>
                         </div>

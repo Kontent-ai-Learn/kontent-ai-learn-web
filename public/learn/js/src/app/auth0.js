@@ -19,32 +19,11 @@ const processLoginState = async () => {
         window.history.replaceState({}, document.title, window.location.pathname);
         const returnUrl = localStorage.getItem('auth0ReturnUrl');
         localStorage.removeItem('auth0ReturnUrl');
-        window.location.replace(`${returnUrl.split('#')[0]}#trainingAction`);
+        const redirectUrl = returnUrl.includes('/e-learning/') ? `${returnUrl.split('#')[0]}#trainingAction`: returnUrl; 
+        window.location.replace(redirectUrl);
     }
 };
-/*
-const provideInfo = async () => {
-    let isAuthenticated = await auth0.client.isAuthenticated();
-    
-    if (isAuthenticated) {
-        console.log('User is authenticated on the site.')
-    } else {
-        try {
-            await auth0.client.getTokenSilently();
-        } 
-        catch (e) { }
-        finally {
-            isAuthenticated = await auth0.client.isAuthenticated();
 
-            if (isAuthenticated) {
-                console.log('User is authenticated through the app.')
-            } else {
-                console.log('User is not authenticated.')
-            }   
-        }
-    }
-};
-*/
 auth0.login = async () => {
     localStorage.setItem('auth0ReturnUrl', window.location.href);
     await auth0.client.loginWithRedirect(auth0Settings);
@@ -100,6 +79,5 @@ auth0.eventListeners = () => {
 window.addEventListener('load', async () => {
     await configureClient();
     await processLoginState();
-    // provideInfo();
     await trainingCourse.getInfo();
 });

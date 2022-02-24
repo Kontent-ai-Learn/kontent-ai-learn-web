@@ -138,13 +138,13 @@ const componentsResolvers = [{
     type: 'carousel',
     resolver: richTextResolverTemplates.carousel
 }, {
-    type: 'training_question',
+    type: 'training_question_for_survey_and_test',
     resolver: richTextResolverTemplates.question
 }, {
     type: 'training_question_free_text',
     resolver: richTextResolverTemplates.questionFreeText
 }, {
-    type: 'training_answer',
+    type: 'training_answer_for_survey_and_test',
     resolver: richTextResolverTemplates.answer
 }];
 

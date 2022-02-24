@@ -188,9 +188,7 @@ if (!String.prototype.endsWith) {
   
     /* Extend the EventTarget prototype to add a delegateEventListener() event */
     EventTarget.prototype.delegateEventListener = function(eName, toFind, fn) {
-        console.log(eName);
       this.addEventListener(eName, function(event) {
-        console.log(event);
         var found = passedThrough(event, toFind, event.currentTarget);
   
         if(found) {

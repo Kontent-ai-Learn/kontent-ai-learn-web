@@ -142,7 +142,7 @@ const invalidatePDFs = async (items, res) => {
 };
 
 const getRootItems = async (items, KCDetails) => {
-    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_survey', 'training_course', 'training_question', 'training_question_free_text', 'training_answer'];
+    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_survey', 'training_course', 'training_question_for_survey_and_test', 'training_question_free_text', 'training_answer_for_survey_and_test'];
     const allItems = await requestDelivery({
         types: typesToSearch,
         depth: 0,

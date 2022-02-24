@@ -60,7 +60,7 @@ function checkIfItemIsParent(item, codename) {
             return item.content.linkedItemCodenames.includes(codename);
         case 'training_survey':
             return item.survey_questions.linkedItemCodenames.includes(codename);
-        case 'training_question':
+        case 'training_question_for_survey_and_test':
             return item.answers.linkedItemCodenames.includes(codename);
         default:
             return false;
