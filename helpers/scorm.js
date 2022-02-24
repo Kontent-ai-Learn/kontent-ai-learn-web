@@ -154,7 +154,21 @@ const getCoursePreviewLink = async (courseId, codename, res) => {
   return linkData;
 };
 
-const getCertificate = () => {
+const getCertificate = (progress) => {
+  if (progress === 'COMPLETED') {
+    // Fake cerificate
+    return {
+      course_id: '193',
+      course_name: 'Get Started with Modular Content',
+      unique_id: '795f-7fb9-d421-2fec',
+      issued_date: '2020/12/28',
+      issued_date_timestamp: 1609147583,
+      expiration_date: 'Never',
+      expiration_date_timestamp: 0,
+      download_url: 'https://kontent-kentico.talentlms.com/user/downloadcertification/id:8573',
+      public_url: 'https://training.kentico.com/user/certification/sig:uPhkqu_BsLdV_5tK1dGvwg.RjR5ZmExOGI5OWtYUWg4TGlDSForQT09'
+    };
+  }
   return null;
 };
 
@@ -226,7 +240,7 @@ const scorm = {
 
         url = linkData?.launchLink;
 
-        certificate = getCertificate();
+        certificate = getCertificate(progress);
       }
     } else {
       progress = 'PREVIEW';

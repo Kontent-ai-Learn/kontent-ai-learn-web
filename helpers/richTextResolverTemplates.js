@@ -625,6 +625,7 @@ const richTextResolverTemplates = {
                 </script>`;
     },
     question: (item) => {
+        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.stripTags(item.question.value))).trim();
         return `<fieldset class="question">
                     <legend class="question__legend">${item.question.value}</legend>
                     <div class="question__answers">
@@ -632,15 +633,16 @@ const richTextResolverTemplates = {
                             markup: item.answers.resolveHtml(),
                             selector: '.answer__radio',
                             attr: 'name',
-                            attrValue: item.system.codename
+                            attrValue: `${name}|${item.system.id}|radio`
                         })}
                     </div>
                 </fieldset>`;
     },
     questionFreeText: (item) => {
+        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.stripTags(item.question.value))).trim();
         return `<fieldset class="question">
                     <label class="question__legend" for="${item.system.codename}">${item.question.value}</label>
-                    <textarea class="question__textarea" name="${item.system.codename}" for="${item.system.codename}"></textarea>
+                    <textarea class="question__textarea" name="${name}|${item.system.id}|textarea" for="${item.system.codename}"></textarea>
                 </fieldset>`;
     },
     answer: (item) => {
@@ -649,7 +651,7 @@ const richTextResolverTemplates = {
         return `<div class="answer">
                     <div class="answer__wrapper">
                         <div class="answer__form-elements">
-                            <input class="answer__radio" type="radio" tabIndex="-1" value="${value}" id="${item.system.codename}" />
+                            <input class="answer__radio" type="radio" tabIndex="-1" value="${value}|${item.system.id}" id="${item.system.codename}" />
                             <label class="answer__radio-label" for="${item.system.codename}">${item.system.name}</label>
                         </div>
                         <div class="answer__visual-elements">

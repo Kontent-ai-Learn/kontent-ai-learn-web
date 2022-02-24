@@ -60,7 +60,52 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
 }));
 
 router.post('/:slug', asyncHandler(async (req, res, next) => {
-  return res.send(req.body);
+  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+    return await getUrlMap(res);
+  });
+  const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
+  if (!urlMapItem) return next();
+  const content = await handleCache.evaluateSingle(res, urlMapItem.codename, async () => {
+    return await commonContent.getSurvey(res, urlMapItem.codename);
+  });
+  if (!content.length) return next();
+
+  const data = {
+    survey_id: content[0].system.id,
+    email: req.body.email,
+    course_id: req.body.courseid,
+    survey_type: content[0].system.name,
+    timestamp: new Date().toISOString(),
+    items: []
+  };
+
+  for (const prop in req.body) {
+    if (Object.prototype.hasOwnProperty.call(req.body, prop)) {
+      if (prop !== 'email' && prop !== 'courseid') {
+        const question = prop.split('|');
+        const answer = req.body[prop].split('|');
+        data.items.push({
+          question_id: question[1] || null,
+          question: question[0] || null,
+          answer_id: answer[1] || null,
+          answer: answer[0] || null,
+          type: question[2] || null
+        });
+      }
+    }
+  }
+
+  console.log(data)
+
+  const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
+    return await commonContent.getTraniningCourse(res);
+  });
+  const trainingCourse = trainingCourses.find(item => item.scorm_cloud_id.value === req.body.courseid);
+  if (!trainingCourse) return next();
+  const urlMapCourseItem = urlMap.find(item => item.codename === trainingCourse.system.codename);
+  if (!urlMapCourseItem) return next();
+
+  return res.redirect(urlMapCourseItem.url);
 }));
 
 module.exports = router;

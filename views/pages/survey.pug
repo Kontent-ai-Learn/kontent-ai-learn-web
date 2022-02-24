@@ -7,8 +7,8 @@ block content
       .survey__questions
         form.survey__form(action=req.originalUrl, method='post', data-survey-form)
           | !{postprocessMarkup(questions, res)}
-          input.survey__hidden(type="text", id="email", name="email")
-          input.survey__hidden(type="text", id="courseid", name="courseid")
+          input.survey__hidden(type="hidden", id="email", name="email")
+          input.survey__hidden(type="hidden", id="courseid", name="courseid")
           button.button.survey__button
             span Submit
             span
