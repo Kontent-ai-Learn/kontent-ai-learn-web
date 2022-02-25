@@ -9,6 +9,7 @@ const getUrlMap = require('../helpers/urlMap');
 const isPreview = require('../helpers/isPreview');
 const postprocessMarkup = require('../helpers/postprocessMarkup');
 const smartLink = require('../helpers/smartLink');
+const surveyHelper = require('../helpers/survey');
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
   const home = await handleCache.ensureSingle(res, 'home', async () => {
@@ -70,32 +71,10 @@ router.post('/:slug', asyncHandler(async (req, res, next) => {
   });
   if (!content.length) return next();
 
-  const data = {
-    survey_id: content[0].system.id,
-    email: req.body.email,
-    course_id: req.body.courseid,
-    survey_type: content[0].system.name,
-    timestamp: new Date().toISOString(),
-    items: []
-  };
+  const data = surveyHelper.buildPostData(content[0], req.body);
+  await surveyHelper.sendDataToDb(data);
 
-  for (const prop in req.body) {
-    if (Object.prototype.hasOwnProperty.call(req.body, prop)) {
-      if (prop !== 'email' && prop !== 'courseid') {
-        const question = prop.split('|');
-        const answer = req.body[prop].split('|');
-        data.items.push({
-          question_id: question[1] || null,
-          question: question[0] || null,
-          answer_id: answer[1] || null,
-          answer: answer[0] || null,
-          type: question[2] || null
-        });
-      }
-    }
-  }
-
-  console.log(data)
+  // console.log(data)
 
   const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
     return await commonContent.getTraniningCourse(res);

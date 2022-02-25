@@ -62,6 +62,10 @@
     codename: 'sendgrid',
     title: 'Sendgrid',
     endpoint: '/learn/service-check/sendgrid/',
+  }, {
+    codename: 'cosmosDb',
+    title: 'CosmosDB',
+    endpoint: '/learn/service-check/cosmosdb/',
   }];
 
   const buidlUI = () => {

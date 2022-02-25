@@ -9,6 +9,7 @@ const checkTlms = require('../helpers/serviceCheck/tlms');
 const checkScorm = require('../helpers/serviceCheck/scorm');
 const checkAuth0 = require('../helpers/serviceCheck/auth0');
 const checkSendgrid = require('../helpers/serviceCheck/sendgrid');
+const checkCosmosDb = require('../helpers/serviceCheck/cosmosDb');
 
 router.get('/', (req, res) => {
   return res.render('pages/serviceCheck');
@@ -43,6 +44,9 @@ router.get('/:codename', asyncHandler(async (req, res) => {
     case 'sendgrid':
       result = await checkSendgrid();
       break;
+    case 'cosmosdb':
+        result = await checkCosmosDb();
+        break;
     default:
       result = {
         isSuccess: false,
