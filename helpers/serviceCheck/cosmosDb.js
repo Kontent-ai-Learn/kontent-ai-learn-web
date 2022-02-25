@@ -1,10 +1,18 @@
 const { CosmosClient } = require('@azure/cosmos');
-const surveyHelper = require('../survey');
 
 const checkCosmosDb = async () => {
   const envs = [{
-    name: 'CosmosDB',
-    errMessage: 'Missing CosmosDB env'
+    name: 'COSMOSDB_ENDPOINT',
+    errMessage: 'Missing COSMOSDB_ENDPOINT env'
+  }, {
+    name: 'COSMOSDB_KEY',
+    errMessage: 'Missing COSMOSDB_KEY env'
+  }, {
+    name: 'COSMOSDB_DATABASE',
+    errMessage: 'Missing COSMOSDB_DATABASE env'
+  }, {
+    name: 'COSMOSDB_CONTAINER',
+    errMessage: 'Missing COSMOSDB_CONTAINER env'
   }];
 
   for (let i = 0; i < envs.length; i++) {
@@ -16,21 +24,12 @@ const checkCosmosDb = async () => {
     }
   }
 
-  const config = surveyHelper.getDbConfig();
-
-  if (!(config.AccountEndpoint && config.AccountKey)) {
-    return {
-      isSuccess: false,
-      message: 'Unable to retrieve config values.'
-    };
-  }
-
   const data = {
     isSuccess: false,
     message: ''
   };
 
-  const client = new CosmosClient({ endpoint: config.AccountEndpoint, key: config.AccountKey });
+  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
   try {
     await client.getDatabaseAccount();
     data.isSuccess = true;

@@ -1,4 +1,5 @@
 const { CosmosClient } = require('@azure/cosmos');
+const app = require('../app');
 
 const buildPostData = (surveyContent, reqBody) => {
   const data = {
@@ -29,35 +30,20 @@ const buildPostData = (surveyContent, reqBody) => {
   return data;
 };
 
-const getDbConfig = () => {
-  let configEnv = process.env.CosmosDB
-  if (!configEnv) return null;
-  configEnv = configEnv.split(';');
-  configEnv = configEnv.filter(item => item);
-  const config = {};
-  for (let i = 0; i < configEnv.length; i++) {
-    const itemSplit = configEnv[i].split('=');
-    config[itemSplit[0]] = itemSplit[1];
-  }
-
-  // console.log(config);
-  return config;
-};
-
 const sendDataToDb = async (data) => {
-  const config = getDbConfig();
-  const client = new CosmosClient({ endpoint: config.AccountEndpoint, key: config.AccountKey });
+  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
   try {
-    const { database } = await client.databases.createIfNotExists({ id: 'Preview' });
-    const { container } = await database.containers.createIfNotExists({ id: 'Test' });
+    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
+    const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER });
     await container.items.create(data);
   } catch (error) {
-    console.log(error);
+    if (app.appInsights) {
+      app.appInsights.defaultClient.trackTrace({ message: 'COSMOSDB_ERROR: ' + error });
+    }
   }
 };
 
 module.exports = {
   buildPostData,
-  sendDataToDb,
-  getDbConfig
+  sendDataToDb
 };
