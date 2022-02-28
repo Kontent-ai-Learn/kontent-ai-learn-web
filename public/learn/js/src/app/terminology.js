@@ -170,9 +170,9 @@ window.initTerminology = () => {
                 anchor = generateAnchor(window.termDefinitions[i].term);
             }
         }
-        
+
         if (anchor) {
-            term.setAttribute('href', `/learn${terminologyPageUrl}#a-${anchor}`);
+            term.setAttribute('href', `${terminologyPageUrl}#a-${anchor}`);
         }
     };
 
