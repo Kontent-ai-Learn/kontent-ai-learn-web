@@ -307,6 +307,7 @@ const requestDelivery = async (config) => {
     response = extendLinkedItems(response);
 
     if (response?.items) {
+        if (config.type === 'training_question_for_survey_and_test') return response;
         return response.items;
     }
     if (response?.type) {

@@ -175,6 +175,12 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     }
   }
 
+  if (itemsByTypes.trainingCertificationTests.length) {
+    for (let i = 0; i < itemsByTypes.trainingCertificationTests.length; i++) {
+      await purge(itemsByTypes.trainingCertificationTests[i].codename, res);
+    }
+  }
+
   if (itemsByTypes.articles.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
     await axiosPurge(axiosDomain, '/learn/redirect-urls');
   }

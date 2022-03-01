@@ -249,18 +249,18 @@ const handleUnusedArtiles = async (deliveryClient, urlMap) => {
     return urlMap;
 };
 
-const handleSurveys = async (deliveryClient, urlMap) => {
-    const { items, error } = await queryDeliveryType('training_survey', 1, deliveryClient);
+const handleContentType = async (deliveryClient, urlMap, codename, pathSegment) => {
+    const { items, error } = await queryDeliveryType(codename, 1, deliveryClient);
 
     if (items && items.items) {
-        items.items.forEach((surveyItem) => {
-            if (!surveyItem._raw.system.workflow_step !== 'archived') {
+        items.items.forEach((item) => {
+            if (!item._raw.system.workflow_step !== 'archived') {
                 urlMap.push(getMapItem({
-                    codename: surveyItem.system.codename,
-                    url: `/learn/survey/${surveyItem.url.value}/`,
-                    date: surveyItem.system.lastModified,
+                    codename: item.system.codename,
+                    url: `/learn/${pathSegment}/${item.url.value}/`,
+                    date: item.system.lastModified,
                     visibility: [{ codename: 'excluded_from_search' }],
-                    type: surveyItem.system.type
+                    type: item.system.type
                 }, fields));
             }
         });
@@ -312,7 +312,8 @@ const getUrlMap = async (res, isSitemap) => {
         cachedPlatforms: cachedPlatforms
     });
     urlMap = await handleUnusedArtiles(deliveryClient, urlMap);
-    urlMap = await handleSurveys(deliveryClient, urlMap);
+    urlMap = await handleContentType(deliveryClient, urlMap, 'training_survey', 'survey');
+    urlMap = await handleContentType(deliveryClient, urlMap, 'training_certification_test', 'get-certified');
 
     return urlMap;
 };

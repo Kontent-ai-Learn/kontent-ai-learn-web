@@ -82,6 +82,13 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
+    getTrainingQuestions: async (res) => {
+        return await requestDelivery({
+            type: 'training_question_for_survey_and_test',
+            depth: 2,
+            ...commonContent.getKCDetails(res)
+        });
+    },
     getTrainingSubscriptions: async (res) => {
         return await requestDelivery({
             type: 'training_subscriptions',
@@ -109,6 +116,13 @@ const commonContent = {
             resolveRichText: true,
             depth: 2,
             urlMap: urlMap,
+            ...commonContent.getKCDetails(res)
+        });
+    },
+    getCertificationTest: async (res, codename) => {
+        return await requestDelivery({
+            type: 'training_certification_test',
+            codename: codename,
             ...commonContent.getKCDetails(res)
         });
     },

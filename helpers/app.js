@@ -16,6 +16,7 @@ const urlWhitelist = [
   '/learn/sitemap.xml',
   '/learn/pdf/',
   '/learn/survey/*',
+  '/learn/get-certified/*',
   '/learn/callback/',
   '/learn/opensearch.xml'
 ];

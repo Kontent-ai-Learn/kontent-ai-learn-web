@@ -84,6 +84,7 @@ gulp.task('js-app', () => {
       'node_modules/@splidejs/splide/dist/js/splide.js',
       'public/learn/js/src/app/carousel.js',
       'public/learn/js/src/app/survey.js',
+      'public/learn/js/src/app/certification-test.js',
     ])
     .pipe(concat('app.js'))
     .pipe(uglify())
@@ -255,6 +256,7 @@ gulp.task('css-app', () => {
       'node_modules/@splidejs/splide/dist/css/splide-core.min.css',
       'public/learn/css/src/components/carousel.less',
       'public/learn/css/src/components/survey.less',
+      'public/learn/css/src/components/certification-test.less',
       'public/learn/css/src/components/question.less',
       'public/learn/css/src/components/answer.less',
     ])

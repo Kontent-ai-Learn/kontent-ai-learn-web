@@ -79,7 +79,9 @@ const splitPayloadByContentType = (items) => {
         trainingCourses: [],
         trainingUsers: [],
         trainingSubscriptions: [],
-        trainingSurveys: []
+        trainingSurveys: [],
+        trainingCertificationTests: [],
+        trainingQuestions: [],
     };
 
     for (let i = 0; i < items.length; i++) {
@@ -116,6 +118,10 @@ const splitPayloadByContentType = (items) => {
             itemsByTypes.trainingSubscriptions.push(item);
         } else if (item.type === 'training_survey') {
             itemsByTypes.trainingSurveys.push(item);
+        } else if (item.type === 'training_certification_test') {
+            itemsByTypes.trainingCertificationTests.push(item);
+        } else if (item.type === 'training_question_for_survey_and_test') {
+            itemsByTypes.trainingQuestions.push(item);
         }
     }
 
@@ -251,6 +257,7 @@ const invalidateSubNavigation = async (res, keys, KCDetails) => {
 const invalidateElearning = async (itemsByTypes, KCDetails, res) => {
     if (itemsByTypes.trainingCourses.length) {
         await invalidateMultiple(itemsByTypes, KCDetails, 'trainingCourses', res);
+        await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingCourses');
         await revalidateTrainingCourseType(KCDetails, res);
         await requestItemAndDeleteCacheKey('e_learning_overview', KCDetails, res);
     }
@@ -281,6 +288,8 @@ const processInvalidation = async (req, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingUsers');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingSubscriptions');
         await deleteSpecificKeys(KCDetails, itemsByTypes.trainingSurveys, res);
+        await deleteSpecificKeys(KCDetails, itemsByTypes.trainingCertificationTests, res);
+        await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingQuestions');
         await invalidatePDFs(items, res);
         await fastly.purgeFinal(itemsByTypes, req, res);
 
