@@ -1,13 +1,9 @@
 (() => {
-  const certificationTest = document.querySelector('[data-certification-test]');
-  if (!certificationTest) return;
-
   const startTimer = (selector) => {
     const display =  document.querySelector(selector);
+    if(!display) return;
     const duration = parseInt(display.getAttribute('data-timer'));
     let timer = duration, hours, minutes, seconds;
-    
-    if(!display) return;
 
     const interval = setInterval(() => {
         hours = parseInt(timer / 3600, 10);
@@ -21,6 +17,9 @@
 
         if (--timer < 0) {
             clearInterval(interval);
+
+            const submitButton = document.querySelector('.certification-test__button');
+            if (submitButton) submitButton.click();
         }
     }, 1000);
 }
@@ -60,12 +59,13 @@
     }, 500);
   };
 
-  const requestFormData = async (itemCodename, email, token) => {
+  const requestFormData = async (itemCodename, user, token) => {
     const fetchOptions = {
       method: 'POST',
       body: JSON.stringify({
         codename: itemCodename,
-        email: email
+        email: user.email,
+        username: user.name
       })
     };
 
@@ -120,28 +120,24 @@
   };
 
   const renderForm = (formData, container) => {
-    const title = formData.data.test.title;
     const data = formData.data.test.questions;
 
-    const attemptStart = new Date(formData.data.timestamp);
+    const attemptStart = new Date(formData.data.start);
     const attemptStartDurationSec = attemptStart.getTime() / 1000 + formData.data.test.duration * 60;
     const nowSec = (new Date()).getTime() / 1000;
 
     let markup = `<span class="certification-test__timer" data-timer="${Math.round(attemptStartDurationSec - nowSec)}"></span>
-      <h1 class="certification-test__heading">${title}</h1>
       <form class="certification-test__form" action="${window.location.pathname}" method="post" data-certification-test-form>
     `;
     markup += renderTopics(data);
-
+    markup += `<input type="hidden" name="attempt" value="${formData.data.id}">`;
     markup += `<button class="button certification-test__button"><span>Submit</span><span></span></button></form>`;
 
     container.innerHTML = markup;
   };
 
-  const makeAnswersInteractive = () => {
-    const survey = document.querySelector('[data-certification-test]');
-    if (!survey) return;
-    survey.delegateEventListener('click', '[data-form-answer]', function (e) {
+  const makeAnswersInteractive = (elem) => {
+    elem.delegateEventListener('click', '[data-form-answer]', function (e) {
       e.preventDefault();
       const answserCodename = this.getAttribute('href');
       const answerInput = document.querySelector(answserCodename);
@@ -152,7 +148,7 @@
   };
 
   const renderNextAttemptMessage = (formData, container) => {
-    const attemptStart = new Date(formData.data.timestamp);
+    const attemptStart = new Date(formData.data.start);
     attemptStart.setDate(attemptStart.getDate() + 1);
     const now = new Date();
     const diffSec = Math.round((attemptStart - now) / 1000);
@@ -161,32 +157,87 @@
     container.innerHTML = markup;
   };
 
+  const setFormState = (storageName, property, value) => {
+    let state = localStorage.getItem(storageName);
+
+    if (state) {
+      state = JSON.parse(state);
+    } else {
+      state = {};
+    }
+    state[property] = value;
+    localStorage.setItem(storageName, JSON.stringify(state));
+  };
+
+  const getFormState = (storageName) => {
+    let state = localStorage.getItem(storageName);
+    if (!state) return;
+
+    state = JSON.parse(state);
+    for (const property in state) {
+      if (Object.prototype.hasOwnProperty.call(state, property)) {
+        const answerInput = document.querySelector(`[name="${property}"][value="${state[property]}"]`);
+        if (answerInput) {
+          answerInput.checked = true;
+        }
+      }
+    }
+  };
+
+  const persistFormState = (elem) => {
+    const storageName = elem.getAttribute('data-certification-test');
+    getFormState(storageName);
+    elem.delegateEventListener('click', '[data-form-answer]', function (e) {
+      e.preventDefault();
+      const answserCodename = this.getAttribute('href');
+      const answerInput = document.querySelector(answserCodename);
+      if (!answerInput) return;
+      setFormState(storageName, answerInput.getAttribute('name'), answerInput.value);
+      e.stopPropagation();
+    });
+  };
+
   const getCertificationTest = async (user) => {
     if (!user) return;
     const token = user ? user.__raw : null;
     const elem = document.querySelector('[data-certification-test]');
     const codename = elem ? elem.getAttribute('data-certification-test') : null
     if (!(token && codename)) return;
-    const formData = await requestFormData(codename, user.email, token);
+    const formData = await requestFormData(codename, user, token);
     console.log(formData);
 
-    const headTitle = document.querySelector('title');
-    if (headTitle) {
-      headTitle.innerHTML = `${formData.data.test.title}${headTitle.innerHTML}`;
-    }
-
-    if (formData.code === 200) {
+    if (formData.code === 302) {
+      window.location.href = `${window.location.protocol}//${window.location.host}${window.location.pathname}${formData.data.id}/`;
+    } else if (formData.code === 200) {
       renderForm(formData, elem);
-      makeAnswersInteractive();
+      makeAnswersInteractive(elem);
+      persistFormState(elem);
     } else {
       renderNextAttemptMessage(formData, elem);
     }
-    startTimer('[data-timer]');
   };
 
-  window.addEventListener('load', () => {
-    ensureUserSignedIn(async (user) => {
-      await getCertificationTest(user);
+  const removeFormState = () => {
+    const elem = document.querySelector('[data-certification-result]');
+    if (!elem) return;
+    const codename = elem.getAttribute('data-certification-result');
+    localStorage.removeItem(codename);
+  };
+
+  
+  let container = document.querySelector('[data-certification-result]');
+  if (container) {
+    removeFormState();
+    startTimer('[data-timer]');
+  }
+
+  container = document.querySelector('[data-certification-test]');
+  if (container) {
+    window.addEventListener('load', () => {
+      ensureUserSignedIn(async (user) => {
+        await getCertificationTest(user);
+        startTimer('[data-timer]');
+      });
     });
-  });
+  }
 })();

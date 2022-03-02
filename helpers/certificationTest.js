@@ -4,7 +4,90 @@ const handleCache = require('./handleCache');
 const commonContent = require('./commonContent');
 const helper = require('./helperFunctions');
 
-const checkCreateAttempt = async (codename, email, res) => {
+const successfullAttemptExists = async (body, res) => {
+  const { codename, email } = body;
+  let attempt = null;
+  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
+
+  try {
+    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
+    const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT });
+
+    const query = {
+        query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.certificate_expiration > @expiration',
+        parameters: [{
+          name: '@email',
+          value: email
+        }, {
+          name: '@codename',
+          value: codename
+        }, {
+          name: '@expiration',
+          value: new Date().toISOString()
+        }]
+    };
+
+    const { resources } = await container.items.query(query).fetchAll();
+    if (resources && resources.length) {
+      attempt = resources[0];
+    }
+  } catch (error) {
+    if (app.appInsights) {
+      app.appInsights.defaultClient.trackTrace({ message: 'COSMOSDB_ERROR: ' + error });
+    }
+  }
+
+  return attempt;
+};
+
+const updateAttempt = async (attempt) => {
+  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
+
+  try {
+    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
+    const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT });
+    const itemToUpdate = await container.item(attempt.id);
+
+    await itemToUpdate.replace(attempt);
+  } catch (error) {
+    if (app.appInsights) {
+      app.appInsights.defaultClient.trackTrace({ message: 'COSMOSDB_ERROR: ' + error });
+    }
+  }
+};
+
+const getAttempt = async (id) => {
+  let attempt = null;
+  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
+
+  try {
+    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
+    const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT });
+
+    const query = {
+      query: 'SELECT * FROM c WHERE c.id = @id',
+      parameters: [{
+        name: '@id',
+        value: id
+      }]
+    };
+
+    const { resources } = await container.items.query(query).fetchAll();
+
+    if ((resources && resources.length)) {
+      attempt = resources[0];
+    }
+  } catch (error) {
+    if (app.appInsights) {
+      app.appInsights.defaultClient.trackTrace({ message: 'COSMOSDB_ERROR: ' + error });
+    }
+  }
+
+  return attempt;
+};
+
+const checkCreateAttempt = async (body, res) => {
+  const { codename, email, username } = body;
   let attempt = null;
   const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
 
@@ -13,11 +96,11 @@ const checkCreateAttempt = async (codename, email, res) => {
     const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT });
 
     const date = new Date()
-    date.setDate(date.getDate() - 1); // !!!! Change this to 1 before pushing to repo
-    const timestamp = date.toISOString();
+    date.setDate(date.getDate() - 1);
+    const start = date.toISOString();
 
     const query = {
-        query: 'SELECT * FROM c WHERE c.email = @email AND c.codename = @codename AND c.timestamp > @timestamp',
+        query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.start > @start',
         parameters: [{
           name: '@email',
           value: email
@@ -25,8 +108,8 @@ const checkCreateAttempt = async (codename, email, res) => {
           name: '@codename',
           value: codename
         }, {
-          name: '@timestamp',
-          value: timestamp
+          name: '@start',
+          value: start
         }]
     };
 
@@ -36,8 +119,11 @@ const checkCreateAttempt = async (codename, email, res) => {
 
       attempt = await container.items.create({
         email: email,
-        codename: codename,
-        timestamp: new Date().toISOString(),
+        username: username,
+        start: new Date().toISOString(),
+        end: null,
+        score: null,
+        certificate_expiration: null,
         test: certificationTestData
       });
     } else {
@@ -111,7 +197,8 @@ const buildQuestionsObject = (certificationTest, allQuestions) => {
               codename: allQuestions.items[i].answers.linkedItems_custom[m].system.codename,
               name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(allQuestions.items[i].answers.linkedItems_custom[m].answer.value)))).trim(),
               html: allQuestions.items[i].answers.linkedItems_custom[m].answer.value,
-              correct: !!allQuestions.items[i].answers.linkedItems_custom[m].is_this_a_correct_answer_.value.length
+              correct: !!allQuestions.items[i].answers.linkedItems_custom[m].is_this_a_correct_answer_.value.length,
+              answer: false
             })
           }
 
@@ -131,6 +218,7 @@ const removeCorrectnessFromCertificationTestData = (data) => {
     for (let j = 0; j < data.questions[i].questions.length; j++) {
       for (let k = 0; k < data.questions[i].questions[j].answers.length; k++) {
         delete data.questions[i].questions[j].answers[k].correct;
+        delete data.questions[i].questions[j].answers[k].answer;
       }
     }
   }
@@ -151,21 +239,68 @@ const getCertificationTestData = async (codename, res) => {
   const questions = buildQuestionsObject(certificationTest, allQuestions);
 
   return {
+    codename: codename,
     title: certificationTest.title.value,
     duration: parseInt(certificationTest.test_duration.value),
+    questions_count: certificationTest.question_count.value,
     questions: questions
    };
 };
 
-const getData = async (codename, email, req, res) => {
-  const attempt = await checkCreateAttempt(codename, email, res);
+const evaluateAttempt = (body, attempt) => {
+  attempt.end = new Date().toISOString();
+  let correctAnswers = 0;
+
+  for (const property in body) {
+    if (Object.prototype.hasOwnProperty.call(body, property)) {
+      for (let i = 0; i < attempt.test.questions.length; i++) {
+        for (let j = 0; j < attempt.test.questions[i].questions.length; j++) {
+          if (attempt.test.questions[i].questions[j].codename === property) {
+            for (let k = 0; k < attempt.test.questions[i].questions[j].answers.length; k++) {
+              if (attempt.test.questions[i].questions[j].answers[k].codename === body[property]) {
+                attempt.test.questions[i].questions[j].answers[k].answer = true;
+
+                if (attempt.test.questions[i].questions[j].answers[k].answer === true &&
+                  attempt.test.questions[i].questions[j].answers[k].correct === true
+                  ) {
+                    correctAnswers++;
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  attempt.score = Math.floor(correctAnswers / attempt.test.questions_count * 100);
+
+  if (attempt.score >= 80) {
+    const date = new Date()
+    date.setDate(date.getDate() + 365);
+    attempt.certificate_expiration = date.toISOString();
+  }
+
+  return attempt;
+};
+
+const initAttempt = async (body, res) => {
+  const successfullAttempt = await successfullAttemptExists(body);
+  if (successfullAttempt) {
+    return {
+      code: 302,
+      data: successfullAttempt
+    }
+  }
+
+  const attempt = await checkCreateAttempt(body, res);
   let code = 403;
 
   if (attempt && attempt.resource) {
-    const attemptStart = new Date(attempt.resource.timestamp);
+    const attemptStart = new Date(attempt.resource.start);
     const attemptStartDurationMs = attemptStart.getTime() + attempt.resource.test.duration * 60000;
     const nowMs = (new Date()).getTime();
-    if (attemptStartDurationMs > nowMs) {
+    if (attemptStartDurationMs > nowMs && !attempt.resource.end) {
       code = 200;
     }
     attempt.resource.test = removeCorrectnessFromCertificationTestData(attempt.resource.test);
@@ -177,6 +312,25 @@ const getData = async (codename, email, req, res) => {
   };
 };
 
+const handleAttempt = async (body) => {
+  let attempt = await getAttempt(body.attempt);
+  if (!attempt) return null;
+  attempt = evaluateAttempt(body, attempt);
+  updateAttempt(attempt);
+
+  return attempt;
+};
+
+const getNextAttemptSeconds = (date) => {
+  const attemptStart = new Date(date);
+  attemptStart.setDate(attemptStart.getDate() + 1);
+  const now = new Date();
+  return Math.round((attemptStart - now) / 1000);
+}
+
 module.exports = {
-  getData
+  initAttempt,
+  handleAttempt,
+  getAttempt,
+  getNextAttemptSeconds
 };

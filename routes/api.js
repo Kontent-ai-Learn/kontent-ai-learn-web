@@ -32,7 +32,7 @@ router.post('/training-course/detail/public', async (req, res) => {
 
 router.post('/get-certified', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
-  const data = await certificationTest.getData(req.body.codename, req.body.email, req, res);
+  const data = await certificationTest.initAttempt(req.body, res);
   return res.send(data);
 });
 
