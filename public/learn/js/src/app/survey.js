@@ -9,46 +9,6 @@
     overlay.classList.add('survey__overlay--hidden');
   };
 
-  const makeUserSignIn = () => {
-    auth0.login();
-  };
-  
-  const setSurveyEmailInput = async () => {
-    const emailInput = surveyForm.querySelector('input[name="email"]');
-    if (!(emailInput && auth0)) return;
-
-    let ktcCounter = 0; // Interval counter
-    let user;
-
-    // Wait until auth0.client is available
-    const interval = setInterval(async () => {
-        const auth0Client = auth0.client;
-        let success = true;
-        if (auth0Client) {
-          try {
-            await auth0.client.getTokenSilently();
-            await auth0.client.getIdTokenClaims();
-            user = await auth0.client.getUser();
-          } catch (err) {
-            success = false;
-          }
-          if (typeof user !== 'undefined') {
-            emailInput.value = user.email;
-            clearInterval(interval);
-            hideOverlay();
-          }
-        }
-        if (ktcCounter > 10) {
-          success = false;
-        }
-        if (!success) {
-          clearInterval(interval);
-          makeUserSignIn();
-        }
-        ktcCounter++;
-    }, 500);
-  };
-
   const setCourseIdInput = () => {
     const courseIdInput = surveyForm.querySelector('input[name="courseid"]');
     if (!courseIdInput) return;
@@ -77,6 +37,12 @@
   window.addEventListener('load', async () => {
     makeAnswersInteractive();
     setCourseIdInput();
-    await setSurveyEmailInput();
+
+    auth0.ensureUserSignedIn(async (user) => {
+      const emailInput = surveyForm.querySelector('input[name="email"]');
+      if (!emailInput) return;
+      emailInput.value = user.email;
+      hideOverlay();
+    });
   });
 })();

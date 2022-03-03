@@ -57,8 +57,9 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
   });
 }));
 
-router.post('/:slug', asyncHandler(async (req, res) => {
+router.post('/:slug', asyncHandler(async (req, res, next) => {
   const attempt = await certificationTest.handleAttempt(req.body);
+  if (!attempt) return next();
   return res.redirect(302, `${req.originalUrl.split('?')[0]}${attempt.id}/`);
 }));
 
@@ -74,6 +75,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
   const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
+
   let url = req.originalUrl.split('?')[0].replace(/\/$/, '');
   url = `${url.slice(0, url.lastIndexOf('/'))}/`;
   const urlMapItem = helper.getMapItemByUrl(url, urlMap);
@@ -84,6 +86,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
   });
 
   const attempt = await certificationTest.getAttempt(req.params.attemptid);
+  if (!attempt) return next();
 
   const footer = await handleCache.ensureSingle(res, 'footer', async () => {
     return commonContent.getFooter(res);

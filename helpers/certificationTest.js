@@ -1,5 +1,4 @@
-const { CosmosClient } = require('@azure/cosmos');
-const app = require('../app');
+const cosmos = require('./cosmos');
 const handleCache = require('./handleCache');
 const commonContent = require('./commonContent');
 const helper = require('./helperFunctions');
@@ -7,12 +6,9 @@ const helper = require('./helperFunctions');
 const successfullAttemptExists = async (body, res) => {
   const { codename, email } = body;
   let attempt = null;
-  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
 
   try {
-    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
-    const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT });
-
+    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
     const query = {
         query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.certificate_expiration > @expiration',
         parameters: [{
@@ -27,43 +23,32 @@ const successfullAttemptExists = async (body, res) => {
         }]
     };
 
-    const { resources } = await container.items.query(query).fetchAll();
+    const { resources } = await db.items.query(query).fetchAll();
     if (resources && resources.length) {
       attempt = resources[0];
     }
   } catch (error) {
-    if (app.appInsights) {
-      app.appInsights.defaultClient.trackTrace({ message: 'COSMOSDB_ERROR: ' + error });
-    }
+    cosmos.logAppInsightsError(error);
   }
 
   return attempt;
 };
 
 const updateAttempt = async (attempt) => {
-  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
-
   try {
-    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
-    const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT });
-    const itemToUpdate = await container.item(attempt.id);
-
+    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
+    const itemToUpdate = await db.item(attempt.id);
     await itemToUpdate.replace(attempt);
   } catch (error) {
-    if (app.appInsights) {
-      app.appInsights.defaultClient.trackTrace({ message: 'COSMOSDB_ERROR: ' + error });
-    }
+    cosmos.logAppInsightsError(error);
   }
 };
 
 const getAttempt = async (id) => {
   let attempt = null;
-  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
 
   try {
-    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
-    const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT });
-
+    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
     const query = {
       query: 'SELECT * FROM c WHERE c.id = @id',
       parameters: [{
@@ -72,15 +57,13 @@ const getAttempt = async (id) => {
       }]
     };
 
-    const { resources } = await container.items.query(query).fetchAll();
+    const { resources } = await db.items.query(query).fetchAll();
 
     if ((resources && resources.length)) {
       attempt = resources[0];
     }
   } catch (error) {
-    if (app.appInsights) {
-      app.appInsights.defaultClient.trackTrace({ message: 'COSMOSDB_ERROR: ' + error });
-    }
+    cosmos.logAppInsightsError(error);
   }
 
   return attempt;
@@ -89,16 +72,13 @@ const getAttempt = async (id) => {
 const checkCreateAttempt = async (body, res) => {
   const { codename, email, username } = body;
   let attempt = null;
-  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
 
   try {
-    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
-    const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT });
-
     const date = new Date()
     date.setDate(date.getDate() - 1);
     const start = date.toISOString();
 
+    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
     const query = {
         query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.start > @start',
         parameters: [{
@@ -113,11 +93,11 @@ const checkCreateAttempt = async (body, res) => {
         }]
     };
 
-    const { resources } = await container.items.query(query).fetchAll();
+    const { resources } = await db.items.query(query).fetchAll();
     if (!(resources && resources.length)) {
       const certificationTestData = await getCertificationTestData(codename, res);
 
-      attempt = await container.items.create({
+      attempt = await db.items.create({
         email: email,
         username: username,
         start: new Date().toISOString(),
@@ -131,9 +111,7 @@ const checkCreateAttempt = async (body, res) => {
       attempt.resource = resources[0];
     }
   } catch (error) {
-    if (app.appInsights) {
-      app.appInsights.defaultClient.trackTrace({ message: 'COSMOSDB_ERROR: ' + error });
-    }
+    cosmos.logAppInsightsError(error);
   }
 
   return attempt;
@@ -163,7 +141,7 @@ const pickRandomQuestions = (questions, formQuestionsNumber, allQuestionsNumber)
 };
 
 const buildQuestionsObject = (certificationTest, allQuestions) => {
-  let questions = [];
+  const questions = [];
 
   for (let i = 0; i < certificationTest.training_questions.value.length; i++) {
     questions.push({
@@ -208,9 +186,7 @@ const buildQuestionsObject = (certificationTest, allQuestions) => {
     }
   };
 
-  questions = pickRandomQuestions(questions, certificationTest.question_count.value, allQuestions.items.length);
-
-  return questions;
+  return pickRandomQuestions(questions, certificationTest.question_count.value, allQuestions.items.length);
 }
 
 const removeCorrectnessFromCertificationTestData = (data) => {

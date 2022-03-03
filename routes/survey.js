@@ -74,8 +74,6 @@ router.post('/:slug', asyncHandler(async (req, res, next) => {
   const data = surveyHelper.buildPostData(content[0], req.body);
   await surveyHelper.sendDataToDb(data);
 
-  // console.log(data)
-
   const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
     return await commonContent.getTraniningCourse(res);
   });
@@ -84,7 +82,7 @@ router.post('/:slug', asyncHandler(async (req, res, next) => {
   const urlMapCourseItem = urlMap.find(item => item.codename === trainingCourse.system.codename);
   if (!urlMapCourseItem) return next();
 
-  return res.redirect(urlMapCourseItem.url);
+  return res.redirect(`${urlMapCourseItem.url}#trainingAction`);
 }));
 
 module.exports = router;

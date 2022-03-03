@@ -11,8 +11,11 @@ const checkCosmosDb = async () => {
     name: 'COSMOSDB_DATABASE',
     errMessage: 'Missing COSMOSDB_DATABASE env'
   }, {
-    name: 'COSMOSDB_CONTAINER',
-    errMessage: 'Missing COSMOSDB_CONTAINER env'
+    name: 'COSMOSDB_CONTAINER_SURVEY',
+    errMessage: 'Missing COSMOSDB_CONTAINER_SURVEY env'
+  }, {
+    name: 'COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT',
+    errMessage: 'Missing COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT env'
   }];
 
   for (let i = 0; i < envs.length; i++) {

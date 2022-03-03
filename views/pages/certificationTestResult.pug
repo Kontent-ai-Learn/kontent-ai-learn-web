@@ -2,20 +2,23 @@ extends ../includes/layout.pug
 block content
     main(id='main', data-certification-result=itemCodename)
       h1.certification-test__heading !{title}
-      h2.certification-test__score Score: !{attempt.score}%
-      if (attempt.score >= 80)
-        p You have successfully passed the certification test
-        a(href='#').button
-          span Download certificate
-          span
-      else 
-        p You didn’t pass this time. You can try again in 
-          span(data-timer=nextAttemptSeconds)
-
-      each topic in attempt.test.questions
-        each question in topic.questions
-          .certification-test__question !{question.html}
-          ul.certification-test__answers
-            each answer in question.answers
-              - let className = 'answer';if (answer.correct && answer.answer) { className = 'correct'; } if (answer.correct && !answer.answer) { className = 'incorrect'; }
-              li(class=`certification-test__${className}`) !{answer.html}
+      if (attempt.score)
+        h2.certification-test__score Score: !{attempt.score}%
+      .certification-test__text
+        if (attempt.score >= 80)
+          p You have successfully passed the certification test.
+          a(href='#').button
+            span Download certificate
+            span
+        else 
+          p You didn’t pass this time. You can try again in 
+            span(data-timer=nextAttemptSeconds)
+            | .
+      if (attempt.score)
+        each topic in attempt.test.questions
+          each question in topic.questions
+            .certification-test__question !{question.html}
+            ul.certification-test__answers
+              each answer in question.answers
+                - let className = 'general';if (answer.correct && answer.answer) { className = 'correct'; } if (answer.correct && !answer.answer) { className = 'incorrect'; }
+                li(class=`certification-test__answer certification-test__answer--${className}`) !{answer.html}

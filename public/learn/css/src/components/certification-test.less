@@ -34,7 +34,7 @@
     }
   }
 
-  &__timer {
+  &__bar {
     position: fixed;
     bottom: 0;
     right: 0;
@@ -43,13 +43,47 @@
     background-color: #fff; 
     z-index: 6000;
     box-shadow: 0 -2px 0 0 #e8e8e8;
+    text-align: center;
+    font-size: 1.5em;
   }
 
-  &__correct {
-    color: green;
+  &__score {
+    font-size: 1.75em;
+    padding: .5em 0;
   }
 
-  &__incorrect {
-    color: red; 
+  &__text {
+    padding: 0 0 2em;
+
+    p {
+      padding: 0 0 1em;
+
+      &:last-child {
+        padding: 0;
+      }
+    }
+  }
+
+  &__question {
+    font-size: 1.25em;
+    padding: 0 0 .25em;
+  }
+
+  &__answers {
+    padding: 0 0 1.5em;
+  }
+
+  &__answer {
+    padding: 0 0 .25em;
+
+    &--incorrect {
+      color: #ff0000; 
+      font-weight: 700;
+    }
+
+    &--correct {
+      color: #3dd100;
+      font-weight: 700;
+    }
   }
 }

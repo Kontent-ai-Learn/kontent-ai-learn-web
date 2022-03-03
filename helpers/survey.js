@@ -1,5 +1,4 @@
-const { CosmosClient } = require('@azure/cosmos');
-const app = require('../app');
+const cosmos = require('./cosmos');
 
 const buildPostData = (surveyContent, reqBody) => {
   const data = {
@@ -31,15 +30,11 @@ const buildPostData = (surveyContent, reqBody) => {
 };
 
 const sendDataToDb = async (data) => {
-  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
   try {
-    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
-    const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER });
-    await container.items.create(data);
+    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_SURVEY);
+    await db.items.create(data);
   } catch (error) {
-    if (app.appInsights) {
-      app.appInsights.defaultClient.trackTrace({ message: 'COSMOSDB_ERROR: ' + error });
-    }
+    cosmos.logAppInsightsError(error);
   }
 };
 

@@ -4,8 +4,7 @@ const auth0Settings = {
     domain: window.auth0Config.domain,
     client_id: window.auth0Config.clientID,
     redirect_uri: `${location.protocol}//${location.host}/learn/callback/`,
-    scope: 'openid email profile',
-    //cacheLocation: 'localstorage'
+    scope: 'openid email profile'
 };
 
 const configureClient = async () => {
@@ -74,7 +73,38 @@ auth0.eventListeners = () => {
             }
         });
     }
-}
+};
+
+auth0.ensureUserSignedIn = (callback) => {
+    let counter = 0;
+    let user;
+
+    // Wait until auth0.client is available
+    const interval = setInterval(async () => {
+        const auth0Client = auth0.client;
+        let success = true;
+        if (auth0Client) {
+          try {
+            await auth0.client.getTokenSilently();
+            user = await auth0.client.getIdTokenClaims();
+          } catch (err) {
+            success = false;
+          }
+          if (typeof user !== 'undefined') {
+            clearInterval(interval);
+            callback(user);
+          }
+        }
+        if (counter > 10) {
+          success = false;
+        }
+        if (!success) {
+          clearInterval(interval);
+          await auth0.login();
+        }
+        counter++;
+    }, 500);
+};
 
 window.addEventListener('load', async () => {
     await configureClient();

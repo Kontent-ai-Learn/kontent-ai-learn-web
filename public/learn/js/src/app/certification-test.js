@@ -22,41 +22,6 @@
             if (submitButton) submitButton.click();
         }
     }, 1000);
-}
-
-  const makeUserSignIn = () => {
-    auth0.login();
-  };
-  
-  const ensureUserSignedIn = (callback) => {
-    let ktcCounter = 0; // Interval counter
-    let user;
-
-    // Wait until auth0.client is available
-    const interval = setInterval(async () => {
-        const auth0Client = auth0.client;
-        let success = true;
-        if (auth0Client) {
-          try {
-            await auth0.client.getTokenSilently();
-            user = await auth0.client.getIdTokenClaims();
-          } catch (err) {
-            success = false;
-          }
-          if (typeof user !== 'undefined') {
-            clearInterval(interval);
-            callback(user);
-          }
-        }
-        if (ktcCounter > 10) {
-          success = false;
-        }
-        if (!success) {
-          clearInterval(interval);
-          makeUserSignIn();
-        }
-        ktcCounter++;
-    }, 500);
   };
 
   const requestFormData = async (itemCodename, user, token) => {
@@ -126,7 +91,9 @@
     const attemptStartDurationSec = attemptStart.getTime() / 1000 + formData.data.test.duration * 60;
     const nowSec = (new Date()).getTime() / 1000;
 
-    let markup = `<span class="certification-test__timer" data-timer="${Math.round(attemptStartDurationSec - nowSec)}"></span>
+    let markup = `<div class="certification-test__bar">
+        Remaining time: <span class="certification-test__timer" data-timer="${Math.round(attemptStartDurationSec - nowSec)}"></span>
+      </div>
       <form class="certification-test__form" action="${window.location.pathname}" method="post" data-certification-test-form>
     `;
     markup += renderTopics(data);
@@ -145,16 +112,6 @@
       answerInput.checked = true;
       e.stopPropagation();
     });
-  };
-
-  const renderNextAttemptMessage = (formData, container) => {
-    const attemptStart = new Date(formData.data.start);
-    attemptStart.setDate(attemptStart.getDate() + 1);
-    const now = new Date();
-    const diffSec = Math.round((attemptStart - now) / 1000);
-
-    const markup = `You didn\’t pass this time. You can try again in <span data-timer="${diffSec}"></span>.`;
-    container.innerHTML = markup;
   };
 
   const setFormState = (storageName, property, value) => {
@@ -206,14 +163,12 @@
     const formData = await requestFormData(codename, user, token);
     console.log(formData);
 
-    if (formData.code === 302) {
-      window.location.href = `${window.location.protocol}//${window.location.host}${window.location.pathname}${formData.data.id}/`;
-    } else if (formData.code === 200) {
+    if (formData.code === 200) {
       renderForm(formData, elem);
       makeAnswersInteractive(elem);
       persistFormState(elem);
     } else {
-      renderNextAttemptMessage(formData, elem);
+      window.location.href = `${window.location.protocol}//${window.location.host}${window.location.pathname}${formData.data.id}/`;
     }
   };
 
@@ -224,7 +179,6 @@
     localStorage.removeItem(codename);
   };
 
-  
   let container = document.querySelector('[data-certification-result]');
   if (container) {
     removeFormState();
@@ -234,7 +188,7 @@
   container = document.querySelector('[data-certification-test]');
   if (container) {
     window.addEventListener('load', () => {
-      ensureUserSignedIn(async (user) => {
+      auth0.ensureUserSignedIn(async (user) => {
         await getCertificationTest(user);
         startTimer('[data-timer]');
       });
