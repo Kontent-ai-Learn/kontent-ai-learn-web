@@ -1,121 +1,6 @@
-const cosmos = require('./cosmos');
-const handleCache = require('./handleCache');
-const commonContent = require('./commonContent');
-const helper = require('./helperFunctions');
-
-const successfullAttemptExists = async (body, res) => {
-  const { codename, email } = body;
-  let attempt = null;
-
-  try {
-    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
-    const query = {
-        query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.certificate_expiration > @expiration',
-        parameters: [{
-          name: '@email',
-          value: email
-        }, {
-          name: '@codename',
-          value: codename
-        }, {
-          name: '@expiration',
-          value: new Date().toISOString()
-        }]
-    };
-
-    const { resources } = await db.items.query(query).fetchAll();
-    if (resources && resources.length) {
-      attempt = resources[0];
-    }
-  } catch (error) {
-    cosmos.logAppInsightsError(error);
-  }
-
-  return attempt;
-};
-
-const updateAttempt = async (attempt) => {
-  try {
-    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
-    const itemToUpdate = await db.item(attempt.id);
-    await itemToUpdate.replace(attempt);
-  } catch (error) {
-    cosmos.logAppInsightsError(error);
-  }
-};
-
-const getAttempt = async (id) => {
-  let attempt = null;
-
-  try {
-    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
-    const query = {
-      query: 'SELECT * FROM c WHERE c.id = @id',
-      parameters: [{
-        name: '@id',
-        value: id
-      }]
-    };
-
-    const { resources } = await db.items.query(query).fetchAll();
-
-    if ((resources && resources.length)) {
-      attempt = resources[0];
-    }
-  } catch (error) {
-    cosmos.logAppInsightsError(error);
-  }
-
-  return attempt;
-};
-
-const checkCreateAttempt = async (body, res) => {
-  const { codename, email, username } = body;
-  let attempt = null;
-
-  try {
-    const date = new Date()
-    date.setDate(date.getDate() - 1);
-    const start = date.toISOString();
-
-    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
-    const query = {
-        query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.start > @start',
-        parameters: [{
-          name: '@email',
-          value: email
-        }, {
-          name: '@codename',
-          value: codename
-        }, {
-          name: '@start',
-          value: start
-        }]
-    };
-
-    const { resources } = await db.items.query(query).fetchAll();
-    if (!(resources && resources.length)) {
-      const certificationTestData = await getCertificationTestData(codename, res);
-
-      attempt = await db.items.create({
-        email: email,
-        username: username,
-        start: new Date().toISOString(),
-        end: null,
-        score: null,
-        certificate_expiration: null,
-        test: certificationTestData
-      });
-    } else {
-      attempt = {};
-      attempt.resource = resources[0];
-    }
-  } catch (error) {
-    cosmos.logAppInsightsError(error);
-  }
-
-  return attempt;
-};
+const handleCache = require('../handleCache');
+const commonContent = require('../commonContent');
+const helper = require('../helperFunctions');
 
 const pickRandomQuestions = (questions, formQuestionsNumber, allQuestionsNumber) => {
   let totalQuestionsNumber = 0;
@@ -189,7 +74,7 @@ const buildQuestionsObject = (certificationTest, allQuestions) => {
   return pickRandomQuestions(questions, certificationTest.question_count.value, allQuestions.items.length);
 }
 
-const removeCorrectnessFromCertificationTestData = (data) => {
+const removeCorrectness = (data) => {
   for (let i = 0; i < data.questions.length; i++) {
     for (let j = 0; j < data.questions[i].questions.length; j++) {
       for (let k = 0; k < data.questions[i].questions[j].answers.length; k++) {
@@ -202,7 +87,7 @@ const removeCorrectnessFromCertificationTestData = (data) => {
   return data;
 };
 
-const getCertificationTestData = async (codename, res) => {
+const getTest = async (codename, res) => {
   let certificationTest = await handleCache.evaluateSingle(res, codename, async () => {
     return await commonContent.getCertificationTest(res, codename);
   });
@@ -260,53 +145,8 @@ const evaluateAttempt = (body, attempt) => {
   return attempt;
 };
 
-const initAttempt = async (body, res) => {
-  const successfullAttempt = await successfullAttemptExists(body);
-  if (successfullAttempt) {
-    return {
-      code: 302,
-      data: successfullAttempt
-    }
-  }
-
-  const attempt = await checkCreateAttempt(body, res);
-  let code = 403;
-
-  if (attempt && attempt.resource) {
-    const attemptStart = new Date(attempt.resource.start);
-    const attemptStartDurationMs = attemptStart.getTime() + attempt.resource.test.duration * 60000;
-    const nowMs = (new Date()).getTime();
-    if (attemptStartDurationMs > nowMs && !attempt.resource.end) {
-      code = 200;
-    }
-    attempt.resource.test = removeCorrectnessFromCertificationTestData(attempt.resource.test);
-  }
-
-  return {
-    code: code,
-    data: attempt.resource
-  };
-};
-
-const handleAttempt = async (body) => {
-  let attempt = await getAttempt(body.attempt);
-  if (!attempt) return null;
-  attempt = evaluateAttempt(body, attempt);
-  updateAttempt(attempt);
-
-  return attempt;
-};
-
-const getNextAttemptSeconds = (date) => {
-  const attemptStart = new Date(date);
-  attemptStart.setDate(attemptStart.getDate() + 1);
-  const now = new Date();
-  return Math.round((attemptStart - now) / 1000);
-}
-
 module.exports = {
-  initAttempt,
-  handleAttempt,
-  getAttempt,
-  getNextAttemptSeconds
+  evaluateAttempt,
+  getTest,
+  removeCorrectness
 };

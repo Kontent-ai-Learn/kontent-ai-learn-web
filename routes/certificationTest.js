@@ -9,7 +9,8 @@ const getUrlMap = require('../helpers/urlMap');
 const isPreview = require('../helpers/isPreview');
 const postprocessMarkup = require('../helpers/postprocessMarkup');
 const smartLink = require('../helpers/smartLink');
-const certificationTest = require('../helpers/certificationTest');
+const certificationAttempt = require('../helpers/certification/attempt');
+const certificationEmail = require('../helpers/certification/email');
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
   const home = await handleCache.ensureSingle(res, 'home', async () => {
@@ -58,7 +59,8 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
 }));
 
 router.post('/:slug', asyncHandler(async (req, res, next) => {
-  const attempt = await certificationTest.handleAttempt(req.body);
+  const attempt = await certificationAttempt.handle(req.body);
+  await certificationEmail.sendCongrats(attempt);
   if (!attempt) return next();
   return res.redirect(302, `${req.originalUrl.split('?')[0]}${attempt.id}/`);
 }));
@@ -85,7 +87,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
     return await commonContent.getCertificationTest(res, urlMapItem.codename);
   });
 
-  const attempt = await certificationTest.getAttempt(req.params.attemptid);
+  const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
   const footer = await handleCache.ensureSingle(res, 'footer', async () => {
@@ -101,7 +103,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
     req: req,
     res: res,
     title: certificationTestItem[0].title.value,
-    nextAttemptSeconds: certificationTest.getNextAttemptSeconds(attempt.start),
+    nextAttemptSeconds: certificationAttempt.getNextSeconds(attempt.start),
     attempt: attempt,
     postprocessMarkup: postprocessMarkup,
     slug: req.params.slug,

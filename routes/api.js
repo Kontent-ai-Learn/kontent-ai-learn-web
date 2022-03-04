@@ -3,7 +3,7 @@ const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const router = express.Router();
 const trainingCourseDetail = require('../helpers/trainingCourseDetail');
-const certificationTest = require('../helpers/certificationTest');
+const certificationAttempt = require('../helpers/certification/attempt');
 const fastly = require('../helpers/fastly');
 
 const jwtCheck = jwt({
@@ -32,7 +32,7 @@ router.post('/training-course/detail/public', async (req, res) => {
 
 router.post('/get-certified', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
-  const data = await certificationTest.initAttempt(req.body, res);
+  const data = await certificationAttempt.init(req.body, res);
   return res.send(data);
 });
 

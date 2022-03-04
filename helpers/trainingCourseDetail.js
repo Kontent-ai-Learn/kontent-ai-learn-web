@@ -30,7 +30,7 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => 
       subject: 'LMS error notification',
       text: notification
     };
-    sendSendGridEmail(emailInfo);
+    await sendSendGridEmail(emailInfo);
 
     if (app.appInsights) {
       app.appInsights.defaultClient.trackTrace({ message: `LMS_ERROR: ${notification}` });
@@ -91,7 +91,7 @@ const getTrainingCourseInfoFromScorm = async (user, course, UIMessages, req, res
       subject: 'Scorm Cloud error notification',
       text: notification
     };
-    sendSendGridEmail(emailInfo);
+    await sendSendGridEmail(emailInfo);
 
     if (app.appInsights) {
       app.appInsights.defaultClient.trackTrace({ message: `SCORM_ERROR: ${notification}` });
@@ -203,7 +203,7 @@ const getUserFromSubscriptionService = async (req) => {
       subject: 'Failed user sign in notification',
       text: notification
     };
-    sendSendGridEmail(emailInfo);
+    await sendSendGridEmail(emailInfo);
 
     if (app.appInsights) {
       app.appInsights.defaultClient.trackTrace({ message: `SUBSCRIPTION_SERVICE_ERROR: ${notification}` });

@@ -11,9 +11,12 @@ block content
             span Download certificate
             span
         else 
-          p You didn’t pass this time. You can try again in 
-            span(data-timer=nextAttemptSeconds)
-            | .
+          if (nextAttemptSeconds > 0)
+            p You didn’t pass this time. You can try again in 
+              span(data-timer=nextAttemptSeconds)
+              | .
+          else 
+            p You didn’t pass this time. You can try again.
       if (attempt.score)
         each topic in attempt.test.questions
           each question in topic.questions
