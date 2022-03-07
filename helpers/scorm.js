@@ -181,9 +181,23 @@ const getCompletion = (codename, UIMessages) => {
   }
 }
 
+const getCourseId = (course, res) => {
+  let courseId = course?.scorm_cloud_id?.value;
+
+  if (isPreview(res.locals.previewapikey)) {
+    courseId = `${courseId}_preview`;
+  }
+
+  if (process.env.isDevelopment === 'true') {
+    courseId = `dev_${courseId}`;
+  }
+
+  return courseId;
+};
+
 const scorm = {
   handleTrainingCourse: async (user, course, req, res) => {
-    const courseId = course?.scorm_cloud_id?.value;
+    const courseId = getCourseId(course, res);
     let registrationData = null;
     let linkData = null;
     let certificate = null;
