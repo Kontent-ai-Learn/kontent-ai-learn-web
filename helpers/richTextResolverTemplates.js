@@ -538,8 +538,33 @@ const richTextResolverTemplates = {
     terminology: (item, config) => {
         return `<div id="terminology-resolve"${getSmartLinkAttr(config, item.system.id, 'component')}></div>`;
     },
+    certificationText: (item, config) => {
+        const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
+        const url = urlMapItem.length ? urlMapItem[0].url : null;
+
+        return `
+            <div class="article__teaser"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+                <h3${getSmartLinkAttr(config, 'title', 'element')}>${url ? `<a href="${url}">${item.title.value}</a>` : `${item.title.value}`}</h3>
+                ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
+                <div class="article__introduction">
+                    <div class="article__introduction-content">
+                        <div${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>
+                            ${item.description.value}
+                        </div>
+                        ${url && config.UIMessages && config.UIMessages.training___view_details
+                            ? `  
+                            <a href="${url}" class="call-to-action call-to-action--small"${getSmartLinkAttr(config, config.UIMessages.system.id, 'item')}${getSmartLinkAttr(config, 'training___view_details', 'element')}>
+                                <span>${config.UIMessages.training___view_details.value}</span>
+                                <span></span>
+                            </a>
+                        `
+                        : ''}              
+                    </div>
+                </div>
+            </div>`;
+    },
     trainingCourse: (item, config) => {
-        const personas = item.persona.value;
+        const personas = item.training_persona.value;
         const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
         const url = urlMapItem.length ? urlMapItem[0].url : null;
         const isFree = item.is_free ? helper.isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
@@ -572,8 +597,8 @@ const richTextResolverTemplates = {
                             ${personas.map(item => `<li class="article__tags-item article__tags-item--green">${item.name}</li>`).join('')}
                             ${personas.length ? '</ul>' : ''}
                         </div>
-                        <div${getSmartLinkAttr(config, 'introduction', 'element')}${getSmartLinkAttrInner(item.introduction.value, config)}>
-                            ${item.introduction.value}
+                        <div${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>
+                            ${item.description.value}
                         </div>
                         ${url && config.UIMessages && config.UIMessages.training___view_details
 ? `  

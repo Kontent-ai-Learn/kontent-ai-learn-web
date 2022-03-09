@@ -1,29 +1,4 @@
 (() => {
-  const startTimer = (selector) => {
-    const display =  document.querySelector(selector);
-    if(!display) return;
-    const duration = parseInt(display.getAttribute('data-timer'));
-    let timer = duration, hours, minutes, seconds;
-
-    const interval = setInterval(() => {
-        hours = parseInt(timer / 3600, 10);
-        minutes = parseInt((timer % 3600) / 60, 10);
-        seconds = parseInt((timer % 3600) % 60, 10);
-
-        minutes = minutes < 10 ? `0${minutes}` : minutes;
-        seconds = seconds < 10 ? `0${seconds}` : seconds;
-
-        display.textContent = `${hours ? `${hours}:` : ''}${minutes}:${seconds}`;
-
-        if (--timer < 0) {
-            clearInterval(interval);
-
-            const submitButton = document.querySelector('.certification-test__button');
-            if (submitButton) submitButton.click();
-        }
-    }, 1000);
-  };
-
   const requestFormData = async (itemCodename, user, token) => {
     const fetchOptions = {
       method: 'POST',
@@ -167,6 +142,8 @@
       renderForm(formData, elem);
       makeAnswersInteractive(elem);
       persistFormState(elem);
+    } else if (formData.code === 401) {
+      elem.innerHTML = `Access in now allowed.`;
     } else {
       window.location.href = `${window.location.protocol}//${window.location.host}${window.location.pathname}${formData.data.id}/`;
     }
@@ -182,7 +159,7 @@
   let container = document.querySelector('[data-certification-result]');
   if (container) {
     removeFormState();
-    startTimer('[data-timer]');
+    window.helper.startTimer('[data-timer]');
   }
 
   container = document.querySelector('[data-certification-test]');
@@ -190,7 +167,7 @@
     window.addEventListener('load', () => {
       auth0.ensureUserSignedIn(async (user) => {
         await getCertificationTest(user);
-        startTimer('[data-timer]');
+        window.helper.startTimer('[data-timer]');
       });
     });
   }

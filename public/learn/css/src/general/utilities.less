@@ -289,3 +289,20 @@ kontent-smart-link-element {
     top: 4px;
     right: 8px;
 }
+
+[data-once]:not([href]) {
+    cursor: default;
+    background-color: #919091 !important;
+    box-shadow: 0 0 0 1px #919091 !important; 
+
+    &:hover,
+    &:active {
+        span {
+            background-color: transparent !important;
+        }
+    }
+
+    span:last-child {
+        display: none;
+    }
+}

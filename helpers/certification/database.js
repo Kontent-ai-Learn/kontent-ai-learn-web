@@ -1,5 +1,6 @@
 const cosmos = require('../cosmos');
 const certificationData = require('./data');
+const elearningUser = require('../e-learning/user');
 
 const successfullAttemptExists = async (body) => {
   const { codename, email } = body;
@@ -67,10 +68,7 @@ const getAttempt = async (id) => {
   return attempt;
 };
 
-const checkCreateAttempt = async (body, res) => {
-  const { codename, email, username } = body;
-  let attempt = null;
-
+const checkAttemptInPastDay = async (email, codename) => {
   try {
     const date = new Date();
     date.setDate(date.getDate() - 1);
@@ -92,12 +90,29 @@ const checkCreateAttempt = async (body, res) => {
     };
 
     const { resources } = await db.items.query(query).fetchAll();
-    if (!(resources && resources.length)) {
-      const certificationTestData = await certificationData.getTest(codename, res);
+    return resources;
+  } catch (error) {
+    cosmos.logAppInsightsError(error);
+    return null;
+  }
+};
 
+const checkCreateAttempt = async (body, res) => {
+  const { codename, email } = body;
+  let attempt = null;
+
+  const attemptInPastDay = await checkAttemptInPastDay(email, codename);
+
+  if (!(attemptInPastDay && attemptInPastDay.length)) {
+    const certificationTestData = await certificationData.getTest(codename, res);
+
+    const { user } = await elearningUser.getUser(email, res);
+
+    try {
+      const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
       attempt = await db.items.create({
         email: email,
-        username: username,
+        username: `${user?.firstName} ${user?.lastName}`,
         start: new Date().toISOString(),
         end: null,
         score: null,
@@ -109,12 +124,12 @@ const checkCreateAttempt = async (body, res) => {
         },
         test: certificationTestData
       });
-    } else {
-      attempt = {};
-      attempt.resource = resources[0];
+    } catch (error) {
+      cosmos.logAppInsightsError(error);
     }
-  } catch (error) {
-    cosmos.logAppInsightsError(error);
+  } else {
+    attempt = {};
+    attempt.resource = attemptInPastDay[0];
   }
 
   return attempt;
@@ -155,5 +170,6 @@ module.exports = {
   updateAttempt,
   getAttempt,
   getExpirationAttempts,
-  checkCreateAttempt
+  checkCreateAttempt,
+  checkAttemptInPastDay
 };

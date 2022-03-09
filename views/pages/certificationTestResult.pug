@@ -7,7 +7,7 @@ block content
       .certification-test__text
         if (attempt.score >= 80)
           p You have successfully passed the certification test.
-          a(href='#').button
+          a(href=`${req.originalUrl.split('?')[0]}certificate`).button
             span Download certificate
             span
         else 

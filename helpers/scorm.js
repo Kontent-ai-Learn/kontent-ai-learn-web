@@ -182,7 +182,7 @@ const getCompletion = (codename, UIMessages) => {
 }
 
 const getCourseId = (course, res) => {
-  let courseId = course?.scorm_cloud_id?.value;
+  let courseId = course?.course_id?.value?.[0].codename;
 
   if (isPreview(res.locals.previewapikey)) {
     courseId = `${courseId}_preview`;

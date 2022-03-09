@@ -122,13 +122,14 @@ const commonContent = {
     getCertificationTest: async (res, codename) => {
         return await requestDelivery({
             type: 'training_certification_test',
+            depth: 4,
             codename: codename,
             ...commonContent.getKCDetails(res)
         });
     },
     getTraniningCourse: async (res) => {
         return await requestDelivery({
-            type: 'training_course',
+            type: 'training_course2',
             ...commonContent.getKCDetails(res)
         });
     },
@@ -172,10 +173,10 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
-    getTrainingCourseType: async (res) => {
+    getTrainingPersonaTaxonomyGroup: async (res) => {
         return await requestDelivery({
-            data: 'type',
-            type: 'training_course',
+            data: 'taxonomy',
+            taxonomy: 'training_persona',
             ...commonContent.getKCDetails(res)
         });
     },

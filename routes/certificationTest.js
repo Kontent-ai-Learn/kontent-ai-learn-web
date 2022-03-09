@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
+const Api2Pdf = require('api2pdf');
+const a2pClient = new Api2Pdf(process.env['Api2Pdf.ApiKey']);
+// const download = require('download');
+const moment = require('moment');
+
 const handleCache = require('../helpers/handleCache');
 const commonContent = require('../helpers/commonContent');
 const helper = require('../helpers/helperFunctions');
@@ -43,7 +48,7 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
   return res.render('pages/certificationTest', {
     req: req,
     res: res,
-    title: certificationTestItem[0].title.value,
+    title: certificationTestItem.items[0].title.value,
     postprocessMarkup: postprocessMarkup,
     slug: req.params.slug,
     itemCodename: urlMapItem.codename,
@@ -78,8 +83,8 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
     return await getUrlMap(res);
   });
 
-  let url = req.originalUrl.split('?')[0].replace(/\/$/, '');
-  url = `${url.slice(0, url.lastIndexOf('/'))}/`;
+  let url = helper.getPathWithoutTrailingSlash(req.originalUrl);
+  url = helper.removePathLastSegments(url, 1);
   const urlMapItem = helper.getMapItemByUrl(url, urlMap);
   if (!urlMapItem) return next();
 
@@ -102,7 +107,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
   return res.render('pages/certificationTestResult', {
     req: req,
     res: res,
-    title: certificationTestItem[0].title.value,
+    title: certificationTestItem.items[0].title.value,
     nextAttemptSeconds: certificationAttempt.getNextSeconds(attempt.start),
     attempt: attempt,
     postprocessMarkup: postprocessMarkup,
@@ -116,6 +121,60 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
     platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
     helper: helper,
     smartLink: siteIsPreview ? smartLink : null
+  });
+}));
+
+router.get('/:slug/:attemptid/certificate', asyncHandler(async (req, res, next) => {
+  const attempt = await certificationAttempt.get(req.params.attemptid);
+  if (!attempt) return next();
+
+  let baseURL;
+
+  if (process.env.ngrok) {
+      baseURL = process.env.ngrok;
+  } else if (process.env.aliasURL) {
+      baseURL = process.env.aliasURL;
+  } else {
+      baseURL = process.env.baseURL;
+  }
+
+  const url = `${req.originalUrl.split('?')[0]}pdf`;
+
+  const fileName = `${attempt.test.codename}_${attempt.id}`;
+
+  const options = {
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    marginTop: 0,
+    printBackground: true
+  };
+  let pdfResult;
+  let error;
+
+  a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, `${fileName}.pdf`, options)
+        .then((result) => {
+            pdfResult = result;
+        }, (rejected) => {
+            error = rejected
+        })
+        .then(async () => {
+            if (error) return next();
+            // logRequest(req, true);
+            // pdfAddCache(pdfResult, fileName, req.query.url, urlMap);
+            // await download(pdfResult.pdf, 'public/learn/files');
+            // return res.redirect(303, `${baseURL}/learn/files/${fileName}.pdf`);
+            return res.redirect(303, pdfResult.pdf);
+        })
+}));
+
+router.get('/:slug/:attemptid/certificate/pdf', asyncHandler(async (req, res, next) => {
+  const attempt = await certificationAttempt.get(req.params.attemptid);
+  if (!attempt) return next();
+
+  return res.render('certificate/test', {
+    attempt: attempt,
+    moment: moment
   });
 }));
 

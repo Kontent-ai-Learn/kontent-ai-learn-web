@@ -57,9 +57,9 @@ const revalidateReleaseNoteType = async (KCDetails, res) => {
 };
 
 const revalidateTrainingCourseType = async (KCDetails, res) => {
-    const key = 'trainingCourseContentType';
+    const key = 'trainingPersonaTaxonomyGroup';
     handleCache.deleteCache(key, KCDetails);
-    const trainingCourseType = await commonContent.getTrainingCourseType(res);
+    const trainingCourseType = await commonContent.getTrainingPersonaTaxonomyGroup(res);
     handleCache.putCache(key, trainingCourseType, KCDetails);
 };
 
@@ -110,7 +110,7 @@ const splitPayloadByContentType = (items) => {
             itemsByTypes.releaseNotes.push(item);
         } else if (item.type === 'term_definition') {
             itemsByTypes.termDefinitions.push(item);
-        } else if (item.type === 'training_course') {
+        } else if (item.type === 'training_course2') {
             itemsByTypes.trainingCourses.push(item);
         } else if (item.type === 'training_user') {
             itemsByTypes.trainingUsers.push(item);
@@ -148,7 +148,7 @@ const invalidatePDFs = async (items, res) => {
 };
 
 const getRootItems = async (items, KCDetails) => {
-    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_survey', 'training_course', 'training_question_for_survey_and_test', 'training_question_free_text', 'training_answer_for_survey_and_test'];
+    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_survey', 'training_course2', 'training_question_for_survey_and_test', 'training_question_free_text', 'training_answer_for_survey_and_test'];
     const allItems = await requestDelivery({
         types: typesToSearch,
         depth: 0,

@@ -448,6 +448,13 @@ const helper = {
 
         const output = $.html();
         return output.replace('<html><head></head><body>', '').replace('</body></html>', '');
+    },
+    getPathWithoutTrailingSlash: (url) => url.split('?')[0].replace(/\/$/, ''),
+    removePathLastSegments: (path, segmentsCount) => {
+        for (let i = 0; i < segmentsCount; i++) {
+            path = path.slice(0, path.lastIndexOf('/'));
+        }
+        return `${path}/`;
     }
 };
 

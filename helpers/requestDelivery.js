@@ -54,6 +54,10 @@ const defineQuery = (deliveryConfig, config) => {
         return deliveryClient.languages();
     }
 
+    if (config.data === 'taxonomy') {
+        return deliveryClient.taxonomy(config.taxonomy);
+    }
+
     let query = deliveryClient.items();
 
     query.notEqualsFilter('system.workflow_step', 'archived');
@@ -129,7 +133,7 @@ const componentsResolvers = [{
     type: 'terminology',
     resolver: richTextResolverTemplates.terminology
 }, {
-    type: 'training_course',
+    type: 'training_course2',
     resolver: richTextResolverTemplates.trainingCourse
 }, {
     type: 'quote',
@@ -146,6 +150,9 @@ const componentsResolvers = [{
 }, {
     type: 'training_answer_for_survey_and_test',
     resolver: richTextResolverTemplates.answer
+}, {
+    type: 'training_certification_test',
+    resolver: richTextResolverTemplates.certificationText
 }];
 
 const resolveRichText = (item, config) => {
@@ -307,7 +314,9 @@ const requestDelivery = async (config) => {
     response = extendLinkedItems(response);
 
     if (response?.items) {
-        if (config.type === 'training_question_for_survey_and_test') return response;
+        if (config.type === 'training_certification_test') {
+            return response;
+        }
         return response.items;
     }
     if (response?.type) {

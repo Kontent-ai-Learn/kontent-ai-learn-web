@@ -2,76 +2,52 @@ const handleCache = require('../handleCache');
 const commonContent = require('../commonContent');
 const helper = require('../helperFunctions');
 
-const pickRandomQuestions = (questions, formQuestionsNumber, allQuestionsNumber) => {
-  let totalQuestionsNumber = 0;
-  formQuestionsNumber = parseInt(formQuestionsNumber);
-  allQuestionsNumber = parseInt(allQuestionsNumber);
-
-  for (let i = 0; i < questions.length; i++) {
-    const topicQuestionsNumber = questions[i].questions.length;
-    let topicTargetQuestionsNumber = Math.round(formQuestionsNumber / allQuestionsNumber * topicQuestionsNumber);
-    totalQuestionsNumber += topicTargetQuestionsNumber;
-
-    if (totalQuestionsNumber > formQuestionsNumber) {
-      topicTargetQuestionsNumber = topicTargetQuestionsNumber - totalQuestionsNumber + formQuestionsNumber;
-    }
-
-    while (questions[i].questions.length > topicTargetQuestionsNumber) {
-      const currentQuestionsNumber = questions[i].questions.length;
-      const randomIndex = Math.floor(Math.random() * currentQuestionsNumber);
-      questions[i].questions.splice(randomIndex, 1);
-    }
-  }
-  return questions;
-};
-
-const buildQuestionsObject = (certificationTest, allQuestions) => {
+const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) => {
   const questions = [];
 
-  for (let i = 0; i < certificationTest.training_questions.value.length; i++) {
+  for (let f = 0; f < certificationTest.question_groups.value.length; f++) {
     questions.push({
       topic: {
-        name: certificationTest.training_questions.value[i].name,
-        codename: certificationTest.training_questions.value[i].codename,
+        name: certificationTest.question_groups.value[f].system.name,
+        codename: certificationTest.question_groups.value[f].system.codename,
       },
       questions: []
-    })
+    });
+
+    let questionsNumber = parseInt(certificationTest.question_groups.value[f].number_of_questions.value);
+    if (isNaN(questionsNumber)) questionsNumber = 0;
+
+    while (certificationTest.question_groups.value[f].questions.value.length > questionsNumber) {
+      const currentQuestionsNumber = certificationTest.question_groups.value[f].questions.value.length;
+      const randomIndex = Math.floor(Math.random() * currentQuestionsNumber);
+      certificationTest.question_groups.value[f].questions.value.splice(randomIndex, 1);
+    }
+
+    for (let i = 0; i < certificationTest.question_groups.value[f].questions.value.length; i++) {
+      const question = {
+        codename: certificationTest.question_groups.value[f].questions.value[i].system.codename,
+        name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(certificationTest.question_groups.value[f].questions.value[i].question.value)))).trim(),
+        html: certificationTest.question_groups.value[f].questions.value[i].question.value,
+        answers: []
+      }
+
+      for (let j = 0; j < certificationTest.question_groups.value[f].questions.value[i].answers.linkedItemCodenames.length; j++) {
+        const answer = certificationTestLinkedItems[certificationTest.question_groups.value[f].questions.value[i].answers.linkedItemCodenames[j]];
+
+        question.answers.push({
+          codename: answer.system.codename,
+          name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(answer.answer.value)))).trim(),
+          html: answer.answer.value,
+          correct: !!answer.is_this_a_correct_answer_.value.length,
+          answer: false
+        })
+      }
+
+      questions[f].questions.push(question);
+    }
   }
 
-  for (let i = 0; i < allQuestions.items.length; i++) {
-    const answerCodenames = allQuestions.items[i].answers.linkedItemCodenames;
-    allQuestions.items[i].answers.linkedItems_custom = [];
-    for (let j = 0; j < answerCodenames.length; j++) {
-      allQuestions.items[i].answers.linkedItems_custom.push(allQuestions.linkedItems[answerCodenames[j]]);
-    }
-
-    for (let j = 0; j < allQuestions.items[i].training_questions.value.length; j++) {
-      for (let k = 0; k < questions.length; k++) {
-        if (questions[k].topic.codename === allQuestions.items[i].training_questions.value[j].codename) {
-          const question = {
-            codename: allQuestions.items[i].system.codename,
-            name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(allQuestions.items[i].question.value)))).trim(),
-            html: allQuestions.items[i].question.value,
-            answers: []
-          }
-
-          for (let m = 0; m < allQuestions.items[i].answers.linkedItems_custom.length; m++) {
-            question.answers.push({
-              codename: allQuestions.items[i].answers.linkedItems_custom[m].system.codename,
-              name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(allQuestions.items[i].answers.linkedItems_custom[m].answer.value)))).trim(),
-              html: allQuestions.items[i].answers.linkedItems_custom[m].answer.value,
-              correct: !!allQuestions.items[i].answers.linkedItems_custom[m].is_this_a_correct_answer_.value.length,
-              answer: false
-            })
-          }
-
-          questions[k].questions.push(question);
-        }
-      }
-    }
-  };
-
-  return pickRandomQuestions(questions, certificationTest.question_count.value, allQuestions.items.length);
+  return questions;
 }
 
 const removeCorrectness = (data) => {
@@ -91,19 +67,19 @@ const getTest = async (codename, res) => {
   let certificationTest = await handleCache.evaluateSingle(res, codename, async () => {
     return await commonContent.getCertificationTest(res, codename);
   });
-  const allQuestions = await handleCache.evaluateSingle(res, 'trainingQuestions', async () => {
-    return await commonContent.getTrainingQuestions(res, codename);
-  });
-  if (!(certificationTest.length && allQuestions.items.length)) return null;
-  certificationTest = certificationTest[0];
+  if (!(certificationTest.items && certificationTest.items.length)) return null;
+  const certificationTestLinkedItems = certificationTest.linkedItems;
+  certificationTest = certificationTest.items[0];
 
-  const questions = buildQuestionsObject(certificationTest, allQuestions);
+  const questions = buildQuestionsObject(certificationTest, certificationTestLinkedItems);
+  let testQuestionsNumber = 0;
+  certificationTest.question_groups.value.forEach(item => { testQuestionsNumber += item.number_of_questions.value });
 
   return {
     codename: codename,
     title: certificationTest.title.value,
     duration: parseInt(certificationTest.test_duration.value),
-    questions_count: certificationTest.question_count.value,
+    questions_count: testQuestionsNumber,
     questions: questions
    };
 };

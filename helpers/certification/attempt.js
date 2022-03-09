@@ -1,7 +1,16 @@
 const certificationDatabase = require('./database');
 const certificationData = require('./data');
+const elearningUser = require('../e-learning/user');
 
 const init = async (body, res) => {
+  const { user, trainingUser, errCode } = await elearningUser.getUser(body.email, res);
+  if (!(await elearningUser.isCourseAvailable(user, null, trainingUser, res)) || errCode) {
+    return {
+      code: 401,
+      data: null
+    }
+  }
+
   const successfullAttempt = await certificationDatabase.successfullAttemptExists(body);
   if (successfullAttempt) {
     return {
