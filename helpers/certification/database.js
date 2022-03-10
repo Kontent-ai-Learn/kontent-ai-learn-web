@@ -112,7 +112,7 @@ const checkCreateAttempt = async (body, res) => {
       const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
       attempt = await db.items.create({
         email: email,
-        username: `${user?.firstName} ${user?.lastName}`,
+        username: user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : email,
         start: new Date().toISOString(),
         end: null,
         score: null,
@@ -141,11 +141,8 @@ const getExpirationAttempts = async () => {
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
     const query = {
-        query: 'SELECT * FROM c WHERE c.score >= @score AND c.certificate_expiration < @expirationAhead AND c.certificate_expiration > @expired',
+        query: 'SELECT * FROM c WHERE c.certificate_expiration < @expirationAhead AND c.certificate_expiration > @expired',
         parameters: [{
-          name: '@score',
-          value: 80
-        }, {
           name: '@expirationAhead',
           value: new Date(new Date().getTime() + 86400000 * 7).toISOString()
         }, {

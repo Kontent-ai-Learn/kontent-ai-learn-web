@@ -538,7 +538,7 @@ const richTextResolverTemplates = {
     terminology: (item, config) => {
         return `<div id="terminology-resolve"${getSmartLinkAttr(config, item.system.id, 'component')}></div>`;
     },
-    certificationText: (item, config) => {
+    certificationTest: (item, config) => {
         const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
         const url = urlMapItem.length ? urlMapItem[0].url : null;
 

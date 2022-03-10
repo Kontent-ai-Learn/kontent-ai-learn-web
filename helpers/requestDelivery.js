@@ -152,7 +152,7 @@ const componentsResolvers = [{
     resolver: richTextResolverTemplates.answer
 }, {
     type: 'training_certification_test',
-    resolver: richTextResolverTemplates.certificationText
+    resolver: richTextResolverTemplates.certificationTest
 }];
 
 const resolveRichText = (item, config) => {
@@ -314,7 +314,7 @@ const requestDelivery = async (config) => {
     response = extendLinkedItems(response);
 
     if (response?.items) {
-        if (config.type === 'training_certification_test') {
+        if (config.type === 'training_certification_test' || config.type === 'training_survey') {
             return response;
         }
         return response.items;

@@ -4,12 +4,5 @@ block content
       h1.survey__heading&attributes(smartLink?.elementCodename('title')) !{title}
       .survey__introduction&attributes(smartLink?.elementCodename('short_introduction'))
         | !{postprocessMarkup(introduction, res)}
-      .survey__questions
-        form.survey__form(action=req.originalUrl, method='post', data-survey-form)
-          | !{postprocessMarkup(questions, res)}
-          input.survey__hidden(type="hidden", id="email", name="email")
-          input.survey__hidden(type="hidden", id="courseid", name="courseid")
-          button.button.survey__button
-            span Submit
-            span
-      .survey__overlay
+      .survey__questions(data-survey=itemCodename)
+        .survey__overlay

@@ -9,7 +9,7 @@ const getUrlMap = require('../helpers/urlMap');
 const isPreview = require('../helpers/isPreview');
 const postprocessMarkup = require('../helpers/postprocessMarkup');
 const smartLink = require('../helpers/smartLink');
-const surveyHelper = require('../helpers/survey');
+const surveyAttempt = require('../helpers/survey/attempt')
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
   const home = await handleCache.ensureSingle(res, 'home', async () => {
@@ -28,7 +28,7 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
   const content = await handleCache.evaluateSingle(res, urlMapItem.codename, async () => {
     return await commonContent.getSurvey(res, urlMapItem.codename);
   });
-  if (!content.length) return next();
+  if (!content.items.length) return next();
 
   const footer = await handleCache.ensureSingle(res, 'footer', async () => {
     return commonContent.getFooter(res);
@@ -46,11 +46,11 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
     slug: req.params.slug,
     isPreview: siteIsPreview,
     language: res.locals.language,
-    itemId: content[0].system.id,
-    title: content[0].title.value,
-    introduction: content[0].short_introduction.value,
-    description: helper.stripTags(content[0].short_introduction.value).substring(0, 300),
-    questions: content[0].survey_questions.value,
+    itemId: content.items[0].system.id,
+    itemCodename: urlMapItem.codename,
+    title: content.items[0].title.value,
+    introduction: content.items[0].short_introduction.value,
+    description: helper.stripTags(content.items[0].short_introduction.value).substring(0, 300),
     navigation: home[0].subpages.value,
     footer: footer && footer.length ? footer[0] : null,
     UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
@@ -61,23 +61,18 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
 }));
 
 router.post('/:slug', asyncHandler(async (req, res, next) => {
+  const attempt = await surveyAttempt.handle(req.body);
+
+  let courseIdTrainingCourse = attempt.course_id.replace('_preview', '');
+  courseIdTrainingCourse = courseIdTrainingCourse.replace('dev_', '');
+
   const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
-  const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
-  if (!urlMapItem) return next();
-  const content = await handleCache.evaluateSingle(res, urlMapItem.codename, async () => {
-    return await commonContent.getSurvey(res, urlMapItem.codename);
-  });
-  if (!content.length) return next();
-
-  const data = surveyHelper.buildPostData(content[0], req.body);
-  await surveyHelper.sendDataToDb(data);
-
   const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
     return await commonContent.getTraniningCourse(res);
   });
-  const trainingCourse = trainingCourses.find(item => item.course_id?.value?.[0].codename === req.body.courseid);
+  const trainingCourse = trainingCourses.find(item => item.course_id?.value?.[0].codename === courseIdTrainingCourse);
   if (!trainingCourse) return next();
   const urlMapCourseItem = urlMap.find(item => item.codename === trainingCourse.system.codename);
   if (!urlMapCourseItem) return next();

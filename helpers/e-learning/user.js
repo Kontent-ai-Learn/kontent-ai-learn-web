@@ -42,7 +42,8 @@ const isCourseAvailable = async (user, content, trainingUser, res) => {
 };
 
 const getUser = async (email, res) => {
-  let user, errCode, trainingUser;
+  let user = {};
+  let errCode, trainingUser;
 
   if (email) {
     trainingUser = await getTrainingUser(email, res);

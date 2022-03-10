@@ -86,9 +86,6 @@ const cacheKeys = [{
     }, {
         name: 'trainingSubscriptions',
         method: commonContent.getTrainingSubscriptions
-    }, {
-        name: 'trainingQuestions',
-        method: commonContent.getTrainingQuestions
     }
 ];
 

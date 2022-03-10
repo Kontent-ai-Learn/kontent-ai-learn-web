@@ -2,5 +2,5 @@ extends ../includes/layout.pug
 block content
     main(id='main')
       h1.certification-test__heading !{title}
-      .certification-test(data-certification-test=`${itemCodename}`)
+      .certification-test(data-certification-test= itemCodename)
         .certification-test__overlay

@@ -14,7 +14,7 @@ const getCertificationInfo = async (user, certificationTest, UIMessages, req, re
 
   if (successfullAttempt) {
     return {
-      text: 'You have successfully passed the certification test.',
+      text: 'You have successfully passed the exam.',
       renderAs: 'text',
       certificate: {
         public_url: `/learn/get-certified/${certificationTest.url.value}/${successfullAttempt.id}/certificate/`,
@@ -43,7 +43,7 @@ const getCertificationInfo = async (user, certificationTest, UIMessages, req, re
   }
 
   return {
-    text: 'Start certification exam',
+    text: 'Start exam',
     url: `/learn/get-certified/${certificationTest.url.value}/`,
     target: '_self',
     attr: 'data-once',

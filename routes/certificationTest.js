@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 
 const Api2Pdf = require('api2pdf');
 const a2pClient = new Api2Pdf(process.env['Api2Pdf.ApiKey']);
-// const download = require('download');
+const fetch = require('node-fetch');
 const moment = require('moment');
 
 const handleCache = require('../helpers/handleCache');
@@ -110,6 +110,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
     title: certificationTestItem.items[0].title.value,
     nextAttemptSeconds: certificationAttempt.getNextSeconds(attempt.start),
     attempt: attempt,
+    content: certificationTestItem.items[0],
     postprocessMarkup: postprocessMarkup,
     slug: req.params.slug,
     itemCodename: urlMapItem.codename,
@@ -140,19 +141,23 @@ router.get('/:slug/:attemptid/certificate', asyncHandler(async (req, res, next) 
 
   const url = `${req.originalUrl.split('?')[0]}pdf`;
 
-  const fileName = `${attempt.test.codename}_${attempt.id}`;
+  const fileName = `${attempt.test.codename}_${attempt.id}.pdf`;
 
   const options = {
-    marginBottom: 0,
-    marginLeft: 0,
-    marginRight: 0,
-    marginTop: 0,
-    printBackground: true
+    filename: fileName,
+    inline: true,
+    options: {
+      marginBottom: 0,
+      marginLeft: 0,
+      marginRight: 0,
+      marginTop: 0,
+      printBackground: true
+    }
   };
   let pdfResult;
   let error;
 
-  a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, `${fileName}.pdf`, options)
+a2pClient.chromeUrlToPdf(`${baseURL}${url}`, options)
         .then((result) => {
             pdfResult = result;
         }, (rejected) => {
@@ -160,11 +165,11 @@ router.get('/:slug/:attemptid/certificate', asyncHandler(async (req, res, next) 
         })
         .then(async () => {
             if (error) return next();
-            // logRequest(req, true);
-            // pdfAddCache(pdfResult, fileName, req.query.url, urlMap);
-            // await download(pdfResult.pdf, 'public/learn/files');
-            // return res.redirect(303, `${baseURL}/learn/files/${fileName}.pdf`);
-            return res.redirect(303, pdfResult.pdf);
+            fetch(pdfResult.FileUrl).then(result => {
+              result.headers.forEach((v, n) => res.setHeader(n, v));
+              res.set('Content-disposition', `attachment; filename=${encodeURI(fileName)}`);
+              return result.body.pipe(res);
+            });
         })
 }));
 

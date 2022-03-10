@@ -82,13 +82,6 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
-    getTrainingQuestions: async (res) => {
-        return await requestDelivery({
-            type: 'training_question_for_survey_and_test',
-            depth: 2,
-            ...commonContent.getKCDetails(res)
-        });
-    },
     getTrainingSubscriptions: async (res) => {
         return await requestDelivery({
             type: 'training_subscriptions',
@@ -114,16 +107,21 @@ const commonContent = {
             type: 'training_survey',
             codename: codename,
             resolveRichText: true,
-            depth: 2,
+            depth: 3,
             urlMap: urlMap,
             ...commonContent.getKCDetails(res)
         });
     },
     getCertificationTest: async (res, codename) => {
+        const urlMap = await ensureSingle(res, 'urlMap', async () => {
+            return await getUrlMap(res);
+        });
         return await requestDelivery({
             type: 'training_certification_test',
             depth: 4,
             codename: codename,
+            resolveRichText: true,
+            urlMap: urlMap,
             ...commonContent.getKCDetails(res)
         });
     },

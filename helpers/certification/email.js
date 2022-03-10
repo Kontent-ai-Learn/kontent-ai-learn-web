@@ -28,7 +28,7 @@ Kontent Customer Education team`;
 
 const sendCongrats = async (attempt) => {
   const expirationValid = new Date(attempt.certificate_expiration).getTime() > new Date().getTime();
-  if (!(attempt.score >= 80 && attempt.end && expirationValid && !attempt.email_notifications.congrats)) return;
+  if (!(attempt.score >= attempt.test.score_to_pass && attempt.end && expirationValid && !attempt.email_notifications.congrats)) return;
 
   const emailInfo = {
     recipient: attempt.email,
@@ -44,7 +44,7 @@ const sendCongrats = async (attempt) => {
 
 const sendExpirationAhead = async (attempt) => {
   const expirationValid = new Date(attempt.certificate_expiration).getTime() < new Date().getTime() + 86400000 * 7;
-  if (!(attempt.score >= 80 && attempt.end && expirationValid && !attempt.email_notifications.expriration_ahead)) return;
+  if (!(attempt.score >= attempt.test.score_to_pass && attempt.end && expirationValid && !attempt.email_notifications.expriration_ahead)) return;
 
   const emailInfo = {
     recipient: attempt.email,
@@ -60,7 +60,7 @@ const sendExpirationAhead = async (attempt) => {
 
 const sendExpired = async (attempt) => {
   const expirationValid = new Date(attempt.certificate_expiration).getTime() < new Date().getTime();
-  if (!(attempt.score >= 80 && attempt.end && expirationValid && !attempt.email_notifications.expired)) return;
+  if (!(attempt.score >= attempt.test.score_to_pass && attempt.end && expirationValid && !attempt.email_notifications.expired)) return;
 
   const emailInfo = {
     recipient: attempt.email,

@@ -19,7 +19,7 @@ block content
                       if (isFree)
                         span.article__tag.article__tag--blue !{UIMessages.training___free_course_label.value}
                     .article__notes#trainingNotes
-                      span&attributes(smartLink?.elementCodename('duration')) !{UIMessages.training___estimated_duration.value} !{content.duration.value} !{content.duration.value === 1 ? 'hour' : `hours`}
+                      span&attributes(smartLink?.elementCodename('duration')) !{UIMessages.training___estimated_duration.value} !{content.duration.value} !{content.duration.value === 1 ? 'minute' : `minutes`}
                       if (content.training_persona.value.length)
                         ul.article__tags&attributes(smartLink?.elementCodename('training_persona'))
                           each item in content.training_persona.value

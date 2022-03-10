@@ -196,6 +196,16 @@ const getCourseId = (course, res) => {
 };
 
 const scorm = {
+  getUserCourseRegistration: async (email, courseId) => {
+    const registrationId = getRegistrationId(email, courseId);
+    const registrationExists = await getRegistrationExistence(registrationId);
+
+    if (registrationExists) {
+      return await getRegistrationData(registrationId);
+    }
+
+    return null;
+  },
   handleTrainingCourse: async (user, course, req, res) => {
     const courseId = getCourseId(course, res);
     let registrationData = null;

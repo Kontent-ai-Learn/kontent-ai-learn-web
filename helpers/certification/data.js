@@ -80,6 +80,8 @@ const getTest = async (codename, res) => {
     title: certificationTest.title.value,
     duration: parseInt(certificationTest.test_duration.value),
     questions_count: testQuestionsNumber,
+    score_to_pass: certificationTest.score_to_pass.value,
+    certificate_validity: certificationTest.certificate_validity.value,
     questions: questions
    };
 };
@@ -112,9 +114,9 @@ const evaluateAttempt = (body, attempt) => {
 
   attempt.score = Math.floor(correctAnswers / attempt.test.questions_count * 100);
 
-  if (attempt.score >= 80) {
+  if (attempt.score >= attempt.test.score_to_pass) {
     const date = new Date()
-    date.setDate(date.getDate() + 365);
+    date.setDate(date.getDate() + ((attempt.test.certificate_validity * 365) || 365));
     attempt.certificate_expiration = date.toISOString();
   }
 

@@ -80,8 +80,7 @@ const splitPayloadByContentType = (items) => {
         trainingUsers: [],
         trainingSubscriptions: [],
         trainingSurveys: [],
-        trainingCertificationTests: [],
-        trainingQuestions: [],
+        trainingCertificationTests: []
     };
 
     for (let i = 0; i < items.length; i++) {
@@ -120,8 +119,6 @@ const splitPayloadByContentType = (items) => {
             itemsByTypes.trainingSurveys.push(item);
         } else if (item.type === 'training_certification_test') {
             itemsByTypes.trainingCertificationTests.push(item);
-        } else if (item.type === 'training_question_for_survey_and_test') {
-            itemsByTypes.trainingQuestions.push(item);
         }
     }
 
@@ -148,7 +145,7 @@ const invalidatePDFs = async (items, res) => {
 };
 
 const getRootItems = async (items, KCDetails) => {
-    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_survey', 'training_course2', 'training_question_for_survey_and_test', 'training_question_free_text', 'training_answer_for_survey_and_test'];
+    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_survey', 'training_certification_test', 'training_course2', 'training_question_for_survey_and_test', 'training_question_free_text', 'training_answer_for_survey_and_test', 'training_question_group'];
     const allItems = await requestDelivery({
         types: typesToSearch,
         depth: 0,
@@ -289,7 +286,6 @@ const processInvalidation = async (req, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingSubscriptions');
         await deleteSpecificKeys(KCDetails, itemsByTypes.trainingSurveys, res);
         await deleteSpecificKeys(KCDetails, itemsByTypes.trainingCertificationTests, res);
-        await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingQuestions');
         await invalidatePDFs(items, res);
         await fastly.purgeFinal(itemsByTypes, req, res);
 
