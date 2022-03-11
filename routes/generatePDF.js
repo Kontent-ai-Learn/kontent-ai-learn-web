@@ -94,39 +94,34 @@ router.get('/', asyncHandler(async (req, res, next) => {
     const domain = helper.getDomain();
     const pageUrl = `${domain}${req.query.url}`;
     const options = {
-        filename: `${fileName}.pdf`,
-        inline: true,
-        options: {
-            marginBottom: 0.7,
-            marginLeft: 0.8,
-            marginRight: 0.8,
-            marginTop: 0.8,
-            displayHeaderFooter: true,
-            headerTemplate: `
-                <div style="font-family:Arial;width:100%;font-size:9px;padding:0 0.6in;color:silver;display:flex;">
-                    <div style="width:0.6in;border-right:1px solid silver;margin-right:0.1in;padding-right:0.1in;">
-                        <img src="${logo}" style="width:100%;">
-                    </div>
-                    <div style="display:flex;align-items:center;">
-                        ${isPreview(res.locals.previewapikey) ?
-                            '<span style="color:red;">Preview</span>' :
-                            `<a href="${pageUrl}" style="color:silver;">${pageUrl}</a>`}
-                    </div>
-                </div>`,
-            footerTemplate: `
-                <div style="font-family:Arial;width:100%;font-size:9px;padding:0 0.6in;color:silver;">
-                    <div style="display:inline-block;width:49%;">
-                        <a href="${baseURL}" style="color:silver;">${baseURLShortened}</a>
-                    </div>
-                    <div style="display:inline-block;width:49%;text-align:right;">
-                        <span class="pageNumber"></span> of <span class="totalPages"></span>
-                    </div>
-                </div>`
-        }
-
+        marginBottom: 0.7,
+        marginLeft: 0.8,
+        marginRight: 0.8,
+        marginTop: 0.8,
+        displayHeaderFooter: true,
+        headerTemplate: `
+            <div style="font-family:Arial;width:100%;font-size:9px;padding:0 0.6in;color:silver;display:flex;">
+                <div style="width:0.6in;border-right:1px solid silver;margin-right:0.1in;padding-right:0.1in;">
+                    <img src="${logo}" style="width:100%;">
+                </div>
+                <div style="display:flex;align-items:center;">
+                    ${isPreview(res.locals.previewapikey) ?
+                        '<span style="color:red;">Preview</span>' :
+                        `<a href="${pageUrl}" style="color:silver;">${pageUrl}</a>`}
+                </div>
+            </div>`,
+        footerTemplate: `
+            <div style="font-family:Arial;width:100%;font-size:9px;padding:0 0.6in;color:silver;">
+                <div style="display:inline-block;width:49%;">
+                    <a href="${baseURL}" style="color:silver;">${baseURLShortened}</a>
+                </div>
+                <div style="display:inline-block;width:49%;text-align:right;">
+                    <span class="pageNumber"></span> of <span class="totalPages"></span>
+                </div>
+            </div>`
     };
 
-    a2pClient.chromeUrlToPdf(`${baseURL}${url}`, options)
+    a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, `${fileName}.pdf`, options)
         .then((result) => {
             pdfResult = result;
         }, (rejected) => {
@@ -136,7 +131,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
             if (error) return next();
             logRequest(req, true);
             pdfAddCache(pdfResult, fileName, req.query.url, urlMap);
-            await download(pdfResult.FileUrl, 'public/learn/files');
+            await download(pdfResult.pdf, 'public/learn/files');
             return res.redirect(303, `${baseURL}/learn/files/${fileName}.pdf`);
         })
 }));

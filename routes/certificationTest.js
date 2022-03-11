@@ -144,33 +144,29 @@ router.get('/:slug/:attemptid/certificate', asyncHandler(async (req, res, next) 
   const fileName = `${attempt.test.codename}_${attempt.id}.pdf`;
 
   const options = {
-    filename: fileName,
-    inline: true,
-    options: {
-      marginBottom: 0,
-      marginLeft: 0,
-      marginRight: 0,
-      marginTop: 0,
-      printBackground: true
-    }
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    marginTop: 0,
+    printBackground: true
   };
   let pdfResult;
   let error;
 
-a2pClient.chromeUrlToPdf(`${baseURL}${url}`, options)
-        .then((result) => {
-            pdfResult = result;
-        }, (rejected) => {
-            error = rejected
-        })
-        .then(async () => {
-            if (error) return next();
-            fetch(pdfResult.FileUrl).then(result => {
-              result.headers.forEach((v, n) => res.setHeader(n, v));
-              res.set('Content-disposition', `attachment; filename=${encodeURI(fileName)}`);
-              return result.body.pipe(res);
-            });
-        })
+a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
+  .then((result) => {
+      pdfResult = result;
+  }, (rejected) => {
+      error = rejected
+  })
+  .then(async () => {
+      if (error) return next();
+      fetch(pdfResult.pdf).then(result => {
+        result.headers.forEach((v, n) => res.setHeader(n, v));
+        res.set('Content-disposition', `attachment; filename=${encodeURI(fileName)}`);
+        return result.body.pipe(res);
+      });
+  })
 }));
 
 router.get('/:slug/:attemptid/certificate/pdf', asyncHandler(async (req, res, next) => {
