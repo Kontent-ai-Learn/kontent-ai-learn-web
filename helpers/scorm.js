@@ -1,5 +1,6 @@
 const axios = require('axios');
 const CryptoJS = require('crypto-js');
+const moment = require('moment');
 const isPreview = require('./isPreview');
 const getUrlMap = require('./urlMap');
 const handleCache = require('./handleCache');
@@ -154,19 +155,14 @@ const getCoursePreviewLink = async (courseId, codename, res) => {
   return linkData;
 };
 
-const getCertificate = (progress) => {
-  if (progress === 'COMPLETED') {
-    // Fake cerificate
+const getCertificate = (registrationData, course) => {
+  if (registrationData?.activityDetails?.activityCompletion === 'COMPLETED') {
     return {
-      course_id: '193',
-      course_name: 'Get Started with Modular Content',
-      unique_id: '795f-7fb9-d421-2fec',
-      issued_date: '2020/12/28',
-      issued_date_timestamp: 1609147583,
-      expiration_date: 'Never',
-      expiration_date_timestamp: 0,
-      download_url: 'https://kontent-kentico.talentlms.com/user/downloadcertification/id:8573',
-      public_url: 'https://training.kentico.com/user/certification/sig:uPhkqu_BsLdV_5tK1dGvwg.RjR5ZmExOGI5OWtYUWg4TGlDSForQT09'
+      course_id: registrationData.course.id,
+      course_name: course.title.value,
+      issued_date: moment(registrationData.completedDate).format('YYYY/MM/DD'),
+      expiration_date: null,
+      public_url: `/learn/get-certified/course/${registrationData.id}/certificate/`
     };
   }
   return null;
@@ -196,6 +192,15 @@ const getCourseId = (course, res) => {
 };
 
 const scorm = {
+  getRegistrationIdData: async (registrationId) => {
+    const registrationExists = await getRegistrationExistence(registrationId);
+
+    if (registrationExists) {
+      return await getRegistrationData(registrationId);
+    }
+
+    return null;
+  },
   getUserCourseRegistration: async (email, courseId) => {
     const registrationId = getRegistrationId(email, courseId);
     const registrationExists = await getRegistrationExistence(registrationId);
@@ -264,7 +269,7 @@ const scorm = {
 
         url = linkData?.launchLink;
 
-        certificate = getCertificate(progress);
+        certificate = getCertificate(registrationData, course);
       }
     } else {
       progress = 'PREVIEW';

@@ -17,9 +17,9 @@ const getCertificationInfo = async (user, certificationTest, UIMessages, req, re
       text: 'You have successfully passed the exam.',
       renderAs: 'text',
       certificate: {
-        public_url: `/learn/get-certified/${certificationTest.url.value}/${successfullAttempt.id}/certificate/`,
-        issued_date: moment(successfullAttempt.end).format('MM/DD/YYYY'),
-        expiration_date: moment(successfullAttempt.certificate_expiration).format('MM/DD/YYYY'),
+        public_url: `/learn/get-certified/exam/${successfullAttempt.id}/certificate/`,
+        issued_date: moment(successfullAttempt.end).format('YYYY/MM/DD'),
+        expiration_date: moment(successfullAttempt.certificate_expiration).format('YYYY/MM/DD'),
         course_name: successfullAttempt.test.title
       },
       signedIn: true

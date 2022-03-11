@@ -16,6 +16,7 @@ const postprocessMarkup = require('../helpers/postprocessMarkup');
 const smartLink = require('../helpers/smartLink');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationEmail = require('../helpers/certification/email');
+const scorm = require('../helpers/scorm');
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
   const home = await handleCache.ensureSingle(res, 'home', async () => {
@@ -125,7 +126,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
   });
 }));
 
-router.get('/:slug/:attemptid/certificate', asyncHandler(async (req, res, next) => {
+router.get('/exam/:attemptid/certificate', asyncHandler(async (req, res, next) => {
   const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
@@ -169,12 +170,66 @@ a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
   })
 }));
 
-router.get('/:slug/:attemptid/certificate/pdf', asyncHandler(async (req, res, next) => {
+router.get('/exam/:attemptid/certificate/pdf', asyncHandler(async (req, res, next) => {
   const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
-  return res.render('certificate/test', {
+  return res.render('certificate/exam', {
     attempt: attempt,
+    moment: moment
+  });
+}));
+
+router.get('/course/:registrationId/certificate', asyncHandler(async (req, res, next) => {
+  const registrationData = await scorm.getRegistrationIdData(req.params.registrationId);
+  if (!registrationData) return next();
+
+  let baseURL;
+
+  if (process.env.ngrok) {
+      baseURL = process.env.ngrok;
+  } else if (process.env.aliasURL) {
+      baseURL = process.env.aliasURL;
+  } else {
+      baseURL = process.env.baseURL;
+  }
+
+  const url = `${req.originalUrl.split('?')[0]}pdf`;
+
+  const fileName = `${registrationData.course.id}_${req.params.registrationId}.pdf`;
+
+  const options = {
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    marginTop: 0,
+    printBackground: true
+  };
+  let pdfResult;
+  let error;
+
+a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
+  .then((result) => {
+      pdfResult = result;
+  }, (rejected) => {
+      error = rejected
+  })
+  .then(async () => {
+      if (error) return next();
+      fetch(pdfResult.pdf).then(result => {
+        result.headers.forEach((v, n) => res.setHeader(n, v));
+        res.set('Content-disposition', `attachment; filename=${encodeURI(fileName)}`);
+        return result.body.pipe(res);
+      });
+  })
+}));
+
+router.get('/course/:registrationId/certificate/pdf', asyncHandler(async (req, res, next) => {
+  const registrationData = await scorm.getRegistrationIdData(req.params.registrationId);
+  if (!registrationData) return next();
+
+  return res.render('certificate/course', {
+    registrationData: registrationData,
     moment: moment
   });
 }));
