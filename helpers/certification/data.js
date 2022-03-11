@@ -3,10 +3,10 @@ const commonContent = require('../commonContent');
 const helper = require('../helperFunctions');
 
 const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) => {
-  const questions = [];
+  const questionsBuild = [];
 
   for (let f = 0; f < certificationTest.question_groups.value.length; f++) {
-    questions.push({
+    questionsBuild.push({
       topic: {
         name: certificationTest.question_groups.value[f].system.name,
         codename: certificationTest.question_groups.value[f].system.codename,
@@ -17,22 +17,24 @@ const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) =
     let questionsNumber = parseInt(certificationTest.question_groups.value[f].number_of_questions.value);
     if (isNaN(questionsNumber)) questionsNumber = 0;
 
-    while (certificationTest.question_groups.value[f].questions.value.length > questionsNumber) {
-      const currentQuestionsNumber = certificationTest.question_groups.value[f].questions.value.length;
+    const questions = certificationTest.question_groups.value[f].questions.value.map(a => { return { ...a } }); // Deep copy
+
+    while (questions.length > questionsNumber) {
+      const currentQuestionsNumber = questions.length;
       const randomIndex = Math.floor(Math.random() * currentQuestionsNumber);
-      certificationTest.question_groups.value[f].questions.value.splice(randomIndex, 1);
+      questions.splice(randomIndex, 1);
     }
 
-    for (let i = 0; i < certificationTest.question_groups.value[f].questions.value.length; i++) {
+    for (let i = 0; i < questions.length; i++) {
       const question = {
-        codename: certificationTest.question_groups.value[f].questions.value[i].system.codename,
+        codename: questions[i].system.codename,
         name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(certificationTest.question_groups.value[f].questions.value[i].question.value)))).trim(),
-        html: certificationTest.question_groups.value[f].questions.value[i].question.value,
+        html: questions[i].question.value,
         answers: []
       }
 
-      for (let j = 0; j < certificationTest.question_groups.value[f].questions.value[i].answers.linkedItemCodenames.length; j++) {
-        const answer = certificationTestLinkedItems[certificationTest.question_groups.value[f].questions.value[i].answers.linkedItemCodenames[j]];
+      for (let j = 0; j < questions[i].answers.linkedItemCodenames.length; j++) {
+        const answer = certificationTestLinkedItems[questions[i].answers.linkedItemCodenames[j]];
 
         question.answers.push({
           codename: answer.system.codename,
@@ -43,11 +45,11 @@ const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) =
         })
       }
 
-      questions[f].questions.push(question);
+      questionsBuild[f].questions.push(question);
     }
   }
 
-  return questions;
+  return questionsBuild;
 }
 
 const removeCorrectness = (data) => {

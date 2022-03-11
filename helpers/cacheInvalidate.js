@@ -10,7 +10,7 @@ const helper = require('./helperFunctions');
 const fastly = require('./fastly');
 const getUrlMap = require('./urlMap');
 
-const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
+const requestItemAndDeleteCacheKey = async (codename, type, KCDetails, res) => {
     const originalItem = handleCache.getCache(codename, KCDetails);
 
     if (originalItem && originalItem.length) {
@@ -24,16 +24,28 @@ const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
     const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });
-    const newItem = await requestDelivery({
+    const options = {
         codename: codename,
-        depth: 2,
+        depth: 4,
         resolveRichText: true,
         urlMap: urlMap,
         ...KCDetails
-    });
+    };
+    if (!type) {
+        const urlMapItem = urlMap.find(item => item.codename === codename);
+        if (urlMapItem) type = urlMapItem.type;
+    }
+    if (type) {
+        options.type = type;
+    }
+    let newItem = await requestDelivery(options);
 
-    if (newItem && newItem.length) {
+    if (newItem && (newItem?.items?.length || newItem?.length)) {
         handleCache.putCache(codename, newItem, KCDetails);
+
+        if (newItem.items) {
+            newItem = newItem.items;
+        }
 
         if (newItem[0].redirect_urls) {
             await fastly.purgeToRedirectUrls(newItem[0].redirect_urls, res);
@@ -45,7 +57,7 @@ const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
 
 const deleteSpecificKeys = async (KCDetails, items, res) => {
     for await (const item of items) {
-        await requestItemAndDeleteCacheKey(item.codename, KCDetails, res);
+        await requestItemAndDeleteCacheKey(item.codename, item.type, KCDetails, res);
     }
 };
 
@@ -168,7 +180,7 @@ const invalidateRootItems = async (items, KCDetails, res) => {
 
     for await (const rootItem of rootItems) {
         await invalidatePDFItem(rootItem);
-        await requestItemAndDeleteCacheKey(rootItem, KCDetails, res);
+        await requestItemAndDeleteCacheKey(rootItem, null, KCDetails, res);
     }
 };
 
@@ -188,7 +200,7 @@ const invalidateGeneral = async (itemsByTypes, KCDetails, res, type, keyName) =>
 const invalidateMultiple = async (itemsByTypes, KCDetails, type, res) => {
     if (itemsByTypes[type].length) {
         itemsByTypes[type].forEach(async (item) => {
-            await requestItemAndDeleteCacheKey(item.codename, KCDetails, res);
+            await requestItemAndDeleteCacheKey(item.codename, item.type, KCDetails, res);
         });
     }
 
@@ -256,7 +268,7 @@ const invalidateElearning = async (itemsByTypes, KCDetails, res) => {
         await invalidateMultiple(itemsByTypes, KCDetails, 'trainingCourses', res);
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingCourses');
         await revalidateTrainingCourseType(KCDetails, res);
-        await requestItemAndDeleteCacheKey('e_learning_overview', KCDetails, res);
+        await requestItemAndDeleteCacheKey('e_learning_overview', 'article', KCDetails, res);
     }
 };
 

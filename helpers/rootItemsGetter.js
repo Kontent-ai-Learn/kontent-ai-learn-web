@@ -1,4 +1,4 @@
-const ROOT_CONTENT_TYPES = ['article', 'training_course2', 'training_survey', 'training_certification_test', 'training_question_group'];
+const ROOT_CONTENT_TYPES = ['article', 'training_course2', 'training_survey', 'training_certification_test'];
 
 function getRootCodenamesOfSingleItem(item, allItems) {
     if (ROOT_CONTENT_TYPES.includes(item.type)) {
