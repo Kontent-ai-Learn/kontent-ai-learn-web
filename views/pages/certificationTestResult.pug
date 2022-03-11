@@ -7,7 +7,7 @@ block content
       .certification-test__text
         if (attempt.score >= attempt.test.score_to_pass)
           | !{content.success_message.value}
-          a(href=`${req.originalUrl.split('?')[0]}certificate`).call-to-action.call-to-action--left-spacing
+          a(href=`/learn/get-certified/exam/${attempt.id}/certificate/`).call-to-action.call-to-action--left-spacing
             span Download certificate
             span
         else 

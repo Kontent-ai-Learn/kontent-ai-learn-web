@@ -66,8 +66,8 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
 
 router.post('/:slug', asyncHandler(async (req, res, next) => {
   const attempt = await certificationAttempt.handle(req.body);
-  await certificationEmail.sendCongrats(attempt);
   if (!attempt) return next();
+  await certificationEmail.sendCongrats(attempt);
   return res.redirect(302, `${req.originalUrl.split('?')[0]}${attempt.id}/`);
 }));
 
