@@ -20,9 +20,9 @@ block content
                         span.article__tag.article__tag--blue !{UIMessages.training___free_course_label.value}
                     .article__notes#trainingNotes
                       span&attributes(smartLink?.elementCodename('duration')) !{UIMessages.training___estimated_duration.value} !{content.duration.value} !{content.duration.value === 1 ? 'minute' : `minutes`}
-                      if (content.training_persona.value.length)
-                        ul.article__tags&attributes(smartLink?.elementCodename('training_persona'))
-                          each item in content.training_persona.value
+                      if (content.personas___topics__training_persona.value.length)
+                        ul.article__tags&attributes(smartLink?.elementCodename('personas___topics__training_persona'))
+                          each item in content.personas___topics__training_persona.value
                             li.article__tags-item.article__tags-item--green !{item.name}
                       if (isPreview)
                         a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${content.system.id}`, target='_blank', rel='noopener') Edit

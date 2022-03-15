@@ -93,16 +93,16 @@ const getRegistrationData = async (registrationId) => {
   return registrationData;
 };
 
-const getRegistrationLink = async (registrationId, codename, res) => {
+const getRegistrationLink = async (registrationId, course, courseId, res) => {
   const url = `${settings.registrationsUrl}/${registrationId}/launchLink`;
   const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
-  const redirectUrl = urlMap.find(item => item.codename === codename);
+  const redirectUrl = urlMap.find(item => item.codename === course.course_survey.value?.[0]?.system?.codename);
 
   const data = {
     expiry: 120,
-    redirectOnExitUrl: `${helper.getDomain()}${redirectUrl?.url}`,
+    redirectOnExitUrl: `${helper.getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
   };
   let linkData = {};
 
@@ -124,16 +124,16 @@ const getRegistrationLink = async (registrationId, codename, res) => {
   return linkData;
 };
 
-const getCoursePreviewLink = async (courseId, codename, res) => {
+const getCoursePreviewLink = async (courseId, course, res) => {
   const url = `${settings.coursesUrl}/${courseId}/preview`;
   const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
-  const redirectUrl = urlMap.find(item => item.codename === codename);
+  const redirectUrl = urlMap.find(item => item.codename === course.course_survey.value?.[0]?.system?.codename);
 
   const data = {
     expiry: 120,
-    redirectOnExitUrl: `${helper.getDomain()}${redirectUrl?.url}`,
+    redirectOnExitUrl: `${helper.getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
   };
   let linkData = {};
 
@@ -257,7 +257,7 @@ const scorm = {
 
         progress = registrationData?.activityDetails?.activityCompletion;
 
-        linkData = await getRegistrationLink(registrationId, course.system.codename, res);
+        linkData = await getRegistrationLink(registrationId, course, courseId, res);
 
         if (linkData.err) {
           return {
@@ -273,7 +273,7 @@ const scorm = {
       }
     } else {
       progress = 'PREVIEW';
-      linkData = await getCoursePreviewLink(courseId, course.system.codename, res);
+      linkData = await getCoursePreviewLink(courseId, course, res);
 
       if (linkData.err) {
         return {

@@ -564,7 +564,7 @@ const richTextResolverTemplates = {
             </div>`;
     },
     trainingCourse: (item, config) => {
-        const personas = item.training_persona.value;
+        const personas = item.personas___topics__training_persona.value;
         const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
         const url = urlMapItem.length ? urlMapItem[0].url : null;
         const isFree = item.is_free ? helper.isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
