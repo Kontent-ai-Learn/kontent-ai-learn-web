@@ -4,6 +4,7 @@ const surveyData = require('./data');
 const handleCache = require('../handleCache');
 const commonContent = require('../commonContent');
 const scorm = require('../scorm');
+const getUrlMap = require('../urlMap');
 
 const init = async (req, res) => {
   let courseIdTrainingCourse = req.body.courseid.replace('_preview', '');
@@ -17,9 +18,16 @@ const init = async (req, res) => {
   const userCompletedCourse = userCourseRegistration?.registrationCompletion === 'COMPLETED';
   const { user, trainingUser, errCode } = await elearningUser.getUser(req.body.email, res);
   if (!(await elearningUser.isCourseAvailable(user, trainingCourse, trainingUser, res)) || errCode || !trainingCourse || !userCompletedCourse) {
+    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+      return await getUrlMap(res);
+    });
+    const urlMapItem = urlMap.find(item => item.codename === trainingCourse.system.codename);
+
     return {
       code: 401,
-      data: null
+      data: {
+        redirect_url: urlMapItem?.url || null
+      }
     }
   }
 

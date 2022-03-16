@@ -81,6 +81,13 @@
     });
   };
 
+  const hideOverlay = () => {
+    const overlay = document.querySelector('.survey__overlay');
+    if (!overlay) return;
+    overlay.classList.add('survey__overlay--hidden');
+  };
+
+
   const getSurvey = async (user) => {
     if (!user) return;
     const token = user ? user.__raw : null;
@@ -94,11 +101,15 @@
     if (formData.code === 200) {
       renderForm(formData, elem);
       makeAnswersInteractive(elem);
+      hideOverlay();
     } else if (formData.code === 401) {
-      elem.innerHTML = `Access in now allowed.`;
+      if (formData.data && formData.data.redirect_url) {
+        window.location.replace(formData.data.redirect_url);
+      } else {
+        elem.innerHTML = `Access in now allowed.`;
+      }
     }
   };
-
 
   const container = document.querySelector('[data-survey]');
   if (container) {
