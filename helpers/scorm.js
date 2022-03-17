@@ -178,7 +178,7 @@ const getCompletion = (codename, UIMessages) => {
 }
 
 const getCourseId = (course, res) => {
-  let courseId = course?.course_id?.value?.[0].codename;
+  let courseId = course?.system.id;
 
   if (isPreview(res.locals.previewapikey)) {
     courseId = `${courseId}_preview`;

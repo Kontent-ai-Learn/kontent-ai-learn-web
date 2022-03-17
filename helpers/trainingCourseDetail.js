@@ -70,7 +70,7 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => 
 };
 
 const getTrainingCourseInfoFromScorm = async (user, course, UIMessages, req, res) => {
-  const courseId = course?.course_id?.value?.[0].codename;
+  const courseId = course?.system.id;
   if (!courseId && courseId !== 0) return null;
   let redirectToScorm = false;
 
@@ -135,8 +135,8 @@ const getTrainingCourseInfoFromScorm = async (user, course, UIMessages, req, res
 const getLmsServiceName = (course) => {
   let serviceName = null;
 
-  if (course.talentlms_course_id.value) serviceName = 'tlms';
-  if (course.course_id?.value?.[0].codename) serviceName = 'scorm';
+  if (course?.system.id) serviceName = 'scorm';
+  if (course?.talentlms_course_id.value) serviceName = 'tlms';
 
   return serviceName;
 }

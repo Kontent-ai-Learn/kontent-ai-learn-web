@@ -12,7 +12,7 @@ const init = async (req, res) => {
   const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
     return await commonContent.getTraniningCourse(res);
   });
-  const trainingCourse = trainingCourses.find(item => item.course_id?.value?.[0].codename === courseIdTrainingCourse);
+  const trainingCourse = trainingCourses.find(item => item.system.id === courseIdTrainingCourse);
 
   const userCourseRegistration = await scorm.getUserCourseRegistration(req.body.email, req.body.courseid);
   const userCompletedCourse = userCourseRegistration?.registrationCompletion === 'COMPLETED';
