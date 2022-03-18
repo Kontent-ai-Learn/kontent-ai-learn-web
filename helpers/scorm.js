@@ -216,7 +216,7 @@ const scorm = {
     }
 
     if (linkData?.launchLink && process.env.aliasURL) {
-      return linkData.launchLink.replace(toBeReplacedUrl, replacementUrl);
+      return linkData.launchLink.replace(toBeReplacedUrl, `${process.env.aliasURL}${replacementUrl}`);
     }
 
     if (linkData?.launchLink) {
