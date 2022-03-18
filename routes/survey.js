@@ -72,7 +72,7 @@ router.post('/:slug', asyncHandler(async (req, res, next) => {
   const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
     return await commonContent.getTraniningCourse(res);
   });
-  const trainingCourse = trainingCourses.find(item => item.course_id?.value?.[0].codename === courseIdTrainingCourse);
+  const trainingCourse = trainingCourses.find(item => item?.system.id === courseIdTrainingCourse);
   if (!trainingCourse) return next();
   const urlMapCourseItem = urlMap.find(item => item.codename === trainingCourse.system.codename);
   if (!urlMapCourseItem) return next();
