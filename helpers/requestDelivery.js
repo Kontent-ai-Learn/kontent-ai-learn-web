@@ -215,7 +215,7 @@ const extendLinkedItems = (response) => {
 const removeArchivedLinkedItems = (items) => {
     for (const item of items) {
         for (const prop in item) {
-            if (Object.prototype.hasOwnProperty.call(item, prop)) {
+            if (Object.prototype.hasOwnProperty.call(item, prop) && item.system.type !== 'training_course2') {
                 if (item[prop] && item[prop].type === 'modular_content') {
                     for (const modularItem of item[prop].value) {
                         if (modularItem._raw.system.workflow_step === 'archived') {

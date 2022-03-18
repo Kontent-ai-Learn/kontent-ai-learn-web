@@ -14,6 +14,8 @@ const platforms = require('../helpers/platforms');
 const customRichTextResolver = require('../helpers/customRichTextResolver');
 const smartLink = require('../helpers/smartLink');
 const getUrlMap = require('../helpers/urlMap');
+const scorm = require('../helpers/scorm');
+const fastly = require('../helpers/fastly');
 
 let cookiesPlatform;
 
@@ -165,6 +167,16 @@ const getContent = async (req, res) => {
                 redirectUrl: `${pathUrl}${content[0].subpages.value[0].url.value}/${queryHash ? '?' + queryHash : ''}`
             }
         } else if (content[0].system.type === 'training_course2') {
+            if (req.query.id) {
+                res = fastly.preventCaching(res);
+                const link = await scorm.getTrainingRegistrationLink(req.query.id, content[0].system.codename, res);
+                if (link) {
+                    return {
+                        redirectCode: 303,
+                        redirectUrl: link
+                    }
+                }
+            }
             view = 'pages/trainingCourse';
         } else if (content[0].system.type === 'training_certification_test') {
             view = 'pages/certificationTestDetail';

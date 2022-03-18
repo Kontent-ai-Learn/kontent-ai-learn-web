@@ -40,6 +40,10 @@ const getRegistrationExistence = async (registrationId) => {
   return exists;
 };
 
+const getRegistrationLinkEndpoint = (id, req) => {
+    return `${(req.headers.referrer || req.headers.referer)?.split('?')[0]}?id=${id}`;
+};
+
 const createRegistration = async (user, courseId, registrationId) => {
   const registration = {};
   const url = `${settings.registrationsUrl}`;
@@ -93,15 +97,15 @@ const getRegistrationData = async (registrationId) => {
   return registrationData;
 };
 
-const getRegistrationLink = async (registrationId, course, courseId, res) => {
+const getRegistrationLink = async (registrationId, surveyCodename, courseId, res) => {
   const url = `${settings.registrationsUrl}/${registrationId}/launchLink`;
   const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
-  const redirectUrl = urlMap.find(item => item.codename === course.course_survey.value?.[0]?.system?.codename);
+  const redirectUrl = urlMap.find(item => item.codename === surveyCodename);
 
   const data = {
-    expiry: 120,
+    expiry: 300,
     redirectOnExitUrl: `${helper.getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
   };
   let linkData = {};
@@ -124,15 +128,15 @@ const getRegistrationLink = async (registrationId, course, courseId, res) => {
   return linkData;
 };
 
-const getCoursePreviewLink = async (courseId, course, res) => {
+const getCoursePreviewLink = async (courseId, surveyCodename, res) => {
   const url = `${settings.coursesUrl}/${courseId}/preview`;
   const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
-  const redirectUrl = urlMap.find(item => item.codename === course.course_survey.value?.[0]?.system?.codename);
+  const redirectUrl = urlMap.find(item => item.codename === surveyCodename);
 
   const data = {
-    expiry: 120,
+    expiry: 300,
     redirectOnExitUrl: `${helper.getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
   };
   let linkData = {};
@@ -192,6 +196,35 @@ const getCourseId = (course, res) => {
 };
 
 const scorm = {
+  getTrainingRegistrationLink: async (id, codename, res) => {
+    let linkData = null;
+    let toBeReplacedUrl = '';
+    let replacementUrl = '';
+    const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
+      return await commonContent.getTraniningCourse(res);
+    });
+    const course = trainingCourses.find(item => item.system.codename === codename);
+
+    if (isPreview(res.locals.previewapikey)) {
+      linkData = await getCoursePreviewLink(id, course.course_survey.value?.[0]?.system?.codename, res);
+      toBeReplacedUrl = 'https://cloud.scorm.com/api/cloud/course/preview/';
+      replacementUrl = '/learn/e-learning/course/preview/';
+    } else {
+      linkData = await getRegistrationLink(id, course.course_survey.value?.[0]?.system?.codename, getCourseId(course, res), res);
+      toBeReplacedUrl = 'https://cloud.scorm.com/api/cloud/registration/launch/';
+      replacementUrl = '/learn/e-learning/course/';
+    }
+
+    if (linkData?.launchLink && process.env.aliasURL) {
+      return linkData.launchLink.replace(toBeReplacedUrl, replacementUrl);
+    }
+
+    if (linkData?.launchLink) {
+      return linkData.launchLink;
+    }
+
+    return null;
+  },
   getRegistrationIdData: async (registrationId) => {
     const registrationExists = await getRegistrationExistence(registrationId);
 
@@ -214,7 +247,6 @@ const scorm = {
   handleTrainingCourse: async (user, course, req, res) => {
     const courseId = getCourseId(course, res);
     let registrationData = null;
-    let linkData = null;
     let certificate = null;
     let qs = null;
     let url = null;
@@ -256,34 +288,12 @@ const scorm = {
         }
 
         progress = registrationData?.activityDetails?.activityCompletion;
-
-        linkData = await getRegistrationLink(registrationId, course, courseId, res);
-
-        if (linkData.err) {
-          return {
-            url: '#',
-            completion: 103,
-            err: linkData.err
-          }
-        }
-
-        url = linkData?.launchLink;
-
+        url = getRegistrationLinkEndpoint(registrationId, req);
         certificate = getCertificate(registrationData, course);
       }
     } else {
       progress = 'PREVIEW';
-      linkData = await getCoursePreviewLink(courseId, course, res);
-
-      if (linkData.err) {
-        return {
-          url: '#',
-          completion: 103,
-          err: linkData.err
-        }
-      }
-
-      url = linkData?.launchLink;
+      url = getRegistrationLinkEndpoint(courseId, req);
     }
 
     return {
