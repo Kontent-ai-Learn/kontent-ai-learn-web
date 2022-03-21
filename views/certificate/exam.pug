@@ -16,7 +16,7 @@ html(lang='en')
           .certificate__course !{attempt.test.title}
         .certificate__bottom
           .certificate__column
-            .certificate__value !{moment(attempt.start).format('MMMM D, YYYY')}
+            .certificate__value !{moment(attempt.end).format('MMMM D, YYYY')}
             .certificate__label Valid from
           .certificate__column
             .certificate__value !{moment(attempt.certificate_expiration).format('MMMM D, YYYY')}

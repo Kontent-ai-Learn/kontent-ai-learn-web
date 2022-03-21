@@ -78,8 +78,10 @@ const handleExpirations = async () => {
   const attempts = await certificationDatabase.getExpirationAttempts();
   if (!attempts) return;
   for (const attempt of attempts) {
-    await sendExpirationAhead(attempt);
-    await sendExpired(attempt);
+    if (process.env.isProduction === 'false' && (attempt.email.endsWith('@milanlund.com') || attempt.email.endsWith('@kentico.com'))) {
+      await sendExpirationAhead(attempt);
+      await sendExpired(attempt);
+    }
   }
 };
 
