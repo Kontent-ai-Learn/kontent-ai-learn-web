@@ -10,7 +10,9 @@ html(lang='en')
           .certificate__name Certificate of Completion
             span .
           .certificate__text This certificate is awarded to
-          .certificate__username !{registrationData.learner.firstName} !{registrationData.learner.lastName}
+          - var name = `${registrationData.learner.firstName} ${registrationData.learner.lastName}`;
+          - name = name.trim() || registrationData.learner.email;
+          .certificate__username !{name}
           .certificate__text Following the successful completion of
           .certificate__course !{registrationData.course.title}
         .certificate__bottom

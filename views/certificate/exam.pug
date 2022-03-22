@@ -10,7 +10,8 @@ html(lang='en')
           .certificate__name Certificate of Completion
             span .
           .certificate__text This certificate is awarded to
-          .certificate__username !{attempt.username}
+          - var name = attempt.username || attempt.email;
+          .certificate__username !{name}
           .certificate__id id: !{attempt.id}
           .certificate__text Following the successful completion of
           .certificate__course !{attempt.test.title}

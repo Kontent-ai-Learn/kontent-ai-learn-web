@@ -136,7 +136,7 @@
     const codename = elem ? elem.getAttribute('data-certification-test') : null
     if (!(token && codename)) return;
     const formData = await requestFormData(codename, user, token);
-    console.log(formData);
+    // console.log(formData);
 
     if (formData.code === 200) {
       renderForm(formData, elem);

@@ -96,7 +96,7 @@
     const courseid = window.helper.getParameterByName('courseid');
     if (!(token && codename && courseid)) return;
     const formData = await requestFormData(codename, courseid, user, token);
-    console.log(formData);
+    // console.log(formData);
 
     if (formData.code === 200) {
       renderForm(formData, elem);

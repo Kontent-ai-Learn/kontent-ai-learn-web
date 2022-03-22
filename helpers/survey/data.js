@@ -47,6 +47,7 @@ const getQuestions = (survey) => {
     const question = linkedItems[survey.items[0].survey_questions.linkedItemCodenames[i]];
     const questionItem = {
       id: question.system.id,
+      codename: question.system.codename,
       name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(question.question.value)))).trim(),
       html: question.question.value,
       answers: [],
@@ -60,6 +61,7 @@ const getQuestions = (survey) => {
         const answer = linkedItems[question.answers.linkedItemCodenames[j]];
         const answerItem = {
           id: answer.system.id,
+          codename: answer.system.codename,
           name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(answer.answer.value)))).trim(),
           html: answer.answer.value,
           selected: false,

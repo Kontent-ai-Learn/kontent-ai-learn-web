@@ -52,6 +52,7 @@ const createAttempt = async (body, user, res) => {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_SURVEY);
     attempt = await db.items.create({
       survey_id: survey.items[0].system.id,
+      codename: survey.items[0].system.codename,
       email: email,
       course_id: courseid,
       username: user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : email,

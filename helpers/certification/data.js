@@ -8,8 +8,9 @@ const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) =
   for (let f = 0; f < certificationTest.question_groups.value.length; f++) {
     questionsBuild.push({
       topic: {
-        name: certificationTest.question_groups.value[f].system.name,
+        id: certificationTest.question_groups.value[f].system.id,
         codename: certificationTest.question_groups.value[f].system.codename,
+        name: certificationTest.question_groups.value[f].system.name
       },
       questions: []
     });
@@ -27,6 +28,7 @@ const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) =
 
     for (let i = 0; i < questions.length; i++) {
       const question = {
+        id: questions[i].system.id,
         codename: questions[i].system.codename,
         name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(certificationTest.question_groups.value[f].questions.value[i].question.value)))).trim(),
         html: questions[i].question.value,
@@ -37,6 +39,7 @@ const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) =
         const answer = certificationTestLinkedItems[questions[i].answers.linkedItemCodenames[j]];
 
         question.answers.push({
+          id: answer.system.id,
           codename: answer.system.codename,
           name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(answer.answer.value)))).trim(),
           html: answer.answer.value,
@@ -78,6 +81,7 @@ const getTest = async (codename, res) => {
   certificationTest.question_groups.value.forEach(item => { testQuestionsNumber += item.number_of_questions.value });
 
   return {
+    id: certificationTest.system.id,
     codename: codename,
     title: certificationTest.title.value,
     duration: parseInt(certificationTest.test_duration.value),
