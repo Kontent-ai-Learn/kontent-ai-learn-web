@@ -1,10 +1,11 @@
 .callout {
-    border: 1px solid;
+    border: 3px solid;
     padding: 1.25em 1.5em;
     margin: 0 0 1em;
     box-sizing: border-box;
     position: relative;
     border-radius: 1.8125em 1.8125em .3125em 1.8125em;
+    background-color: transparent;
     
     @media screen and (min-width: 768px) {
         padding: 1.5em 2em;
@@ -31,15 +32,10 @@
     }
 
     &--key_points {
-        background-color: transparent;
         border-color: #231f20;
 
         &:before {
             background-image: url(../img/ui/callout-key-points.svg);
-        }
-
-        p, a, li {
-            color: #231f20 !important;
         }
         
         ul > li:before {
@@ -48,75 +44,55 @@
     }
 
     &--tip {
-        background-color: #ecf6f3;
-        border-color: #45a485;
+        border-color: #44B77A;
 
         &:before {
             background-image: url(../img/ui/callout-tip.svg);
         }
-
-        p, a, li {
-            color: #45a485 !important;
-        }
         
         ul > li:before {
-            background-color: #45a485 !important;
+            background-color: #44B77A !important;
         }
     }
 
     &--warning {
-        background-color: #fdeee8;
-        border-color: #e85a20;
+        border-color: #C42D61;
 
         &:before {
             background-image: url(../img/ui/callout-warning.svg);
         }
 
-        p, a, li {
-            color: #e85a20 !important;
-        }
-
         ul > li:before {
-            background-color: #e85a20 !important;
+            background-color: #C42D61 !important;
         }
     }
 
     &--note {
-        background-color: #f3edf6;
-        border-color: #894da7;
+        border-color: #8054B4;
 
         &:before {
             background-image: url(../img/ui/callout-note.svg);
         }
 
-        p, a, li {
-            color: #894da7 !important;
-        }
-
         ul > li:before {
-            background-color: #894da7 !important;
+            background-color: #8054B4 !important;
         }
     }
 
     &--info {
-        background-color: #eceff8;
-        border-color: #5160c0;
+        border-color: #1C60BF;
 
         &:before {
             background-image: url(../img/ui/callout-info.svg);
         }
 
-        p, a, li {
-            color: #5160c0 !important;
-        }
-
         ul > li:before {
-            background-color: #5160c0 !important;
+            background-color: #1C60BF !important;
         }
     }
 
     &__title, & > p:first-child > strong {
-        font-weight: 400;
+        font-weight: 700;
     }
 
     & > p:first-child > strong {

@@ -17,7 +17,7 @@
 @font-face {
   font-family: 'GT Walsheim Pro';
   src: url(../fonts/GT-Walsheim-Black.woff2) format('woff2'), url(../fonts/GT-Walsheim-Black.woff) format('woff'), url(../fonts/GT-Walsheim-Black.eot) format('embedded-opentype'), url(../fonts/GT-Walsheim-Bold.ttf) format('truetype');
-  font-weight: 900;
+  font-weight: 700;
   font-style: normal;
   font-display: swap
 }
@@ -76,7 +76,7 @@ body {
   font-size: 3em;
   padding: .375em 0 .75em;
   color: #f05a22;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .certificate__id {

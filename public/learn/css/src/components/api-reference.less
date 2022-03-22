@@ -1,7 +1,58 @@
 html,
 body {
   overflow-x: visible;
-  font-weight: 300 !important;
+  font-weight: 400 !important;
+}
+
+@media screen and (min-width: 768px) {
+  [class*="StyledScrollWrapper"] {
+    opacity: .5;
+    transition: .25s opacity;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+[class*="PrismDiv"],
+[class*="MenuItemLabel"],
+[class*="MiddlePanel"] p,
+[class*="PropertiesTable"] * {
+  font-weight: 400 !important;
+}
+[class*="MenuItemLabel"].active {
+  font-weight: 700 !important;
+}
+
+[class*="MiddlePanel"] [class*="PrismDiv"] {
+  ul, ol {
+    padding-left: 0;
+  }
+  ul > li {
+    padding: 0 0 .25em 2.125em;
+
+    &:before {
+      content: '';
+      width: 1.375em;
+      height: .25em;
+      border-radius: .25em .25em .25em 0;
+      background-color: #41D9C5;
+      position: absolute;
+      left: 0;
+      top: .675em;
+    }
+  }
+
+  table {
+    border-top: 0.125em solid #E8E8E8;
+    border-left: 0.125em solid #E8E8E8;
+
+    td {
+      border-bottom: 0.125em solid #E8E8E8;
+      border-right: 0.125em solid #E8E8E8;
+    }
+  }
 }
 
 .redoc-wrap {
@@ -21,7 +72,7 @@ body {
   [data-tabs] {
     margin: 0.5em 0 1em;
     border-radius: 36px 36px 12px 36px;
-    border: 1px solid #D3D2D2;
+    border: 2px solid #e8e8e8;
   }
 
   .react-tabs__tab-list {
@@ -39,12 +90,12 @@ body {
       padding: 0.375em 1em;
       transition: background-color .25s, color .25s;
       position: relative;
-      font-weight: 300 !important;
+      font-weight: 400 !important;
       min-width: 0;
 
       &:after {
         content: '';
-        height: 1px;
+        height: 2px;
         bottom: 0;
         left: 1em;
         right: 1em;
@@ -65,21 +116,21 @@ body {
       }
 
       &.tab-error {
-        color: #B72929;
+        color: #C42D61;
 
         &.react-tabs__tab--selected {
           &:after {
-            background-color: #B72929;
+            background-color: #C42D61;
           }
         }
       }
 
       &.tab-success {
-        color: #36A284;
+        color: #44B77A;
 
         &.react-tabs__tab--selected {
           &:after {
-            background-color: #36A284;
+            background-color: #44B77A;
           }
         }
       }
@@ -133,6 +184,14 @@ body {
   
   [class*="samples__SampleControls-"] {
     padding: 0.5em 0;
+
+    span {
+      font-weight: 400;
+    }
+  }
+
+  [class*="fields__RequiredLabel"] {
+    color: #C42D61 !important;
   }
 
   .react-tabs__tab-panel,
@@ -142,12 +201,13 @@ body {
       padding: .375em 1em;
       margin: .5em 0;
       color: #F05A22;
-      border: 1px solid #F05A22;
+      border: 2px solid #F05A22;
       line-height: 1.375em;
       opacity: 1;
       display: inline-block;
       border-radius: 16px 16px 4px 16px;
       font-size: .75em;
+      font-weight: 400;
 
       &>span {
         line-height: 1.675em;
@@ -438,7 +498,7 @@ body {
     padding: 2em 0 1em;
     font-size: 1.3125em;
     margin: 0;
-    font-weight: 300;
+    font-weight: 400;
   }
 
   [class*="StyledDropdown"] .Dropdown-control,
@@ -547,7 +607,7 @@ body {
         padding: 0;
         background: transparent;
         border-bottom: 1px dashed #343131;
-        font-weight: 300;
+        font-weight: 400;
         display: inline-block;
         margin: 0 1em .5em 0;
         padding: 0 0 2px;
@@ -608,7 +668,7 @@ body {
 
     [class*="OneOfLabel"] {
       font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     & + [class*="PropertiesTable"] {
@@ -618,7 +678,7 @@ body {
 
   [class*="SecurityRequirementAndWrap"] {
     a {
-      font-weight: 300;
+      font-weight: 400;
       text-decoration: underline;
     }
   }
@@ -650,7 +710,7 @@ body {
   &__lang {
     padding: .25em .75em !important;
     color: #F05A22;
-    border: 1px solid #F05A22;
+    border: 2px solid #F05A22;
     line-height: 1.375em;
     opacity: 1;
     display: inline-block;
@@ -740,6 +800,11 @@ figure {
   display: flex;
 }
 
+[class*="fields-layout"],
+[class*="FieldLabel"] {
+  font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif !important;
+}
+
 .language-selector {
   position: relative;
   padding: 0 !important;
@@ -752,7 +817,7 @@ figure {
     position: absolute;
     font-size: 0.875em;
     right: 1em;
-    border: 1px solid #d9d8d8;
+    border: 2px solid #e8e8e8;
     box-sizing: border-box;
     padding: 0.125em 3.125em .125em 1.75em;
     cursor: pointer;
@@ -834,7 +899,7 @@ figure {
   }
 
   a&__link {
-    font-weight: 300;
+    font-weight: 400;
     font-size: .875em;
     display: block;
     padding: 0.375em 1.75em;
@@ -853,7 +918,7 @@ figure {
   }
 
   [class*="tab-click_"][role="tab"] {
-    font-weight: 300;
+    font-weight: 400;
     font-size: .875em;
     display: block !important;
     padding: 0.375em 1.75em !important;
@@ -880,7 +945,10 @@ figure {
 }
 
 .breadcrumbs {
-  background-color: #F3F3F3;
+  background-color: #fff;
+  border: 2px solid #e8e8e8;
+  border-top: none;
+  border-left: none;
   padding: 1em 2em;
   margin: -1em 0 1em -1em;
   width: ~"calc(100% + 2em)";
@@ -904,6 +972,7 @@ figure {
 
   a {
     color: #F05A22;
+    font-weight: 400;
 
     &:hover {
       text-decoration: none;
@@ -912,6 +981,7 @@ figure {
 
   span {
     color: #908E8F;
+    font-weight: 400;
   }
 }
 
@@ -944,7 +1014,7 @@ span.api-status {
   line-height: 1.675em;
   font-size: 10px;
   text-transform: uppercase;
-  font-weight: 300;
+  font-weight: 400;
   background-color: #5160c0;
   color: #fff;
   margin: 0 .5em;
@@ -1065,7 +1135,7 @@ h3[class*="RightPanelHeader"] {
 
 [class*="SchemaDefinition__MediaSamplesWrap"] {
   border-radius: 36px 36px 12px 36px;
-  border: 1px solid #D3D2D2;
+  border: 2px solid #E8E8E8;
 }
 
 [class*="tabs__Tabs"] > .react-tabs__tab-panel,
@@ -1088,7 +1158,7 @@ h3[class*="RightPanelHeader"] {
 .code-samples,
 .code-sample-standalone {
   border-radius: 36px 36px 12px 36px;
-  border: 1px solid #D3D2D2;
+  border: 3px solid #E8E8E8;
   padding: 20px;
   margin: 0 0 1em;
 
@@ -1110,7 +1180,7 @@ h3[class*="RightPanelHeader"] {
 }
 
 h1, h2, h3, h4, strong {
-  font-weight: 500 !important;
+  font-weight: 700 !important;
 }
 
 [class*="headers__H1"] [class*="StyledShareLink"]:before {
@@ -1320,13 +1390,12 @@ h1, h2, h3, h4, strong {
   }
 
   [class*="DownloadButton"] {
-    text-transform: uppercase;
     border: none;
-    font-size: 14px;
-    font-weight: 400;
+    font-size: 16px;
+    font-weight: 700;
     border-radius: 26px;
     line-height: 16px;
-    padding: 12px 32px;
+    padding: 12px 24px;
     margin: 8px 0 16px;
     position: relative;
     overflow: hidden;
@@ -1335,7 +1404,7 @@ h1, h2, h3, h4, strong {
     text-align: center;
     cursor: pointer;
     color: #231f20;
-    box-shadow: 0 0 0 1px #231f20;
+    box-shadow: 0 0 0 2px #231f20;
     text-decoration: none;
     display: inline-block;
 

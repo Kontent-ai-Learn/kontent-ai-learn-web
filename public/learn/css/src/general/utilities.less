@@ -3,7 +3,7 @@ body {
     font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif;
     color: #231F20;
     font-size: 14px;
-    font-weight: 300;
+    font-weight: 400;
     background-color: #fff; 
     -webkit-text-size-adjust: 100%;
 
@@ -86,10 +86,10 @@ a {
 }
 
 strong {
-    font-weight: 400;
+    font-weight: 700;
 
     em & {
-        font-weight: 500;
+        font-weight: 700;
     }
 }
 
@@ -118,10 +118,6 @@ main {
         min-height: ~"calc(100vh - 379px)";
         margin: 3.75em auto 0;
     }
-}
-
-.border-top {
-    border-top: 1px solid #dedede;
 }
 
 select, 
@@ -288,6 +284,28 @@ kontent-smart-link-element {
     position: absolute;
     top: 4px;
     right: 8px;
+}
+
+.utilities-hero-bg {
+    background-image: url('../img/ui/hero-shapes.svg');
+    background-position: top -180px right -110px;
+    background-size: 340px auto;
+    background-repeat: no-repeat;
+
+    @media screen and (min-width: 768px) {
+        background-position: top -250px right -210px;
+        background-size: 550px auto;
+    }
+
+    @media screen and (min-width: 1024px) {
+        background-position: top -380px right -310px;
+        background-size: 750px auto;
+    }
+
+    @media screen and (min-width: 1280px) {
+        background-position: top -350px right -280px;
+        background-size: 820px auto;
+    }
 }
 
 [data-once]:not([href]) {
