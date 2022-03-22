@@ -218,7 +218,7 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
     };
 };
 
-const handleUnusedArtiles = async (deliveryClient, urlMap) => {
+const handleUnusedArticles = async (deliveryClient, urlMap) => {
     const { items, error } = await queryDeliveryType('article', 1, deliveryClient);
 
     if (items && items.items) {
@@ -311,7 +311,7 @@ const getUrlMap = async (res, isSitemap) => {
         urlMap: [],
         cachedPlatforms: cachedPlatforms
     });
-    urlMap = await handleUnusedArtiles(deliveryClient, urlMap);
+    urlMap = await handleUnusedArticles(deliveryClient, urlMap);
     urlMap = await handleContentType(deliveryClient, urlMap, 'training_survey', 'survey');
     urlMap = await handleContentType(deliveryClient, urlMap, 'training_certification_test', 'get-certified');
 

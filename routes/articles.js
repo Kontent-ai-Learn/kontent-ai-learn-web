@@ -239,7 +239,7 @@ const getContent = async (req, res) => {
     }
 
     // If only article url slug in passed and item is present in the navigation, do not render the article
-    const isExcludedNavigation = urlMap.filter(item => (item.codename === content[0].system.codename) && (item.url.startsWith('/other/'))).length > 0;
+    const isExcludedNavigation = urlMap.filter(item => (item.codename === content[0].system.codename) && (item.url.startsWith('/learn/other/'))).length > 0;
     if (!req.params.scenario && !req.params.topic && req.params.article && !isExcludedNavigation) {
         return null;
     }
