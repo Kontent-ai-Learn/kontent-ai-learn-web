@@ -88,7 +88,10 @@
 
           const width = item.getAttribute('width');
           const height = item.getAttribute('height');
-          const content = `<img src="${item.getAttribute('src').split('?')[0] + '?w=1600&fm=pjpg&auto=format'}"${width ? ` width=${width}` : ''}${height ? ` height=${height}` : ''}>`;
+          const url = item.getAttribute('src').split('?');
+          const qs = url[1].includes('&rect=') ? url[1] : 'w=1600&fm=pjpg&auto=format';
+
+          const content = `<img src="${url[0]}?${qs}"${width ? ` width=${width}` : ''}${height ? ` height=${height}` : ''}>`;
 
           // Init lighbox with caption
           let instance;

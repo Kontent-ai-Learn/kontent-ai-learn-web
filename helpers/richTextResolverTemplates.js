@@ -35,32 +35,39 @@ const getSmartLinkAttrInner = (markup, config) => {
     return ` data-kk-rels="${rels.join('|')}" data-kk-codenames="${codenames.join('|')}"`;
 };
 
-const getImageAttributes = (item, cssClass, transformationQueryString) => {
+const getImageAttributes = (item, cssClass) => {
+    let transformationQueryString = '?';
+
+    if (item.image.value.length && item.image.value[0].url.endsWith('.gif')) {
+        transformationQueryString += 'fm=mp4';
+    } else {
+        transformationQueryString += 'fm=pjpg&auto=format';
+    }
+
+    const renditionsQueryString = item.image.value[0]?.contract?.renditions?.default?.query;
+    if (renditionsQueryString) transformationQueryString += `&${renditionsQueryString}`;
+
     if (item.image_width.value.length) {
         switch (item.image_width.value[0].codename) {
             case 'n25_':
                 cssClass += ' article__image--25';
-                transformationQueryString += '168';
+                if (!renditionsQueryString) transformationQueryString += '&w=168';
                 break;
             case 'n50_':
                 cssClass += ' article__image--50';
-                transformationQueryString += '336';
+                if (!renditionsQueryString) transformationQueryString += '&w=336';
                 break;
             case 'n75_':
                 cssClass += ' article__image--75';
-                transformationQueryString += '504';
+                if (!renditionsQueryString) transformationQueryString += '&w=504';
                 break;
             case 'n100_':
                 cssClass += ' article__image--100';
-                transformationQueryString += '672';
+                if (!renditionsQueryString) transformationQueryString += '&w=672';
                 break;
             default:
-                transformationQueryString += '896';
+                if (!renditionsQueryString) transformationQueryString += '&w=896';
         }
-    }
-
-    if (item.image.value.length && item.image.value[0].url.endsWith('.gif')) {
-        transformationQueryString = '?fm=mp4';
     }
 
     return {
@@ -351,16 +358,15 @@ const richTextResolverTemplates = {
         if (item.image.value.length) {
             const alt = item.image.value[0].description ? helper.escapeQuotesHtml(item.image.value[0].description) : '';
             const url = item.url.value.trim();
-            const transformationQueryString = '?fm=pjpg&auto=format&w=';
             const zoomable = item.zoomable.value.length && item.zoomable.value[0].codename === 'true';
             let cssClass = ' article__image-border'; // Always show border
             cssClass += zoomable && !url ? ' article__add-lightbox' : '';
-            const imageWidth = item.image.value[0] ? item.image.value[0].width || 0 : 0;
-            const imageHeight = item.image.value[0] ? item.image.value[0].height || 0 : 0;
+            const imageWidth = item.image.value[0] ? item.image.value[0]?.contract?.renditions?.default?.width || item.image.value[0].width || 0 : 0;
+            const imageHeight = item.image.value[0] ? item.image.value[0]?.contract?.renditions?.default?.height || item.image.value[0].height || 0 : 0;
             const openLinkTag = url ? `<a href="${url}" target="_blank" class="no-icon"${getSmartLinkAttr(config, 'url', 'element')}>` : '';
             const closeLinkTag = url ? '</a>' : '';
             const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${item.image.value[0].width}" height="${item.image.value[0].height}"></svg>`;
-            const attributes = getImageAttributes(item, cssClass, transformationQueryString);
+            const attributes = getImageAttributes(item, cssClass);
 
             if (item.image.value[0].url.endsWith('.gif')) {
                 return `
