@@ -17,7 +17,7 @@ block content
           each question in topic.questions
             - const anyAnswer = question.answers.find(answer => answer.answer);
             - let incorrect = false;
-            - if (anyAnswer) incorrect = question.answers.find(answer => answer.correct && !answer.answer);
+            - if (anyAnswer) incorrect = question.answers.find(answer => !answer.correct && answer.answer);
             if (incorrect)
               .certification-test__question !{question.html}
               ul.certification-test__answers
