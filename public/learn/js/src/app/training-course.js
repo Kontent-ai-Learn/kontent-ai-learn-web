@@ -89,14 +89,13 @@ const trainingCourse = (() => {
       type = 'training-certification';
     }
 
-    let claims = null;
+    let user = null;
     try {
-      await auth0.client.getTokenSilently();
-      claims = await auth0.client.getIdTokenClaims();
+      user = await auth0.ensureUserSignedIn();
     } 
     catch (e) { }
     finally {
-      const token = claims ? claims.__raw : null;
+      const token = user ? user.__raw : null;
       await requestInfo(codename, type,  token);
       performUIActions();
     }
@@ -104,5 +103,5 @@ const trainingCourse = (() => {
 
   return {
     getInfo: getInfo
-  }
+  };
 })();
