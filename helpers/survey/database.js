@@ -3,6 +3,37 @@ const commonContent = require('../commonContent');
 const cosmos = require('../cosmos');
 const surveyData = require('./data');
 
+const getUserCourseAttempt = async (body) => {
+  const { courseid, email } = body;
+  let attempt = null;
+
+  try {
+    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_SURVEY);
+    const query = {
+        query: 'SELECT * FROM c WHERE c["end"] < @end AND c.email = @email AND c.course_id = @courseId',
+        parameters: [{
+          name: '@email',
+          value: email
+        }, {
+          name: '@courseId',
+          value: courseid
+        }, {
+          name: '@end',
+          value: (new Date()).toISOString()
+        }]
+    };
+
+    const { resources } = await db.items.query(query).fetchAll();
+    if (resources && resources.length) {
+      attempt = resources[0];
+    }
+  } catch (error) {
+    cosmos.logAppInsightsError(error);
+  }
+
+  return attempt;
+};
+
 const updateAttempt = async (attempt) => {
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_SURVEY);
@@ -70,5 +101,6 @@ const createAttempt = async (body, user, res) => {
 module.exports = {
   createAttempt,
   getAttempt,
-  updateAttempt
+  updateAttempt,
+  getUserCourseAttempt
 };

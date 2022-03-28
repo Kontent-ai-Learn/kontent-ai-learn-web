@@ -147,7 +147,7 @@ const getExpirationAttempts = async () => {
           value: new Date(new Date().getTime() + 86400000 * 7).toISOString()
         }, {
           name: '@expired',
-          value: new Date(new Date().getTime() - 86400000).toISOString()
+          value: new Date(new Date().getTime() - 86400000 * 2).toISOString()
         }]
     };
 

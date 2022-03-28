@@ -1,4 +1,5 @@
 const auth0 = {};
+auth0.client = null;
 
 const auth0Settings = {
     domain: window.auth0Config.domain,
@@ -7,107 +8,114 @@ const auth0Settings = {
     scope: 'openid email profile'
 };
 
-const configureClient = async () => {
-    auth0.client = await createAuth0Client(auth0Settings);
-};
-
-const processLoginState = async () => {
-    const query = window.location.search;
-    if (query.includes('code=') && query.includes('state=')) {
-        await auth0.client.handleRedirectCallback();
-        window.history.replaceState({}, document.title, window.location.pathname);
-        const returnUrl = localStorage.getItem('auth0ReturnUrl');
-        localStorage.removeItem('auth0ReturnUrl');
-        const redirectUrl = returnUrl.includes('/e-learning/') ? `${returnUrl.split('#')[0]}#trainingAction`: returnUrl; 
-        window.location.replace(redirectUrl);
-    }
-};
-
 auth0.login = async () => {
+    if (!auth0.client) return;
     localStorage.setItem('auth0ReturnUrl', window.location.href);
     await auth0.client.loginWithRedirect(auth0Settings);
 };
 
 auth0.logout = () => {
+    if (!auth0.client) return;
     auth0.client.logout({
         returnTo: `${location.protocol}//${location.host}${window.auth0Config.logoutUrl}`
     });
 };
 
 auth0.signup = async () => {
+    if (!auth0.client) return;
     localStorage.setItem('auth0ReturnUrl', window.location.href);
     await auth0.client.loginWithRedirect({ tab: 'signUp' });
 };
 
 auth0.eventListeners = () => {
-    const login = document.querySelector('#login');
-    const logout = document.querySelector('#logout');
-    const signup = document.querySelector('#signup');
-    const intercom = document.querySelector('[data-click="support-async"]');
+    const logins = document.querySelectorAll('#login:not([data-listener])');
+    const logouts = document.querySelectorAll('#logout:not([data-listener])');
+    const signups = document.querySelectorAll('#signup:not([data-listener])');
+    const intercoms = document.querySelectorAll('[data-click="support-async"]:not([data-listener])');
 
-    if (login) {
+    logins.forEach((login) => {
         login.addEventListener('click', (e) => {
             e.preventDefault();
             auth0.login();
         });
-    }
+        login.setAttribute('data-listener', '');
+    });
 
-    if (logout) {
+    logouts.forEach((logout) => {
         logout.addEventListener('click', (e) => {
             e.preventDefault();
             auth0.logout();
         });
-    }
+        logout.setAttribute('data-listener', '');
+    });
 
-    if (signup) {
+    signups.forEach((signup) => {
         signup.addEventListener('click', (e) => {
             e.preventDefault();
             auth0.signup();
         });
-    }
+        signup.setAttribute('data-listener', '');
+    });
 
-    if (intercom) {
+    intercoms.forEach((intercom) => {
         intercom.addEventListener('click', () => {
             if (window.Intercom && !window.kontentSmartLinkEnabled) {
                 window.Intercom('show');
             }
         });
+        intercom.setAttribute('data-listener', '');
+    });
+};
+
+auth0.ensureUserSignedIn = async () => {
+    if (!auth0.client) return null;
+    try {
+        await auth0.client.getTokenSilently();
+        return await auth0.client.getIdTokenClaims();
+    } catch (e) {
+        return null;
     }
 };
 
-auth0.ensureUserSignedIn = (callback) => {
-    let counter = 0;
-    let user;
+const configureClient = async () => {
+    return await createAuth0Client(auth0Settings);
+};
 
-    // Wait until auth0.client is available
-    const interval = setInterval(async () => {
-        const auth0Client = auth0.client;
-        let success = true;
-        if (auth0Client) {
-          try {
-            await auth0.client.getTokenSilently();
-            user = await auth0.client.getIdTokenClaims();
-          } catch (err) {
-            success = false;
-          }
-          if (typeof user !== 'undefined') {
-            clearInterval(interval);
-            callback(user);
-          }
-        }
-        if (counter > 10) {
-          success = false;
-        }
-        if (!success) {
-          clearInterval(interval);
-          await auth0.login();
-        }
-        counter++;
-    }, 500);
+const processLoginState = async () => {
+    const query = window.location.search;
+    if (query.includes('code=') && query.includes('state=') && auth0.client) {
+        await auth0.client.handleRedirectCallback();
+        window.history.replaceState({}, document.title, window.location.pathname);
+        const returnUrl = localStorage.getItem('auth0ReturnUrl');
+        localStorage.removeItem('auth0ReturnUrl');
+        window.location.replace(returnUrl);
+    }
+};
+
+const handleNavigationUI = async () => {
+    const navAuth = document.querySelector('[data-nav-auth]');
+    if (!navAuth) return;
+    const user = await auth0.ensureUserSignedIn();
+    
+    let action = 'login';
+    if (user) {
+        action = 'logout';
+    }
+    navAuth.innerHTML = `<a href="#" class="navigation__link navigation__link--auth" id="${action}">${action === 'login' ? window.UIMessages.signIn : window.UIMessages.signOut}</a>`
 };
 
 window.addEventListener('load', async () => {
-    await configureClient();
+    auth0.client = await configureClient();
     await processLoginState();
-    await trainingCourse.getInfo();
+    await handleNavigationUI();
+    if (typeof trainingCourse !== 'undefined') {
+        await trainingCourse.getInfo();
+    }
+    if (typeof survey !== 'undefined') {
+        await survey.getInfo();
+    }
+    if (typeof certificationTest !== 'undefined') {
+        await certificationTest.getInfo();
+    }
+    auth0.eventListeners();
 });

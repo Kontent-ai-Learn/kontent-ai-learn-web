@@ -16,8 +16,9 @@ const init = async (req, res) => {
 
   const userCourseRegistration = await scorm.getUserCourseRegistration(req.body.email, req.body.courseid);
   const userCompletedCourse = userCourseRegistration?.registrationCompletion === 'COMPLETED';
+  const userSubmittedSurvey = await surveyDatabase.getUserCourseAttempt(req.body);
   const { user, trainingUser, errCode } = await elearningUser.getUser(req.body.email, res);
-  if (!(await elearningUser.isCourseAvailable(user, trainingCourse, trainingUser, res)) || errCode || !trainingCourse || !userCompletedCourse) {
+  if (!(await elearningUser.isCourseAvailable(user, trainingCourse, trainingUser, res)) || errCode || !trainingCourse || !userCompletedCourse || userSubmittedSurvey) {
     const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
       return await getUrlMap(res);
     });
