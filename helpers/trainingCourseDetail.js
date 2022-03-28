@@ -1,10 +1,11 @@
-const axios = require('axios');
 const app = require('../app');
 const handleCache = require('./handleCache');
 const commonContent = require('./commonContent');
 const helper = require('./helperFunctions');
 const lms = require('./lms');
+const scorm = require('./scorm');
 const sendSendGridEmail = require('./sendgrid');
+const elearningUser = require('./e-learning/user');
 
 const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => {
   if (!courseId && courseId !== 0) return null;
@@ -29,7 +30,7 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => 
       subject: 'LMS error notification',
       text: notification
     };
-    sendSendGridEmail(emailInfo);
+    await sendSendGridEmail(emailInfo);
 
     if (app.appInsights) {
       app.appInsights.defaultClient.trackTrace({ message: `LMS_ERROR: ${notification}` });
@@ -68,107 +69,84 @@ const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => 
   };
 };
 
-const getTrainingUser = async (email, res) => {
-  const trainingUsers = await handleCache.evaluateSingle(res, 'trainingUsers', async () => {
-    return await commonContent.getTraniningUser(res);
-  });
+const getTrainingCourseInfoFromScorm = async (user, course, UIMessages, req, res) => {
+  const courseId = course?.system.id;
+  if (!courseId && courseId !== 0) return null;
+  let redirectToScorm = false;
 
-  return trainingUsers.find(item => item.email.value === email);
-};
-
-const isCourseAvailable = async (user, content, trainingUser, res) => {
-  const isFreeCourse = content.is_free ? helper.isCodenameInMultipleChoice(content.is_free.value, 'yes') : false;
-
-  if (user.email.endsWith('@kentico.com') || isFreeCourse || trainingUser) {
-    return true;
+  // Register user in LMS and course and get info about course url and completion
+  if (typeof req.query.enroll !== 'undefined') {
+    redirectToScorm = true;
   }
 
-  const userSubscriptions = user.customerSuccessSubscriptions;
+  const courseInfo = await scorm.handleTrainingCourse(user, course, req, res);
 
-  const trainingSubscriptions = await handleCache.ensureSingle(res, 'trainingSubscriptions', async () => {
-    return await commonContent.getTrainingSubscriptions(res);
-  });
+  let textUIMessageCodename = '';
+  let renderAs = 'button';
 
-  for (let i = 0; i < userSubscriptions.length; i++) {
-    if (userSubscriptions[i].isPartner || userSubscriptions[i].isMvp) {
-      return true;
-    }
-
-    for (let j = 0; j < userSubscriptions[i].activePackages.length; j++) {
-      for (let k = 0; k < trainingSubscriptions.length; k++) {
-        if (userSubscriptions[i].activePackages[j].name.includes(trainingSubscriptions[k].subscription_service_package_code_name.value)) {
-          return true;
-        }
-      }
-    }
-  }
-
-  return false;
-};
-
-const getUserFromSubscriptionService = async (req) => {
-  const url = `${process.env['SubscriptionService.Url']}${req?.user?.email}/`;
-  let user;
-  let errCode;
-
-  try {
-    user = await axios({
-      method: 'get',
-      url: url,
-      headers: {
-        Authorization: `Bearer ${process.env['SubscriptionService.Bearer']}`
-      }
-    });
-  } catch (err) {
-    if (!err.response) {
-      err.response = {
-        data: {
-          message: `Invalid request to ${url}`
-        }
-      };
-    }
-    if (typeof err.response.data === 'string') {
-      err.response.data = { message: err.response.data };
-    }
-    err.response.data.userEmail = req?.user.email;
-    err.response.data.file = 'helpers/trainingCourseDetail.js';
-    err.response.data.method = 'getPrivate';
-    const notification = lms.composeNotification('A user attempt to sign in to Kontent Learn failed in the Subscription service with the following error:', err.response.data);
+  if (courseInfo.err) {
+    const notification = lms.composeNotification('A user attempt to access to Scorm Cloud in Kontent Learn failed with the following error:', courseInfo.err);
     const emailInfo = {
       recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
-      subject: 'Failed user sign in notification',
+      subject: 'Scorm Cloud error notification',
       text: notification
     };
-    sendSendGridEmail(emailInfo);
+    await sendSendGridEmail(emailInfo);
 
     if (app.appInsights) {
-      app.appInsights.defaultClient.trackTrace({ message: `SUBSCRIPTION_SERVICE_ERROR: ${notification}` });
+      app.appInsights.defaultClient.trackTrace({ message: `SCORM_ERROR: ${notification}` });
     }
-
-    errCode = err.response.data.code;
   }
-  return { user, errCode };
+
+  if (courseInfo.completion === 0 || courseInfo.completion === UIMessages.training___course_status_unknown.value) {
+    textUIMessageCodename = 'training___cta_start_course';
+  } else if (courseInfo.completion === 100 || courseInfo.completion === UIMessages.training___course_status_completed.value) {
+    textUIMessageCodename = 'training___cta_revisit_course';
+  } else if (courseInfo.completion === UIMessages.training___course_status_preview.value) {
+    textUIMessageCodename = 'training___cta_preview_course';
+  } else if (courseInfo.completion === 101) {
+    textUIMessageCodename = 'sign_in_error_text'; // 'User info is not available in LMS.';
+    renderAs = 'text';
+  } else if (courseInfo.completion === 102) {
+    textUIMessageCodename = 'sign_in_error_text'; // 'Course info is not available in LMS.';
+    renderAs = 'text';
+  } else if (courseInfo.completion === 103) {
+    textUIMessageCodename = 'sign_in_error_text'; // 'Course ID does not exist in LMS.';
+    renderAs = 'text';
+  } else {
+    textUIMessageCodename = 'training___cta_resume_course';
+  }
+
+  return {
+    text: UIMessages[textUIMessageCodename].value,
+    textUIMessageCodename: textUIMessageCodename,
+    url: courseInfo.url,
+    id: courseInfo.id,
+    qs: courseInfo.qs,
+    completion: courseInfo.completion.toString(),
+    certificate: courseInfo.certificate,
+    target: courseInfo.target,
+    signedIn: true,
+    renderAs: renderAs,
+    redirectToLMS: redirectToScorm
+  };
 };
+
+const getLmsServiceName = (course) => {
+  let serviceName = null;
+
+  if (course?.system.id) serviceName = 'scorm';
+  if (course?.talentlms_course_id.value) serviceName = 'tlms';
+
+  return serviceName;
+}
 
 const getPrivate = async (UIMessages, course, req, res) => {
   const hideCta = helper.isCodenameInMultipleChoice(course.display_options.value, 'hide_cta');
-  const trainingUser = await getTrainingUser(req?.user?.email, res);
+  const serviceName = getLmsServiceName(course);
   const data = {};
-  let user = {};
-  let errCode;
-
-  if (req?.user?.email.endsWith('@kentico.com') || trainingUser) {
-    user.email = req.user.email;
-
-    if (trainingUser) {
-      user.firstName = trainingUser.first_name.value;
-      user.lastName = trainingUser.last_name.value;
-    }
-  } else {
-    const userSubscriptionService = await getUserFromSubscriptionService(req);
-    user = userSubscriptionService.user?.data;
-    errCode = userSubscriptionService.errCode;
-  }
+  let trainingCourseInfo;
+  const { user, trainingUser, errCode } = await elearningUser.getUser(req?.user?.email, res);
 
   if (errCode) {
     data.renderGeneralMessage = true;
@@ -179,20 +157,31 @@ const getPrivate = async (UIMessages, course, req, res) => {
     data.textUIMessageCodename = 'training___cta_coming_soon';
     data.renderAs = 'text';
     data.signedIn = true;
-  } else if (!(await isCourseAvailable(user, course, trainingUser, res))) {
+  } else if (!(await elearningUser.isCourseAvailable(user, course, trainingUser, res))) {
     data.renderGeneralMessage = true;
     data.textUIMessageCodename = 'training___cta_buy_course';
     data.action = 'intercom';
     data.renderAs = 'button';
-    data.certificate = await lms.getUserCourseCertificate(user, course.talentlms_course_id.value);
     data.signedIn = true;
+
+    if (serviceName === 'tlms') {
+      data.certificate = await lms.getUserCourseCertificate(user, course.talentlms_course_id.value);
+    } else if (serviceName === 'scorm') {
+      data.certificate = null;
+    }
   }
 
   data.text = data.textUIMessageCodename ? UIMessages[data.textUIMessageCodename].value : '';
 
+  if (serviceName === 'tlms') {
+    trainingCourseInfo = await getTrainingCourseInfoFromLMS(user, course.talentlms_course_id.value, UIMessages, req);
+  } else if (serviceName === 'scorm') {
+    trainingCourseInfo = await getTrainingCourseInfoFromScorm(user, course, UIMessages, req, res);
+  }
+
   return {
     general: data.renderGeneralMessage ? data : null,
-    production: !data.renderGeneralMessage && !errCode ? await getTrainingCourseInfoFromLMS(user, course.talentlms_course_id.value, UIMessages, req) : null
+    production: !data.renderGeneralMessage && !errCode ? trainingCourseInfo : null
   }
 };
 

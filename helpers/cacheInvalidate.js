@@ -10,7 +10,7 @@ const helper = require('./helperFunctions');
 const fastly = require('./fastly');
 const getUrlMap = require('./urlMap');
 
-const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
+const requestItemAndDeleteCacheKey = async (codename, type, KCDetails, res) => {
     const originalItem = handleCache.getCache(codename, KCDetails);
 
     if (originalItem && originalItem.length) {
@@ -24,16 +24,28 @@ const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
     const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });
-    const newItem = await requestDelivery({
+    const options = {
         codename: codename,
-        depth: 2,
+        depth: 4,
         resolveRichText: true,
         urlMap: urlMap,
         ...KCDetails
-    });
+    };
+    if (!type) {
+        const urlMapItem = urlMap.find(item => item.codename === codename);
+        if (urlMapItem) type = urlMapItem.type;
+    }
+    if (type) {
+        options.type = type;
+    }
+    let newItem = await requestDelivery(options);
 
-    if (newItem && newItem.length) {
+    if (newItem && (newItem?.items?.length || newItem?.length)) {
         handleCache.putCache(codename, newItem, KCDetails);
+
+        if (newItem.items) {
+            newItem = newItem.items;
+        }
 
         if (newItem[0].redirect_urls) {
             await fastly.purgeToRedirectUrls(newItem[0].redirect_urls, res);
@@ -45,7 +57,7 @@ const requestItemAndDeleteCacheKey = async (codename, KCDetails, res) => {
 
 const deleteSpecificKeys = async (KCDetails, items, res) => {
     for await (const item of items) {
-        await requestItemAndDeleteCacheKey(item.codename, KCDetails, res);
+        await requestItemAndDeleteCacheKey(item.codename, item.type, KCDetails, res);
     }
 };
 
@@ -57,9 +69,9 @@ const revalidateReleaseNoteType = async (KCDetails, res) => {
 };
 
 const revalidateTrainingCourseType = async (KCDetails, res) => {
-    const key = 'trainingCourseContentType';
+    const key = 'trainingPersonaTaxonomyGroup';
     handleCache.deleteCache(key, KCDetails);
-    const trainingCourseType = await commonContent.getTrainingCourseType(res);
+    const trainingCourseType = await commonContent.getTrainingPersonaTaxonomyGroup(res);
     handleCache.putCache(key, trainingCourseType, KCDetails);
 };
 
@@ -78,7 +90,9 @@ const splitPayloadByContentType = (items) => {
         termDefinitions: [],
         trainingCourses: [],
         trainingUsers: [],
-        trainingSubscriptions: []
+        trainingSubscriptions: [],
+        trainingSurveys: [],
+        trainingCertificationTests: []
     };
 
     for (let i = 0; i < items.length; i++) {
@@ -107,12 +121,16 @@ const splitPayloadByContentType = (items) => {
             itemsByTypes.releaseNotes.push(item);
         } else if (item.type === 'term_definition') {
             itemsByTypes.termDefinitions.push(item);
-        } else if (item.type === 'training_course') {
+        } else if (item.type === 'training_course2') {
             itemsByTypes.trainingCourses.push(item);
         } else if (item.type === 'training_user') {
             itemsByTypes.trainingUsers.push(item);
         } else if (item.type === 'training_subscriptions') {
             itemsByTypes.trainingSubscriptions.push(item);
+        } else if (item.type === 'training_survey') {
+            itemsByTypes.trainingSurveys.push(item);
+        } else if (item.type === 'training_certification_test') {
+            itemsByTypes.trainingCertificationTests.push(item);
         }
     }
 
@@ -139,7 +157,7 @@ const invalidatePDFs = async (items, res) => {
 };
 
 const getRootItems = async (items, KCDetails) => {
-    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_course'];
+    const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_survey', 'training_certification_test', 'training_course2', 'training_question_for_survey_and_test', 'training_question_free_text', 'training_answer_for_survey_and_test', 'training_question_group'];
     const allItems = await requestDelivery({
         types: typesToSearch,
         depth: 0,
@@ -162,7 +180,7 @@ const invalidateRootItems = async (items, KCDetails, res) => {
 
     for await (const rootItem of rootItems) {
         await invalidatePDFItem(rootItem);
-        await requestItemAndDeleteCacheKey(rootItem, KCDetails, res);
+        await requestItemAndDeleteCacheKey(rootItem, null, KCDetails, res);
     }
 };
 
@@ -182,7 +200,7 @@ const invalidateGeneral = async (itemsByTypes, KCDetails, res, type, keyName) =>
 const invalidateMultiple = async (itemsByTypes, KCDetails, type, res) => {
     if (itemsByTypes[type].length) {
         itemsByTypes[type].forEach(async (item) => {
-            await requestItemAndDeleteCacheKey(item.codename, KCDetails, res);
+            await requestItemAndDeleteCacheKey(item.codename, item.type, KCDetails, res);
         });
     }
 
@@ -248,8 +266,9 @@ const invalidateSubNavigation = async (res, keys, KCDetails) => {
 const invalidateElearning = async (itemsByTypes, KCDetails, res) => {
     if (itemsByTypes.trainingCourses.length) {
         await invalidateMultiple(itemsByTypes, KCDetails, 'trainingCourses', res);
+        await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingCourses');
         await revalidateTrainingCourseType(KCDetails, res);
-        await requestItemAndDeleteCacheKey('e_learning_overview', KCDetails, res);
+        await requestItemAndDeleteCacheKey('e_learning_overview', 'article', KCDetails, res);
     }
 };
 
@@ -277,6 +296,8 @@ const processInvalidation = async (req, res) => {
         await invalidateElearning(itemsByTypes, KCDetails, res);
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingUsers');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingSubscriptions');
+        await deleteSpecificKeys(KCDetails, itemsByTypes.trainingSurveys, res);
+        await deleteSpecificKeys(KCDetails, itemsByTypes.trainingCertificationTests, res);
         await invalidatePDFs(items, res);
         await fastly.purgeFinal(itemsByTypes, req, res);
 

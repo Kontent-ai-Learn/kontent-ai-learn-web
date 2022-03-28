@@ -3,6 +3,9 @@ const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const router = express.Router();
 const trainingCourseDetail = require('../helpers/trainingCourseDetail');
+const certificationAttempt = require('../helpers/certification/attempt');
+const certificationDetail = require('../helpers/certification/detail');
+const surveyAttempt = require('../helpers/survey/attempt');
 const fastly = require('../helpers/fastly');
 
 const jwtCheck = jwt({
@@ -26,6 +29,30 @@ router.post('/training-course/detail/private', jwtCheck, async (req, res) => {
 router.post('/training-course/detail/public', async (req, res) => {
   res = fastly.preventCaching(res);
   const data = await trainingCourseDetail(req.body.codename, req, res);
+  return res.send(data);
+});
+
+router.post('/training-certification/detail/private', jwtCheck, async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await certificationDetail.get(req.body.codename, req, res);
+  return res.send(data);
+});
+
+router.post('/training-certification/detail/public', async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await certificationDetail.get(req.body.codename, req, res);
+  return res.send(data);
+});
+
+router.post('/get-certified', jwtCheck, async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await certificationAttempt.init(req.body, res);
+  return res.send(data);
+});
+
+router.post('/survey', jwtCheck, async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await surveyAttempt.init(req, res);
   return res.send(data);
 });
 

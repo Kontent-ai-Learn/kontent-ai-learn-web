@@ -54,6 +54,10 @@ const defineQuery = (deliveryConfig, config) => {
         return deliveryClient.languages();
     }
 
+    if (config.data === 'taxonomy') {
+        return deliveryClient.taxonomy(config.taxonomy);
+    }
+
     let query = deliveryClient.items();
 
     query.notEqualsFilter('system.workflow_step', 'archived');
@@ -129,7 +133,7 @@ const componentsResolvers = [{
     type: 'terminology',
     resolver: richTextResolverTemplates.terminology
 }, {
-    type: 'training_course',
+    type: 'training_course2',
     resolver: richTextResolverTemplates.trainingCourse
 }, {
     type: 'quote',
@@ -138,8 +142,17 @@ const componentsResolvers = [{
     type: 'carousel',
     resolver: richTextResolverTemplates.carousel
 }, {
-    type: 'run_in_postman_button',
-    resolver: richTextResolverTemplates.runInPostmanButton
+    type: 'training_question_for_survey_and_test',
+    resolver: richTextResolverTemplates.question
+}, {
+    type: 'training_question_free_text',
+    resolver: richTextResolverTemplates.questionFreeText
+}, {
+    type: 'training_answer_for_survey_and_test',
+    resolver: richTextResolverTemplates.answer
+}, {
+    type: 'training_certification_test',
+    resolver: richTextResolverTemplates.certificationTest
 }];
 
 const resolveRichText = (item, config) => {
@@ -202,7 +215,7 @@ const extendLinkedItems = (response) => {
 const removeArchivedLinkedItems = (items) => {
     for (const item of items) {
         for (const prop in item) {
-            if (Object.prototype.hasOwnProperty.call(item, prop)) {
+            if (Object.prototype.hasOwnProperty.call(item, prop) && item.system.type !== 'training_course2') {
                 if (item[prop] && item[prop].type === 'modular_content') {
                     for (const modularItem of item[prop].value) {
                         if (modularItem._raw.system.workflow_step === 'archived') {
@@ -301,6 +314,9 @@ const requestDelivery = async (config) => {
     response = extendLinkedItems(response);
 
     if (response?.items) {
+        if (config.type === 'training_certification_test' || config.type === 'training_survey') {
+            return response;
+        }
         return response.items;
     }
     if (response?.type) {

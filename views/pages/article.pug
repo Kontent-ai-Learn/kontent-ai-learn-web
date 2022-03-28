@@ -43,13 +43,13 @@ block content
                                     ul.filter__list(data-filter-group='services')
                                         each item, index in releaseNoteContentType.elements.filter(elem => elem.codename === 'affected_services')[0].options
                                             li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
-                    if (containsTrainingCourse && trainingCourseContentType)
+                    if (containsTrainingCourse && trainingPersonaTaxonomyGroup)
                         div(data-aside-container='filter')
                             .article__filter(data-aside='filter')&attributes(smartLink?.itemId(UIMessages.system.id))
                                 .filter
                                     .filter-label&attributes(smartLink?.elementCodename('training___personas_selector_title')) !{UIMessages && UIMessages.training___personas_selector_title.value}
                                     ul.filter__list(data-filter-group='personas')
-                                        each item, index in trainingCourseContentType.elements.filter(elem => elem.codename === 'persona')[0].options
+                                        each item, index in trainingPersonaTaxonomyGroup.taxonomy.terms
                                             li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
                     if (platform && !availablePlatforms.length)
                         .language-selector.language-selector--unprocessed

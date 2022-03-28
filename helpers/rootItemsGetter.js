@@ -1,4 +1,4 @@
-const ROOT_CONTENT_TYPES = ['article', 'training_course'];
+const ROOT_CONTENT_TYPES = ['article', 'training_course2', 'training_survey', 'training_certification_test'];
 
 function getRootCodenamesOfSingleItem(item, allItems) {
     if (ROOT_CONTENT_TYPES.includes(item.type)) {
@@ -52,12 +52,22 @@ function checkIfItemIsParent(item, codename) {
         case 'article':
             return item.content.linkedItemCodenames.includes(codename) ||
                    item.introduction.linkedItemCodenames.includes(codename);
-        case 'training_course':
-            return item.description.linkedItemCodenames.includes(codename) ||
-                   item.introduction.linkedItemCodenames.includes(codename);
+        case 'training_course2':
+            return item.description.linkedItemCodenames.includes(codename);
         case 'callout':
         case 'content_chunk':
             return item.content.linkedItemCodenames.includes(codename);
+        case 'training_survey':
+            return item.survey_questions.linkedItemCodenames.includes(codename);
+        case 'training_certification_test':
+            return item.question_groups.itemCodenames.includes(codename) ||
+                   item.description.linkedItemCodenames.includes(codename) ||
+                   item.success_message.linkedItemCodenames.includes(codename) ||
+                   item.failure_message.linkedItemCodenames.includes(codename);
+        case 'training_question_group':
+            return item.questions.itemCodenames.includes(codename);
+        case 'training_question_for_survey_and_test':
+            return item.answers.linkedItemCodenames.includes(codename);
         default:
             return false;
     }

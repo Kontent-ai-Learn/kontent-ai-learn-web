@@ -99,9 +99,35 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
+    getSurvey: async (res, codename) => {
+        const urlMap = await ensureSingle(res, 'urlMap', async () => {
+            return await getUrlMap(res);
+        });
+        return await requestDelivery({
+            type: 'training_survey',
+            codename: codename,
+            resolveRichText: true,
+            depth: 3,
+            urlMap: urlMap,
+            ...commonContent.getKCDetails(res)
+        });
+    },
+    getCertificationTest: async (res, codename) => {
+        const urlMap = await ensureSingle(res, 'urlMap', async () => {
+            return await getUrlMap(res);
+        });
+        return await requestDelivery({
+            type: 'training_certification_test',
+            depth: 4,
+            codename: codename,
+            resolveRichText: true,
+            urlMap: urlMap,
+            ...commonContent.getKCDetails(res)
+        });
+    },
     getTraniningCourse: async (res) => {
         return await requestDelivery({
-            type: 'training_course',
+            type: 'training_course2',
             ...commonContent.getKCDetails(res)
         });
     },
@@ -145,10 +171,10 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
-    getTrainingCourseType: async (res) => {
+    getTrainingPersonaTaxonomyGroup: async (res) => {
         return await requestDelivery({
-            data: 'type',
-            type: 'training_course',
+            data: 'taxonomy',
+            taxonomy: 'training_persona',
             ...commonContent.getKCDetails(res)
         });
     },

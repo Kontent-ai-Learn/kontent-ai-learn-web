@@ -218,7 +218,7 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
     };
 };
 
-const handleUnusedArtiles = async (deliveryClient, urlMap) => {
+const handleUnusedArticles = async (deliveryClient, urlMap) => {
     const { items, error } = await queryDeliveryType('article', 1, deliveryClient);
 
     if (items && items.items) {
@@ -237,6 +237,30 @@ const handleUnusedArtiles = async (deliveryClient, urlMap) => {
                     date: articleItem.system.lastModified,
                     visibility: articleItem.visibility && articleItem.visibility.value.length ? articleItem.visibility.value : null,
                     type: 'article'
+                }, fields));
+            }
+        });
+    }
+
+    if (error && app.appInsights) {
+        app.appInsights.defaultClient.trackTrace({ message: 'DELIVERY_API_ERROR: ' + error.message });
+    }
+
+    return urlMap;
+};
+
+const handleContentType = async (deliveryClient, urlMap, codename, pathSegment) => {
+    const { items, error } = await queryDeliveryType(codename, 1, deliveryClient);
+
+    if (items && items.items) {
+        items.items.forEach((item) => {
+            if (!item._raw.system.workflow_step !== 'archived') {
+                urlMap.push(getMapItem({
+                    codename: item.system.codename,
+                    url: `/learn/${pathSegment}/${item.url.value}/`,
+                    date: item.system.lastModified,
+                    visibility: [{ codename: 'excluded_from_search' }],
+                    type: item.system.type
                 }, fields));
             }
         });
@@ -287,7 +311,9 @@ const getUrlMap = async (res, isSitemap) => {
         urlMap: [],
         cachedPlatforms: cachedPlatforms
     });
-    urlMap = await handleUnusedArtiles(deliveryClient, urlMap);
+    urlMap = await handleUnusedArticles(deliveryClient, urlMap);
+    urlMap = await handleContentType(deliveryClient, urlMap, 'training_survey', 'survey');
+    urlMap = await handleContentType(deliveryClient, urlMap, 'training_certification_test', 'get-certified');
 
     return urlMap;
 };

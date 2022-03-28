@@ -4,8 +4,7 @@ const auth0Settings = {
     domain: window.auth0Config.domain,
     client_id: window.auth0Config.clientID,
     redirect_uri: `${location.protocol}//${location.host}/learn/callback/`,
-    scope: 'openid email profile',
-    //cacheLocation: 'localstorage'
+    scope: 'openid email profile'
 };
 
 const configureClient = async () => {
@@ -19,32 +18,11 @@ const processLoginState = async () => {
         window.history.replaceState({}, document.title, window.location.pathname);
         const returnUrl = localStorage.getItem('auth0ReturnUrl');
         localStorage.removeItem('auth0ReturnUrl');
-        window.location.replace(`${returnUrl.split('#')[0]}#trainingAction`);
+        const redirectUrl = returnUrl.includes('/e-learning/') ? `${returnUrl.split('#')[0]}#trainingAction`: returnUrl; 
+        window.location.replace(redirectUrl);
     }
 };
-/*
-const provideInfo = async () => {
-    let isAuthenticated = await auth0.client.isAuthenticated();
-    
-    if (isAuthenticated) {
-        console.log('User is authenticated on the site.')
-    } else {
-        try {
-            await auth0.client.getTokenSilently();
-        } 
-        catch (e) { }
-        finally {
-            isAuthenticated = await auth0.client.isAuthenticated();
 
-            if (isAuthenticated) {
-                console.log('User is authenticated through the app.')
-            } else {
-                console.log('User is not authenticated.')
-            }   
-        }
-    }
-};
-*/
 auth0.login = async () => {
     localStorage.setItem('auth0ReturnUrl', window.location.href);
     await auth0.client.loginWithRedirect(auth0Settings);
@@ -95,11 +73,41 @@ auth0.eventListeners = () => {
             }
         });
     }
-}
+};
+
+auth0.ensureUserSignedIn = (callback) => {
+    let counter = 0;
+    let user;
+
+    // Wait until auth0.client is available
+    const interval = setInterval(async () => {
+        const auth0Client = auth0.client;
+        let success = true;
+        if (auth0Client) {
+          try {
+            await auth0.client.getTokenSilently();
+            user = await auth0.client.getIdTokenClaims();
+          } catch (err) {
+            success = false;
+          }
+          if (typeof user !== 'undefined') {
+            clearInterval(interval);
+            callback(user);
+          }
+        }
+        if (counter > 10) {
+          success = false;
+        }
+        if (!success) {
+          clearInterval(interval);
+          await auth0.login();
+        }
+        counter++;
+    }, 500);
+};
 
 window.addEventListener('load', async () => {
     await configureClient();
     await processLoginState();
-    // provideInfo();
     await trainingCourse.getInfo();
 });

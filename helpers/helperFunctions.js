@@ -21,6 +21,10 @@ const helper = {
         return unsafe
             .replace(/"/g, '&quot;')
     },
+    removeQuotes: (unsafe) => {
+        return unsafe
+            .replace(/"/g, '')
+    },
     removeNewLines: (unsafe) => {
         return unsafe.replace(/\r?\n|\r/g, '');
     },
@@ -431,7 +435,27 @@ const helper = {
 
         return items;
     },
-    addTrailingSlash: (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? '/' : ''
+    addTrailingSlash: (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? '/' : '',
+    injectHTMLAttr: (options) => {
+        if (!options.markup || !options.selector || !options.attr || !options.attrValue) return `Invalid HTML attribute injection: ${options}`;
+        const $ = cheerio.load(options.markup);
+        const $elems = $(options.selector);
+
+        $elems.each(function () {
+            const $that = $(this);
+            $that.attr(options.attr, options.attrValue);
+        });
+
+        const output = $.html();
+        return output.replace('<html><head></head><body>', '').replace('</body></html>', '');
+    },
+    getPathWithoutTrailingSlash: (url) => url.split('?')[0].replace(/\/$/, ''),
+    removePathLastSegments: (path, segmentsCount) => {
+        for (let i = 0; i < segmentsCount; i++) {
+            path = path.slice(0, path.lastIndexOf('/'));
+        }
+        return `${path}/`;
+    }
 };
 
 module.exports = helper;

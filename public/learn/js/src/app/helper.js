@@ -432,6 +432,51 @@ window.helper = (() => {
         wrapper.parentNode.replaceChild(docFrag, wrapper);
     };
 
+    const startTimer = (selector) => {
+        const display =  document.querySelector(selector);
+        if(!display) return;
+        const duration = parseInt(display.getAttribute('data-timer'));
+        display.removeAttribute('data-timer')
+        let timer = duration, hours, minutes, seconds;
+    
+        const interval = setInterval(() => {
+            hours = parseInt(timer / 3600, 10);
+            minutes = parseInt((timer % 3600) / 60, 10);
+            seconds = parseInt((timer % 3600) % 60, 10);
+    
+            minutes = minutes < 10 ? `0${minutes}` : minutes;
+            seconds = seconds < 10 ? `0${seconds}` : seconds;
+    
+            display.textContent = `${hours ? `${hours}:` : ''}${minutes}:${seconds}`;
+    
+            if (--timer < 0) {
+                clearInterval(interval);
+    
+                const submitButton = document.querySelector('.certification-test__button');
+                if (submitButton) submitButton.click();
+            }
+        }, 1000);
+      };
+
+      const removeHrefOnClick = () => {
+        const items = document.querySelectorAll('[data-once]');
+        const remove = (elem) => { 
+            setTimeout(() => {
+                elem.removeAttribute('href');
+            }, 0);
+        };
+
+        for (let i = 0; i < items.length; i++) {
+            items[i].addEventListener('click', () => {
+                remove(items[i]);
+            });
+
+            items[i].addEventListener('auxclick', () => {
+                remove(items[i]);
+            });
+        }
+      };
+
     return {
         getParents: getParents,
         findAncestor: findAncestor,
@@ -459,7 +504,9 @@ window.helper = (() => {
         getTech: getTech,
         logAnchorUpdate: logAnchorUpdate,
         unwrapElement: unwrapElement,
-        updateParameter: updateParameter
+        updateParameter: updateParameter,
+        startTimer: startTimer,
+        removeHrefOnClick: removeHrefOnClick
     }
 })();
 

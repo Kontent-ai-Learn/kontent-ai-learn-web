@@ -13,8 +13,9 @@ const handleCache = require('../helpers/handleCache');
 const platforms = require('../helpers/platforms');
 const customRichTextResolver = require('../helpers/customRichTextResolver');
 const smartLink = require('../helpers/smartLink');
-
 const getUrlMap = require('../helpers/urlMap');
+const scorm = require('../helpers/scorm');
+const fastly = require('../helpers/fastly');
 
 let cookiesPlatform;
 
@@ -22,8 +23,9 @@ const getItemContent = async (item, urlMap, res) => {
     const KCDetails = commonContent.getKCDetails(res);
 
     const settings = {
+        type: item.type,
         codename: item.codename,
-        depth: 2,
+        depth: 4,
         ...KCDetails
     };
 
@@ -34,9 +36,15 @@ const getItemContent = async (item, urlMap, res) => {
         settings.urlMap = urlMap;
     }
 
-    return await handleCache.evaluateSingle(res, item.codename, async () => {
+    let content = await handleCache.evaluateSingle(res, item.codename, async () => {
         return await requestDelivery(settings);
     });
+
+    if (item.type === 'training_certification_test') {
+        content = content.items;
+    }
+
+    return content;
 };
 
 const getRedocReference = async (apiCodename, res, KCDetails) => {
@@ -138,6 +146,7 @@ const getContent = async (req, res) => {
     const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
 
     const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
+    if (!urlMapItem) return null;
     let content = await getItemContent(urlMapItem, urlMap, res);
 
     let view = 'pages/article';
@@ -148,6 +157,7 @@ const getContent = async (req, res) => {
     const platformsConfig = await platforms.getPlatformsConfig(res);
     let preselectedPlatform;
     let canonicalUrl;
+    let testQuestionsNumber = 0;
     cookiesPlatform = req.cookies['KCDOCS.preselectedLanguage'];
 
     if (content && content.length) {
@@ -156,8 +166,21 @@ const getContent = async (req, res) => {
                 redirectCode: 301,
                 redirectUrl: `${pathUrl}${content[0].subpages.value[0].url.value}/${queryHash ? '?' + queryHash : ''}`
             }
-        } else if (content[0].system.type === 'training_course') {
+        } else if (content[0].system.type === 'training_course2') {
+            if (req.query.id) {
+                res = fastly.preventCaching(res);
+                const link = await scorm.getTrainingRegistrationLink(req.query.id, content[0].system.codename, res);
+                if (link) {
+                    return {
+                        redirectCode: 303,
+                        redirectUrl: link
+                    }
+                }
+            }
             view = 'pages/trainingCourse';
+        } else if (content[0].system.type === 'training_certification_test') {
+            view = 'pages/certificationTestDetail';
+            content[0].question_groups.value.forEach(item => { testQuestionsNumber += item.number_of_questions.value });
         } else if (content[0].system.type === 'zapi_specification') {
             view = 'pages/redoc';
             let contentReference = await getRedocReference(content[0].system.codename, res, KCDetails);
@@ -216,7 +239,7 @@ const getContent = async (req, res) => {
     }
 
     // If only article url slug in passed and item is present in the navigation, do not render the article
-    const isExcludedNavigation = urlMap.filter(item => (item.codename === content[0].system.codename) && (item.url.startsWith('/other/'))).length > 0;
+    const isExcludedNavigation = urlMap.filter(item => (item.codename === content[0].system.codename) && (item.url.startsWith('/learn/other/'))).length > 0;
     if (!req.params.scenario && !req.params.topic && req.params.article && !isExcludedNavigation) {
         return null;
     }
@@ -261,11 +284,11 @@ const getContent = async (req, res) => {
     let containsTerminology;
     let containsTrainingCourse;
     let releaseNoteContentType;
-    let trainingCourseContentType;
+    let trainingPersonaTaxonomyGroup;
     if (content && content.length && content[0].content) {
         containsChangelog = helper.hasLinkedItemOfType(content[0].content, 'changelog');
         containsTerminology = helper.hasLinkedItemOfType(content[0].content, 'terminology');
-        containsTrainingCourse = helper.hasLinkedItemOfType(content[0].content, 'training_course');
+        containsTrainingCourse = helper.hasLinkedItemOfType(content[0].content, 'training_course2');
 
         if (containsChangelog) {
             req.app.locals.changelogPath = helper.getPathWithoutQS(req.originalUrl);
@@ -280,8 +303,8 @@ const getContent = async (req, res) => {
 
         if (containsTrainingCourse) {
             req.app.locals.elearningPath = helper.getPathWithoutQS(req.originalUrl);
-            trainingCourseContentType = await handleCache.evaluateSingle(res, 'trainingCourseContentType', async () => {
-                return await commonContent.getTrainingCourseType(res);
+            trainingPersonaTaxonomyGroup = await handleCache.evaluateSingle(res, 'trainingPersonaTaxonomyGroup', async () => {
+                return await commonContent.getTrainingPersonaTaxonomyGroup(res);
             });
         }
 
@@ -323,10 +346,11 @@ const getContent = async (req, res) => {
         containsChangelog: containsChangelog,
         releaseNoteContentType: releaseNoteContentType,
         containsTrainingCourse: containsTrainingCourse,
-        trainingCourseContentType: trainingCourseContentType,
+        trainingPersonaTaxonomyGroup: trainingPersonaTaxonomyGroup,
         hideAuthorLastModified: content && content.length && content[0].display_options ? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_metadata') : false,
         hideFeedback: content && content.length && content[0].display_options? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_feedback') : false,
-        readingTime: content && content.length && content[0].content ? helper.getReadingTime(content[0].content.value) : null
+        readingTime: content && content.length && content[0].content ? helper.getReadingTime(content[0].content.value) : null,
+        testQuestionsNumber: testQuestionsNumber
     };
 };
 

@@ -1,0 +1,90 @@
+.question {
+  padding: 0 0 2em;
+	max-width: 768px;
+
+	&__legend {
+    font-size: 1.25em;
+    padding: 0 0 .5em;
+		display: block;
+
+    p {
+			line-height: 1.25em;
+			padding: 0 0 .25em;
+
+			&:only-child {
+				padding: 0;
+			}
+		}
+
+		a {
+			color: #f05a22;
+			text-decoration: underline;
+
+			&:hover,
+			&:active {
+				text-decoration: none;
+			}
+		}
+
+		ul, ol {
+				padding: 0 0 .375em .75em;
+
+				ul, ol {
+						padding: .125em 0 0;
+				}
+
+				ul, ol {
+						& > {
+								margin-left: .5em;
+						}
+				}
+		}
+
+		ul {
+				list-style-type: none;
+
+				& > li {
+						padding: 0 0 .25em 1.875em;
+						position: relative;
+
+						&:before {
+								content: '';
+								width: .875em;
+								height: .4375em;
+								border-radius: .25em .25em .25em 0;
+								background-color: #F05A22;
+								position: absolute;
+								left: 0;
+								top: .4625em;
+						}
+				}
+		}
+
+		ol {
+				list-style-type: decimal;
+
+				& > li {
+						padding: 0 0 .25em .125em;
+						margin: 0 0 0 1.125em;
+				}
+		}
+	}
+
+  &__textarea {
+    width: 100%;
+    max-width: 360px;
+    height: 100px;
+    padding: 1em 0.75em;
+    font-family: 'GT Walsheim Pro',Helvetica,Arial,sans-serif;
+    border: 1px solid rgba(35, 31, 32, .25);
+    border-radius: 0.5714em 1.4285em 1.4285em 1.4285em;
+    font-size: .875em;
+    line-height: 1.25em;
+    font-weight: 300;
+  }
+
+	&__answers {
+
+	}
+
+}

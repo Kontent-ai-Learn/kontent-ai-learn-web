@@ -57,6 +57,9 @@ Without the following variables, certain features will not work on the website.
 * `Jira.User` - User email for a Jira account (used for feedback form)
 * `LMS.host` - Kentico e-learning URL of the LMS
 * `LMS.id` - Kentico e-learning API key (used for e-learning integration)
+* `SCORM_APP_ID` - Scorm Cloud Application ID
+* `SCORM_SECRET_KEY`- Scorm Cloud Secret key
+* `SCORM_HOST`- Kentico e-learning Scorm Cloud host URL
 * `ngrok` - ngrok tunnel URL (i.e. https://91a2c81a7f1f.ngrok.io) (useful for api2PDF service local development/testing)
 * `Recaptcha.v2.secret` - Google Recaptcha v2 secret API key (used for forms robot protection)
 * `Recaptcha.v2.site` - Google Recaptcha v2 site API key (used for forms robot protection)

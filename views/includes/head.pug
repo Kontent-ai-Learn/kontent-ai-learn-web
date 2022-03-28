@@ -2,7 +2,8 @@ meta(name='viewport', content='width=device-width, initial-scale=1')
 meta(charset='utf-8')
 - const titleSuffix = (slug !== 'home' ? ` | ${UIMessages.portal_name.value}` : '');
 title !{title}!{titleSuffix}
-meta(property='og:title', content=`${title.trim().replace(/\s+/g, ' ').replace(/"/g, '&quot;')}${titleSuffix}`)
+if (title)
+    meta(property='og:title', content=`${title.trim().replace(/\s+/g, ' ').replace(/"/g, '&quot;')}${titleSuffix}`)
 if description
     - description = description.trim().replace(/\s+/g, ' ').replace(/"/g, '&quot;')
     meta(name='description', content=description)

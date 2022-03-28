@@ -5,6 +5,7 @@ const checkApiReferences = require('./apiReferences');
 const checkTlms = require('./tlms');
 const checkAuth0 = require('./auth0');
 const checkSendgrid = require('./sendgrid');
+const checkCosmosDb = require('./cosmosDb');
 
 const checkAll = async () => {
   const checkItems = [{
@@ -28,6 +29,9 @@ const checkAll = async () => {
   }, {
     name: 'Sendgrid',
     method: checkSendgrid
+  }, {
+    name: 'CosmosDB',
+    method: checkCosmosDb
   }];
   const resultItems = [];
 

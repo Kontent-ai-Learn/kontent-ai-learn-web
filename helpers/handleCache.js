@@ -1,4 +1,6 @@
 const cache = require('memory-cache');
+const axios = require('axios');
+const util = require('util');
 const commonContent = require('./commonContent');
 const helper = require('./helperFunctions');
 const getUrlMap = require('./urlMap');
@@ -139,6 +141,24 @@ const cacheAllAPIReferences = async (res, forceCacheRevalidate) => {
     }
 };
 
+const poolCache = async () => {
+    const log = {
+        timestamp: (new Date()).toISOString(),
+        pool: util.inspect(cache.get('webhook-payload-pool'), {
+            maxArrayLength: 500
+        })
+    };
+
+    try {
+        const response = await axios.post(`${process.env.baseURL}/learn/cache-invalidate/pool/`, {});
+        log.url = response && response.config ? response.config.url : '';
+    } catch (error) {
+        log.error = error && error.response ? error.response.data : '';
+    }
+
+    helper.logInCacheKey('cache-interval-pool', log);
+};
+
 module.exports = {
     evaluateCommon,
     evaluateSingle,
@@ -146,6 +166,7 @@ module.exports = {
     getCache,
     putCache,
     deleteCache,
+    poolCache,
     deleteMultipleKeys,
     ensureSingle
 };

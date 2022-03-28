@@ -8,18 +8,16 @@ const logger = require('morgan');
 const serveStatic = require('serve-static');
 const slashes = require('connect-slashes');
 const consola = require('consola');
-const axios = require('axios');
-const cache = require('memory-cache');
-const util = require('util');
+
 const { setIntervalAsync } = require('set-interval-async/dynamic');
 const asyncHandler = require('express-async-handler');
 
-const helper = require('./helpers/helperFunctions');
 const appHelper = require('./helpers/app');
 const handleCache = require('./helpers/handleCache');
 const isPreview = require('./helpers/isPreview');
 const fastly = require('./helpers/fastly');
 const serviceCheckAll = require('./helpers/serviceCheck/all');
+const certificationEmail = require('./helpers/certification/email');
 
 const siteRouter = require('./routes/siteRouter');
 const serviceCheck = require('./routes/serviceCheck');
@@ -118,21 +116,8 @@ app.use('/learn', siteRouter);
 app.use('/', (req, res) => res.redirect(301, '/learn/'));
 
 setIntervalAsync(async () => {
-  const log = {
-    timestamp: (new Date()).toISOString(),
-    pool: util.inspect(cache.get('webhook-payload-pool'), {
-        maxArrayLength: 500
-    })
-  };
-
-  try {
-    const response = await axios.post(`${process.env.baseURL}/learn/cache-invalidate/pool/`, {});
-    log.url = response && response.config ? response.config.url : '';
-  } catch (error) {
-    log.error = error && error.response ? error.response.data : '';
-  }
-
-  helper.logInCacheKey('cache-interval-pool', log);
+  await handleCache.poolCache();
+  await certificationEmail.handleExpirations();
 }, 300000);
 
 // catch 404 and forward to error handler

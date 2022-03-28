@@ -17,6 +17,8 @@ const urlMap = require('./urlMap');
 const articles = require('./articles');
 const auth0Callback = require('./auth0Callback');
 const api = require('./api');
+const survey = require('./survey');
+const certificationTest = require('./certificationTest');
 
 const commonContent = require('../helpers/commonContent');
 const handleCache = require('../helpers/handleCache');
@@ -61,6 +63,8 @@ router.use('/redirect-urls', redirectUrls);
 router.use('/rss', rss);
 router.use('/pdf', generatePDF);
 router.get('/urlmap', urlMap);
+router.use('/survey', survey);
+router.use('/get-certified', certificationTest);
 router.use('/', home, articles);
 
 // Check aliases on whitelisted url paths that do not match any routing above

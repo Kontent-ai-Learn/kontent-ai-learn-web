@@ -35,32 +35,39 @@ const getSmartLinkAttrInner = (markup, config) => {
     return ` data-kk-rels="${rels.join('|')}" data-kk-codenames="${codenames.join('|')}"`;
 };
 
-const getImageAttributes = (item, cssClass, transformationQueryString) => {
+const getImageAttributes = (item, cssClass) => {
+    let transformationQueryString = '?';
+
+    if (item.image.value.length && item.image.value[0].url.endsWith('.gif')) {
+        transformationQueryString += 'fm=mp4';
+    } else {
+        transformationQueryString += 'fm=pjpg&auto=format';
+    }
+
+    const renditionsQueryString = item.image.value[0]?.contract?.renditions?.default?.query;
+    if (renditionsQueryString) transformationQueryString += `&${renditionsQueryString}`;
+
     if (item.image_width.value.length) {
         switch (item.image_width.value[0].codename) {
             case 'n25_':
                 cssClass += ' article__image--25';
-                transformationQueryString += '168';
+                if (!renditionsQueryString) transformationQueryString += '&w=168';
                 break;
             case 'n50_':
                 cssClass += ' article__image--50';
-                transformationQueryString += '336';
+                if (!renditionsQueryString) transformationQueryString += '&w=336';
                 break;
             case 'n75_':
                 cssClass += ' article__image--75';
-                transformationQueryString += '504';
+                if (!renditionsQueryString) transformationQueryString += '&w=504';
                 break;
             case 'n100_':
                 cssClass += ' article__image--100';
-                transformationQueryString += '672';
+                if (!renditionsQueryString) transformationQueryString += '&w=672';
                 break;
             default:
-                transformationQueryString += '896';
+                if (!renditionsQueryString) transformationQueryString += '&w=896';
         }
-    }
-
-    if (item.image.value.length && item.image.value[0].url.endsWith('.gif')) {
-        transformationQueryString = '?fm=mp4';
     }
 
     return {
@@ -351,16 +358,15 @@ const richTextResolverTemplates = {
         if (item.image.value.length) {
             const alt = item.image.value[0].description ? helper.escapeQuotesHtml(item.image.value[0].description) : '';
             const url = item.url.value.trim();
-            const transformationQueryString = '?fm=pjpg&auto=format&w=';
             const zoomable = item.zoomable.value.length && item.zoomable.value[0].codename === 'true';
             let cssClass = ' article__image-border'; // Always show border
             cssClass += zoomable && !url ? ' article__add-lightbox' : '';
-            const imageWidth = item.image.value[0] ? item.image.value[0].width || 0 : 0;
-            const imageHeight = item.image.value[0] ? item.image.value[0].height || 0 : 0;
+            const imageWidth = item.image.value[0] ? item.image.value[0]?.contract?.renditions?.default?.width || item.image.value[0].width || 0 : 0;
+            const imageHeight = item.image.value[0] ? item.image.value[0]?.contract?.renditions?.default?.height || item.image.value[0].height || 0 : 0;
             const openLinkTag = url ? `<a href="${url}" target="_blank" class="no-icon"${getSmartLinkAttr(config, 'url', 'element')}>` : '';
             const closeLinkTag = url ? '</a>' : '';
             const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${item.image.value[0].width}" height="${item.image.value[0].height}"></svg>`;
-            const attributes = getImageAttributes(item, cssClass, transformationQueryString);
+            const attributes = getImageAttributes(item, cssClass);
 
             if (item.image.value[0].url.endsWith('.gif')) {
                 return `
@@ -538,8 +544,33 @@ const richTextResolverTemplates = {
     terminology: (item, config) => {
         return `<div id="terminology-resolve"${getSmartLinkAttr(config, item.system.id, 'component')}></div>`;
     },
+    certificationTest: (item, config) => {
+        const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
+        const url = urlMapItem.length ? urlMapItem[0].url : null;
+
+        return `
+            <div class="article__teaser"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+                <h3${getSmartLinkAttr(config, 'title', 'element')}>${url ? `<a href="${url}">${item.title.value}</a>` : `${item.title.value}`}</h3>
+                ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
+                <div class="article__introduction">
+                    <div class="article__introduction-content">
+                        <div${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>
+                            ${item.description.value}
+                        </div>
+                        ${url && config.UIMessages && config.UIMessages.training___view_details
+                            ? `  
+                            <a href="${url}" class="call-to-action call-to-action--small"${getSmartLinkAttr(config, config.UIMessages.system.id, 'item')}${getSmartLinkAttr(config, 'training___view_details', 'element')}>
+                                <span>${config.UIMessages.training___view_details.value}</span>
+                                <span></span>
+                            </a>
+                        `
+                        : ''}              
+                    </div>
+                </div>
+            </div>`;
+    },
     trainingCourse: (item, config) => {
-        const personas = item.persona.value;
+        const personas = item.personas___topics__training_persona.value;
         const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
         const url = urlMapItem.length ? urlMapItem[0].url : null;
         const isFree = item.is_free ? helper.isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
@@ -572,8 +603,8 @@ const richTextResolverTemplates = {
                             ${personas.map(item => `<li class="article__tags-item article__tags-item--green">${item.name}</li>`).join('')}
                             ${personas.length ? '</ul>' : ''}
                         </div>
-                        <div${getSmartLinkAttr(config, 'introduction', 'element')}${getSmartLinkAttrInner(item.introduction.value, config)}>
-                            ${item.introduction.value}
+                        <div${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>
+                            ${item.description.value}
                         </div>
                         ${url && config.UIMessages && config.UIMessages.training___view_details
 ? `  
@@ -624,6 +655,45 @@ const richTextResolverTemplates = {
                     }(window, document, "_pm", "PostmanRunObject", "https://run.pstmn.io/button.js"));
                 </script>`;
     },
+    question: (item) => {
+        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(item.question.value)))).trim();
+        return `<fieldset class="question">
+                    <legend class="question__legend">${item.question.value}</legend>
+                    <div class="question__answers">
+                        ${helper.injectHTMLAttr({
+                            markup: item.answers.resolveHtml(),
+                            selector: '.answer__radio',
+                            attr: 'name',
+                            attrValue: `${name}|${item.system.id}|radio`
+                        })}
+                    </div>
+                </fieldset>`;
+    },
+    questionFreeText: (item) => {
+        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(item.question.value)))).trim();
+        return `<fieldset class="question">
+                    <label class="question__legend" for="${item.system.codename}">${item.question.value}</label>
+                    <textarea class="question__textarea" name="${name}|${item.system.id}|textarea" for="${item.system.codename}"></textarea>
+                </fieldset>`;
+    },
+    answer: (item) => {
+        const content = item.answer.resolveHtml();
+        const value = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(content)))).trim();
+        return `<div class="answer">
+                    <div class="answer__wrapper">
+                        <div class="answer__form-elements">
+                            <input class="answer__radio" type="radio" tabIndex="-1" value="${value}|${item.system.id}" id="${item.system.codename}" />
+                            <label class="answer__radio-label" for="${item.system.codename}">${value}</label>
+                        </div>
+                        <div class="answer__visual-elements">
+                            <div class="answer__content">
+                                ${content}
+                            </div>
+                            <a data-form-answer href="#${item.system.codename}" class="answer__link"></a>
+                        </div>
+                    </div>
+                </div>`;
+    }
 };
 
 module.exports = richTextResolverTemplates;

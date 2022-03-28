@@ -169,6 +169,18 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     await axiosPurge(axiosDomain, req.app.locals.elearningPath);
   }
 
+  if (itemsByTypes.trainingSurveys.length) {
+    for (let i = 0; i < itemsByTypes.trainingSurveys.length; i++) {
+      await purge(itemsByTypes.trainingSurveys[i].codename, res);
+    }
+  }
+
+  if (itemsByTypes.trainingCertificationTests.length) {
+    for (let i = 0; i < itemsByTypes.trainingCertificationTests.length; i++) {
+      await purge(itemsByTypes.trainingCertificationTests[i].codename, res);
+    }
+  }
+
   if (itemsByTypes.articles.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
     await axiosPurge(axiosDomain, '/learn/redirect-urls');
   }

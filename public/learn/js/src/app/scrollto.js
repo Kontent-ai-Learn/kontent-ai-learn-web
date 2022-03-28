@@ -14,7 +14,6 @@
       setTimeout(() => {
         const elem = document.querySelector(window.location.hash);
         if (!elem) return;
-        //console.log(elem);
         elem.scrollIntoView();
       }, 0);
     };
