@@ -198,8 +198,6 @@ const getCourseId = (course, res) => {
 const scorm = {
   getTrainingRegistrationLink: async (id, codename, res) => {
     let linkData = null;
-    let toBeReplacedUrl = '';
-    let replacementUrl = '';
     const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
       return await commonContent.getTraniningCourse(res);
     });
@@ -207,16 +205,8 @@ const scorm = {
 
     if (isPreview(res.locals.previewapikey)) {
       linkData = await getCoursePreviewLink(id, course.course_survey.value?.[0]?.system?.codename, res);
-      toBeReplacedUrl = 'https://cloud.scorm.com/api/cloud/course/preview/';
-      replacementUrl = '/learn/e-learning/course/preview/';
     } else {
       linkData = await getRegistrationLink(id, course.course_survey.value?.[0]?.system?.codename, getCourseId(course, res), res);
-      toBeReplacedUrl = 'https://cloud.scorm.com/api/cloud/registration/launch/';
-      replacementUrl = '/learn/e-learning/course/';
-    }
-
-    if (linkData?.launchLink && process.env.aliasURL) {
-      return linkData.launchLink.replace(toBeReplacedUrl, `${process.env.aliasURL}${replacementUrl}`);
     }
 
     if (linkData?.launchLink) {
