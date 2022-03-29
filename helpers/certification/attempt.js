@@ -42,7 +42,7 @@ const handle = async (body) => {
   let attempt = await certificationDatabase.getAttempt(body.attempt);
   if (!attempt || attempt.end) return null;
   attempt = certificationData.evaluateAttempt(body, attempt);
-  certificationDatabase.updateAttempt(attempt);
+  await certificationDatabase.updateAttempt(attempt);
 
   return attempt;
 };

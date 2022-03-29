@@ -6,7 +6,7 @@ const elearningUser = require('../e-learning/user');
 const certificationDatabase = require('./database');
 const certificationAttempt = require('./attempt');
 
-const getCertificationInfo = async (user, certificationTest, UIMessages, req, res) => {
+const getCertificationInfo = async (user, certificationTest) => {
   const successfullAttempt = await certificationDatabase.successfullAttemptExists({
     email: user?.email,
     codename: certificationTest.system.codename
@@ -20,7 +20,7 @@ const getCertificationInfo = async (user, certificationTest, UIMessages, req, re
         public_url: `/learn/get-certified/exam/${successfullAttempt.id}/certificate/`,
         issued_date: moment(successfullAttempt.end).format('YYYY/MM/DD'),
         expiration_date: moment(successfullAttempt.certificate_expiration).format('YYYY/MM/DD'),
-        course_name: successfullAttempt.test.title
+        course_name: certificationTest.title.value
       },
       signedIn: true
     }

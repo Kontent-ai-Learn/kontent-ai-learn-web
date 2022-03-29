@@ -2,6 +2,11 @@
   position: relative;
   min-height: 480px;
 
+  &--results {
+    min-height: none;
+    padding: 2em 0 0;
+  }
+
   &__heading {
     font-size: 1.75em;
     padding: 0 0 .375em;
@@ -47,31 +52,18 @@
     font-size: 1.5em;
   }
 
-  &__score {
-    font-size: 1.75em;
-    padding: .5em 0;
-  }
-
-  &__text {
-    padding: 0 0 2em;
-
-    p {
-      padding: 0 0 1em;
-
-      &:last-child {
-        padding: 0;
-      }
-    }
-  }
-
   &__question {
     font-size: 1.25em;
-    padding: 0 0 .5em;
+    padding: 0 0 .25em;
     max-width: 768px;
 
     p {
       line-height: 1.25em;
       padding: 0 0 .25em;
+
+      &:only-child {
+        padding: 0;
+      }
     }
   }
 
@@ -80,12 +72,26 @@
   }
 
   &__answer {
-    padding: 0 0 .25em;
+    padding: 0 0 1.5em;
     max-width: 768px;
 
     &--incorrect {
       color: #f02222;
       font-weight: 700;
+
+      p {
+        padding: 0;
+      }
+    }
+  }
+
+  &__answer-label {
+    display: inline-block;
+    padding: 0 .5em 0 0;
+    color: #231f20;
+
+    & + p {
+      display: inline-block;
     }
   }
 }

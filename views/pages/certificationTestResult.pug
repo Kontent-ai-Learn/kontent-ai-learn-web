@@ -1,24 +1,27 @@
 extends ../includes/layout.pug
 block content
     main(id='main', data-certification-result=itemCodename)
-      h1.certification-test__heading !{title}
-      if (attempt.score)
-        h2.certification-test__score Score: !{attempt.score}%
-      .certification-test__text
-        if (attempt.score >= attempt.test.score_to_pass)
-          | !{content.success_message.value}
-          a(href=`/learn/get-certified/exam/${attempt.id}/certificate/`).call-to-action.call-to-action--left-spacing
-            span Download certificate
-            span
-        else 
-          | !{content.failure_message.value}
-      if (attempt.score !== null)
-        each topic in attempt.test.questions
-          each question in topic.questions
-            - const anyAnswer = question.answers.find(answer => answer.answer);
-            - let incorrect = false;
-            - if (anyAnswer) incorrect = question.answers.find(answer => !answer.correct && answer.answer);
-            if (incorrect)
-              .certification-test__question !{question.html}
-              ul.certification-test__answers
-                li(class='certification-test__answer certification-test__answer--incorrect') !{incorrect.html}
+      .article
+        .article__content
+          h1 !{title}
+          if (attempt.score !== null)
+            h2 Score: !{attempt.score}%
+            if (attempt.score >= attempt.test.score_to_pass)
+              | !{content.success_message.value}
+            else 
+              | !{content.failure_message.value}
+            script var trainingCertificationTestCodename='!{content.system.codename}';
+            .article__training-action.article__training-action--result#trainingAction&attributes(smartLink?.itemId(UIMessages.system.id))
+            .certification-test.certification-test--results
+              if (attempt.score < 100 && helper.isNotEmptyRichText(content.heading_for_incorrect_answers.value))
+                | !{content.heading_for_incorrect_answers.value}
+              each topic in attempt.test.questions
+                each question in topic.questions
+                  - const anyAnswer = question.answers.find(answer => answer.answer);
+                  - let incorrect = false;
+                  - if (anyAnswer) incorrect = question.answers.find(answer => !answer.correct && answer.answer);
+                  if (incorrect)
+                    .certification-test__question !{question.html}
+                    .certification-test__answer.certification-test__answer--incorrect 
+                      span.certification-test__answer-label !{UIMessages.traning___test___your_answer.value} 
+                      | !{incorrect.html}
