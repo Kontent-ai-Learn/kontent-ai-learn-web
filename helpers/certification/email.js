@@ -1,4 +1,4 @@
-const sendSendGridEmail = require('../sendgrid');
+const sendSendGridEmail = require('../services/sendgrid');
 const certificationDatabase = require('./database')
 
 const congratsTemplate = (attempt) => {

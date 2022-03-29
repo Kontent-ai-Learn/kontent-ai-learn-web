@@ -6,6 +6,7 @@ const trainingCourseDetail = require('../helpers/trainingCourseDetail');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationDetail = require('../helpers/certification/detail');
 const surveyAttempt = require('../helpers/survey/attempt');
+const elearningLandingPage = require('../helpers/e-learning/landingPage');
 const fastly = require('../helpers/fastly');
 
 const jwtCheck = jwt({
@@ -41,6 +42,18 @@ router.post('/training-certification/detail/private', jwtCheck, async (req, res)
 router.post('/training-certification/detail/public', async (req, res) => {
   res = fastly.preventCaching(res);
   const data = await certificationDetail.get(req.body.codename, req, res);
+  return res.send(data);
+});
+
+router.post('/landing-page/private', jwtCheck, async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await elearningLandingPage.init(req, res);
+  return res.send(data);
+});
+
+router.post('/landing-page/public', async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await elearningLandingPage.init(req, res);
   return res.send(data);
 });
 

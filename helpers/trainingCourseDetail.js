@@ -4,7 +4,7 @@ const commonContent = require('./commonContent');
 const helper = require('./helperFunctions');
 const lms = require('./lms');
 const scorm = require('./scorm');
-const sendSendGridEmail = require('./sendgrid');
+const sendSendGridEmail = require('./services/sendgrid');
 const elearningUser = require('./e-learning/user');
 
 const getTrainingCourseInfoFromLMS = async (user, courseId, UIMessages, req) => {

@@ -181,6 +181,23 @@ const getContent = async (req, res) => {
         } else if (content[0].system.type === 'training_certification_test') {
             view = 'pages/certificationTestDetail';
             content[0].question_groups.value.forEach(item => { testQuestionsNumber += item.number_of_questions.value });
+        } else if (content[0].system.type === 'landing_page') {
+            view = 'pages/landingPage';
+
+            return {
+                req: req,
+                res: res,
+                postprocessMarkup: postprocessMarkup,
+                slug: slug,
+                isPreview: KCDetails.isPreview,
+                itemId: content && content.length ? content[0].system.id : null,
+                title: content && content.length ? content[0].title.value : '',
+                navigation: home && home.length ? home[0].subpages.value : null,
+                footer: footer && footer.length ? footer[0] : null,
+                UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
+                helper: helper,
+                view: view
+            };
         } else if (content[0].system.type === 'zapi_specification') {
             view = 'pages/redoc';
             let contentReference = await getRedocReference(content[0].system.codename, res, KCDetails);

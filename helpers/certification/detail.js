@@ -54,13 +54,13 @@ const getCertificationInfo = async (user, certificationTest, UIMessages, req, re
 
 const getPrivate = async (UIMessages, certificationTest, req, res) => {
   const data = {};
-  const { user, trainingUser, errCode } = await elearningUser.getUser(req?.user?.email, res);
+  const user = await elearningUser.getUser(req?.user?.email, res);
 
-  if (errCode) {
+  if (!user) {
     data.renderGeneralMessage = true;
-    data.textUIMessageCodename = errCode === 'CR404' ? 'sign_in_error_subscription_missing_text' : 'sign_in_error_text';
+    data.textUIMessageCodename = 'sign_in_error_subscription_missing_text'; //errCode === 'CR404' ? 'sign_in_error_subscription_missing_text' : 'sign_in_error_text';
     data.renderAs = 'text';
-  } else if (!(await elearningUser.isCourseAvailable(user, certificationTest, trainingUser, res))) {
+  } else if (!(await elearningUser.isCourseAvailable(user, certificationTest, res))) {
     data.renderGeneralMessage = true;
     data.textUIMessageCodename = 'training___cta_buy_course';
     data.action = 'intercom';
@@ -75,7 +75,7 @@ const getPrivate = async (UIMessages, certificationTest, req, res) => {
 
   return {
     general: data.renderGeneralMessage ? data : null,
-    production: !data.renderGeneralMessage && !errCode ? certificationInfo : null
+    production: !data.renderGeneralMessage && user ? certificationInfo : null
   }
 };
 

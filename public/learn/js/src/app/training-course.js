@@ -75,6 +75,7 @@ const trainingCourse = (() => {
       }
     }
   };
+  
   const performUIActions = () => {
     window.helper.startTimer('[data-timer]');
     window.helper.removeHrefOnClick();

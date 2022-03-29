@@ -1,6 +1,6 @@
-const app = require('../app');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const errorAppInsights = require('../error/appInsights');
 
 const send = async (info) => {
   const msg = {
@@ -18,13 +18,11 @@ const send = async (info) => {
 
   try {
     await sgMail.send(msg);
-    return true;
   } catch (error) {
-    if (app.appInsights && error.response) {
-      app.appInsights.defaultClient.trackTrace({ message: `SENDGRID_ERROR: ${JSON.stringify(error.response?.body.errors)}` });
-    }
-    return false;
+    errorAppInsights.log('SENDGRID_ERROR', JSON.stringify(error.response?.body.errors));
   }
 };
 
-module.exports = send;
+module.exports = {
+  send
+};

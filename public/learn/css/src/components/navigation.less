@@ -203,10 +203,37 @@
         &--auth {
             text-transform: none;
             white-space: nowrap;
-            padding: 0 0 0 1em;
+            margin: 0 0 0 1em;
+            padding: 0;
             justify-content: flex-end;
             box-sizing: border-box;
             display: inline-block;
+
+            &:before {
+                bottom: -4px;
+            }
+
+            &:hover,
+            &:focus,
+            &:active {
+                &:before {
+                    bottom: -2px;
+                }
+            }
+
+            @media screen and (min-width: 1024px) {
+                &:before {
+                    bottom: -2px;
+                }
+
+                &:hover,
+                &:focus,
+                &:active {
+                    &:before {
+                        bottom: -6px;
+                    }
+                }
+            }
         }
     }
 

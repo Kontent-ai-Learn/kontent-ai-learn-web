@@ -203,17 +203,6 @@ const getCertificate = (user, courseId) => {
 };
 
 const lms = {
-    composeNotification: (text, info) => {
-        text = `${text}\nenvironment: ${process.env.baseURL}`;
-
-        if (typeof info === 'object') {
-            return `${text}\n${Object.keys(info).map((key) => {
-                return `${key}: ${info[key]}`;
-            }).join('\n')}`;
-        }
-
-        return `${text}\n${info}`;
-    },
     getUserCourseCertificate: async (data, courseId) => {
         const userLMS = await getUserByEmail(data.email);
 

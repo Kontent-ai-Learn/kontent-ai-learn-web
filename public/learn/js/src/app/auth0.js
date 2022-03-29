@@ -117,5 +117,8 @@ window.addEventListener('load', async () => {
     if (typeof certificationTest !== 'undefined') {
         await certificationTest.getInfo();
     }
+    if (typeof landingPage !== 'undefined') {
+        await landingPage.getInfo();
+    }
     auth0.eventListeners();
 });

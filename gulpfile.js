@@ -82,6 +82,7 @@ gulp.task('js-app', () => {
       'public/learn/js/src/app/training-course.js',
       'node_modules/@splidejs/splide/dist/js/splide.js',
       'public/learn/js/src/app/carousel.js',
+      'public/learn/js/src/app/landing-page.js',
       'public/learn/js/src/app/survey.js',
       'public/learn/js/src/app/certification-test.js',
     ])

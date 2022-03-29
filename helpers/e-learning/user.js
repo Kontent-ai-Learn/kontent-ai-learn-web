@@ -11,10 +11,8 @@ const getTrainingUser = async (email, res) => {
   return trainingUsers.find(item => item.email.value === email);
 };
 
-const isCourseAvailable = async (user, content, trainingUser, res) => {
-  const isFreeCourse = content?.is_free ? helper.isCodenameInMultipleChoice(content?.is_free.value, 'yes') : false;
-
-  if (user.email.endsWith('@kentico.com') || isFreeCourse || trainingUser) {
+const userHasElearningAccess = async (user, res) => {
+  if (user.email.endsWith('@kentico.com') || isFreeCourse || user.isTrainigUser) {
     return true;
   }
 
@@ -37,35 +35,34 @@ const isCourseAvailable = async (user, content, trainingUser, res) => {
       }
     }
   }
+};
 
-  return false;
+const isCourseAvailable = async (user, content, res) => {
+  const isFreeCourse = content?.is_free ? helper.isCodenameInMultipleChoice(content?.is_free.value, 'yes') : false;
+  if (isFreeCourse) return true;
+  return await userHasElearningAccess(user, res);
 };
 
 const getUser = async (email, res) => {
-  let user = {};
-  let errCode, trainingUser;
-
   if (email) {
-    trainingUser = await getTrainingUser(email, res);
+    const trainingUser = await getTrainingUser(email, res);
+    const user = {};
+
     if (email.endsWith('@kentico.com') || trainingUser) {
       user.email = email;
 
       if (trainingUser) {
         user.firstName = trainingUser.first_name.value;
         user.lastName = trainingUser.last_name.value;
+        user.isTrainigUser = true;
       }
+      return user;
     } else {
-      const userSubscriptionService = await subscriptionService.getUser(email);
-      user = userSubscriptionService.user?.data;
-      errCode = userSubscriptionService.errCode;
+      const user = await subscriptionService.getUser(email);
+      if (user) return user.data;
     }
   }
-
-  return {
-    user,
-    trainingUser,
-    errCode
-  }
+  return null;
 };
 
 module.exports = {
