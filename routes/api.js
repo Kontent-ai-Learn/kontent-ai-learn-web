@@ -34,7 +34,12 @@ router.post('/training-course/detail/public', async (req, res) => {
 
 router.post('/training-certification/detail/private', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
-  const data = await certificationDetail.get(req.body.codename, req, res);
+  let data = null;
+  if (req.body.attemptid) {
+    data = await certificationDetail.getByAttemptId(req.body.codename, req.body.attemptid, res);
+  } else {
+    data = await certificationDetail.get(req.body.codename, req, res);
+  }
   return res.send(data);
 });
 

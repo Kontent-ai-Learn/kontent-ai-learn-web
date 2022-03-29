@@ -15,7 +15,6 @@ const trainingCourse = (() => {
     if (!container || !data) return;
     const originalInnerHTML = container.innerHTML;
     const logoutBtnExists = document.querySelector('#logout') != null;
-    console.log(data);
     const markup = `
       <div class="article__row-links">
         ${data.renderAs === 'text' ? `<div  class="article__row"><div class="callout callout--info"><div><p>${data.text}</p></div></div></div>` : ''}
@@ -53,12 +52,13 @@ const trainingCourse = (() => {
     auth0.eventListeners();
   };
 
-  const requestInfo = async (codename, contentType, token) => {
+  const requestInfo = async (codename, contentType, attemptId, token) => {
     let accessType = 'public';
     const fetchOptions = {
       method: 'POST',
       body: JSON.stringify({
-        codename: codename
+        codename: codename,
+        attemptid: attemptId
       })
     };
 
@@ -85,10 +85,15 @@ const trainingCourse = (() => {
     if (!(window.trainingCourseCodename || window.trainingCertificationTestCodename)) return;
     let type = 'training-course';
     let codename = window.trainingCourseCodename;
-    let qs = '';
+    let attemptId = null;
     if (window.trainingCertificationTestCodename) {
       codename = window.trainingCertificationTestCodename;
       type = 'training-certification';
+
+      if (window.attemptId) {
+        attemptId = window.attemptId;
+      }
+
     }
 
     let claims = null;
@@ -99,7 +104,7 @@ const trainingCourse = (() => {
     catch (e) { }
     finally {
       const token = claims ? claims.__raw : null;
-      await requestInfo(codename, type,  token);
+      await requestInfo(codename, type, attemptId, token);
       performUIActions();
     }
   };

@@ -2,7 +2,7 @@ const cosmos = require('../cosmos');
 const certificationData = require('./data');
 const elearningUser = require('../e-learning/user');
 
-const successfullAttemptExists = async (body) => {
+const successfullAttemptExists = async (body, timespan = 0) => {
   const { codename, email } = body;
   let attempt = null;
 
@@ -18,7 +18,7 @@ const successfullAttemptExists = async (body) => {
           value: codename
         }, {
           name: '@expirationAhead',
-          value: new Date(new Date().getTime() + 86400000 * 7).toISOString()
+          value: new Date(new Date().getTime() + 86400000 * timespan).toISOString()
         }]
     };
 

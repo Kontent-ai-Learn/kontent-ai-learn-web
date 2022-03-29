@@ -11,7 +11,7 @@ const init = async (body, res) => {
     }
   }
 
-  const successfullAttempt = await certificationDatabase.successfullAttemptExists(body);
+  const successfullAttempt = await certificationDatabase.successfullAttemptExists(body, 7);
   if (successfullAttempt) {
     return {
       code: 302,
