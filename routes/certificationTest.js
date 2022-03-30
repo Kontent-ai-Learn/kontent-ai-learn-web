@@ -16,6 +16,7 @@ const postprocessMarkup = require('../helpers/postprocessMarkup');
 const smartLink = require('../helpers/smartLink');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationEmail = require('../helpers/certification/email');
+const certificationData = require('../helpers/certification/data');
 const scorm = require('../helpers/scorm');
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
@@ -111,6 +112,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
     title: certificationTestItem.items[0].title.value,
     nextAttemptSeconds: certificationAttempt.getNextSeconds(attempt.start),
     attempt: attempt,
+    incorrect: certificationData.getIncorrect(attempt),
     content: certificationTestItem.items[0],
     postprocessMarkup: postprocessMarkup,
     slug: req.params.slug,

@@ -10,18 +10,13 @@ block content
               | !{content.success_message.value}
             else 
               | !{content.failure_message.value}
-            script var trainingCertificationTestCodename='!{content.system.codename}'; var attemptId = '!{attempt.id}';
+            script var trainingCertificationTestCodename='!{content.system.codename}';var attemptId='!{attempt.id}';
             .article__training-action.article__training-action--result#trainingAction&attributes(smartLink?.itemId(UIMessages.system.id))
             .certification-test.certification-test--results
-              if (attempt.score < 100 && helper.isNotEmptyRichText(content.heading_for_incorrect_answers.value))
+              if (incorrect.length && helper.isNotEmptyRichText(content.heading_for_incorrect_answers.value))
                 | !{content.heading_for_incorrect_answers.value}
-              each topic in attempt.test.questions
-                each question in topic.questions
-                  - const anyAnswer = question.answers.find(answer => answer.answer);
-                  - let incorrect = false;
-                  - if (anyAnswer) incorrect = question.answers.find(answer => !answer.correct && answer.answer);
-                  if (incorrect)
-                    .certification-test__question !{question.html}
-                    .certification-test__answer.certification-test__answer--incorrect 
-                      span.certification-test__answer-label !{UIMessages.traning___test___your_answer.value} 
-                      | !{incorrect.html}
+              each item in incorrect
+                .certification-test__question !{item.question}
+                .certification-test__answer.certification-test__answer--incorrect 
+                  span.certification-test__answer-label !{UIMessages.traning___test___your_answer.value} 
+                  | !{item.answer}
