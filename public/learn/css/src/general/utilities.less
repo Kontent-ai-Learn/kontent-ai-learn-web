@@ -101,22 +101,38 @@ main {
     margin: 2em auto 0;
     max-width: 1260px;
     padding: 0 1em;
-    min-height: ~"calc(100vh - 181px)";
+    min-height: ~"calc(100vh - 286px)";
     display: block;
 
     @media screen and (min-width: 480px) {
-        min-height: ~"calc(100vh - 256px)";
+        min-height: ~"calc(100vh - 331px)";
         margin: 2em auto 0;
     }
 
     @media screen and (min-width: 768px) {
-        min-height: ~"calc(100vh - 280px)";
+        min-height: ~"calc(100vh - 387px)";
         margin: 2em auto 0;
     }
 
     @media screen and (min-width: 1024px) {
-        min-height: ~"calc(100vh - 379px)";
+        min-height: ~"calc(100vh - 461px)";
         margin: 3.75em auto 0;
+    }
+
+    .non-production & {
+        min-height: ~"calc(100vh - 362px)";
+
+        @media screen and (min-width: 480px) {
+            min-height: ~"calc(100vh - 395px)";
+        }
+    
+        @media screen and (min-width: 768px) {
+            min-height: ~"calc(100vh - 427px)";
+        }
+    
+        @media screen and (min-width: 1024px) {
+            min-height: ~"calc(100vh - 503px)";
+        }
     }
 }
 

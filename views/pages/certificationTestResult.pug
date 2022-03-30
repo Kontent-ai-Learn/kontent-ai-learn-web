@@ -10,8 +10,6 @@ block content
               | !{content.success_message.value}
             else 
               | !{content.failure_message.value}
-            script var trainingCertificationTestCodename='!{content.system.codename}';var attemptId='!{attempt.id}';
-            .article__training-action.article__training-action--result#trainingAction&attributes(smartLink?.itemId(UIMessages.system.id))
             .certification-test.certification-test--results
               if (incorrect.length && helper.isNotEmptyRichText(content.heading_for_incorrect_answers.value))
                 | !{content.heading_for_incorrect_answers.value}
@@ -20,3 +18,5 @@ block content
                 .certification-test__answer.certification-test__answer--incorrect 
                   span.certification-test__answer-label !{UIMessages.traning___test___your_answer.value} 
                   | !{item.answer}
+            script var trainingCertificationTestCodename='!{content.system.codename}';var attemptId='!{attempt.id}';
+            .article__training-action.article__training-action--result#trainingAction&attributes(smartLink?.itemId(UIMessages.system.id))
