@@ -176,7 +176,12 @@ router.get('/exam/:attemptid/certificate/pdf', asyncHandler(async (req, res, nex
   const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
+  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
+    return commonContent.getUIMessages(res);
+  });
+
   return res.render('certificate/exam', {
+    UIMessages: UIMessages?.[0],
     attempt: attempt,
     moment: moment
   });
