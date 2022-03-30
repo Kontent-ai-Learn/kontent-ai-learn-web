@@ -606,6 +606,8 @@
     }
 
     &__training-action {
+        min-height: 48px;
+
         &:empty {
             width: 48px;
             height: 48px;
@@ -615,6 +617,14 @@
             background-color: #fff;
             background-size: contain;
             margin: 0 24px;
+        }
+
+        &--result {
+            padding: 1em 0 0;
+
+            .callout {
+                display: none;
+            }
         }
     }
 }

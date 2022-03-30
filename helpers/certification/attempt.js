@@ -11,7 +11,7 @@ const init = async (body, res) => {
     }
   }
 
-  const successfullAttempt = await certificationDatabase.successfullAttemptExists(body);
+  const successfullAttempt = await certificationDatabase.successfullAttemptExists(body, 7);
   if (successfullAttempt) {
     return {
       code: 302,
@@ -42,7 +42,7 @@ const handle = async (body) => {
   let attempt = await certificationDatabase.getAttempt(body.attempt);
   if (!attempt || attempt.end) return null;
   attempt = certificationData.evaluateAttempt(body, attempt);
-  certificationDatabase.updateAttempt(attempt);
+  await certificationDatabase.updateAttempt(attempt);
 
   return attempt;
 };

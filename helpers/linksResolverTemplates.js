@@ -37,7 +37,7 @@ const resolveLinkUrlsInElement = (element, config) => {
         } else if (link.type === 'term_definition') {
             resolvedUrl = `#term-definition-${link.codename}`;
         } else {
-            resolvedUrl = '/page-not-found';
+            resolvedUrl = '/learn/page-not-found';
         }
 
         if (element.value && resolvedUrl) {
@@ -59,7 +59,7 @@ const linksResolverTemplates = {
         } else if (item.type === 'term_definition') {
             return `#term-definition-${item.codename}`;
         } else {
-            return '/page-not-found';
+            return '/learn/page-not-found';
         }
     },
     resolveInnerRichTextLinks: (item, config) => {

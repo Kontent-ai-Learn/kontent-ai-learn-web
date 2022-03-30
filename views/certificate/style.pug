@@ -48,10 +48,10 @@ style.
     flex-direction: column;
     justify-content: space-between;
   }
-
+  
   .certificate__logo {
     width: 10em;
-    padding: 0 0 10em;
+    padding: 0 0 8em;
   }
 
   .certificate__logo img {
@@ -70,20 +70,25 @@ style.
 
   .certificate__text {
     font-size: 1.375em;
-    padding: 0 0 1em;
+    padding: 0 0 .875em;
+    line-height: 1.375em;
+  }
+
+  .certificate__text--bold {
+    font-weight: 700;
   }
 
   .certificate__username {
     font-size: 3em;
-    padding: .375em 0 .75em;
+    padding: 0 0 .75em;
     color: #f05a22;
     font-weight: 900;
   }
 
   .certificate__id {
-    font-weight: 700;
-    font-size: 1.375em;
-    padding: 0 0 3em;
+    font-size: .875em;
+    padding: 3em 0 0;
+    width: 100%;
   }
 
   .certificate__course {
@@ -96,7 +101,8 @@ style.
     display: flex;
     justify-content: space-between;
     text-align: center;
-    padding: 0 0 1em;
+    padding: 0;
+    flex-wrap: wrap;
   }
 
   .certificate__column {
@@ -117,9 +123,9 @@ style.
   }
 
   .certificate__value img {
-    width: 100%;
+    width: 80%;
+    margin: 0 auto;
   }
-
 
   .certificate__label {
     padding: .5em 0 0;

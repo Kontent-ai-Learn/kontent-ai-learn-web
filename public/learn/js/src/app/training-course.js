@@ -5,7 +5,7 @@ const trainingCourse = (() => {
     if (!certificate) return '';
     const certIssue = certificate.issued_date.split('/').map(x => parseInt(x));
     const certExpiration = certificate.expiration_date ? certificate.expiration_date.split('/').map(x => parseInt(x)) : null;
-    const certName = encodeURIComponent(certificate.course_name);
+    const certName = encodeURIComponent(`${window.UIMessages.productName} ${certificate.course_name}`);
 
     return `<a href=${`https://www.linkedin.com/profile/add?startTask=${certName}&name=${certName}&organizationId=373060&issueYear=${certIssue[0]}&issueMonth=${certIssue[1]}&${certExpiration ? `expirationYear=${certExpiration[0]}&expirationMonth=${certExpiration[1]}` : ''}&certUrl=${!certificate.public_url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.public_url}`} target='_blank' ${isPreview ? window.resolveSmartLink.elementCodename('training___add_to_linkedin') : ''}>${UIMessages.addToLikedIn}</a>`;
   };
@@ -52,12 +52,13 @@ const trainingCourse = (() => {
     auth0.eventListeners();
   };
 
-  const requestInfo = async (codename, contentType, token) => {
+  const requestInfo = async (codename, contentType, attemptId, token) => {
     let accessType = 'public';
     const fetchOptions = {
       method: 'POST',
       body: JSON.stringify({
-        codename: codename
+        codename: codename,
+        attemptid: attemptId
       })
     };
 
@@ -84,9 +85,15 @@ const trainingCourse = (() => {
     if (!(window.trainingCourseCodename || window.trainingCertificationTestCodename)) return;
     let type = 'training-course';
     let codename = window.trainingCourseCodename;
+    let attemptId = null;
     if (window.trainingCertificationTestCodename) {
       codename = window.trainingCertificationTestCodename;
       type = 'training-certification';
+
+      if (window.attemptId) {
+        attemptId = window.attemptId;
+      }
+
     }
 
     let claims = null;
@@ -97,7 +104,7 @@ const trainingCourse = (() => {
     catch (e) { }
     finally {
       const token = claims ? claims.__raw : null;
-      await requestInfo(codename, type,  token);
+      await requestInfo(codename, type, attemptId, token);
       performUIActions();
     }
   };

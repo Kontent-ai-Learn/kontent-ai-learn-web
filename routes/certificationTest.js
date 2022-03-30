@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
-
 const Api2Pdf = require('api2pdf');
 const a2pClient = new Api2Pdf(process.env['Api2Pdf.ApiKey']);
-const fetch = require('node-fetch');
 const moment = require('moment');
+const download = require('download');
+const fs = require('fs');
 
 const handleCache = require('../helpers/handleCache');
 const commonContent = require('../helpers/commonContent');
@@ -16,6 +16,7 @@ const postprocessMarkup = require('../helpers/postprocessMarkup');
 const smartLink = require('../helpers/smartLink');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationEmail = require('../helpers/certification/email');
+const certificationData = require('../helpers/certification/data');
 const scorm = require('../helpers/scorm');
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
@@ -111,6 +112,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
     title: certificationTestItem.items[0].title.value,
     nextAttemptSeconds: certificationAttempt.getNextSeconds(attempt.start),
     attempt: attempt,
+    incorrect: certificationData.getIncorrect(attempt),
     content: certificationTestItem.items[0],
     postprocessMarkup: postprocessMarkup,
     slug: req.params.slug,
@@ -162,11 +164,11 @@ a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
   })
   .then(async () => {
       if (error) return next();
-      fetch(pdfResult.pdf).then(result => {
-        result.headers.forEach((v, n) => res.setHeader(n, v));
-        res.set('Content-disposition', `attachment; filename=${encodeURI(fileName)}`);
-        return result.body.pipe(res);
-      });
+      await download(pdfResult.pdf, 'public/learn/files');
+      setTimeout(() => {
+        fs.unlink(`public/learn/files/${fileName}`, () => null)
+      }, 60000);
+      return res.redirect(303, `${baseURL}/learn/files/${fileName}`);
   })
 }));
 
@@ -174,7 +176,12 @@ router.get('/exam/:attemptid/certificate/pdf', asyncHandler(async (req, res, nex
   const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
+  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
+    return commonContent.getUIMessages(res);
+  });
+
   return res.render('certificate/exam', {
+    UIMessages: UIMessages?.[0],
     attempt: attempt,
     moment: moment
   });
@@ -216,11 +223,11 @@ a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
   })
   .then(async () => {
       if (error) return next();
-      fetch(pdfResult.pdf).then(result => {
-        result.headers.forEach((v, n) => res.setHeader(n, v));
-        res.set('Content-disposition', `attachment; filename=${encodeURI(fileName)}`);
-        return result.body.pipe(res);
-      });
+      await download(pdfResult.pdf, 'public/learn/files');
+      setTimeout(() => {
+        fs.unlink(`public/learn/files/${fileName}`, () => null)
+      }, 60000);
+      return res.redirect(303, `${baseURL}/learn/files/${fileName}`);
   })
 }));
 

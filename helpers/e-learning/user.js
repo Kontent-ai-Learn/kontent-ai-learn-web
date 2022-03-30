@@ -47,16 +47,18 @@ const getUser = async (email, res) => {
 
   if (email) {
     trainingUser = await getTrainingUser(email, res);
-    if (email.endsWith('@kentico.com') || trainingUser) {
+    if (trainingUser) {
       user.email = email;
-
-      if (trainingUser) {
-        user.firstName = trainingUser.first_name.value;
-        user.lastName = trainingUser.last_name.value;
-      }
+      user.firstName = trainingUser.first_name.value;
+      user.lastName = trainingUser.last_name.value;
     } else {
       const userSubscriptionService = await subscriptionService.getUser(email);
       user = userSubscriptionService.user?.data;
+      if (!user) {
+        user = {
+          email: email
+        }
+      }
       errCode = userSubscriptionService.errCode;
     }
   }

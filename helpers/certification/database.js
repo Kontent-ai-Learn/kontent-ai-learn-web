@@ -2,14 +2,14 @@ const cosmos = require('../cosmos');
 const certificationData = require('./data');
 const elearningUser = require('../e-learning/user');
 
-const successfullAttemptExists = async (body) => {
+const successfullAttemptExists = async (body, timespan = 0) => {
   const { codename, email } = body;
   let attempt = null;
 
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
     const query = {
-        query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.certificate_expiration > @expirationAhead',
+        query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.certificate_expiration > @expirationAhead ORDER BY c.certificate_expiration DESC',
         parameters: [{
           name: '@email',
           value: email
@@ -18,7 +18,7 @@ const successfullAttemptExists = async (body) => {
           value: codename
         }, {
           name: '@expirationAhead',
-          value: new Date(new Date().getTime() + 86400000 * 7).toISOString()
+          value: new Date(new Date().getTime() + 86400000 * timespan).toISOString()
         }]
     };
 
