@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
-
 const Api2Pdf = require('api2pdf');
 const a2pClient = new Api2Pdf(process.env['Api2Pdf.ApiKey']);
-const fetch = require('node-fetch');
 const moment = require('moment');
+const download = require('download');
+const fs = require('fs');
 
 const handleCache = require('../helpers/handleCache');
 const commonContent = require('../helpers/commonContent');
@@ -164,11 +164,11 @@ a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
   })
   .then(async () => {
       if (error) return next();
-      fetch(pdfResult.pdf).then(result => {
-        result.headers.forEach((v, n) => res.setHeader(n, v));
-        res.set('Content-disposition', `attachment; filename=${encodeURI(fileName)}`);
-        return result.body.pipe(res);
-      });
+      await download(pdfResult.pdf, 'public/learn/files');
+      setTimeout(() => {
+        fs.unlink(`public/learn/files/${fileName}`, () => null)
+      }, 60000);
+      return res.redirect(303, `${baseURL}/learn/files/${fileName}`);
   })
 }));
 
@@ -223,11 +223,11 @@ a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
   })
   .then(async () => {
       if (error) return next();
-      fetch(pdfResult.pdf).then(result => {
-        result.headers.forEach((v, n) => res.setHeader(n, v));
-        res.set('Content-disposition', `attachment; filename=${encodeURI(fileName)}`);
-        return result.body.pipe(res);
-      });
+      await download(pdfResult.pdf, 'public/learn/files');
+      setTimeout(() => {
+        fs.unlink(`public/learn/files/${fileName}`, () => null)
+      }, 60000);
+      return res.redirect(303, `${baseURL}/learn/files/${fileName}`);
   })
 }));
 
