@@ -52,7 +52,7 @@
         color: #262524;
         text-decoration: none;
         display: block;
-        border: 1px solid #D3D2D2;
+        border: 3px solid #E8E8E8;
         border-radius: 3em 3em .75em 3em;
         transition: .25s border;
         padding: 1.5em 1.5em 1.5em 4.875em;
@@ -75,7 +75,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-weight: 400;
             color: #fff;
             width: 1.90476em;
             height: 1.90476em;
@@ -90,7 +89,7 @@
 
         &:hover,
         &:active {
-            border-color: #F05A22;
+            border-color: #231F20;
         }
 
         .selection--platforms & {
@@ -113,8 +112,8 @@
 
     &__img {
         width: auto;
-        max-width: 81px;
-        max-height: 81px;
+        max-width: 56px;
+        max-height: 56px;
     }
 
     &__title {
@@ -216,19 +215,21 @@
         color: #262524;
         text-decoration: none;
         display: block;
-        padding: 1em 1em 0.75em;
+        padding: 1.5em 1.5em 1em;
         border-radius: 2.25em;
         width: auto;
+        height: 100%;
+        box-sizing: border-box;
 
         &:hover,
         &:active {
-            border-color: #FF4C00;
+            border-color: #231F20;
             background-color: transparent;
         }
     }
     
     .selection__img-sizer {
-        height: 81px;
+        height: 56px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -240,13 +241,13 @@
     }
 
 	.selection__img {
-        max-height: 81px;
+        max-height: 56px;
         margin: 0;
 	}
 
 	.selection__title {
         text-align: center;
-        padding: .375em .5em;
+        padding: .375em 0;
         font-size: 1em;
 
         &:after {

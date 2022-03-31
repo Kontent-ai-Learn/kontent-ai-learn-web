@@ -45,27 +45,33 @@
                 position: absolute;
                 left: 0;
                 top: 0.5em;
-                border: 1px solid rgba(35,31,32,0.25);
+                border: 2px solid rgba(35,31,32,0.5);
             }
     
-            &:hover,
-            &--active {
+            &:hover {
                 margin: 0;
-                border: none;
-                font-weight: 300;
                 color: #F05A22;
+
+                &:before {
+                    border-color: #F05A22;
+                }
             }
 
             &--active {
+                &:before {
+                    border-color: #F05A22;
+                    background-color: #F05A22;
+                }
+
                 &:after {
                     position: absolute;
                     content: '';
-                    top: .675em;
-                    left: .5em;
+                    top: .8em;
+                    left: .6em;
                     width: .25em;
                     height: .675em;
                     transform: rotate(45deg);
-                    border: 2px solid #f05a22;
+                    border: 2px solid #fff;
                     border-width: 0 2px 2px 0;
                     border-radius: 2px;
                 }
@@ -80,10 +86,24 @@ ul.filter__list--toggle,
 
     li.filter__item,
     .filter__item {
-        border: 1px solid #d9d8d8;
-        padding: .5em 1em;
+        border: 2px solid #d9d8d8;
+        padding: .5em .875em;
         white-space: nowrap;
         text-align: center;
+        font-size: .875em;
+        font-weight: 700;
+
+        &:first-child {
+            border-radius: 26px 0 0 26px;
+            padding-left: 1.25em;
+            border-right: none;
+        }
+
+        &:last-child {
+            border-radius: 0 26px 26px 0;
+            padding-right: 1.25em;
+            border-left: none;
+        }
 
         &:before,
         &:after {
@@ -92,28 +112,19 @@ ul.filter__list--toggle,
 
         &:hover {
             color: #F05A22;
-            border: 1px solid #d9d8d8;
+            border-color: #d9d8d8;
         }
 
         &--active {
-            border: 1px solid #F05A22;
-            background-color: #fff3ef;
-            color: #F05A22;
-            font-weight: 500;
+            border-color: #F05A22;
+            background-color: #F05A22;
+            color: #fff;
 
             &:hover {
-                color: #F05A22;
-                border: 1px solid #F05A22;
-                font-weight: 500;
+                color: #fff;
+                background-color: #F05A22;
+                border-color: #F05A22;
             }
-        }
-
-        &:first-child {
-            border-radius: .5em 0 0 .5em;
-        }
-
-        &:last-child {
-            border-radius: 0 .5em .5em 0;
         }
     }
 }
@@ -129,4 +140,5 @@ ul.filter__list--toggle,
 .filter-label {
     display: block;
     padding: 0 .5em 0 0;
+    font-weight: 700;
 }
