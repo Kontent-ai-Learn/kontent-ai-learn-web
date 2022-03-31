@@ -7,7 +7,7 @@ nav.navigation
             .navigation__logo-wrapper
                 a.navigation__logo(href='/learn/', rel='noreferrer')
                     img(src='/learn/img/ui/logo.svg', alt='Kontent by Kentico Learning Center', width='128', height='42')
-            ul(class= `navigation__list${isNotHome ? '' : ' navigation__list--full'}`)
+            ul(class=`navigation__list`)
                 each item in navigation
                     if (item.system.type !== 'navigation_link')
                         li.navigation__item
@@ -20,7 +20,5 @@ nav.navigation
                         label.sr-only(for='nav-search') !{UIMessages ? UIMessages.search___placeholder.value : ''}
                         input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages ? UIMessages.search___placeholder.value : '')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
                         .autocomplete(data-search-autocomplete='')
-            a.navigation__app(href=`${process.env.appUrl ? process.env.appUrl : 'https://app.kontent.ai'}`, target='_blank', rel='noreferrer')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('link_to_app_tooltip'))
-                .navigation__app-tooltip !{UIMessages ? UIMessages.link_to_app_tooltip.value : ''}
-        if isNotHome
-            .navigation__trigger(data-search-trigger='', aria-hidden='true')
+            .navigation__auth(data-nav-auth)
+        .navigation__trigger(data-search-trigger='', aria-hidden='true')

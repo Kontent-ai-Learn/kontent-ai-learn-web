@@ -1,4 +1,4 @@
-(() => {
+const survey = (() => {
   const requestFormData = async (itemCodename, courseid, user, token) => {
     const fetchOptions = {
       method: 'POST',
@@ -96,7 +96,6 @@
     const courseid = window.helper.getParameterByName('courseid');
     if (!(token && codename && courseid)) return;
     const formData = await requestFormData(codename, courseid, user, token);
-    // console.log(formData);
 
     if (formData.code === 200) {
       renderForm(formData, elem);
@@ -111,12 +110,19 @@
     }
   };
 
-  const container = document.querySelector('[data-survey]');
-  if (container) {
-    window.addEventListener('load', () => {
-      auth0.ensureUserSignedIn(async (user) => {
+  const getInfo = async () => {
+    const container = document.querySelector('[data-survey]');
+    if (container) {
+      const user = await auth0.ensureUserSignedIn();
+      if (user) {
         await getSurvey(user);
-      });
-    });
-  }
+      } else {
+        await auth0.login();
+      }
+    }
+  };
+
+  return {
+    getInfo: getInfo
+  };
 })();

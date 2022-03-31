@@ -96,10 +96,9 @@ const trainingCourse = (() => {
 
     }
 
-    let claims = null;
+    let user = null;
     try {
-      await auth0.client.getTokenSilently();
-      claims = await auth0.client.getIdTokenClaims();
+      user = await auth0.ensureUserSignedIn();
     } 
     catch (e) { }
     finally {
@@ -111,5 +110,5 @@ const trainingCourse = (() => {
 
   return {
     getInfo: getInfo
-  }
+  };
 })();

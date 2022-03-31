@@ -3,7 +3,6 @@ const nodemon = require('gulp-nodemon');
 const uglifyes = require('uglify-es');
 const composer = require('gulp-uglify/composer');
 const uglify = composer(uglifyes, console);
-const babel = require('gulp-babel');
 const rename = require('gulp-rename');
 const concat = require('gulp-concat');
 const less = require('gulp-less');
@@ -79,8 +78,8 @@ gulp.task('js-app', () => {
       'public/learn/js/src/app/trigger-on-url-map.js',
       'public/learn/js/src/app/scrollto.js',
       'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
-      'public/learn/js/src/app/training-course.js',
       'public/learn/js/src/app/auth0.js',
+      'public/learn/js/src/app/training-course.js',
       'node_modules/@splidejs/splide/dist/js/splide.js',
       'public/learn/js/src/app/carousel.js',
       'public/learn/js/src/app/survey.js',
@@ -102,6 +101,8 @@ gulp.task('js-reference', () => {
       'public/learn/js/src/app/data-toggle.js',
       'public/learn/js/src/app/intercom.js',
       ...prismFiles,
+      'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
+      'public/learn/js/src/app/auth0.js',
       'public/learn/js/src/app/preview-warning.js',
       'public/learn/js/src/app/icon-tooltip.js',
       'public/learn/js/src/app/api-reference.js',
@@ -115,9 +116,6 @@ gulp.task('js-reference', () => {
       'public/learn/js/src/app/trigger-on-url-map.js'
     ])
     .pipe(concat('apireference.js'))
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
@@ -134,9 +132,6 @@ gulp.task('js-changelog', () => {
       'public/learn/js/src/filter/filter-changelog.js'
     ])
     .pipe(concat('changelog.js'))
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
@@ -151,9 +146,6 @@ gulp.task('js-elearning', () => {
       'public/learn/js/src/filter/filter-elearning.js'
     ])
     .pipe(concat('elearning.js'))
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
