@@ -102,7 +102,7 @@ const trainingCourse = (() => {
     } 
     catch (e) { }
     finally {
-      const token = claims ? claims.__raw : null;
+      const token = user ? user.__raw : null;
       await requestInfo(codename, type, attemptId, token);
       performUIActions();
     }
