@@ -92,7 +92,8 @@ const splitPayloadByContentType = (items) => {
         trainingUsers: [],
         trainingSubscriptions: [],
         trainingSurveys: [],
-        trainingCertificationTests: []
+        trainingCertificationTests: [],
+        emailNotifications: []
     };
 
     for (let i = 0; i < items.length; i++) {
@@ -131,6 +132,8 @@ const splitPayloadByContentType = (items) => {
             itemsByTypes.trainingSurveys.push(item);
         } else if (item.type === 'training_certification_test') {
             itemsByTypes.trainingCertificationTests.push(item);
+        } else if (item.type === 'email_notification') {
+            itemsByTypes.emailNotifications.push(item);
         }
     }
 
@@ -286,6 +289,7 @@ const processInvalidation = async (req, res) => {
         await invalidateAPISpecifications(itemsByTypes, KCDetails, res);
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'footer');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'UIMessages');
+        await invalidateGeneral(itemsByTypes, KCDetails, res, 'emailNotifications');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'notFound');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'redirectRules');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'releaseNotes');

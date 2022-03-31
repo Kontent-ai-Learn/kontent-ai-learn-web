@@ -117,7 +117,7 @@ app.use('/', (req, res) => res.redirect(301, '/learn/'));
 
 setIntervalAsync(async () => {
   await handleCache.poolCache();
-  await certificationEmail.handleExpirations();
+  await certificationEmail.handleExpirationNotifications();
 }, 300000);
 
 // catch 404 and forward to error handler

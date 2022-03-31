@@ -1,9 +1,6 @@
 const axios = require('axios');
 const cache = require('memory-cache');
 const cheerio = require('cheerio');
-// const fs = require('fs');
-// const { promisify } = require('util');
-// const readFileAsync = promisify(fs.readFile);
 
 const helper = {
     escapeHtml: (unsafe) => {
@@ -455,6 +452,20 @@ const helper = {
             path = path.slice(0, path.lastIndexOf('/'));
         }
         return `${path}/`;
+    },
+    makeLinksAbsolute: (domain, content) => {
+        const $ = cheerio.load(content);
+        const $links = $('a[href^="/"]');
+
+        $links.each(function () {
+            const $that = $(this);
+            let url = $that.attr('href');
+            url = `${domain}${url}`;
+            $that.attr('href', url);
+        });
+
+        const output = $.html();
+        return output.replace('<html><head></head><body>', '').replace('</body></html>', '');
     }
 };
 
