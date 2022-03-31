@@ -222,6 +222,7 @@ const handleUnusedItems = async (type, deliveryClient, urlMap) => {
     const { items, error } = await queryDeliveryType(type, 1, deliveryClient);
 
     if (items && items.items) {
+        items.items.forEach((item) => {
             let isInUrlMap = false;
             urlMap.forEach((mapItem) => {
                 if (item.system.codename === mapItem.codename) {
