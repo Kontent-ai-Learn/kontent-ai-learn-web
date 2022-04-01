@@ -20,9 +20,9 @@ const api = require('./api');
 const survey = require('./survey');
 const certificationTest = require('./certificationTest');
 
-const commonContent = require('../helpers/commonContent');
-const handleCache = require('../helpers/handleCache');
-const appHelper = require('../helpers/app');
+const getContent = require('../helpers/kontent/getContent');
+const cacheHandle = require('../helpers/cache/handle');
+const { pageExists } = require('../helpers/general/app');
 
 // Routes
 router.use('/api', express.json({
@@ -41,17 +41,17 @@ router.use('/form', express.text({
   type: '*/*'
 }), form);
 router.use('/', asyncHandler(async (req, res, next) => {
-  await handleCache.evaluateCommon(res, ['platformsConfig', 'urlMap', 'footer', 'UIMessages', 'home', 'navigationItems', 'articles', 'termDefinitions']);
+  await cacheHandle.evaluateCommon(res, ['platformsConfig', 'urlMap', 'footer', 'UIMessages', 'home', 'navigationItems', 'articles', 'termDefinitions']);
 
-  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return await commonContent.getUIMessages(res);
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return await getContent.UIMessages(res);
   });
   if (UIMessages && UIMessages.length) {
     res.locals.UIMessages = UIMessages[0];
   }
 
-  await handleCache.cacheAllAPIReferences(res);
-  const exists = await appHelper.pageExists(req, res, next);
+  await cacheHandle.apiReferences(res);
+  const exists = await pageExists(req, res, next);
 
   if (!exists) {
     return await urlAliases(req, res, next);

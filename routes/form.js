@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const commonContent = require('../helpers/commonContent');
-const recaptcha = require('../helpers/recaptcha');
-const jira = require('../helpers/jira');
-const handleCache = require('../helpers/handleCache');
+const getContent = require('../helpers/kontent/getContent');
+const recaptcha = require('../helpers/services/recaptcha');
+const jira = require('../helpers/services/jira');
+const cacheHandle = require('../helpers/cache/handle');
 
 const setFalseValidation = (validation, property, UIMessages) => {
     validation.isValid = false;
@@ -20,9 +20,9 @@ const validateReCaptcha = async (validation, data, UIMessages) => {
     return validation;
 };
 
-const validateDataFeedback = async (data, req, res) => {
-    const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-        return commonContent.getUIMessages(res);
+const validateDataFeedback = async (data, res) => {
+    const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+        return getContent.UIMessages(res);
     });
 
     let validation = {
@@ -46,7 +46,7 @@ const validateDataFeedback = async (data, req, res) => {
 const manageRequest = async (req, res, validate) => {
     const data = JSON.parse(req.body);
 
-    const validation = await validate(data, req, res);
+    const validation = await validate(data, res);
     return res.json(validation);
 };
 

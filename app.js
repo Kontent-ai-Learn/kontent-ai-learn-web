@@ -12,10 +12,10 @@ const consola = require('consola');
 const { setIntervalAsync } = require('set-interval-async/dynamic');
 const asyncHandler = require('express-async-handler');
 
-const appHelper = require('./helpers/app');
-const handleCache = require('./helpers/handleCache');
-const isPreview = require('./helpers/isPreview');
-const fastly = require('./helpers/fastly');
+const { handleKCKeys, getProjectLanguage } = require('./helpers/general/app');
+const cacheHandle = require('./helpers/cache/handle');
+const isPreview = require('./helpers/kontent/isPreview');
+const fastly = require('./helpers/services/fastly');
 const serviceCheckAll = require('./helpers/serviceCheck/all');
 const certificationEmail = require('./helpers/certification/email');
 
@@ -68,14 +68,14 @@ app.enable('trust proxy');
 app.use(async (req, res, next) => {
   res.locals.host = req.headers.host;
   res.locals.protocol = req.protocol;
-  appHelper.handleKCKeys(req, res);
+  handleKCKeys(req, res);
 
   if (req.cookies['connect.sid']) res.clearCookie('connect.sid');
 
   res = fastly.handleGlobalCaching(req, res);
 
   if (isPreview(res.locals.previewapikey)) {
-    await appHelper.getProjectLanguage(res);
+    await getProjectLanguage(res);
   }
   return next();
 });
@@ -116,7 +116,7 @@ app.use('/learn', siteRouter);
 app.use('/', (req, res) => res.redirect(301, '/learn/'));
 
 setIntervalAsync(async () => {
-  await handleCache.poolCache();
+  await cacheHandle.pool();
   await certificationEmail.handleExpirationNotifications();
 }, 300000);
 
@@ -144,7 +144,7 @@ app.use(async (err, req, res, _next) => { // eslint-disable-line no-unused-vars
 
   // render the error page
   req.err = err;
-  await handleCache.evaluateCommon(res, ['notFound']);
+  await cacheHandle.evaluateCommon(res, ['notFound']);
   return error(req, res);
 });
 

@@ -1,5 +1,10 @@
-const helper = require('../helperFunctions');
 const cheerio = require('cheerio');
+const {
+  removeNewLines,
+  removeQuotes,
+  removeUnnecessaryWhitespace,
+  stripTags
+} = require('../general/helper');
 
 const evaluateAttempt = (body, attempt) => {
   attempt.end = new Date().toISOString();
@@ -48,7 +53,7 @@ const getQuestions = (survey) => {
     const questionItem = {
       id: question.system.id,
       codename: question.system.codename,
-      name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(question.question.value)))).trim(),
+      name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(question.question.value)))).trim(),
       html: question.question.value,
       answers: [],
       type: question.system.type,
@@ -62,7 +67,7 @@ const getQuestions = (survey) => {
         const answerItem = {
           id: answer.system.id,
           codename: answer.system.codename,
-          name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(answer.answer.value)))).trim(),
+          name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(answer.answer.value)))).trim(),
           html: answer.answer.value,
           selected: false,
         }

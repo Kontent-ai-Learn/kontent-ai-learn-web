@@ -1,11 +1,11 @@
 const axios = require('axios');
 const CryptoJS = require('crypto-js');
 const moment = require('moment');
-const isPreview = require('./isPreview');
-const getUrlMap = require('./urlMap');
-const handleCache = require('./handleCache');
-const helper = require('./helperFunctions');
-const commonContent = require('./commonContent');
+const cacheHandle = require('../cache/handle');
+const { getDomain } = require('../general/helper');
+const getUrlMap = require('../general/urlMap');
+const getContent = require('../kontent/getContent');
+const isPreview = require('../kontent/isPreview');
 
 const settings = {
   auth: {
@@ -99,14 +99,14 @@ const getRegistrationData = async (registrationId) => {
 
 const getRegistrationLink = async (registrationId, surveyCodename, courseId, res) => {
   const url = `${settings.registrationsUrl}/${registrationId}/launchLink`;
-  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
   const redirectUrl = urlMap.find(item => item.codename === surveyCodename);
 
   const data = {
     expiry: 300,
-    redirectOnExitUrl: `${helper.getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
+    redirectOnExitUrl: `${getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
   };
   let linkData = {};
 
@@ -130,14 +130,14 @@ const getRegistrationLink = async (registrationId, surveyCodename, courseId, res
 
 const getCoursePreviewLink = async (courseId, surveyCodename, res) => {
   const url = `${settings.coursesUrl}/${courseId}/preview`;
-  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
   const redirectUrl = urlMap.find(item => item.codename === surveyCodename);
 
   const data = {
     expiry: 300,
-    redirectOnExitUrl: `${helper.getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
+    redirectOnExitUrl: `${getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
   };
   let linkData = {};
 
@@ -198,8 +198,8 @@ const getCourseId = (course, res) => {
 const scorm = {
   getTrainingRegistrationLink: async (id, codename, res) => {
     let linkData = null;
-    const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
-      return await commonContent.getTraniningCourse(res);
+    const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+      return await getContent.traniningCourse(res);
     });
     const course = trainingCourses.find(item => item.system.codename === codename);
 
@@ -242,8 +242,8 @@ const scorm = {
     let url = null;
     let progress = null;
 
-    const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-      return await commonContent.getUIMessages(res);
+    const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+      return await getContent.UIMessages(res);
     });
 
     if (!isPreview(res.locals.previewapikey)) {

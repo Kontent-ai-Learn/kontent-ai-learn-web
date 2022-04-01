@@ -1,27 +1,27 @@
-const commonContent = require('../helpers/commonContent');
-const postprocessMarkup = require('../helpers/postprocessMarkup');
-const helper = require('../helpers/helperFunctions');
-const handleCache = require('../helpers/handleCache');
-const smartLink = require('../helpers/smartLink');
-const isPreview = require('../helpers/isPreview');
+const getContent = require('../helpers/kontent/getContent');
+const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
+const helper = require('../helpers/general/helper');
+const cacheHandle = require('../helpers/cache/handle');
+const smartLink = require('../helpers/kontent/smartLink');
+const isPreview = require('../helpers/kontent/isPreview');
 const asyncHandler = require('express-async-handler');
 
 const error = asyncHandler(async (req, res) => {
-    const footer = await handleCache.ensureSingle(res, 'footer', async (res) => {
-        return commonContent.getFooter(res);
+    const footer = await cacheHandle.ensureSingle(res, 'footer', async (res) => {
+        return getContent.footer(res);
     });
-    const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-        return commonContent.getUIMessages(res);
-    });
-
-    const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
-
-    const content = await handleCache.ensureSingle(res, 'notFound', async () => {
-        return commonContent.getNotFound(res);
+    const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+        return getContent.UIMessages(res);
     });
 
-    const home = await handleCache.ensureSingle(res, 'home', async () => {
-        return commonContent.getHome(res);
+    const platformsConfigPairings = await getContent.platformsConfigPairings(res);
+
+    const content = await cacheHandle.ensureSingle(res, 'notFound', async () => {
+        return getContent.notFound(res);
+    });
+
+    const home = await cacheHandle.ensureSingle(res, 'home', async () => {
+        return getContent.home(res);
     });
 
     if (!footer || !UIMessages || !content || !home) {

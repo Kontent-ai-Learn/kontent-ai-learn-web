@@ -1,6 +1,6 @@
-const handleCache = require('./handleCache');
-const requestDelivery = require('./requestDelivery');
-const commonContent = require('./commonContent');
+const cacheHandle = require('../cache/handle');
+const requestDelivery = require('../kontent/requestDelivery');
+const getContent = require('../kontent/getContent');
 
 const getFirstPlatformByConfig = async (preselectedPlatform, items, res) => {
     const platformsConfig = await platforms.getPlatformsConfig(res);
@@ -42,8 +42,8 @@ const platforms = {
         return platform;
     },
     getPlatformsConfig: async (res) => {
-        const platformsConfig = await handleCache.ensureSingle(res, 'platformsConfig', async () => {
-            return commonContent.getPlatformsConfig(res);
+        const platformsConfig = await cacheHandle.ensureSingle(res, 'platformsConfig', async () => {
+            return getContent.platformsConfig(res);
         });
         return (platformsConfig && platformsConfig.length
         ? platformsConfig[0].options
@@ -64,7 +64,7 @@ const platforms = {
         }
 
         if (platformItem.length) {
-            content = await handleCache.evaluateSingle(res, platformItem[0].system.codename, async () => {
+            content = await cacheHandle.evaluateSingle(res, platformItem[0].system.codename, async () => {
                 return await requestDelivery({
                     codename: platformItem[0].system.codename,
                     type: 'article',

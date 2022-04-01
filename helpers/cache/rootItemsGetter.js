@@ -1,14 +1,14 @@
 const ROOT_CONTENT_TYPES = ['article', 'training_course2', 'training_survey', 'training_certification_test'];
 
-function getRootCodenamesOfSingleItem(item, allItems) {
+const getRootCodenamesOfSingleItem = (item, allItems) => {
     if (ROOT_CONTENT_TYPES.includes(item.type)) {
         return [];
     }
 
     return getRootParents(item.codename, allItems);
-}
+};
 
-function getRootParents(codename, allItems) {
+const getRootParents = (codename, allItems) => {
     let itemsToVisit = getDirectParents(codename, allItems);
     const visitedItems = [];
     const rootItemCodenames = [];
@@ -23,9 +23,9 @@ function getRootParents(codename, allItems) {
     }
 
     return rootItemCodenames;
-}
+};
 
-function processItem(item, context) {
+const processItem = (item, context) => {
     const itemCodename = item.system.codename;
 
     if (context.visitedItems.includes(itemCodename)) {
@@ -41,11 +41,11 @@ function processItem(item, context) {
     }
 }
 
-function getDirectParents(codename, allItems) {
+const getDirectParents = (codename, allItems) => {
     return allItems.filter(item => checkIfItemIsParent(item, codename));
-}
+};
 
-function checkIfItemIsParent(item, codename) {
+const checkIfItemIsParent = (item, codename) => {
     switch (item.system.type) {
         case 'code_samples':
             return item.code_samples.itemCodenames.includes(codename);
@@ -71,6 +71,6 @@ function checkIfItemIsParent(item, codename) {
         default:
             return false;
     }
-}
+};
 
 module.exports = getRootCodenamesOfSingleItem;

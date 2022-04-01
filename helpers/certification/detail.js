@@ -1,7 +1,7 @@
 const moment = require('moment');
 
-const handleCache = require('../handleCache');
-const commonContent = require('../commonContent');
+const cacheHandle = require('../cache/handle');
+const getContent = require('../kontent/getContent');
 const elearningUser = require('../e-learning/user');
 const certificationDatabase = require('./database');
 const certificationAttempt = require('./attempt');
@@ -86,9 +86,9 @@ const getPrivate = async (UIMessages, certificationTest, req, res) => {
   const data = {};
   const user = await elearningUser.getUser(req?.user?.email, res);
 
-  if (!user) {
+  if (user.code) {
     data.renderGeneralMessage = true;
-    data.textUIMessageCodename = 'sign_in_error_subscription_missing_text'; //errCode === 'CR404' ? 'sign_in_error_subscription_missing_text' : 'sign_in_error_text';
+    data.textUIMessageCodename = user.code === 'CR404' ? 'sign_in_error_subscription_missing_text' : 'sign_in_error_text';
     data.renderAs = 'text';
   } else if (!(await elearningUser.isCourseAvailable(user, certificationTest, res))) {
     data.renderGeneralMessage = true;
@@ -121,11 +121,11 @@ const getPublic = (UIMessages) => {
 
 const get = async (codename, req, res) => {
   let data = null;
-  const certificationTest = await handleCache.evaluateSingle(res, codename, async () => {
-    return await commonContent.getCertificationTest(res, codename);
+  const certificationTest = await cacheHandle.evaluateSingle(res, codename, async () => {
+    return await getContent.certificationTest(res, codename);
   });
-  const UIMessagesObj = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return await commonContent.getUIMessages(res);
+  const UIMessagesObj = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return await getContent.UIMessages(res);
   });
 
   const UIMessages = UIMessagesObj && UIMessagesObj.length ? UIMessagesObj[0] : null;
@@ -139,8 +139,8 @@ const get = async (codename, req, res) => {
 };
 
 const getByAttemptId = async (codename, attemptId, res) => {
-  const certificationTest = await handleCache.evaluateSingle(res, codename, async () => {
-    return await commonContent.getCertificationTest(res, codename);
+  const certificationTest = await cacheHandle.evaluateSingle(res, codename, async () => {
+    return await getContent.certificationTest(res, codename);
   });
 
   return {

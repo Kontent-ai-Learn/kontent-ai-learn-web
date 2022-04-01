@@ -1,11 +1,10 @@
 const cache = require('memory-cache');
 const requestDelivery = require('./requestDelivery');
-const ensureSingle = require('./ensureSingle');
+const ensureSingle = require('../cache/ensureSingle');
 const isPreview = require('./isPreview');
-const getUrlMap = require('./urlMap');
+const getUrlMap = require('../general/urlMap');
 
-const commonContent = {
-    getKCDetails: (res) => {
+    const KCDetails = (res) => {
         let UIMessages = res.locals.UIMessages
         if (!UIMessages) {
             const UIMessagesCached = cache.get(`UIMessages_${res.locals.projectid}`);
@@ -24,9 +23,8 @@ const commonContent = {
             isPreview: isPreview(res.locals.previewapikey),
             UIMessages: UIMessages,
         };
-    },
-    getTree: async (contentType, depth, res) => {
-        const KCDetails = commonContent.getKCDetails(res);
+    };
+    const tree = async (contentType, depth, res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -35,24 +33,24 @@ const commonContent = {
             depth: depth,
             resolveRichText: true,
             urlMap: urlMap,
-            ...KCDetails
+            ...KCDetails(res)
         });
-    },
-    getFooter: async (res) => {
+    };
+    const footer = async (res) => {
         return await requestDelivery({
             type: 'footer',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getSubNavigation: async (res, codename) => {
+    };
+    const subNavigation = async (res, codename) => {
         return await requestDelivery({
             type: 'navigation_item',
             depth: 4,
             codename: codename,
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getUIMessages: async (res) => {
+    };
+    const UIMessages = async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -60,10 +58,10 @@ const commonContent = {
             type: 'ui_messages',
             resolveRichText: true,
             urlMap: urlMap,
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getEmailNotifications: async (res) => {
+    };
+    const emailNotifications = async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -71,11 +69,10 @@ const commonContent = {
             type: 'email_notification',
             resolveRichText: true,
             urlMap: urlMap,
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getHome: async (res) => {
-        const KCDetails = commonContent.getKCDetails(res);
+    };
+    const home = async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -84,22 +81,22 @@ const commonContent = {
             depth: 4,
             resolveRichText: true,
             urlMap: urlMap,
-            ...KCDetails
+            ...KCDetails(res)
         });
-    },
-    getArticles: async (res) => {
+    };
+    const articles = async (res) => {
         return await requestDelivery({
             type: ['article', 'multiplatform_article'],
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getTrainingSubscriptions: async (res) => {
+    };
+    const trainingSubscriptions = async (res) => {
         return await requestDelivery({
             type: 'training_subscriptions',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getChangelog: async (res) => {
+    };
+    const changelog = async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -107,10 +104,10 @@ const commonContent = {
             codename: 'product_changelog',
             resolveRichText: true,
             urlMap: urlMap,
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getSurvey: async (res, codename) => {
+    };
+    const survey = async (res, codename) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -120,10 +117,10 @@ const commonContent = {
             resolveRichText: true,
             depth: 3,
             urlMap: urlMap,
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getCertificationTest: async (res, codename) => {
+    };
+    const certificationTest = async (res, codename) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -133,23 +130,22 @@ const commonContent = {
             codename: codename,
             resolveRichText: true,
             urlMap: urlMap,
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getTraniningCourse: async (res) => {
+    };
+    const traniningCourse = async (res) => {
         return await requestDelivery({
             type: 'training_course2',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getTraniningUser: async (res) => {
+    };
+    const traniningUser = async (res) => {
         return await requestDelivery({
             type: 'training_user',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getNotFound: async (res) => {
-        const KCDetails = commonContent.getKCDetails(res);
+    };
+    const notFound = async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -157,46 +153,46 @@ const commonContent = {
             type: 'not_found',
             resolveRichText: true,
             urlMap: urlMap,
-            ...KCDetails
+            ...KCDetails(res)
         });
-    },
-    getNavigationItems: async (res) => {
+    };
+    const navigationItems = async (res) => {
         return await requestDelivery({
             type: 'navigation_item',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getReferences: async (res) => {
+    };
+    const references = async (res) => {
         return await requestDelivery({
             type: 'zapi_specification',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getRedirectRules: async (res) => {
+    };
+    const redirectRules = async (res) => {
         return await requestDelivery({
             type: 'redirect_rule',
             order: {
                 field: 'elements.redirect_to',
                 type: 'ascending'
             },
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getTrainingPersonaTaxonomyGroup: async (res) => {
+    };
+    const trainingPersonaTaxonomyGroup = async (res) => {
         return await requestDelivery({
             data: 'taxonomy',
             taxonomy: 'training_persona',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getReleaseNoteType: async (res) => {
+    };
+    const releaseNoteType = async (res) => {
         return await requestDelivery({
             data: 'type',
             type: 'release_note',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getReleaseNotes: async (res) => {
+    };
+    const releaseNotes = async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -208,10 +204,10 @@ const commonContent = {
                 field: 'elements.release_date',
                 type: 'descending'
             },
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getTermDefinitions: async (res) => {
+    };
+    const termDefinitions = async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -222,19 +218,19 @@ const commonContent = {
             order: {
                 field: 'elements.term',
             },
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getPlatformsConfig: async (res) => {
+    };
+    const platformsConfig = async (res) => {
         return await requestDelivery({
             type: 'platform_picker',
             codename: 'platform_picker',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    getPlatformsConfigPairings: async (res) => {
+    };
+    const platformsConfigPairings = async (res) => {
         const cachedPlatforms = await ensureSingle(res, 'platformsConfig', async () => {
-            return await commonContent.getPlatformsConfig(res);
+            return await platformsConfig(res);
         });
         const pairings = [];
 
@@ -248,22 +244,22 @@ const commonContent = {
         }
 
         return pairings;
-    },
-    getLanguages: async (res) => {
+    };
+    const languages = async (res) => {
         return await requestDelivery({
             data: 'languages',
-            ...commonContent.getKCDetails(res)
+            ...KCDetails(res)
         });
-    },
-    normalizePlatforms: async (platforms, res) => {
+    };
+    const normalizePlatforms = async (platforms, res) => {
         const result = [];
         const order = [];
         let cachedPlatforms = await ensureSingle(res, 'platformsConfig', async () => {
-            return await commonContent.getPlatformsConfig(res);
+            return await platformsConfig(res);
         });
 
         if (!cachedPlatforms) {
-            cachedPlatforms = await commonContent.getPlatformsConfig(res);
+            cachedPlatforms = await platformsConfig(res);
         }
 
         if (platforms && cachedPlatforms && cachedPlatforms.length) {
@@ -294,6 +290,32 @@ const commonContent = {
 
         return result;
     }
-}
 
-module.exports = commonContent;
+module.exports = {
+    articles,
+    certificationTest,
+    changelog,
+    emailNotifications,
+    footer,
+    home,
+    KCDetails,
+    languages,
+    navigationItems,
+    normalizePlatforms,
+    notFound,
+    platformsConfig,
+    platformsConfigPairings,
+    redirectRules,
+    references,
+    releaseNotes,
+    releaseNoteType,
+    subNavigation,
+    survey,
+    termDefinitions,
+    trainingPersonaTaxonomyGroup,
+    trainingSubscriptions,
+    traniningCourse,
+    traniningUser,
+    tree,
+    UIMessages
+};

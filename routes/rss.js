@@ -4,22 +4,22 @@ const moment = require('moment');
 const { decode } = require('html-entities');
 const asyncHandler = require('express-async-handler');
 
-const handleCache = require('../helpers/handleCache');
-const commonContent = require('../helpers/commonContent');
-const helper = require('../helpers/helperFunctions');
-const getUrlMap = require('../helpers/urlMap');
+const cacheHandle = require('../helpers/cache/handle');
+const getContent = require('../helpers/kontent/getContent');
+const helper = require('../helpers/general/helper');
+const getUrlMap = require('../helpers/general/urlMap');
 
 router.get('/changelog', asyncHandler(async (req, res) => {
-    const home = await handleCache.ensureSingle(res, 'home', async () => {
-        return commonContent.getHome(res);
+    const home = await cacheHandle.ensureSingle(res, 'home', async () => {
+        return getContent.home(res);
     });
-    const changelog = await handleCache.ensureSingle(res, 'product_changelog', async () => {
-        return commonContent.getChangelog(res);
+    const changelog = await cacheHandle.ensureSingle(res, 'product_changelog', async () => {
+        return getContent.changelog(res);
     });
-    const releaseNotes = await handleCache.evaluateSingle(res, 'releaseNotes', async () => {
-        return await commonContent.getReleaseNotes(res);
+    const releaseNotes = await cacheHandle.evaluateSingle(res, 'releaseNotes', async () => {
+        return await getContent.releaseNotes(res);
     });
-    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+    const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });
 

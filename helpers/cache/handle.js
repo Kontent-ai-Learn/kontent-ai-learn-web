@@ -1,9 +1,9 @@
 const cache = require('memory-cache');
 const axios = require('axios');
 const util = require('util');
-const commonContent = require('./commonContent');
-const helper = require('./helperFunctions');
-const getUrlMap = require('./urlMap');
+const getContent = require('../kontent/getContent');
+const { getReferenceFiles, logInCacheKey } = require('../general/helper');
+const getUrlMap = require('../general/urlMap');
 
 const deleteCachePreviewCheck = (keyName, KCDetails, isPreviewRequest) => {
     if (isPreviewRequest && cache.get(`${keyName}_${KCDetails.projectid}`)) {
@@ -11,7 +11,7 @@ const deleteCachePreviewCheck = (keyName, KCDetails, isPreviewRequest) => {
     }
 };
 
-const deleteCache = (keyName, KCDetails) => {
+const remove = (keyName, KCDetails) => {
     cache.del(`${keyName}_${KCDetails.projectid}`);
 };
 
@@ -27,77 +27,77 @@ const deleteMultipleKeys = (startsWithString, keys) => {
     }
 };
 
-const getCache = (keyName, KCDetails) => {
+const get = (keyName, KCDetails) => {
     return cache.get(`${keyName}_${KCDetails.projectid}`);
 };
 
-const putCache = (keyName, data, KCDetails) => {
+const put = (keyName, data, KCDetails) => {
     cache.put(`${keyName}_${KCDetails.projectid}`, data);
 };
 
-const manageCache = async (keyName, dataRetrieval, KCDetails, isPreviewRequest, res) => {
+const manage = async (keyName, dataRetrieval, KCDetails, isPreviewRequest, res) => {
     deleteCachePreviewCheck(keyName, KCDetails, isPreviewRequest);
-    if (!getCache(keyName, KCDetails)) {
+    if (!get(keyName, KCDetails)) {
         const data = await dataRetrieval(res);
-        putCache(keyName, data, KCDetails);
+        put(keyName, data, KCDetails);
     }
-    return getCache(keyName, KCDetails);
+    return get(keyName, KCDetails);
 };
 
 const cacheKeys = [{
         name: 'platformsConfig',
-        method: commonContent.getPlatformsConfig
+        method: getContent.platformsConfig
     }, {
         name: 'urlMap',
         method: getUrlMap
     }, {
         name: 'footer',
-        method: commonContent.getFooter
+        method: getContent.footer
     }, {
         name: 'UIMessages',
-        method: commonContent.getUIMessages
+        method: getContent.UIMessages
     }, {
         name: 'home',
-        method: commonContent.getHome
+        method: getContent.home
     }, {
         name: 'articles',
-        method: commonContent.getArticles
+        method: getContent.articles
     }, {
         name: 'notFound',
-        method: commonContent.getNotFound
+        method: getContent.notFound
     }, {
         name: 'navigationItems',
-        method: commonContent.getNavigationItems
+        method: getContent.navigationItems
     }, {
         name: 'apiSpecifications',
-        method: commonContent.getReferences
+        method: getContent.references
     }, {
         name: 'releaseNotes',
-        method: commonContent.getReleaseNotes
+        method: getContent.releaseNotes
     }, {
         name: 'redirectRules',
-        method: commonContent.getRedirectRules
+        method: getContent.redirectRules
     }, {
         name: 'termDefinitions',
-        method: commonContent.getTermDefinitions
+        method: getContent.termDefinitions
     }, {
         name: 'trainingUsers',
-        method: commonContent.getTraniningUser
+        method: getContent.traniningUser
     }, {
         name: 'trainingSubscriptions',
-        method: commonContent.getTrainingSubscriptions
+        method: getContent.trainingSubscriptions
     }, {
         name: 'emailNotifications',
-        method: commonContent.getEmailNotifications
+        method: getContent.emailNotifications
     }
 ];
 
 const evaluateCommon = async (res, keysTohandle) => {
-    const KCDetails = commonContent.getKCDetails(res);
+    const KCDetails = getContent.KCDetails(res);
     const processCache = async (array) => {
         for await (const item of array) {
             if (keysTohandle.indexOf(item.name) > -1) {
-                await manageCache(item.name, async (res) => {
+                await manage(item.name, async (res) => {
                     return await item.method(res);
                 }, KCDetails, KCDetails.isPreview, res);
             }
@@ -108,32 +108,32 @@ const evaluateCommon = async (res, keysTohandle) => {
 };
 
 const evaluateSingle = async (res, keyName, method) => {
-    const KCDetails = commonContent.getKCDetails(res);
-    return await manageCache(keyName, async (res) => {
+    const KCDetails = getContent.KCDetails(res);
+    return await manage(keyName, async (res) => {
         return await method(res);
     }, KCDetails, KCDetails.isPreview);
 };
 
 const ensureSingle = async (res, keyName, method) => {
-    const KCDetails = commonContent.getKCDetails(res);
+    const KCDetails = getContent.KCDetails(res);
 
-    if (!getCache(keyName, KCDetails)) {
+    if (!get(keyName, KCDetails)) {
         const data = await method(res);
-        putCache(keyName, data, KCDetails);
+        put(keyName, data, KCDetails);
     }
-    return getCache(keyName, KCDetails);
+    return get(keyName, KCDetails);
 };
 
-const cacheAllAPIReferences = async (res, forceCacheRevalidate) => {
-    const KCDetails = commonContent.getKCDetails(res);
+const apiReferences = async (res, forceCacheRevalidate) => {
+    const KCDetails = getContent.KCDetails(res);
     const provideReferences = async (apiCodename, KCDetails) => {
-        await helper.getReferenceFiles(apiCodename, true, KCDetails, 'cacheAllAPIReferences');
+        await getReferenceFiles(apiCodename, true, KCDetails, 'apiReferences');
     };
     const keys = cache.keys();
     let references;
     if ((!(keys.filter(item => item.indexOf('reDocReference_') > -1).length) || !!forceCacheRevalidate) && !KCDetails.isPreview) {
         references = await evaluateSingle(res, 'apiSpecifications', async () => {
-            return commonContent.getReferences(res);
+            return getContent.references(res);
         });
 
         if (references && references.length) {
@@ -144,7 +144,7 @@ const cacheAllAPIReferences = async (res, forceCacheRevalidate) => {
     }
 };
 
-const poolCache = async () => {
+const pool = async () => {
     const log = {
         timestamp: (new Date()).toISOString(),
         pool: util.inspect(cache.get('webhook-payload-pool'), {
@@ -159,17 +159,17 @@ const poolCache = async () => {
         log.error = error && error.response ? error.response.data : '';
     }
 
-    helper.logInCacheKey('cache-interval-pool', log);
+    logInCacheKey('cache-interval-pool', log);
 };
 
 module.exports = {
     evaluateCommon,
     evaluateSingle,
-    cacheAllAPIReferences,
-    getCache,
-    putCache,
-    deleteCache,
-    poolCache,
+    apiReferences,
+    get,
+    put,
+    remove,
+    pool,
     deleteMultipleKeys,
     ensureSingle
 };

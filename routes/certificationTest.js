@@ -7,44 +7,44 @@ const moment = require('moment');
 const download = require('download');
 const fs = require('fs');
 
-const handleCache = require('../helpers/handleCache');
-const commonContent = require('../helpers/commonContent');
-const helper = require('../helpers/helperFunctions');
-const getUrlMap = require('../helpers/urlMap');
-const isPreview = require('../helpers/isPreview');
-const postprocessMarkup = require('../helpers/postprocessMarkup');
-const smartLink = require('../helpers/smartLink');
+const cacheHandle = require('../helpers/cache/handle');
+const getContent = require('../helpers/kontent/getContent');
+const helper = require('../helpers/general/helper');
+const getUrlMap = require('../helpers/general/urlMap');
+const isPreview = require('../helpers/kontent/isPreview');
+const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
+const smartLink = require('../helpers/kontent/smartLink');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationEmail = require('../helpers/certification/email');
 const certificationData = require('../helpers/certification/data');
-const scorm = require('../helpers/scorm');
+const scorm = require('../helpers/services/scorm');
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
-  const home = await handleCache.ensureSingle(res, 'home', async () => {
-    return commonContent.getHome(res);
+  const home = await cacheHandle.ensureSingle(res, 'home', async () => {
+    return getContent.home(res);
   });
 
   if (!home.length) {
     return next();
   }
 
-  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
   const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
   if (!urlMapItem) return next();
 
-  const certificationTestItem = await handleCache.evaluateSingle(res, urlMapItem.codename, async () => {
-    return await commonContent.getCertificationTest(res, urlMapItem.codename);
+  const certificationTestItem = await cacheHandle.evaluateSingle(res, urlMapItem.codename, async () => {
+    return await getContent.certificationTest(res, urlMapItem.codename);
   });
 
-  const footer = await handleCache.ensureSingle(res, 'footer', async () => {
-    return commonContent.getFooter(res);
+  const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
+    return getContent.footer(res);
   });
-  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return commonContent.getUIMessages(res);
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return getContent.UIMessages(res);
   });
-  const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
+  const platformsConfigPairings = await getContent.platformsConfigPairings(res);
   const siteIsPreview = isPreview(res.locals.previewapikey);
 
   return res.render('pages/certificationTest', {
@@ -73,15 +73,15 @@ router.post('/:slug', asyncHandler(async (req, res, next) => {
 }));
 
 router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
-  const home = await handleCache.ensureSingle(res, 'home', async () => {
-    return commonContent.getHome(res);
+  const home = await cacheHandle.ensureSingle(res, 'home', async () => {
+    return getContent.home(res);
   });
 
   if (!home.length) {
     return next();
   }
 
-  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
 
@@ -90,20 +90,20 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
   const urlMapItem = helper.getMapItemByUrl(url, urlMap);
   if (!urlMapItem) return next();
 
-  const certificationTestItem = await handleCache.evaluateSingle(res, urlMapItem.codename, async () => {
-    return await commonContent.getCertificationTest(res, urlMapItem.codename);
+  const certificationTestItem = await cacheHandle.evaluateSingle(res, urlMapItem.codename, async () => {
+    return await getContent.certificationTest(res, urlMapItem.codename);
   });
 
   const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
-  const footer = await handleCache.ensureSingle(res, 'footer', async () => {
-    return commonContent.getFooter(res);
+  const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
+    return getContent.footer(res);
   });
-  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return commonContent.getUIMessages(res);
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return getContent.UIMessages(res);
   });
-  const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
+  const platformsConfigPairings = await getContent.platformsConfigPairings(res);
   const siteIsPreview = isPreview(res.locals.previewapikey);
 
   return res.render('pages/certificationTestResult', {
@@ -176,8 +176,8 @@ router.get('/exam/:attemptid/certificate/pdf', asyncHandler(async (req, res, nex
   const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
-  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return commonContent.getUIMessages(res);
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return getContent.UIMessages(res);
   });
 
   return res.render('certificate/exam', {

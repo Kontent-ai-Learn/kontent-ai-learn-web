@@ -1,5 +1,5 @@
 const axios = require('axios');
-const consola = require('consola');
+const errorAppInsights = require('../error/appInsights');
 
 const settings = {
     auth: {
@@ -38,7 +38,7 @@ const jira = {
                 headers: settings.headers
             });
         } catch (error) {
-            consola.error(error.response.data);
+            errorAppInsights.log('JIRA_ERROR', error);
         }
     }
 }

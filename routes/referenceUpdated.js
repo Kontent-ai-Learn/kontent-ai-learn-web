@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const handleCache = require('../helpers/handleCache');
-const commonContent = require('../helpers/commonContent');
-const helper = require('../helpers/helperFunctions');
-const fastly = require('../helpers/fastly');
+const cacheHandle = require('../helpers/cache/handle');
+const getContent = require('../helpers/kontent/getContent');
+const helper = require('../helpers/general/helper');
+const fastly = require('../helpers/services/fastly');
 
 router.post('/', async (req, res) => {
     const event = req.body[0];
-    const KCDetails = commonContent.getKCDetails(res);
+    const KCDetails = getContent.KCDetails(res);
     let apiCodename;
 
     if (isValidationEvent(event)) {
@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
     }
 
     if (isReferenceDeletedEvent(event)) {
-        handleCache.deleteCache(`reDocReference_${apiCodename}`, KCDetails);
-        handleCache.deleteMultipleKeys('reference_');
+        cacheHandle.remove(`reDocReference_${apiCodename}`, KCDetails);
+        cacheHandle.deleteMultipleKeys('reference_');
     }
 
     res.end();

@@ -1,27 +1,26 @@
 const cache = require('memory-cache');
 const fs = require('fs');
-const commonContent = require('./commonContent');
-const app = require('../app');
-const requestDelivery = require('./requestDelivery');
+const getContent = require('../kontent/getContent');
+const requestDelivery = require('../kontent/requestDelivery');
 const getRootCodenamesOfSingleItem = require('./rootItemsGetter');
-const handleCache = require('./handleCache');
-const isPreview = require('./isPreview');
-const helper = require('./helperFunctions');
-const fastly = require('./fastly');
-const getUrlMap = require('./urlMap');
+const cacheHandle = require('../cache/handle');
+const isPreview = require('../kontent/isPreview');
+const { getLogItemCacheKey, removeLogItemCacheKey, getDomain } = require('../general/helper');
+const fastly = require('../services/fastly');
+const getUrlMap = require('../general/urlMap');
 
 const requestItemAndDeleteCacheKey = async (codename, type, KCDetails, res) => {
-    const originalItem = handleCache.getCache(codename, KCDetails);
+    const originalItem = cacheHandle.get(codename, KCDetails);
 
     if (originalItem && originalItem.length) {
         if (originalItem[0].redirect_urls) {
             await fastly.purgeToRedirectUrls(originalItem[0].redirect_urls, res);
         }
 
-        handleCache.deleteCache(codename, KCDetails);
+        cacheHandle.remove(codename, KCDetails);
     }
 
-    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+    const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });
     const options = {
@@ -41,7 +40,7 @@ const requestItemAndDeleteCacheKey = async (codename, type, KCDetails, res) => {
     let newItem = await requestDelivery(options);
 
     if (newItem && (newItem?.items?.length || newItem?.length)) {
-        handleCache.putCache(codename, newItem, KCDetails);
+        cacheHandle.put(codename, newItem, KCDetails);
 
         if (newItem.items) {
             newItem = newItem.items;
@@ -63,16 +62,16 @@ const deleteSpecificKeys = async (KCDetails, items, res) => {
 
 const revalidateReleaseNoteType = async (KCDetails, res) => {
     const key = 'releaseNoteContentType';
-    handleCache.deleteCache(key, KCDetails);
-    const releaseNoteType = await commonContent.getReleaseNoteType(res);
-    handleCache.putCache(key, releaseNoteType, KCDetails);
+    cacheHandle.remove(key, KCDetails);
+    const releaseNoteType = await getContent.releaseNoteType(res);
+    cacheHandle.put(key, releaseNoteType, KCDetails);
 };
 
 const revalidateTrainingCourseType = async (KCDetails, res) => {
     const key = 'trainingPersonaTaxonomyGroup';
-    handleCache.deleteCache(key, KCDetails);
-    const trainingCourseType = await commonContent.getTrainingPersonaTaxonomyGroup(res);
-    handleCache.putCache(key, trainingCourseType, KCDetails);
+    cacheHandle.remove(key, KCDetails);
+    const trainingCourseType = await getContent.trainingPersonaTaxonomyGroup(res);
+    cacheHandle.put(key, trainingCourseType, KCDetails);
 };
 
 const splitPayloadByContentType = (items) => {
@@ -141,7 +140,7 @@ const splitPayloadByContentType = (items) => {
 };
 
 const invalidatePDFItem = async (codename, res) => {
-    const pdfs = helper.getLogItemCacheKey('api2pdf-cache', 'codename', codename);
+    const pdfs = getLogItemCacheKey('api2pdf-cache', 'codename', codename);
 
     for await (const pdf of pdfs) {
         await fastly.purgePDF(pdf.filename, res);
@@ -150,7 +149,7 @@ const invalidatePDFItem = async (codename, res) => {
         });
     }
 
-    helper.removeLogItemCacheKey('api2pdf-cache', 'codename', codename);
+    removeLogItemCacheKey('api2pdf-cache', 'codename', codename);
 };
 
 const invalidatePDFs = async (items, res) => {
@@ -161,11 +160,17 @@ const invalidatePDFs = async (items, res) => {
 
 const getRootItems = async (items, KCDetails) => {
     const typesToSearch = ['article', 'callout', 'content_chunk', 'code_sample', 'code_samples', 'training_survey', 'training_certification_test', 'training_course2', 'training_question_for_survey_and_test', 'training_question_free_text', 'training_answer_for_survey_and_test', 'training_question_group'];
-    const allItems = await requestDelivery({
-        types: typesToSearch,
-        depth: 0,
-        ...KCDetails
-    });
+    let allItems = [];
+
+    for await (const type of typesToSearch) {
+        let typeItems = await requestDelivery({
+            type: type,
+            depth: 0,
+            ...KCDetails
+        });
+        if (typeItems?.items) typeItems = typeItems.items;
+        allItems = allItems.concat(typeItems);
+    }
 
     const rootCodenames = new Set();
     if (items && allItems) {
@@ -193,8 +198,8 @@ const invalidateGeneral = async (itemsByTypes, KCDetails, res, type, keyName) =>
     }
 
     if (itemsByTypes[type].length || itemsByTypes.home.length) {
-        handleCache.deleteCache(keyName, KCDetails);
-        await handleCache.evaluateCommon(res, [keyName]);
+        cacheHandle.remove(keyName, KCDetails);
+        await cacheHandle.evaluateCommon(res, [keyName]);
     }
 
     return false;
@@ -212,7 +217,7 @@ const invalidateMultiple = async (itemsByTypes, KCDetails, type, res) => {
 
 const invalidateArticles = async (itemsByTypes, KCDetails, res) => {
     if (itemsByTypes.home.length) {
-        const articles = handleCache.getCache('articles', KCDetails);
+        const articles = cacheHandle.get('articles', KCDetails);
         for (let i = 0; i < articles.length; i++) {
             itemsByTypes.articles.push({ codename: articles[i].system.codename })
         }
@@ -222,8 +227,8 @@ const invalidateArticles = async (itemsByTypes, KCDetails, res) => {
         await revalidateReleaseNoteType(KCDetails, res);
         await revalidateTrainingCourseType(KCDetails, res);
         await deleteSpecificKeys(KCDetails, itemsByTypes.articles, res);
-        handleCache.deleteCache('articles', KCDetails);
-        await handleCache.evaluateCommon(res, ['articles']);
+        cacheHandle.remove('articles', KCDetails);
+        await cacheHandle.evaluateCommon(res, ['articles']);
     }
 
     return false;
@@ -236,21 +241,21 @@ const invalidateAPISpecifications = async (itemsByTypes, KCDetails, res) => {
     }
 
     if (itemsByTypes.home.length) {
-        await handleCache.cacheAllAPIReferences(res, true);
+        await cacheHandle.apiReferences(res, true);
     }
 };
 
 const invalidateHome = async (res, KCDetails) => {
-    handleCache.deleteCache('home', KCDetails);
-    await handleCache.evaluateCommon(res, ['home']);
+    cacheHandle.remove('home', KCDetails);
+    await cacheHandle.evaluateCommon(res, ['home']);
 };
 
 const invalidateUrlMap = async (res, KCDetails) => {
-    handleCache.deleteCache('urlMap', KCDetails);
+    cacheHandle.remove('urlMap', KCDetails);
     if (!isPreview(res.locals.previewapikey)) {
-        await fastly.axiosPurge(helper.getDomain(), '/learn/urlmap/');
+        await fastly.axiosPurge(getDomain(), '/learn/urlmap/');
     }
-    await handleCache.evaluateCommon(res, ['urlMap']);
+    await cacheHandle.evaluateCommon(res, ['urlMap']);
 };
 
 const invalidateSubNavigation = async (res, keys, KCDetails) => {
@@ -258,10 +263,10 @@ const invalidateSubNavigation = async (res, keys, KCDetails) => {
     subNavigationKeys = subNavigationKeys.map(key => {
         return key.replace('subNavigation_', '').replace(`_${KCDetails.projectid}`, '');
     });
-    handleCache.deleteMultipleKeys('subNavigation_', keys);
+    cacheHandle.deleteMultipleKeys('subNavigation_', keys);
     for await (const codename of subNavigationKeys) {
-        await handleCache.evaluateSingle(res, `subNavigation_${codename}`, async () => {
-            return await commonContent.getSubNavigation(res, codename);
+        await cacheHandle.evaluateSingle(res, `subNavigation_${codename}`, async () => {
+            return await getContent.subNavigation(res, codename);
         });
     }
 };
@@ -275,10 +280,10 @@ const invalidateElearning = async (itemsByTypes, KCDetails, res) => {
     }
 };
 
-const processInvalidation = async (req, res) => {
+const invalidate = async (req, res) => {
     const items = cache.get('webhook-payload-pool') || [];
     if (items.length) {
-        const KCDetails = commonContent.getKCDetails(res);
+        const KCDetails = getContent.KCDetails(res);
         const keys = cache.keys();
         const itemsByTypes = splitPayloadByContentType(items);
         await fastly.purgeInitial(itemsByTypes, items, res);
@@ -304,11 +309,7 @@ const processInvalidation = async (req, res) => {
         await deleteSpecificKeys(KCDetails, itemsByTypes.trainingCertificationTests, res);
         await invalidatePDFs(items, res);
         await fastly.purgeFinal(itemsByTypes, req, res);
-
-        if (app.appInsights) {
-            app.appInsights.defaultClient.trackTrace({ message: 'URL_MAP_INVALIDATE: ' + items });
-        }
     }
 };
 
-module.exports = processInvalidation;
+module.exports = invalidate;

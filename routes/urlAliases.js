@@ -1,24 +1,24 @@
-const commonContent = require('../helpers/commonContent');
-const handleCache = require('../helpers/handleCache');
-const helper = require('../helpers/helperFunctions');
-const getUrlMap = require('../helpers/urlMap');
+const getContent = require('../helpers/kontent/getContent');
+const cacheHandle = require('../helpers/cache/handle');
+const helper = require('../helpers/general/helper');
+const getUrlMap = require('../helpers/general/urlMap');
 
 const urlAliases = async (req, res, next) => {
     const urlSplit = req.originalUrl.split('?');
     const queryParamater = urlSplit[1] ? urlSplit[1] : '';
     const originalUrl = urlSplit[0].trim().toLowerCase();
-    const articles = await handleCache.ensureSingle(res, 'articles', async () => {
-        return commonContent.getArticles(res);
+    const articles = await cacheHandle.ensureSingle(res, 'articles', async () => {
+        return getContent.articles(res);
     });
-    const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
-        return await commonContent.getTraniningCourse(res);
+    const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+        return await getContent.traniningCourse(res);
     });
-    const references = await handleCache.ensureSingle(res, 'apiSpecifications', async () => {
-        return commonContent.getReferences(res);
+    const references = await cacheHandle.ensureSingle(res, 'apiSpecifications', async () => {
+        return getContent.references(res);
     });
 
     const items = [...articles, ...references, ...trainingCourses];
-    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+    const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });
     let redirectUrl = [];
@@ -37,7 +37,7 @@ const urlAliases = async (req, res, next) => {
     });
 
     if (redirectUrl.length) {
-        return res.redirect(301, `${redirectUrl[0].url}${queryParamater ? '?' + queryParamater : ''}`);
+        return res.redirect(301, `${redirectUrl[0].url}${queryParamater ? `?${queryParamater}` : ''}`);
     } else {
         const err = new Error('Not Found');
         err.status = 404;

@@ -1,4 +1,4 @@
-const cosmos = require('../cosmos');
+const cosmos = require('../services/cosmos');
 const certificationData = require('./data');
 const elearningUser = require('../e-learning/user');
 
@@ -106,7 +106,7 @@ const checkCreateAttempt = async (body, res) => {
   if (!(attemptInPastDay && attemptInPastDay.length)) {
     const certificationTestData = await certificationData.getTest(codename, res);
 
-    const { user } = await elearningUser.getUser(email, res);
+    const user = await elearningUser.getUser(email, res);
 
     try {
       const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);

@@ -31,8 +31,9 @@ const getUser = async (email) => {
       content: error.response.data
     });
     errorAppInsights.log('SUBSCRIPTION_SERVICE_ERROR', error);
+
+    return error.response.data;
   }
-  return null;
 };
 
 module.exports = {

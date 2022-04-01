@@ -1,6 +1,6 @@
-const handleCache = require('../handleCache');
-const commonContent = require('../commonContent');
-const helper = require('../helperFunctions');
+const cacheHandle = require('../cache/handle');
+const getContent = require('../kontent/getContent');
+const { removeUnnecessaryWhitespace, removeNewLines, removeQuotes, stripTags } = require('../general/helper');
 
 const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) => {
   const questionsBuild = [];
@@ -30,7 +30,7 @@ const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) =
       const question = {
         id: questions[i].system.id,
         codename: questions[i].system.codename,
-        name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(certificationTest.question_groups.value[f].questions.value[i].question.value)))).trim(),
+        name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(certificationTest.question_groups.value[f].questions.value[i].question.value)))).trim(),
         html: questions[i].question.value,
         answers: []
       }
@@ -41,7 +41,7 @@ const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) =
         question.answers.push({
           id: answer.system.id,
           codename: answer.system.codename,
-          name: helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(answer.answer.value)))).trim(),
+          name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(answer.answer.value)))).trim(),
           html: answer.answer.value,
           correct: !!answer.is_this_a_correct_answer_.value.length,
           answer: false
@@ -69,8 +69,8 @@ const removeCorrectness = (data) => {
 };
 
 const getTest = async (codename, res) => {
-  let certificationTest = await handleCache.evaluateSingle(res, codename, async () => {
-    return await commonContent.getCertificationTest(res, codename);
+  let certificationTest = await cacheHandle.evaluateSingle(res, codename, async () => {
+    return await getContent.certificationTest(res, codename);
   });
   if (!(certificationTest.items && certificationTest.items.length)) return null;
   const certificationTestLinkedItems = certificationTest.linkedItems;

@@ -2,10 +2,10 @@ const express = require('express');
 const fs = require('fs');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
-const isPreview = require('../helpers/isPreview');
-const helper = require('../helpers/helperFunctions');
-const getUrlMap = require('../helpers/urlMap');
-const handleCache = require('../helpers/handleCache');
+const isPreview = require('../helpers/kontent/isPreview');
+const helper = require('../helpers/general/helper');
+const getUrlMap = require('../helpers/general/urlMap');
+const cacheHandle = require('../helpers/cache/handle');
 const Api2Pdf = require('api2pdf');
 const a2pClient = new Api2Pdf(process.env['Api2Pdf.ApiKey']);
 const download = require('download');
@@ -52,7 +52,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
 
     if (!url) return res.end();
 
-    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+    const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });
 

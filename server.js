@@ -30,14 +30,14 @@ const onError = error => {
         throw error;
     }
 
-    const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+    const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
 
     // Handle specific listen errors with friendly messages
     if (error.code === 'EACCES') {
-        consola.error(bind + ' requires elevated privileges');
+        consola.error(`${bind} requires elevated privileges`);
         process.exit(1);
     } else if (error.code === 'EACCES') {
-        consola.error(bind + ' is already in use');
+        consola.error(`${bind} is already in use`);
         process.exit(1);
     } else {
         throw error;
@@ -50,8 +50,8 @@ const server = http.createServer(app);
 // Event listener for HTTP server 'listening' event.
 const onListening = () => {
     const addr = server.address();
-    const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-    debug('Listening on ' + bind);
+    const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
+    debug(`Listening on ${bind}`);
 };
 
 // Listen on provided port, on all network interfaces.

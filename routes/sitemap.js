@@ -3,8 +3,8 @@ const asyncHandler = require('express-async-handler');
 const router = express.Router();
 const moment = require('moment');
 
-const helper = require('../helpers/helperFunctions');
-const getUrlMap = require('../helpers/urlMap');
+const helper = require('../helpers/general/helper');
+const getUrlMap = require('../helpers/general/urlMap');
 
 router.get('/', asyncHandler(async (req, res, next) => {
   const urlMap = await getUrlMap(res, true);

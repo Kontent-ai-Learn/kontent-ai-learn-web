@@ -4,10 +4,10 @@ const cache = require('memory-cache');
 const { signatureHelper } = require('@kentico/kontent-webhook-helper');
 const util = require('util');
 const asyncHandler = require('express-async-handler');
-const cacheInvalidate = require('../helpers/cacheInvalidate');
-const isPreview = require('../helpers/isPreview');
-const helper = require('../helpers/helperFunctions');
-const fastly = require('../helpers/fastly');
+const cacheInvalidate = require('../helpers/cache/invalidate');
+const isPreview = require('../helpers/kontent/isPreview');
+const helper = require('../helpers/general/helper');
+const fastly = require('../helpers/services/fastly');
 
 const isValidSignature = (req, secret) => {
     return signatureHelper.isValidSignatureFromString(req.body, secret, req.headers['x-kc-signature']);

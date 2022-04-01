@@ -1,7 +1,7 @@
-const handleCache = require('../handleCache');
-const commonContent = require('../commonContent');
-const cosmos = require('../cosmos');
 const surveyData = require('./data');
+const cacheHandle = require('../cache/handle');
+const getContent = require('../kontent/getContent');
+const cosmos = require('../services/cosmos');
 
 const getUserCourseAttempt = async (body) => {
   const { courseid, email } = body;
@@ -73,8 +73,8 @@ const createAttempt = async (body, user, res) => {
   const { codename, email, courseid } = body;
   let attempt = null;
 
-  const survey = await handleCache.evaluateSingle(res, codename, async () => {
-    return await commonContent.getSurvey(res, codename);
+  const survey = await cacheHandle.evaluateSingle(res, codename, async () => {
+    return await getContent.survey(res, codename);
   });
 
   const questions = surveyData.getQuestions(survey);

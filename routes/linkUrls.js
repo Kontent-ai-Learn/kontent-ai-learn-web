@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
-const handleCache = require('../helpers/handleCache');
-const helper = require('../helpers/helperFunctions');
-const getUrlMap = require('../helpers/urlMap');
+const cacheHandle = require('../helpers/cache/handle');
+const helper = require('../helpers/general/helper');
+const getUrlMap = require('../helpers/general/urlMap');
 
 router.get('/:codenames', asyncHandler(async (req, res, next) => {
     const codenames = req.params.codenames.split('/');
@@ -11,9 +11,9 @@ router.get('/:codenames', asyncHandler(async (req, res, next) => {
     if (codenames.length === 0) {
         return next();
     } else {
-        await handleCache.evaluateCommon(res, ['urlMap']);
+        await cacheHandle.evaluateCommon(res, ['urlMap']);
 
-        const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+        const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
 

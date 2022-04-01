@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
 
-const postprocessMarkup = require('../helpers/postprocessMarkup');
-const isPreview = require('../helpers/isPreview');
-const commonContent = require('../helpers/commonContent');
-const helper = require('../helpers/helperFunctions');
-const handleCache = require('../helpers/handleCache');
-const getUrlMap = require('../helpers/urlMap');
+const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
+const isPreview = require('../helpers/kontent/isPreview');
+const getContent = require('../helpers/kontent/getContent');
+const helper = require('../helpers/general/helper');
+const cacheHandle = require('../helpers/cache/handle');
+const getUrlMap = require('../helpers/general/urlMap');
 
 const getRedirectUrls = async (res) => {
-  const articles = await handleCache.evaluateSingle(res, 'articles', async () => {
-    return await commonContent.getArticles(res);
+  const articles = await cacheHandle.evaluateSingle(res, 'articles', async () => {
+    return await getContent.articles(res);
   });
-  const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
-    return await commonContent.getTraniningCourse(res);
+  const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+    return await getContent.traniningCourse(res);
   });
-  const references = await handleCache.evaluateSingle(res, 'apiSpecifications', async () => {
-    return commonContent.getReferences(res);
+  const references = await cacheHandle.evaluateSingle(res, 'apiSpecifications', async () => {
+    return getContent.references(res);
   });
-  const urlMap = await handleCache.evaluateSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.evaluateSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
 
@@ -45,8 +45,8 @@ const getRedirectUrls = async (res) => {
 };
 
 const getRedirectRules = async (res) => {
-  const redirectRules = await handleCache.evaluateSingle(res, 'redirectRules', async () => {
-    return await commonContent.getRedirectRules(res);
+  const redirectRules = await cacheHandle.evaluateSingle(res, 'redirectRules', async () => {
+    return await getContent.redirectRules(res);
   });
 
   const redirectMap = [];
@@ -81,18 +81,18 @@ const getRedirectRules = async (res) => {
 };
 
 router.get('/', async (req, res) => {
-  const footer = await handleCache.ensureSingle(res, 'footer', async () => {
-    return commonContent.getFooter(res);
+  const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
+    return getContent.footer(res);
   });
-  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return commonContent.getUIMessages(res);
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return getContent.UIMessages(res);
   });
-  const home = await handleCache.ensureSingle(res, 'home', async () => {
-    return commonContent.getHome(res);
+  const home = await cacheHandle.ensureSingle(res, 'home', async () => {
+    return getContent.home(res);
   });
   const redirectRules = await getRedirectRules(res);
   const redirectMap = await getRedirectUrls(res);
-  const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
+  const platformsConfigPairings = await getContent.platformsConfigPairings(res);
 
   return res.render('pages/redirectUrls', {
     req: req,

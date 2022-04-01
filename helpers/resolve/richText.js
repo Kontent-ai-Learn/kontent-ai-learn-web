@@ -1,7 +1,20 @@
 const moment = require('moment');
 const cheerio = require('cheerio');
-const helper = require('./helperFunctions');
-const smartLink = require('./smartLink');
+const {
+    escapeHtml,
+    escapeQuotesHtml,
+    generateAnchor,
+    getPrismClassName,
+    injectHTMLAttr,
+    isCodenameInMultipleChoice,
+    isNotEmptyRichText,
+    removeNewLines,
+    removeQuotes,
+    removeUnnecessaryWhitespace,
+    splitCarouselItems,
+    stripTags
+} = require('../general/helper');
+const smartLink = require('../kontent/smartLink');
 
 const getSmartLinkAttr = (config, id, type, codename) => {
     if (!config.isPreview) return '';
@@ -85,7 +98,7 @@ const getYoutubeTemplate = (cssClass, item, config) => {
                 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/${item.id.value}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
+        ${isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>Play video on <a href="https://www.youtube.com/watch?v=${item.id.value}"> https://www.youtube.com/watch?v=${item.id.value}</a></i>
         </p>
@@ -102,7 +115,7 @@ const getCodepenTemplate = (cssClass, item, config) => {
                 <iframe height="265" scrolling="no" src="https://codepen.io/${item.id.value}/?height=265&amp;theme-id=0" frameborder="no" allowtransparency="true" allowfullscreen="true"${getSmartLinkAttr(config, 'id', 'element')}></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
+        ${isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the code example on <a href="https://codepen.io/${item.id.value}">https://codepen.io/${item.id.value}</a></i>
         </p>
@@ -119,7 +132,7 @@ const getStackblitzTemplate = (cssClass, item, config) => {
                 <iframe src="https://stackblitz.com/edit/${item.id.value}?embed=1"></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
+        ${isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the code example on <a href="https://stackblitz.com/edit/${item.id.value}">https://stackblitz.com/edit/${item.id.value}</a></i>
         </p>
@@ -136,7 +149,7 @@ const getCodesandboxTemplate = (cssClass, item, config) => {
                 <iframe src="https://codesandbox.io/embed/${item.id.value}"></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
+        ${isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the code example on <a href="https://codesandbox.io/s/${item.id.value}">https://codesandbox.io/s/${item.id.value}</a></i>
         </p>
@@ -153,7 +166,7 @@ const getNetlifyTemplate = (cssClass, item, config, netlifyId) => {
                 <iframe src="https://${netlifyId[0]}.netlify.com${netlifyId[1]}"></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
+        ${isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the example on <a href="https://${netlifyId[0]}.netlify.com${netlifyId[1]}">https://${netlifyId[0]}.netlify.com${netlifyId[1]}</a></i>
         </p>
@@ -172,7 +185,7 @@ const getGiphyTemplate = (cssClass, item, config) => {
             </noscript>
             <a class="embed__link" href="https://giphy.com/gifs/${item.id.value}" target="_blank">via GIPHY</a>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
+        ${isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the image on <a href="https://giphy.com/embed/${item.id.value}">https://giphy.com/embed/${item.id.value}</a></i>
         </p>
@@ -190,7 +203,7 @@ const getDiagramsnetTemplate = (cssClass, item, config, elemId) => {
                 <iframe frameborder="0" src="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
             </noscript>
         </div>
-        ${helper.isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
+        ${isNotEmptyRichText(item.caption.value) ? `<div class="figcaption"${getSmartLinkAttr(config, 'caption', 'element')}${getSmartLinkAttrInner(item.caption.value, config)}>${item.caption.value}</div>` : ''}
         <p class="print-only"> 
             <i>See the diagram on <a href="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}">https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}</a></i>
         </p>
@@ -211,7 +224,7 @@ const getEmbeddedTemplate = (cssClass, item, config, netlifyId) => {
     }
 };
 
-const richTextResolverTemplates = {
+const richText = {
     embeddedContent: (item, config) => {
         let cssClass = '';
         let netlifyId = '';
@@ -310,7 +323,7 @@ const richTextResolverTemplates = {
                     `
 : ''}
                     ${item.title.value ? `<div class="selection__title"${getSmartLinkAttr(config, 'title', 'element')}>${item.title.value}</div>` : ''}
-                    ${helper.isNotEmptyRichText(item.description.value) ? `<div class="selection__description"${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</div>` : ''}
+                    ${isNotEmptyRichText(item.description.value) ? `<div class="selection__description"${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</div>` : ''}
                 </div>
             </li>
         `;
@@ -356,7 +369,7 @@ const richTextResolverTemplates = {
     },
     image: (item, config) => {
         if (item.image.value.length) {
-            const alt = item.image.value[0].description ? helper.escapeQuotesHtml(item.image.value[0].description) : '';
+            const alt = item.image.value[0].description ? escapeQuotesHtml(item.image.value[0].description) : '';
             const url = item.url.value.trim();
             const zoomable = item.zoomable.value.length && item.zoomable.value[0].codename === 'true';
             let cssClass = ' article__image-border'; // Always show border
@@ -379,7 +392,7 @@ const richTextResolverTemplates = {
                         <div class="print-only"> 
                             <img class="article__image ${attributes.cssClass}"${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''} alt="${alt}" data-src="${item.image.value[0].url}">
                         </div>
-                        ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</figcaption>` : ''}
+                        ${isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</figcaption>` : ''}
                     </figure>`;
             }
 
@@ -393,7 +406,7 @@ const richTextResolverTemplates = {
                             <img class="article__image ${attributes.cssClass}" alt="${alt}" src="${item.image.value[0].url}${attributes.transformationQueryString}"${getSmartLinkAttr(config, 'image', 'element')}>
                         ${closeLinkTag}
                     </noscript>
-                    ${helper.isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</figcaption>` : ''}
+                    ${isNotEmptyRichText(item.description.value) ? `<figcaption${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>${item.description.value}</figcaption>` : ''}
                 </figure>`;
         }
 
@@ -458,14 +471,14 @@ const richTextResolverTemplates = {
         `;
     },
     codeSample: (item, config, type) => {
-        const lang = helper.getPrismClassName(item.programming_language.value.length ? item.programming_language.value[0] : '');
+        const lang = getPrismClassName(item.programming_language.value.length ? item.programming_language.value[0] : '');
         let infoBar = '<div class="infobar"><ul class="infobar__languages">';
         item.programming_language.value.forEach(item => {
             infoBar += `<li class="infobar__lang">${item.name}</li>`;
         });
         infoBar += '</ul><div class="infobar__copy"><div class="infobar__tooltip"></div></div></div>';
 
-        return `<pre class="line-numbers" data-platform-code="${item.platform.value.length ? item.platform.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, type || 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'code', 'element')}>${infoBar}<div class="clean-code">${helper.escapeHtml(item.code.value)}</div><code class="${lang}">${helper.escapeHtml(item.code.value)}</code></pre>`;
+        return `<pre class="line-numbers" data-platform-code="${item.platform.value.length ? item.platform.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, type || 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'code', 'element')}>${infoBar}<div class="clean-code">${escapeHtml(item.code.value)}</div><code class="${lang}">${escapeHtml(item.code.value)}</code></pre>`;
     },
     contentSwitcher: (item, config) => {
         let switcher = `<div class="language-selector"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}><ul class="language-selector__list">`;
@@ -480,7 +493,7 @@ const richTextResolverTemplates = {
     codeSamples: (item, config) => {
         let codeExamples = `<div class="code-samples"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>`;
         item.code_samples.value.forEach(item => {
-            codeExamples += richTextResolverTemplates.codeSample(item, config, 'item');
+            codeExamples += richText.codeSample(item, config, 'item');
         });
         codeExamples += '</div>';
 
@@ -491,7 +504,7 @@ const richTextResolverTemplates = {
         const severityCodename = item.severity.value.length ? item.severity.value[0].codename : '';
         const severityName = item.severity.value.length ? item.severity.value[0].name : '';
         const displaySeverity = severityCodename === 'breaking_change';
-        const id = `a-${helper.generateAnchor(item.title.value)}`;
+        const id = `a-${generateAnchor(item.title.value)}`;
 
         let services = '';
         const servicesCodenames = [];
@@ -524,7 +537,7 @@ const richTextResolverTemplates = {
         `;
     },
     termDefinition: (item, config) => {
-        const id = `a-${helper.generateAnchor(item.term.value)}`;
+        const id = `a-${generateAnchor(item.term.value)}`;
         return `
             <div${getSmartLinkAttr(config, item.system.id, 'item')}>
                 <h2 id="${id}"${getSmartLinkAttr(config, 'term', 'element')}>
@@ -573,7 +586,7 @@ const richTextResolverTemplates = {
         const personas = item.personas___topics__training_persona.value;
         const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
         const url = urlMapItem.length ? urlMapItem[0].url : null;
-        const isFree = item.is_free ? helper.isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
+        const isFree = item.is_free ? isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
         const imageWidth = item.thumbnail.value[0] ? item.thumbnail.value[0].width || 0 : 0;
         const imageHeight = item.thumbnail.value[0] ? item.thumbnail.value[0].height || 0 : 0;
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
@@ -632,7 +645,7 @@ const richTextResolverTemplates = {
     carousel: (item) => {
         const markupBefore = '<div class="carousel splide"><div class="splide__track"><ul class="splide__list">';
         const markupAfter = '</ul></div></div>';
-        const carouselItems = helper.splitCarouselItems(item.content.value);
+        const carouselItems = splitCarouselItems(item.content.value);
 
         if (carouselItems.count > 1) {
             return `${markupBefore}${carouselItems.markup}${markupAfter}`;
@@ -656,11 +669,11 @@ const richTextResolverTemplates = {
                 </script>`;
     },
     question: (item) => {
-        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(item.question.value)))).trim();
+        const name = removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(item.question.value)))).trim();
         return `<fieldset class="question">
                     <legend class="question__legend">${item.question.value}</legend>
                     <div class="question__answers">
-                        ${helper.injectHTMLAttr({
+                        ${injectHTMLAttr({
                             markup: item.answers.resolveHtml(),
                             selector: '.answer__radio',
                             attr: 'name',
@@ -670,7 +683,7 @@ const richTextResolverTemplates = {
                 </fieldset>`;
     },
     questionFreeText: (item) => {
-        const name = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(item.question.value)))).trim();
+        const name = removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(item.question.value)))).trim();
         return `<fieldset class="question">
                     <label class="question__legend" for="${item.system.codename}">${item.question.value}</label>
                     <textarea class="question__textarea" name="${name}|${item.system.id}|textarea" for="${item.system.codename}"></textarea>
@@ -678,7 +691,7 @@ const richTextResolverTemplates = {
     },
     answer: (item) => {
         const content = item.answer.resolveHtml();
-        const value = helper.removeUnnecessaryWhitespace(helper.removeNewLines(helper.removeQuotes(helper.stripTags(content)))).trim();
+        const value = removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(content)))).trim();
         return `<div class="answer">
                     <div class="answer__wrapper">
                         <div class="answer__form-elements">
@@ -696,4 +709,4 @@ const richTextResolverTemplates = {
     }
 };
 
-module.exports = richTextResolverTemplates;
+module.exports = richText;

@@ -2,29 +2,29 @@ const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
-const postprocessMarkup = require('../helpers/postprocessMarkup');
-const isPreview = require('../helpers/isPreview');
-const commonContent = require('../helpers/commonContent');
-const helper = require('../helpers/helperFunctions');
-const handleCache = require('../helpers/handleCache');
-const smartLink = require('../helpers/smartLink');
+const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
+const isPreview = require('../helpers/kontent/isPreview');
+const getContent = require('../helpers/kontent/getContent');
+const smartLink = require('../helpers/kontent/smartLink');
+const helper = require('../helpers/general/helper');
+const cacheHandle = require('../helpers/cache/handle');
 
 router.get('/', asyncHandler(async (req, res, next) => {
-  const home = await handleCache.ensureSingle(res, 'home', async () => {
-    return commonContent.getHome(res);
+  const home = await cacheHandle.ensureSingle(res, 'home', async () => {
+    return getContent.home(res);
   });
 
   if (!home.length) {
     return next();
   }
 
-  const footer = await handleCache.ensureSingle(res, 'footer', async () => {
-    return commonContent.getFooter(res);
+  const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
+    return getContent.footer(res);
   });
-  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return commonContent.getUIMessages(res);
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return getContent.UIMessages(res);
   });
-  const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
+  const platformsConfigPairings = await getContent.platformsConfigPairings(res);
   const siteIsPreview = isPreview(res.locals.previewapikey);
 
   return res.render('pages/home', {

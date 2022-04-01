@@ -2,13 +2,13 @@ const express = require('express');
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const router = express.Router();
-const trainingCourseDetail = require('../helpers/trainingCourseDetail');
+const trainingCourseDetail = require('../helpers/e-learning/trainingCourseDetail');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationDetail = require('../helpers/certification/detail');
 const certificationEmail = require('../helpers/certification/email');
 const surveyAttempt = require('../helpers/survey/attempt');
 const elearningLandingPage = require('../helpers/e-learning/landingPage');
-const fastly = require('../helpers/fastly');
+const fastly = require('../helpers/services/fastly');
 
 const jwtCheck = jwt({
   secret: jwksRsa.expressJwtSecret({

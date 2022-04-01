@@ -1,5 +1,5 @@
 const { CosmosClient } = require('@azure/cosmos');
-const errorAppInsights = require('./error/appInsights')
+const errorAppInsights = require('../error/appInsights')
 
 const initDatabase = async (containerId) => {
   const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });

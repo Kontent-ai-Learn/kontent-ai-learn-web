@@ -1,14 +1,19 @@
 const axios = require('axios');
-const consola = require('consola');
-const isPreview = require('./isPreview');
-const handleCache = require('./handleCache');
-const helper = require('./helperFunctions');
-const commonContent = require('./commonContent');
-const getUrlMap = require('./urlMap');
+const cacheHandle = require('../cache/handle');
+const {
+  getDomain,
+  getRedirectUrls,
+  getUniqueUrls,
+  isAbsoluteUrl,
+  logInCacheKey
+} = require('../general/helper');
+const getUrlMap = require('../general/urlMap');
+const getContent = require('../kontent/getContent');
+const isPreview = require('../kontent/isPreview');
 
 const getChangelogQueryStringCombinations = async (res) => {
-  const releaseNoteContentType = await handleCache.evaluateSingle(res, 'releaseNoteContentType', async () => {
-      return await commonContent.getReleaseNoteType(res);
+  const releaseNoteContentType = await cacheHandle.evaluateSingle(res, 'releaseNoteContentType', async () => {
+      return await getContent.releaseNoteType(res);
   });
 
   const releaseNotesServices = releaseNoteContentType?.elements.filter(elem => elem.codename === 'affected_services')[0]?.options.map(item => item.codename) || [];
@@ -45,22 +50,21 @@ const axiosPurge = async (domain, path) => {
     } catch (error) {
       log.isError = true;
       log.data = error;
-      consola.error('Fastly not available');
     }
 
-    helper.logInCacheKey('fastly-purge', log);
+    logInCacheKey('fastly-purge', log);
 };
 
 const purge = async (key, res) => {
   if (isPreview(res.locals.previewapikey)) return;
 
-  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
 
   for (let i = 0; i < urlMap.length; i++) {
     if (urlMap[i].codename === key) {
-      const validDomain = helper.getDomain();
+      const validDomain = getDomain();
       if (!validDomain) return;
       await axiosPurge(validDomain, urlMap[i].url);
     }
@@ -70,10 +74,10 @@ const purge = async (key, res) => {
 const purgeToRedirectUrls = async (urls, res) => {
   if (isPreview(res.locals.previewapikey)) return;
 
-  const redirectUrls = helper.getRedirectUrls(urls);
+  const redirectUrls = getRedirectUrls(urls);
   if (!redirectUrls.length) return;
 
-  const validDomain = helper.getDomain();
+  const validDomain = getDomain();
   if (!validDomain) return;
 
   for (let i = 0; i < redirectUrls.length; i++) {
@@ -82,17 +86,17 @@ const purgeToRedirectUrls = async (urls, res) => {
 };
 
 const purgeRedirectRule = async (codename, res) => {
-  const redirectRules = await handleCache.evaluateSingle(res, 'redirectRules', async () => {
-    return await commonContent.getRedirectRules(res);
+  const redirectRules = await cacheHandle.evaluateSingle(res, 'redirectRules', async () => {
+    return await getContent.redirectRules(res);
   });
 
-  const validDomain = helper.getDomain();
+  const validDomain = getDomain();
   if (!validDomain) return;
 
   for (let i = 0; i < redirectRules.length; i++) {
     if (redirectRules[i].system.codename === codename) {
       await axiosPurge(validDomain, redirectRules[i].redirect_from.value);
-      if (!helper.isAbsoluteUrl(redirectRules[i].redirect_to.value)) {
+      if (!isAbsoluteUrl(redirectRules[i].redirect_to.value)) {
         await axiosPurge(validDomain, redirectRules[i].redirect_to.value);
       }
     }
@@ -100,11 +104,11 @@ const purgeRedirectRule = async (codename, res) => {
 };
 
 const purgeAllUrls = async (res) => {
-  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
-  const uniqueUrls = helper.getUniqueUrls(urlMap);
-  const validDomain = helper.getDomain();
+  const uniqueUrls = getUniqueUrls(urlMap);
+  const validDomain = getDomain();
   if (!validDomain) return;
 
   for (let i = 0; i < uniqueUrls.length; i++) {
@@ -114,11 +118,11 @@ const purgeAllUrls = async (res) => {
 };
 
 const purgeAllTechUrls = async (res) => {
-  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
 
-  const validDomain = helper.getDomain();
+  const validDomain = getDomain();
   if (!validDomain) return;
 
   for (let i = 0; i < urlMap.length; i++) {
@@ -149,7 +153,7 @@ const purgeInitial = async (itemsByTypes, items, res) => {
 const purgeFinal = async (itemsByTypes, req, res) => {
   if (isPreview(res.locals.previewapikey)) return;
   let allUrlsPurged = false;
-  const axiosDomain = helper.getDomain();
+  const axiosDomain = getDomain();
 
   if (itemsByTypes.releaseNotes.length && req.app.locals.changelogPath) {
     await axiosPurge(axiosDomain, req.app.locals.changelogPath);
@@ -202,7 +206,7 @@ const purgeFinal = async (itemsByTypes, req, res) => {
 };
 
 const purgePDF = async (filename) => {
-  const axiosDomain = helper.getDomain();
+  const axiosDomain = getDomain();
   await axiosPurge(axiosDomain, `/files/${filename}.pdf`);
 };
 

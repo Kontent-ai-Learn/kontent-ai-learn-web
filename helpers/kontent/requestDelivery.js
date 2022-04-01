@@ -1,14 +1,12 @@
 const { DeliveryClient } = require('@kentico/kontent-delivery');
-const {
-    deliveryConfig
-} = require('../config');
-const enhanceMarkup = require('./enhanceMarkup');
-const helpers = require('./helperFunctions');
-const app = require('../app');
+const { deliveryConfig } = require('./config');
+const enhanceMarkup = require('../resolve/enhanceMarkup');
+const { removeUnderscoreElems, sleep, removeLinkedItemsSelfReferences } = require('../general/helper');
 const isPreview = require('./isPreview');
+const errorAppInsights = require('../error/appInsights');
 
-const richTextResolverTemplates = require('./richTextResolverTemplates');
-const linksResolverTemplates = require('./linksResolverTemplates');
+const resolveRichText = require('../resolve/richText');
+const resolveLinks = require('../resolve/links');
 const compomentsInRichText = [];
 
 const defineDeliveryConfig = (config) => {
@@ -89,74 +87,74 @@ const defineQuery = (deliveryConfig, config) => {
 
 const componentsResolvers = [{
     type: 'embedded_content',
-    resolver: richTextResolverTemplates.embeddedContent
+    resolver: resolveRichText.embeddedContent
 }, {
     type: 'signpost',
-    resolver: richTextResolverTemplates.signpost
+    resolver: resolveRichText.signpost
 }, {
     type: 'signpost_item',
-    resolver: richTextResolverTemplates.signpostItem
+    resolver: resolveRichText.signpostItem
 }, {
     type: 'callout',
-    resolver: richTextResolverTemplates.callout
+    resolver: resolveRichText.callout
 }, {
     type: 'home__link_to_content_item',
-    resolver: richTextResolverTemplates.homeLinkToContentItem
+    resolver: resolveRichText.homeLinkToContentItem
 }, {
     type: 'image',
-    resolver: richTextResolverTemplates.image
+    resolver: resolveRichText.image
 }, {
     type: 'call_to_action',
-    resolver: richTextResolverTemplates.callToAction
+    resolver: resolveRichText.callToAction
 }, {
     type: 'home__link_to_external_url',
-    resolver: richTextResolverTemplates.homeLinkToExternalUrl
+    resolver: resolveRichText.homeLinkToExternalUrl
 }, {
     type: 'code_sample',
-    resolver: richTextResolverTemplates.codeSample
+    resolver: resolveRichText.codeSample
 }, {
     type: 'code_samples',
-    resolver: richTextResolverTemplates.codeSamples
+    resolver: resolveRichText.codeSamples
 }, {
     type: 'content_chunk',
-    resolver: richTextResolverTemplates.contentChunk
+    resolver: resolveRichText.contentChunk
 }, {
     type: 'content_switcher',
-    resolver: richTextResolverTemplates.contentSwitcher
+    resolver: resolveRichText.contentSwitcher
 }, {
     type: 'release_note',
-    resolver: richTextResolverTemplates.releaseNote
+    resolver: resolveRichText.releaseNote
 }, {
     type: 'changelog',
-    resolver: richTextResolverTemplates.changelog
+    resolver: resolveRichText.changelog
 }, {
     type: 'terminology',
-    resolver: richTextResolverTemplates.terminology
+    resolver: resolveRichText.terminology
 }, {
     type: 'training_course2',
-    resolver: richTextResolverTemplates.trainingCourse
+    resolver: resolveRichText.trainingCourse
 }, {
     type: 'quote',
-    resolver: richTextResolverTemplates.quote
+    resolver: resolveRichText.quote
 }, {
     type: 'carousel',
-    resolver: richTextResolverTemplates.carousel
+    resolver: resolveRichText.carousel
 }, {
     type: 'training_question_for_survey_and_test',
-    resolver: richTextResolverTemplates.question
+    resolver: resolveRichText.question
 }, {
     type: 'training_question_free_text',
-    resolver: richTextResolverTemplates.questionFreeText
+    resolver: resolveRichText.questionFreeText
 }, {
     type: 'training_answer_for_survey_and_test',
-    resolver: richTextResolverTemplates.answer
+    resolver: resolveRichText.answer
 }, {
     type: 'training_certification_test',
-    resolver: richTextResolverTemplates.certificationTest
+    resolver: resolveRichText.certificationTest
 }];
 
-const resolveRichText = (item, config) => {
-    item = linksResolverTemplates.resolveInnerRichTextLinks(item, config);
+const richTextResolver = (item, config) => {
+    item = resolveLinks.resolveInnerRichTextLinks(item, config);
 
     for (let i = 0; i < config.componentsResolvers.length; i++) {
         if (item.system.type === config.componentsResolvers[i].type) {
@@ -183,7 +181,7 @@ const resolveRichText = (item, config) => {
 
 const resolveLink = (link, config) => {
     if (config.urlMap && config.urlMap.length) {
-        return linksResolverTemplates.resolve(link, config);
+        return resolveLinks.resolve(link, config);
     } else {
         return '/';
     }
@@ -247,7 +245,7 @@ const getResponse = async (query, config) => {
     for await (let temp of temps) {
         if ((!error && ((response && response.hasStaleContent) || !response)) || error) {
             error = null;
-            await helpers.sleep(5000);
+            await sleep(5000);
             response = await query
                 .toPromise()
                 .catch(err => {
@@ -261,7 +259,7 @@ const getResponse = async (query, config) => {
     }
 
     if (response && response.items) {
-        response.items = helpers.removeLinkedItemsSelfReferences(response.items);
+        response.items = removeLinkedItemsSelfReferences(response.items);
 
         if (isPreview(config.previewapikey)) {
             response.items = removeArchivedLinkedItems(response.items);
@@ -270,7 +268,7 @@ const getResponse = async (query, config) => {
 
     if (config.resolveRichText && response && response.items) {
         response.items.forEach((elem) => {
-            const keys = helpers.removeUnderscoreElems(Object.keys(elem));
+            const keys = removeUnderscoreElems(Object.keys(elem));
 
             if (keys.length) {
                 keys
@@ -285,8 +283,8 @@ const getResponse = async (query, config) => {
         });
     }
 
-    if (error && app.appInsights) {
-        app.appInsights.defaultClient.trackTrace({ message: 'DELIVERY_API_ERROR: ' + error.message });
+    if (error) {
+        errorAppInsights.log('DELIVERY_API_ERROR', error.message);
     }
 
     return response;
@@ -300,7 +298,7 @@ const requestDelivery = async (config) => {
 
     if (config.resolveRichText) {
         queryConfigObject.richTextResolver = (item) => {
-            return resolveRichText(item, config);
+            return richTextResolver(item, config);
         };
         queryConfigObject.urlSlugResolver = (link) => {
             const links = resolveLink(link, config);

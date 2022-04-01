@@ -5,22 +5,22 @@ const moment = require('moment');
 const htmlparser2 = require('htmlparser2');
 const cheerio = require('cheerio');
 
-const requestDelivery = require('../helpers/requestDelivery');
-const postprocessMarkup = require('../helpers/postprocessMarkup');
-const commonContent = require('../helpers/commonContent');
-const helper = require('../helpers/helperFunctions');
-const handleCache = require('../helpers/handleCache');
-const platforms = require('../helpers/platforms');
-const customRichTextResolver = require('../helpers/customRichTextResolver');
-const smartLink = require('../helpers/smartLink');
-const getUrlMap = require('../helpers/urlMap');
-const scorm = require('../helpers/scorm');
-const fastly = require('../helpers/fastly');
+const requestDelivery = require('../helpers/kontent/requestDelivery');
+const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
+const getContent = require('../helpers/kontent/getContent');
+const helper = require('../helpers/general/helper');
+const cacheHandle = require('../helpers/cache/handle');
+const platforms = require('../helpers/general/platforms');
+const resolveCustomRichText = require('../helpers/resolve/customRichText');
+const smartLink = require('../helpers/kontent/smartLink');
+const getUrlMap = require('../helpers/general/urlMap');
+const scorm = require('../helpers/services/scorm');
+const fastly = require('../helpers/services/fastly');
 
 let cookiesPlatform;
 
 const getItemContent = async (item, urlMap, res) => {
-    const KCDetails = commonContent.getKCDetails(res);
+    const KCDetails = getContent.KCDetails(res);
 
     const settings = {
         type: item.type,
@@ -36,7 +36,7 @@ const getItemContent = async (item, urlMap, res) => {
         settings.urlMap = urlMap;
     }
 
-    let content = await handleCache.evaluateSingle(res, item.codename, async () => {
+    let content = await cacheHandle.evaluateSingle(res, item.codename, async () => {
         return await requestDelivery(settings);
     });
 
@@ -48,7 +48,7 @@ const getItemContent = async (item, urlMap, res) => {
 };
 
 const getRedocReference = async (apiCodename, res, KCDetails) => {
-    return await handleCache.evaluateSingle(res, `reDocReference_${apiCodename}`, async () => {
+    return await cacheHandle.evaluateSingle(res, `reDocReference_${apiCodename}`, async () => {
         return await helper.getReferenceFiles(apiCodename, false, KCDetails, 'getRedocReference');
     });
 };
@@ -106,14 +106,14 @@ const resolveLinks = (data, urlMap) => {
     return data;
 };
 
-const getContent = async (req, res) => {
-    const KCDetails = commonContent.getKCDetails(res);
+const getData = async (req, res) => {
+    const KCDetails = getContent.KCDetails(res);
 
-    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+    const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
         return await getUrlMap(res);
     });
-    const home = await handleCache.ensureSingle(res, 'home', async () => {
-        return await commonContent.getHome(res);
+    const home = await cacheHandle.ensureSingle(res, 'home', async () => {
+        return await getContent.home(res);
     });
 
     let slug = req.originalUrl.split('/')[2];
@@ -122,28 +122,28 @@ const getContent = async (req, res) => {
 
     let subNavigation;
     if (subnavCodename) {
-        subNavigation = await handleCache.evaluateSingle(res, `subNavigation_${subnavCodename}`, async () => {
-            return await commonContent.getSubNavigation(res, subnavCodename);
+        subNavigation = await cacheHandle.evaluateSingle(res, `subNavigation_${subnavCodename}`, async () => {
+            return await getContent.subNavigation(res, subnavCodename);
         });
     }
 
-    const footer = await handleCache.ensureSingle(res, 'footer', async () => {
-        return await commonContent.getFooter(res);
+    const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
+        return await getContent.footer(res);
     });
-    const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-        return await commonContent.getUIMessages(res);
+    const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+        return await getContent.UIMessages(res);
     });
-    const articles = await handleCache.ensureSingle(res, 'articles', async () => {
-        return await commonContent.getArticles(res);
+    const articles = await cacheHandle.ensureSingle(res, 'articles', async () => {
+        return await getContent.articles(res);
     });
-    const references = await handleCache.ensureSingle(res, 'apiSpecifications', async () => {
-        return await commonContent.getReferences(res);
+    const references = await cacheHandle.ensureSingle(res, 'apiSpecifications', async () => {
+        return await getContent.references(res);
     });
-    const termDefinitions = await handleCache.evaluateSingle(res, 'termDefinitions', async () => {
-        return await commonContent.getTermDefinitions(res);
+    const termDefinitions = await cacheHandle.evaluateSingle(res, 'termDefinitions', async () => {
+        return await getContent.termDefinitions(res);
     });
 
-    const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
+    const platformsConfigPairings = await getContent.platformsConfigPairings(res);
 
     const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
     if (!urlMapItem) return null;
@@ -164,7 +164,7 @@ const getContent = async (req, res) => {
         if (content[0].system.type === 'navigation_item' && content[0].subpages.value.length) {
             return {
                 redirectCode: 301,
-                redirectUrl: `${pathUrl}${content[0].subpages.value[0].url.value}/${queryHash ? '?' + queryHash : ''}`
+                redirectUrl: `${pathUrl}${content[0].subpages.value[0].url.value}/${queryHash ? `?${queryHash}` : ''}`
             }
         } else if (content[0].system.type === 'training_course2') {
             if (req.query.id) {
@@ -309,8 +309,8 @@ const getContent = async (req, res) => {
 
         if (containsChangelog) {
             req.app.locals.changelogPath = helper.getPathWithoutQS(req.originalUrl);
-            releaseNoteContentType = await handleCache.evaluateSingle(res, 'releaseNoteContentType', async () => {
-                return await commonContent.getReleaseNoteType(res);
+            releaseNoteContentType = await cacheHandle.evaluateSingle(res, 'releaseNoteContentType', async () => {
+                return await getContent.releaseNoteType(res);
             });
         }
 
@@ -320,12 +320,12 @@ const getContent = async (req, res) => {
 
         if (containsTrainingCourse) {
             req.app.locals.elearningPath = helper.getPathWithoutQS(req.originalUrl);
-            trainingPersonaTaxonomyGroup = await handleCache.evaluateSingle(res, 'trainingPersonaTaxonomyGroup', async () => {
-                return await commonContent.getTrainingPersonaTaxonomyGroup(res);
+            trainingPersonaTaxonomyGroup = await cacheHandle.evaluateSingle(res, 'trainingPersonaTaxonomyGroup', async () => {
+                return await getContent.trainingPersonaTaxonomyGroup(res);
             });
         }
 
-        body = await customRichTextResolver(body, res);
+        body = await resolveCustomRichText(body, res);
     }
 
     return {
@@ -342,8 +342,8 @@ const getContent = async (req, res) => {
         itemId: content && content.length ? content[0].system.id : null,
         title: content && content.length ? content[0].title.value : '',
         description: introduction ? helper.stripTags(introduction).substring(0, 300) : '',
-        platform: content && content.length && content[0].platform && content[0].platform.value.length ? await commonContent.normalizePlatforms(content[0].platform.value, res) : null,
-        availablePlatforms: await commonContent.normalizePlatforms(availablePlatforms, res),
+        platform: content && content.length && content[0].platform && content[0].platform.value.length ? await getContent.normalizePlatforms(content[0].platform.value, res) : null,
+        availablePlatforms: await getContent.normalizePlatforms(availablePlatforms, res),
         selectedPlatform: platforms.getSelectedPlatform(platformsConfig, cookiesPlatform),
         canonicalUrl: canonicalUrl,
         introduction: introduction || '',
@@ -372,7 +372,7 @@ const getContent = async (req, res) => {
 };
 
 router.get(['/other/:article', '/:main', '/:main/:scenario', '/:main/:scenario/:topic', '/:main/:scenario/:topic/:article', '/:main/:scenario/:topic/:article/:subarticle'], asyncHandler(async (req, res, next) => {
-    const data = await getContent(req, res, next);
+    const data = await getData(req, res, next);
     if (data && data.redirectUrl && data.redirectCode) return res.redirect(data.redirectCode, data.redirectUrl);
     if (!data) return next();
     return res.render(data.view, data);

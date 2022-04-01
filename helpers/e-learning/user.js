@@ -1,25 +1,25 @@
 const subscriptionService = require('./subscriptionService');
-const handleCache = require('../handleCache');
-const commonContent = require('../commonContent');
-const helper = require('../helperFunctions');
+const cacheHandle = require('../cache/handle');
+const getContent = require('../kontent/getContent');
+const { isCodenameInMultipleChoice } = require('../general/helper');
 
 const getTrainingUser = async (email, res) => {
-  const trainingUsers = await handleCache.evaluateSingle(res, 'trainingUsers', async () => {
-    return await commonContent.getTraniningUser(res);
+  const trainingUsers = await cacheHandle.evaluateSingle(res, 'trainingUsers', async () => {
+    return await getContent.traniningUser(res);
   });
 
   return trainingUsers.find(item => item.email.value === email);
 };
 
 const userHasElearningAccess = async (user, res) => {
-  if (user.email.endsWith('@kentico.com') || isFreeCourse || user.isTrainigUser) {
+  if (user.email.endsWith('@kentico.com') || user.isTrainigUser) {
     return true;
   }
 
   const userSubscriptions = user.customerSuccessSubscriptions;
 
-  const trainingSubscriptions = await handleCache.ensureSingle(res, 'trainingSubscriptions', async () => {
-    return await commonContent.getTrainingSubscriptions(res);
+  const trainingSubscriptions = await cacheHandle.ensureSingle(res, 'trainingSubscriptions', async () => {
+    return await getContent.trainingSubscriptions(res);
   });
 
   for (let i = 0; i < userSubscriptions.length; i++) {
@@ -38,7 +38,8 @@ const userHasElearningAccess = async (user, res) => {
 };
 
 const isCourseAvailable = async (user, content, res) => {
-  const isFreeCourse = content?.is_free ? helper.isCodenameInMultipleChoice(content?.is_free.value, 'yes') : false;
+  if (!user || user.error_id) return false;
+  const isFreeCourse = content?.is_free ? isCodenameInMultipleChoice(content?.is_free.value, 'yes') : false;
   if (isFreeCourse) return true;
   return await userHasElearningAccess(user, res);
 };
@@ -59,7 +60,8 @@ const getUser = async (email, res) => {
       return user;
     } else {
       const user = await subscriptionService.getUser(email);
-      if (user) return user.data;
+      if (user.error_id) return user;
+      if (user.data) return user.data;
       return {
         email: email
       }

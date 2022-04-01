@@ -3,8 +3,8 @@ const certificationData = require('./data');
 const elearningUser = require('../e-learning/user');
 
 const init = async (body, res) => {
-  const { user, trainingUser, errCode } = await elearningUser.getUser(body.email, res);
-  if (!(await elearningUser.isCourseAvailable(user, null, trainingUser, res)) || errCode) {
+  const user = await elearningUser.getUser(body.email, res);
+  if (!(await elearningUser.isCourseAvailable(user, null, res)) || user.error_id) {
     return {
       code: 401,
       data: null

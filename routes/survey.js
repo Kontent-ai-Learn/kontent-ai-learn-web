@@ -2,41 +2,41 @@ const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
-const handleCache = require('../helpers/handleCache');
-const commonContent = require('../helpers/commonContent');
-const helper = require('../helpers/helperFunctions');
-const getUrlMap = require('../helpers/urlMap');
-const isPreview = require('../helpers/isPreview');
-const postprocessMarkup = require('../helpers/postprocessMarkup');
-const smartLink = require('../helpers/smartLink');
+const cacheHandle = require('../helpers/cache/handle');
+const getContent = require('../helpers/kontent/getContent');
+const helper = require('../helpers/general/helper');
+const getUrlMap = require('../helpers/general/urlMap');
+const isPreview = require('../helpers/kontent/isPreview');
+const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
+const smartLink = require('../helpers/kontent/smartLink');
 const surveyAttempt = require('../helpers/survey/attempt')
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
-  const home = await handleCache.ensureSingle(res, 'home', async () => {
-    return commonContent.getHome(res);
+  const home = await cacheHandle.ensureSingle(res, 'home', async () => {
+    return getContent.home(res);
   });
 
   if (!home.length) {
     return next();
   }
 
-  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
   const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
   if (!urlMapItem) return next();
-  const content = await handleCache.evaluateSingle(res, urlMapItem.codename, async () => {
-    return await commonContent.getSurvey(res, urlMapItem.codename);
+  const content = await cacheHandle.evaluateSingle(res, urlMapItem.codename, async () => {
+    return await getContent.survey(res, urlMapItem.codename);
   });
   if (!content.items.length) return next();
 
-  const footer = await handleCache.ensureSingle(res, 'footer', async () => {
-    return commonContent.getFooter(res);
+  const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
+    return getContent.footer(res);
   });
-  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return commonContent.getUIMessages(res);
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return getContent.UIMessages(res);
   });
-  const platformsConfigPairings = await commonContent.getPlatformsConfigPairings(res);
+  const platformsConfigPairings = await getContent.platformsConfigPairings(res);
   const siteIsPreview = isPreview(res.locals.previewapikey);
 
   return res.render('pages/survey', {
@@ -66,11 +66,11 @@ router.post('/:slug', asyncHandler(async (req, res, next) => {
   let courseIdTrainingCourse = attempt.course_id.replace('_preview', '');
   courseIdTrainingCourse = courseIdTrainingCourse.replace('dev_', '');
 
-  const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
-  const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
-    return await commonContent.getTraniningCourse(res);
+  const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+    return await getContent.traniningCourse(res);
   });
   const trainingCourse = trainingCourses.find(item => item?.system.id === courseIdTrainingCourse);
   if (!trainingCourse) return next();

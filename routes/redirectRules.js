@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const handleCache = require('../helpers/handleCache');
-const commonContent = require('../helpers/commonContent');
-const helper = require('../helpers/helperFunctions')
+const cacheHandle = require('../helpers/cache/handle');
+const getContent = require('../helpers/kontent/getContent');
+const helper = require('../helpers/general/helper')
 
 router.get('*', async (req, res, next) => {
-    const rules = await handleCache.evaluateSingle(res, 'redirectRules', async () => {
-        return await commonContent.getRedirectRules(res);
+    const rules = await cacheHandle.evaluateSingle(res, 'redirectRules', async () => {
+        return await getContent.redirectRules(res);
     });
     const normalizedUrlPath = req.originalUrl.toLowerCase().split('?')[0];
 

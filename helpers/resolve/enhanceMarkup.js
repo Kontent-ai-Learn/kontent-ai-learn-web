@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const helper = require('./helperFunctions');
+const { generateAnchor, resolveMacros } = require('../general/helper');
 
 // !!!!! Keep using the "function" keyword in the ".each" callback instead of arrow function
 
@@ -22,7 +22,7 @@ const setWidthToImages = ($) => {
         const $that = $(this);
         const src = $that.attr('src');
         if (src && !src.endsWith('.gif')) {
-            $that.attr('src', src + '?w=926&fm=pjpg&auto=format');
+            $that.attr('src', `${src}?w=926&fm=pjpg&auto=format`);
         }
     });
 };
@@ -64,7 +64,7 @@ const createAnchors = ($) => {
 
     $headings.each(function () {
         const $that = $(this);
-        const anchorName = helper.generateAnchor($that.html());
+        const anchorName = generateAnchor($that.html());
         anchorNameList.push(anchorName);
         let anchorNameCount = 0;
         anchorNameList.forEach((name) => {
@@ -148,7 +148,7 @@ const removeMacroLinkProtocol = ($) => {
 
 const enhanceMarkup = (resolvedData, config) => {
     let text = resolvedData.html;
-    text = helper.resolveMacros(text);
+    text = resolveMacros(text);
     const $ = cheerio.load(text);
 
     replaceNodeWithItsContent($, 'p.kc-linked-item-wrapper, p:empty');

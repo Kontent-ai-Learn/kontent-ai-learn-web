@@ -1,16 +1,16 @@
-const elearningUser = require('../e-learning/user');
-const surveyDatabase = require('./database');
 const surveyData = require('./data');
-const handleCache = require('../handleCache');
-const commonContent = require('../commonContent');
-const scorm = require('../scorm');
-const getUrlMap = require('../urlMap');
+const surveyDatabase = require('./database');
+const elearningUser = require('../e-learning/user');
+const cacheHandle = require('../cache/handle');
+const getContent = require('../kontent/getContent');
+const scorm = require('../services/scorm');
+const getUrlMap = require('../general/urlMap');
 
 const init = async (req, res) => {
   let courseIdTrainingCourse = req.body.courseid.replace('_preview', '');
   courseIdTrainingCourse = courseIdTrainingCourse.replace('dev_', '');
-  const trainingCourses = await handleCache.evaluateSingle(res, 'trainingCourses', async () => {
-    return await commonContent.getTraniningCourse(res);
+  const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+    return await getContent.traniningCourse(res);
   });
   const trainingCourse = trainingCourses.find(item => item.system.id === courseIdTrainingCourse);
 
@@ -19,7 +19,7 @@ const init = async (req, res) => {
   const userSubmittedSurvey = await surveyDatabase.getUserCourseAttempt(req.body);
   const user = await elearningUser.getUser(req.body.email, res);
   if (!(await elearningUser.isCourseAvailable(user, trainingCourse, res)) || !user || !trainingCourse || !userCompletedCourse || userSubmittedSurvey) {
-    const urlMap = await handleCache.ensureSingle(res, 'urlMap', async () => {
+    const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
       return await getUrlMap(res);
     });
     const urlMapItem = urlMap.find(item => item.codename === trainingCourse.system.codename);

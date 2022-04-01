@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const helpers = require('./helperFunctions');
+const { removeUnderscoreElems } = require('../general/helper');
 
 const updateLinkAttribute = (element, resolvedUrl, link) => {
     const $ = cheerio.load(element.value);
@@ -46,7 +46,7 @@ const resolveLinkUrlsInElement = (element, config) => {
     });
 };
 
-const linksResolverTemplates = {
+const links = {
     resolve: (item, config) => {
         let url = [];
 
@@ -63,7 +63,7 @@ const linksResolverTemplates = {
         }
     },
     resolveInnerRichTextLinks: (item, config) => {
-        const keys = helpers.removeUnderscoreElems(Object.keys(item));
+        const keys = removeUnderscoreElems(Object.keys(item));
         keys
             .filter((key) =>
                 Object.prototype.hasOwnProperty.call(item, key) &&
@@ -76,4 +76,4 @@ const linksResolverTemplates = {
     }
 };
 
-module.exports = linksResolverTemplates;
+module.exports = links;

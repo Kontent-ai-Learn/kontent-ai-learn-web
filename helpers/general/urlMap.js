@@ -1,13 +1,9 @@
-const {
-    DeliveryClient
-} = require('@kentico/kontent-delivery');
-const {
-    deliveryConfig
-} = require('../config');
-const app = require('../app');
-const requestDelivery = require('./requestDelivery');
-const helper = require('./helperFunctions');
-const ensureSingle = require('./ensureSingle');
+const { DeliveryClient } = require('@kentico/kontent-delivery');
+const { deliveryConfig } = require('../kontent/config');
+const requestDelivery = require('../kontent/requestDelivery');
+const { replaceWhitespaceWithDash, sleep, removeLinkedItemsSelfReferences } = require('./helper');
+const ensureSingle = require('../cache/ensureSingle');
+const errorAppInsights = require('../error/appInsights');
 let fields = ['codename', 'url'];
 
 const getMapItem = (data) => {
@@ -79,7 +75,7 @@ const handleReferenceHash = (settings) => {
     let hash = '';
 
     if (settings.item.system.type === 'zapi__category') {
-        hash = `#tag/${helper.replaceWhitespaceWithDash(settings.item.name.value)}`;
+        hash = `#tag/${replaceWhitespaceWithDash(settings.item.name.value)}`;
     } else if (settings.item.system.type === 'zapi_path_operation') {
         hash = `#operation/${settings.item.url.value}`;
     } else if (settings.item.system.type === 'zapi_security_scheme') {
@@ -197,7 +193,7 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
     for await (let temp of temps) {
         if ((!error && ((items && items.hasStaleContent) || !items)) || error) {
             error = null;
-            await helper.sleep(5000);
+            await sleep(5000);
             items = await query
                 .toPromise()
                 .catch(err => {
@@ -210,7 +206,7 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
         }
     }
 
-    items.items = helper.removeLinkedItemsSelfReferences(items.items);
+    items.items = removeLinkedItemsSelfReferences(items.items);
 
     return {
         items: items,
@@ -242,8 +238,8 @@ const handleUnusedItems = async (type, deliveryClient, urlMap) => {
         });
     }
 
-    if (error && app.appInsights) {
-        app.appInsights.defaultClient.trackTrace({ message: 'DELIVERY_API_ERROR: ' + error.message });
+    if (error) {
+        errorAppInsights.log('DELIVERY_API_ERROR', items);
     }
 
     return urlMap;
@@ -266,8 +262,8 @@ const handleContentType = async (deliveryClient, urlMap, codename, pathSegment) 
         });
     }
 
-    if (error && app.appInsights) {
-        app.appInsights.defaultClient.trackTrace({ message: 'DELIVERY_API_ERROR: ' + error.message });
+    if (error) {
+        errorAppInsights.log('DELIVERY_API_ERROR', items);
     }
 
     return urlMap;
@@ -300,8 +296,8 @@ const getUrlMap = async (res, isSitemap) => {
         fields = ['codename', 'url', 'type'];
     }
 
-    if (error && app.appInsights) {
-        app.appInsights.defaultClient.trackTrace({ message: 'DELIVERY_API_ERROR: ' + error.message });
+    if (error) {
+        errorAppInsights.log('DELIVERY_API_ERROR', items);
     }
 
     let urlMap = handleNodes({

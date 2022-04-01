@@ -1,11 +1,11 @@
 
 const axios = require('axios');
-const sendSendGridEmail = require('../sendgrid');
+const sendGridEmail = require('../services/sendgrid');
 const certificationDatabase = require('./database')
 const elearningUser = require('../e-learning/user');
-const handleCache = require('../handleCache');
-const commonContent = require('../commonContent');
-const helper = require('../helperFunctions');
+const cacheHandle = require('../cache/handle');
+const getContent = require('../kontent/getContent');
+const { makeLinksAbsolute, getDomain } = require('../general/helper');
 
 const resolveMacros = (text, macros) => {
   return text.replace(/{[^}]+}/g, (match) => {
@@ -14,9 +14,9 @@ const resolveMacros = (text, macros) => {
 };
 
 const getMacrosValues = async (attempt, res) => {
-  const { user } = await elearningUser.getUser(attempt.email, res);
-  const UIMessages = await handleCache.ensureSingle(res, 'UIMessages', async () => {
-    return await commonContent.getUIMessages(res);
+  const user = await elearningUser.getUser(attempt.email, res);
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return await getContent.UIMessages(res);
   });
   const productName = UIMessages[0].product_name.value;
   let title = attempt.test.title;
@@ -31,8 +31,8 @@ const getMacrosValues = async (attempt, res) => {
 };
 
 const getEmailInfo = async (attempt, codename, res) => {
-  const emailNotifications = await handleCache.ensureSingle(res, 'emailNotifications', async () => {
-    return await commonContent.getEmailNotifications(res);
+  const emailNotifications = await cacheHandle.ensureSingle(res, 'emailNotifications', async () => {
+    return await getContent.emailNotifications(res);
   });
   const template = emailNotifications.find(item => item.system.codename === codename);
   if (!template) return null;
@@ -43,7 +43,7 @@ const getEmailInfo = async (attempt, codename, res) => {
     recipient: attempt.email,
     sender_name: template.sender_name.value || 'Kontent Learn',
     subject: resolveMacros(template.subject.value, macros),
-    text: helper.makeLinksAbsolute(helper.getDomain(), resolveMacros(template.content.value, macros)),
+    text: makeLinksAbsolute(getDomain(), resolveMacros(template.content.value, macros)),
   };
 };
 
@@ -52,7 +52,7 @@ const sendCongrats = async (attempt, res) => {
   if (!(attempt.score >= attempt.test.score_to_pass && attempt.end && expirationValid && !attempt.email_notifications.congrats)) return;
 
   const emailInfo = await getEmailInfo(attempt, 'email_certificate_ready_for_download', res);
-  const emailSent = await sendSendGridEmail(emailInfo);
+  const emailSent = await sendGridEmail.send(emailInfo);
   if (!emailSent) return;
   attempt.email_notifications.congrats = new Date().toISOString();
   certificationDatabase.updateAttempt(attempt);
@@ -63,7 +63,7 @@ const sendExpirationAhead = async (attempt, res) => {
   if (!(attempt.score >= attempt.test.score_to_pass && attempt.end && expirationValid && !attempt.email_notifications.expriration_ahead)) return;
 
   const emailInfo = await getEmailInfo(attempt, 'email_certificate_expires_soon', res);
-  const emailSent = await sendSendGridEmail(emailInfo);
+  const emailSent = await sendGridEmail.send(emailInfo);
   if (!emailSent) return;
   attempt.email_notifications.expriration_ahead = new Date().toISOString();
   certificationDatabase.updateAttempt(attempt);
@@ -74,7 +74,7 @@ const sendExpired = async (attempt, res) => {
   if (!(attempt.score >= attempt.test.score_to_pass && attempt.end && expirationValid && !attempt.email_notifications.expired)) return;
 
   const emailInfo = await getEmailInfo(attempt, 'email_certificate_expired', res);
-  const emailSent = await sendSendGridEmail(emailInfo);
+  const emailSent = await sendGridEmail.send(emailInfo);
   if (!emailSent) return;
   attempt.email_notifications.expired = new Date().toISOString();
   certificationDatabase.updateAttempt(attempt);

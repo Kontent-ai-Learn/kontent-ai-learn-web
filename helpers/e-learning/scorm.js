@@ -1,5 +1,5 @@
 const axios = require('axios');
-const app = require('../app');
+const errorAppInsights = require('../error/appInsights');
 
 const settings = {
   auth: {
@@ -8,12 +8,6 @@ const settings = {
   },
   registrationsUrl: `https://${process.env.SCORM_HOST}/api/v2/registrations`,
   coursesUrl: `https://${process.env.SCORM_HOST}/api/v2/courses`,
-};
-
-const logAppInsightsError = (error) => {
-  if (app.appInsights) {
-    app.appInsights.defaultClient.trackTrace({ message: `SCORM_ERROR: ${error}` });
-  }
 };
 
 const getUserRegistrations = async (email) => {
@@ -33,13 +27,12 @@ const getUserRegistrations = async (email) => {
       });
 
       registrations.push(...page.data.registrations);
-      console.log(page.data.more);
       more = page.data.more;
     };
 
     return registrations;
   } catch (error) {
-    logAppInsightsError(error);
+    errorAppInsights.log('SCORM_ERROR', error);
   }
 
   return null;
