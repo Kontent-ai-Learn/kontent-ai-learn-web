@@ -3,18 +3,23 @@ html(lang='en')
     head
       include style.pug
     body
+      - let title = attempt.test.title;
+      - const productName = UIMessages.product_name.value;
+      - if (attempt.test.title.startsWith(productName)) title = title.replace(productName, '').trim()
       .certificate
         .certificate__top
           .certificate__logo
             img(src='/learn/img/ui/logo-kontent.svg')
-          .certificate__name Certificate of Completion
+          .certificate__text.certificate__text--bold Certificate
+          .certificate__name !{productName} !{title}
             span .
-          .certificate__text This certificate is awarded to
-          - var name = attempt.username || attempt.email;
+          .certificate__text This is to certify that
+          - const name = attempt.username || attempt.email;
           .certificate__username !{name}
-          .certificate__id id: !{attempt.id}
-          .certificate__text Following the successful completion of
-          .certificate__course !{attempt.test.title}
+          - let text = 'has successfully completed the examination and is qualified to receive all benefits and recognition.';
+          - if (attempt.test.codename === 'developer_certification') text = 'has successfully completed the Certified Developer examination and is qualified to receive all benefits and recognition of a Kontent Certified Developer.';
+          - if (attempt.test.codename === 'business_qualification') text = 'has successfully completed the Business Qualification examination and has demonstrated an understanding of Kontent features and capabilities.';
+          .certificate__text !{text}
         .certificate__bottom
           .certificate__column
             .certificate__value !{moment(attempt.end).format('MMMM D, YYYY')}
@@ -24,11 +29,10 @@ html(lang='en')
             .certificate__label Valid to
           .certificate__column.certificate__column--wide
             .certificate__value
-              img(src='/learn/img/ui/signature-tomas-nosek.png')
+              img(src='/learn/img/ui/signature-petr-palas.png')
             .certificate__label 
-              | Tomas Nosek,
+              | Petr Palas, CEO
               br
-              | Kontent by Kentico
-              br
-              | Customer Education Leader
+              | Kentico Software
+          .certificate__id Certificate ID: !{attempt.id}
        

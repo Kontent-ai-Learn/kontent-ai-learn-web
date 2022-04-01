@@ -48,7 +48,7 @@ const getUser = async (email, res) => {
     const trainingUser = await getTrainingUser(email, res);
     const user = {};
 
-    if (email.endsWith('@kentico.com') || trainingUser) {
+    if (trainingUser) {
       user.email = email;
 
       if (trainingUser) {
@@ -60,6 +60,9 @@ const getUser = async (email, res) => {
     } else {
       const user = await subscriptionService.getUser(email);
       if (user) return user.data;
+      return {
+        email: email
+      }
     }
   }
   return null;

@@ -5,6 +5,7 @@ const router = express.Router();
 const trainingCourseDetail = require('../helpers/trainingCourseDetail');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationDetail = require('../helpers/certification/detail');
+const certificationEmail = require('../helpers/certification/email');
 const surveyAttempt = require('../helpers/survey/attempt');
 const elearningLandingPage = require('../helpers/e-learning/landingPage');
 const fastly = require('../helpers/fastly');
@@ -35,7 +36,12 @@ router.post('/training-course/detail/public', async (req, res) => {
 
 router.post('/training-certification/detail/private', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
-  const data = await certificationDetail.get(req.body.codename, req, res);
+  let data = null;
+  if (req.body.attemptid) {
+    data = await certificationDetail.getByAttemptId(req.body.codename, req.body.attemptid, res);
+  } else {
+    data = await certificationDetail.get(req.body.codename, req, res);
+  }
   return res.send(data);
 });
 
@@ -67,6 +73,12 @@ router.post('/survey', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
   const data = await surveyAttempt.init(req, res);
   return res.send(data);
+});
+
+router.post('/e-learning/expiration-notifications', async (req, res) => {
+  res = fastly.preventCaching(res);
+  await certificationEmail.handleExpirations(res);
+  return res.end();
 });
 
 module.exports = router;

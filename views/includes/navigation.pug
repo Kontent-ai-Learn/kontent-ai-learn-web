@@ -7,7 +7,7 @@ nav.navigation
             .navigation__logo-wrapper
                 a.navigation__logo(href='/learn/', rel='noreferrer')
                     img(src='/learn/img/ui/logo.svg', alt='Kontent by Kentico Learning Center', width='128', height='42')
-            ul(class= `navigation__list`)
+            ul(class=`navigation__list`)
                 each item in navigation
                     if (item.system.type !== 'navigation_link')
                         li.navigation__item

@@ -35,7 +35,7 @@ const processLinks = ($, config) => {
     $('a[data-item-id][href=""]').each(function () {
         const $that = $(this);
         $that.removeAttr('data-item-id');
-        $that.attr('href', '/page-not-found');
+        $that.attr('href', '/learn/page-not-found');
     });
     $('a[target="_blank"]:not([data-lightbox-embed]):not(.edit-link)').each(function () {
         $(this).addClass('a-blank');
@@ -136,6 +136,16 @@ const kontentSmartLinksRemoveInnerDataAttributes = ($) => {
     $innerDefinitionElem.removeAttr('data-kk-rels');
 };
 
+const removeMacroLinkProtocol = ($) => {
+    const $links = $('[href^="http://{"], [href^="https://{"]');
+
+    $links.each(function () {
+        const $that = $(this);
+        const url = $that.attr('href').replace(/^http[s]?:\/\//, '');
+        $that.attr('href', url);
+    });
+};
+
 const enhanceMarkup = (resolvedData, config) => {
     let text = resolvedData.html;
     text = helper.resolveMacros(text);
@@ -147,6 +157,7 @@ const enhanceMarkup = (resolvedData, config) => {
     removeEmptyParagraph($);
     createAnchors($);
     replaceTooltipSpaces($);
+    removeMacroLinkProtocol($);
     kontentSmartLinksResolveUndecided($, resolvedData);
     kontentSmartLinksRemoveInnerDataAttributes($);
 

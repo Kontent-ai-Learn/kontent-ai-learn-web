@@ -129,8 +129,31 @@ const evaluateAttempt = (body, attempt) => {
   return attempt;
 };
 
+const getIncorrect = (attempt) => {
+  if (!attempt?.test?.questions) return null;
+
+  const incorrect = [];
+
+  for (let i = 0; i < attempt.test.questions.length; i++) {
+    for (let j = 0; j < attempt.test.questions[i].questions.length; j++) {
+      const anyAnswer = attempt.test.questions[i].questions[j].answers.find(answer => answer.answer);
+      if (anyAnswer) {
+        const incorrectAnswer = attempt.test.questions[i].questions[j].answers.find(answer => !answer.correct && answer.answer);
+        if (incorrectAnswer) {
+          incorrect.push({
+            question: attempt.test.questions[i].questions[j].html,
+            answer: incorrectAnswer.html,
+          });
+        }
+      }
+    }
+  }
+  return incorrect;
+};
+
 module.exports = {
   evaluateAttempt,
   getTest,
-  removeCorrectness
+  removeCorrectness,
+  getIncorrect
 };

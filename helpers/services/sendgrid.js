@@ -5,9 +5,11 @@ const errorAppInsights = require('../error/appInsights');
 const send = async (info) => {
   const msg = {
     to: info.recipient,
-    from: process.env.SENDGRID_EMAIL_ADDRESS_FROM,
+    from: {
+      email: process.env.SENDGRID_EMAIL_ADDRESS_FROM,
+    },
     subject: info.subject,
-    text: info.text,
+    html: info.text,
     tracking_settings: {
       click_tracking: {
         enable: false,
@@ -15,6 +17,10 @@ const send = async (info) => {
       }
     }
   };
+
+  if (info.sender_name) {
+    msg.from.name = info.sender_name;
+  }
 
   try {
     await sgMail.send(msg);

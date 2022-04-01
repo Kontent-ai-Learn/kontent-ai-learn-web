@@ -6,24 +6,54 @@ const elearningUser = require('../e-learning/user');
 const certificationDatabase = require('./database');
 const certificationAttempt = require('./attempt');
 
-const getCertificationInfo = async (user, certificationTest, UIMessages, req, res) => {
+const getCertificateData = (attempt, certificationTest) => {
+  return {
+    public_url: `/learn/get-certified/exam/${attempt.id}/certificate/`,
+    issued_date: moment(attempt.end).format('YYYY/MM/DD'),
+    expiration_date: moment(attempt.certificate_expiration).format('YYYY/MM/DD'),
+    course_name: certificationTest.title.value
+  }
+};
+
+const getCertificationInfoByAttemptId = async (attemptId, certificationTest) => {
+  const attempt = await certificationDatabase.getAttempt(attemptId);
+  if (!attempt) return null;
+  const result = {
+    signedIn: true
+  };
+  const now = moment();
+  const expiration = moment(attempt.certificate_expiration);
+  const dateDiff = expiration.diff(now, 'days');
+
+  if (dateDiff >= 0) {
+    result.certificate = getCertificateData(attempt, certificationTest)
+  }
+  return result;
+};
+
+const getCertificationInfo = async (user, certificationTest) => {
   const successfullAttempt = await certificationDatabase.successfullAttemptExists({
     email: user?.email,
     codename: certificationTest.system.codename
   });
-
   if (successfullAttempt) {
-    return {
-      text: 'You have successfully passed the exam.',
-      renderAs: 'text',
-      certificate: {
-        public_url: `/learn/get-certified/exam/${successfullAttempt.id}/certificate/`,
-        issued_date: moment(successfullAttempt.end).format('YYYY/MM/DD'),
-        expiration_date: moment(successfullAttempt.certificate_expiration).format('YYYY/MM/DD'),
-        course_name: successfullAttempt.test.title
-      },
+    const result = {
+      certificate: getCertificateData(successfullAttempt, certificationTest),
       signedIn: true
+    };
+
+    const now = moment();
+    const expiration = moment(successfullAttempt.certificate_expiration);
+    const dateDiff = expiration.diff(now, 'days');
+    if (dateDiff < 7) {
+      result.text = 'Start exam';
+      result.url = `/learn/get-certified/${certificationTest.url.value}/`;
+      result.renderAs = 'button';
+    } else {
+      result.text = 'You have successfully passed the exam.';
+      result.renderAs ='text';
     }
+    return result;
   }
 
   const attemptInPastDay = await certificationDatabase.checkAttemptInPastDay(user?.email, certificationTest.system.codename);
@@ -71,7 +101,7 @@ const getPrivate = async (UIMessages, certificationTest, req, res) => {
 
   data.text = data.textUIMessageCodename ? UIMessages[data.textUIMessageCodename].value : '';
 
-  const certificationInfo = await getCertificationInfo(user, certificationTest, UIMessages, req, res);
+  const certificationInfo = await getCertificationInfo(user, certificationTest);
 
   return {
     general: data.renderGeneralMessage ? data : null,
@@ -108,6 +138,18 @@ const get = async (codename, req, res) => {
   return data;
 };
 
+const getByAttemptId = async (codename, attemptId, res) => {
+  const certificationTest = await handleCache.evaluateSingle(res, codename, async () => {
+    return await commonContent.getCertificationTest(res, codename);
+  });
+
+  return {
+    general: null,
+    production: await getCertificationInfoByAttemptId(attemptId, certificationTest.items[0])
+  }
+}
+
 module.exports = {
-  get
+  get,
+  getByAttemptId
 };

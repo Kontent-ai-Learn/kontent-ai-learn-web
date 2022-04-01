@@ -270,7 +270,7 @@ const richTextResolverTemplates = {
     },
     signpostItem: (item, config) => {
         const urlMap = config.urlMap;
-        let resolvedUrl = '/page-not-found';
+        let resolvedUrl = '/learn/page-not-found';
         const imageWidth = item.image.value[0] ? item.image.value[0].width || 0 : 0;
         const imageHeight = item.image.value[0] ? item.image.value[0].height || 0 : 0;
         const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
@@ -431,7 +431,7 @@ const richTextResolverTemplates = {
         }
 
         if (!resolvedUrl) {
-            resolvedUrl = '/page-not-found';
+            resolvedUrl = '/learn/page-not-found';
         }
 
         return `<a href="${resolvedUrl}" class="call-to-action"${resolvedUrl.indexOf('tech={tech}') > -1 ? ' rel="nofollow"' : ''}${smartLinkComponentAttr}${smartLinkAttr}><span>${item.text.value}</span><span></span></a>`;
