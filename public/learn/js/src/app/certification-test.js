@@ -1,4 +1,4 @@
-(() => {
+const certificationTest = (() => {
   const requestFormData = async (itemCodename, user, token) => {
     const fetchOptions = {
       method: 'POST',
@@ -136,7 +136,6 @@
     const codename = elem ? elem.getAttribute('data-certification-test') : null
     if (!(token && codename)) return;
     const formData = await requestFormData(codename, user, token);
-    // console.log(formData);
 
     if (formData.code === 200) {
       renderForm(formData, elem);
@@ -156,19 +155,26 @@
     localStorage.removeItem(codename);
   };
 
-  let container = document.querySelector('[data-certification-result]');
+  const container = document.querySelector('[data-certification-result]');
   if (container) {
     removeFormState();
     window.helper.startTimer('[data-timer]');
   }
 
-  container = document.querySelector('[data-certification-test]');
-  if (container) {
-    window.addEventListener('load', () => {
-      auth0.ensureUserSignedIn(async (user) => {
+  const getInfo = async () => {
+    const container = document.querySelector('[data-certification-test]');
+    if (container) {
+      const user = await auth0.ensureUserSignedIn();
+      if (user) {
         await getCertificationTest(user);
         window.helper.startTimer('[data-timer]');
-      });
-    });
-  }
+      } else {
+        await auth0.login();
+      }
+    }
+  };
+
+  return {
+    getInfo: getInfo
+  };
 })();

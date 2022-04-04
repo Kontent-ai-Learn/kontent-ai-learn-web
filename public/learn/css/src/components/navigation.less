@@ -3,6 +3,7 @@
     position: relative;
     z-index: 6000;
     box-shadow: 0px 2px 0px 0px #E8E8E8;
+    border-top: 1px solid #E8E8E8;
 
 	&__wrapper {
         margin: 0 auto;
@@ -62,11 +63,6 @@
             flex: 1;
             justify-content: flex-end;
             max-width: 400px;
-            
-            &--full {
-                
-            
-            }
         }      
         
         @media screen and (min-width: 1024px) {
@@ -118,10 +114,6 @@
             overflow: visible;
         }
 
-        &--full {
-            margin: 0;
-        }
-
         &::-webkit-scrollbar-track {
             background-color: #f5f5f5;
             border-radius: 4px;
@@ -160,11 +152,11 @@
         }
 
         @media screen and (min-width: 1024px) {
-            margin: 0 0 0 1.75em;
+            margin: 0 0 0 2em;
         }
 
         @media screen and (min-width: 1024px) {
-            margin: 0 0 0 2em;
+            margin: 0 0 0 2.25em;
         }
 
         @media screen and (min-width: 768px) {
@@ -182,13 +174,77 @@
         position: relative;
         align-items: center;
         height: 100%;
-        text-transform: uppercase;
+        font-weight: 700;
 
         &:hover,
         &:focus,
         &:active,
         &--active {
-            color: #F05A22;
+            &:before {
+                content: '';
+                position: absolute;
+                bottom: 1.5em;
+                background-color: #5ed9c5;
+                left: 0;
+                right: 0;
+                height: 2px;
+
+                @media screen and (min-width: 768px) {
+                    bottom: 1.75em;
+                }
+
+                @media screen and (min-width: 1024px) {
+                    bottom: 2.125em;
+                    height: 3px;
+                }
+            }
+        }
+
+        &--auth {
+            text-transform: none;
+            white-space: nowrap;
+            margin: 0 0 0 1em;
+            padding: 0;
+            justify-content: flex-end;
+            box-sizing: border-box;
+            display: inline-block;
+
+            &:before {
+                bottom: -4px;
+            }
+
+            &:hover,
+            &:focus,
+            &:active {
+                &:before {
+                    bottom: -2px;
+                }
+            }
+
+            @media screen and (min-width: 1024px) {
+                &:before {
+                    bottom: -2px;
+                }
+
+                &:hover,
+                &:focus,
+                &:active {
+                    &:before {
+                        bottom: -6px;
+                    }
+                }
+            }
+        }
+    }
+
+    &__auth {
+        &:only-child {
+            width: 100%;
+            text-align: right;
+
+            @media screen and (min-width: 1024px) {
+                width: auto;
+            }
         }
     }
 
@@ -199,8 +255,8 @@
 
         @media screen and (min-width: 1024px) {
             position: absolute;
-            right: 60px;
-            width: 170px;
+            right: 90px;
+            width: 150px;
             transition: .25s width;
             top: 50%;
             transform: translateY(-50%);
@@ -238,7 +294,7 @@
             font-size: .875em;
             border-radius: .5714em 1.4285em 1.4285em 1.4285em;
             -webkit-appearance: none;
-            border: 1px solid rgba(35, 31, 32, .25);
+            border: 2px solid #E8E8E8;
             background-color: #fff !important;
             color: #231f20;
             font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif;
@@ -249,7 +305,6 @@
             box-sizing: border-box;
             transition: all .25s;
             outline: 0 transparent !important;
-            font-weight: 300;
 
             &:focus {
                 border-color: #F05A22;
@@ -318,73 +373,9 @@
             background-position: center center;
             background-repeat: no-repeat;
             background-size: contain;
-            background-image: url('../img/ui/magnifier-gray.svg');
+            background-image: url('../img/ui/ellipsis-vertical.svg');
         }
     }
-
-    &__app-tooltip {
-        position: absolute;
-        background-color: #3c3638;
-        clip: auto;
-        font-size: .777777em;
-        color: #E3E9EC;
-        top: -2000px;
-        right: -.5em;
-        padding: 0.5em 1em;
-        white-space: nowrap;
-        opacity: 0;
-        transition: 0.25s opacity;
-        z-index: -1;
-        border-radius: .75em;
-
-        &:before {
-            content: '';
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 7px 9px 7px;
-            border-color: transparent transparent #3c3638 transparent;
-            position: absolute;
-            top: -9px;
-            right: 10px;
-        }
-    }
-
-    &__app {
-        display: none;
-        position: relative;
-        overflow: hidden;
-        width: 1.25em;
-        height: 1.25em;
-        margin-left: 1.388em;
-        line-height: 1.25em;
-        justify-content: center;
-        align-items: center;
-        text-decoration: none;
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-size: contain;
-
-        @media screen and (min-width: 1024px) {
-            display: flex;
-            background-image: url('../img/ui/app-gray.svg');
-        }
-
-        &:hover,
-        &:active {
-            overflow: visible;
-
-            @media screen and (min-width: 1024px) {
-                background-image: url('../img/ui/app-orange.svg');
-            }
-
-            .navigation__app-tooltip {
-                opacity: 1;
-                z-index: 9999;
-                top: ~"calc(100% + 1em)";
-            }
-        }
-    } 
     
     &--search-active {
         z-index: 6002;

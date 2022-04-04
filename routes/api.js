@@ -5,6 +5,7 @@ const router = express.Router();
 const trainingCourseDetail = require('../helpers/trainingCourseDetail');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationDetail = require('../helpers/certification/detail');
+const certificationEmail = require('../helpers/certification/email');
 const surveyAttempt = require('../helpers/survey/attempt');
 const fastly = require('../helpers/fastly');
 
@@ -59,6 +60,12 @@ router.post('/survey', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
   const data = await surveyAttempt.init(req, res);
   return res.send(data);
+});
+
+router.post('/e-learning/expiration-notifications', async (req, res) => {
+  res = fastly.preventCaching(res);
+  await certificationEmail.handleExpirations(res);
+  return res.end();
 });
 
 module.exports = router;

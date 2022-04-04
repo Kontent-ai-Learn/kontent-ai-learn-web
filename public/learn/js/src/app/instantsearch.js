@@ -149,6 +149,7 @@ window.initSearch = (() => {
     searchTrigger.classList.add('trigger-active');
     searchTarget.classList.add('toggle-active');
     searchOverlay.classList.add('search-overlay--visible');
+    navigation.classList.add('navigation--search-active');
     const input = searchTarget.querySelector('#nav-search');
 
     if (input) {
@@ -164,6 +165,7 @@ window.initSearch = (() => {
       searchTrigger.classList.remove('trigger-active');
       searchTarget.classList.remove('toggle-active');
       searchOverlay.classList.remove('search-overlay--visible');
+      navigation.classList.remove('navigation--search-active');
     }, 100);
   };
 
@@ -196,7 +198,9 @@ window.initSearch = (() => {
   const onAutocompleteClosed = () => {
     if (searchWrapper && searchOverlay) {
       navigation.classList.remove('navigation--search-active');
-      searchWrapper.classList.remove('navigation__search-wrapper--wide');
+      if (searchWrapper) {
+        searchWrapper.classList.remove('navigation__search-wrapper--wide');
+      }
       if (searchOverlay) {
         searchOverlay.classList.remove('search-overlay--visible');
       }
@@ -210,7 +214,9 @@ window.initSearch = (() => {
   const onAutocompleteOpened = (searchTerm) => {
     if (searchWrapper && searchOverlay) {
       navigation.classList.add('navigation--search-active');
-      searchWrapper.classList.add('navigation__search-wrapper--wide');
+      if (searchWrapper) {
+        searchWrapper.classList.add('navigation__search-wrapper--wide');
+      }
       if (searchOverlay) {
         searchOverlay.classList.add('search-overlay--visible');
       }

@@ -1,18 +1,18 @@
 extends ../includes/layout.pug
 block content
-    div&attributes(smartLink?.itemId(itemId))
+    .utilities-hero-bg&attributes(smartLink?.itemId(itemId))
         .hero
             .hero__wrapper
+                div.hero__note-link&attributes(smartLink?.elementCodename('intro_note')) !{postprocessMarkup(introNote, res)}
                 h1.hero__heading&attributes(smartLink?.elementCodename('title')) !{title}
                 form.hero__search(data-search-container='')
                     .hero__search-icon(aria-hidden='true')
                     label.sr-only(for='nav-search') !{UIMessages && UIMessages.search___placeholder.value}
                     input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages && UIMessages.search___placeholder.value)&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
                     .autocomplete(data-search-autocomplete='')
-                div.hero__note-link&attributes(smartLink?.elementCodename('intro_note')) !{postprocessMarkup(introNote, res)}
         main(id='main')&attributes(smartLink?.elementCodename('signposts')).presentation
             | !{postprocessMarkup(signposts, res)}
-        aside.border-top&attributes(smartLink?.elementCodename('support'))
+        aside&attributes(smartLink?.elementCodename('support'))
             .cta !{postprocessMarkup(support, res)}
         
     

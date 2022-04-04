@@ -5,7 +5,7 @@ html(lang='en')
     body
       - let title = attempt.test.title;
       - const productName = UIMessages.product_name.value;
-      - if (attempt.test.title.startsWith(productName)) title = title.replace(productName, '')
+      - if (attempt.test.title.startsWith(productName)) title = title.replace(productName, '').trim()
       .certificate
         .certificate__top
           .certificate__logo

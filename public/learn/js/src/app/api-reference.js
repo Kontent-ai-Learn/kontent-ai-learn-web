@@ -371,7 +371,7 @@
   var renameSwaggerFile = function () {
     var downloadButton = document.querySelector('[class*="DownloadButton"][download]');
     if (!downloadButton) return;
-    var name = window.location.pathname.split('/').pop();
+    var name = window.location.pathname.replace(/\/$/, '').split('/').pop();
     name = name.replace(/-/g, '_');
     downloadButton.setAttribute('download', name + '.json')
   };

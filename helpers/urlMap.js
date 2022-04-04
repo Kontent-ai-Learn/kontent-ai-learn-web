@@ -218,25 +218,25 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
     };
 };
 
-const handleUnusedArticles = async (deliveryClient, urlMap) => {
-    const { items, error } = await queryDeliveryType('article', 1, deliveryClient);
+const handleUnusedItems = async (type, deliveryClient, urlMap) => {
+    const { items, error } = await queryDeliveryType(type, 1, deliveryClient);
 
     if (items && items.items) {
-        items.items.forEach((articleItem) => {
+        items.items.forEach((item) => {
             let isInUrlMap = false;
             urlMap.forEach((mapItem) => {
-                if (articleItem.system.codename === mapItem.codename) {
+                if (item.system.codename === mapItem.codename) {
                     isInUrlMap = true;
                 }
             });
 
-            if (!isInUrlMap && articleItem._raw.system.workflow_step !== 'archived') {
+            if (!isInUrlMap && item._raw.system.workflow_step !== 'archived') {
                 urlMap.push(getMapItem({
-                    codename: articleItem.system.codename,
-                    url: `/learn/other/${articleItem.url.value}/`,
-                    date: articleItem.system.lastModified,
-                    visibility: articleItem.visibility && articleItem.visibility.value.length ? articleItem.visibility.value : null,
-                    type: 'article'
+                    codename: item.system.codename,
+                    url: `/learn/other/${item.url.value}/`,
+                    date: item.system.lastModified,
+                    visibility: item.visibility && item.visibility.value.length ? item.visibility.value : null,
+                    type: type
                 }, fields));
             }
         });
@@ -311,7 +311,8 @@ const getUrlMap = async (res, isSitemap) => {
         urlMap: [],
         cachedPlatforms: cachedPlatforms
     });
-    urlMap = await handleUnusedArticles(deliveryClient, urlMap);
+    urlMap = await handleUnusedItems('article', deliveryClient, urlMap);
+    urlMap = await handleUnusedItems('training_course2', deliveryClient, urlMap);
     urlMap = await handleContentType(deliveryClient, urlMap, 'training_survey', 'survey');
     urlMap = await handleContentType(deliveryClient, urlMap, 'training_certification_test', 'get-certified');
 

@@ -63,6 +63,17 @@ const commonContent = {
             ...commonContent.getKCDetails(res)
         });
     },
+    getEmailNotifications: async (res) => {
+        const urlMap = await ensureSingle(res, 'urlMap', async () => {
+            return await getUrlMap(res);
+        });
+        return await requestDelivery({
+            type: 'email_notification',
+            resolveRichText: true,
+            urlMap: urlMap,
+            ...commonContent.getKCDetails(res)
+        });
+    },
     getHome: async (res) => {
         const KCDetails = commonContent.getKCDetails(res);
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
