@@ -181,11 +181,12 @@ const getGiphyTemplate = (cssClass, item, config) => {
 };
 
 const getDiagramsnetTemplate = (cssClass, item, config, elemId) => {
+    const zoomable = item.zoomable.value.length && item.zoomable.value[0].codename === 'true';
     return `
         ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
         <div class="embed embed--diagrams-net${cssClass}" id="embed-${elemId}">
             <iframe width="2000" height="1125" class="lazy" frameborder="0" data-src="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
-            <a data-lightbox-embed="embed-${elemId}" target="_blank" href="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>
+            ${zoomable ? `<a data-lightbox-embed="embed-${elemId}" target="_blank" href="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>` : '<div class="embed__overlay" aria-hidden="true"></div>'}     
             <noscript>
                 <iframe frameborder="0" src="https://viewer.diagrams.net?lightbox=1&nav=1#${item.id.value}"></iframe>
             </noscript>
