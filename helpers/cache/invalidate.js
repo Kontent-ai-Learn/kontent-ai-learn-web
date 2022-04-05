@@ -67,11 +67,10 @@ const revalidateReleaseNoteType = async (KCDetails, res) => {
     cacheHandle.put(key, releaseNoteType, KCDetails);
 };
 
-const revalidateTrainingCourseType = async (KCDetails, res) => {
-    const key = 'trainingPersonaTaxonomyGroup';
-    cacheHandle.remove(key, KCDetails);
-    const trainingCourseType = await getContent.trainingPersonaTaxonomyGroup(res);
-    cacheHandle.put(key, trainingCourseType, KCDetails);
+const revalidateTaxonomyGroup = async (KCDetails, keyMethod, res) => {
+    cacheHandle.remove(keyMethod, KCDetails);
+    const taxonomyGroup = await getContent[keyMethod](res);
+    cacheHandle.put(keyMethod, taxonomyGroup, KCDetails);
 };
 
 const splitPayloadByContentType = (items) => {
@@ -225,7 +224,8 @@ const invalidateArticles = async (itemsByTypes, KCDetails, res) => {
 
     if (itemsByTypes.articles.length) {
         await revalidateReleaseNoteType(KCDetails, res);
-        await revalidateTrainingCourseType(KCDetails, res);
+        await revalidateTaxonomyGroup(KCDetails, 'trainingPersonaTaxonomyGroup', res);
+        await revalidateTaxonomyGroup(KCDetails, 'trainingTopicTaxonomyGroup', res);
         await deleteSpecificKeys(KCDetails, itemsByTypes.articles, res);
         cacheHandle.remove('articles', KCDetails);
         await cacheHandle.evaluateCommon(res, ['articles']);
@@ -275,7 +275,8 @@ const invalidateElearning = async (itemsByTypes, KCDetails, res) => {
     if (itemsByTypes.trainingCourses.length) {
         await invalidateMultiple(itemsByTypes, KCDetails, 'trainingCourses', res);
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingCourses');
-        await revalidateTrainingCourseType(KCDetails, res);
+        await revalidateTaxonomyGroup(KCDetails, 'trainingPersonaTaxonomyGroup', res);
+        await revalidateTaxonomyGroup(KCDetails, 'trainingTopicTaxonomyGroup', res);
         await requestItemAndDeleteCacheKey('e_learning_overview', 'article', KCDetails, res);
     }
 };

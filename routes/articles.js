@@ -16,6 +16,7 @@ const smartLink = require('../helpers/kontent/smartLink');
 const getUrlMap = require('../helpers/general/urlMap');
 const scorm = require('../helpers/services/scorm');
 const fastly = require('../helpers/services/fastly');
+const elearningLandingPage = require('../helpers/e-learning/landingPage');
 
 let cookiesPlatform;
 
@@ -190,8 +191,9 @@ const getData = async (req, res) => {
                 postprocessMarkup: postprocessMarkup,
                 slug: slug,
                 isPreview: KCDetails.isPreview,
-                itemId: content && content.length ? content[0].system.id : null,
-                title: content && content.length ? content[0].title.value : '',
+                itemId: content[0].system.id || null,
+                title: content[0].title.value || '',
+                content: await elearningLandingPage.getData(content[0], res),
                 navigation: home && home.length ? home[0].subpages.value : null,
                 footer: footer && footer.length ? footer[0] : null,
                 UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
@@ -210,8 +212,8 @@ const getData = async (req, res) => {
                 slug: slug,
                 isPreview: KCDetails.isPreview,
                 isReference: true,
-                itemId: content && content.length ? content[0].system.id : null,
-                title: content && content.length ? content[0].title.value : '',
+                itemId: content[0].system.id || null,
+                title: content[0].title.value || '',
                 navigation: home && home.length ? home[0].subpages.value : null,
                 footer: footer && footer.length ? footer[0] : null,
                 UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,

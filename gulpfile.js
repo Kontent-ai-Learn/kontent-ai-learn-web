@@ -245,13 +245,16 @@ gulp.task('css-app', () => {
       'public/learn/css/src/components/autocomplete.less',
       'public/learn/css/src/components/video-controls.less',
       'public/learn/css/src/components/quote.less',
-      'public/learn/css/src/general/print.less',
       'node_modules/@splidejs/splide/dist/css/splide-core.min.css',
       'public/learn/css/src/components/carousel.less',
       'public/learn/css/src/components/survey.less',
       'public/learn/css/src/components/certification-test.less',
       'public/learn/css/src/components/question.less',
       'public/learn/css/src/components/answer.less',
+      'public/learn/css/src/components/landing-page.less',
+      'public/learn/css/src/components/tile.less',
+      'public/learn/css/src/components/card.less',
+      'public/learn/css/src/general/print.less',
     ])
     .pipe(concat('app.less'))
     .pipe(less({

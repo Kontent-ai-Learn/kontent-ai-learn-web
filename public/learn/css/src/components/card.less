@@ -1,0 +1,124 @@
+.card {
+  width: 100%;
+  border-radius: 40px 40px 4px 40px;
+  overflow: hidden;
+  border: 3px solid #E8E8E9;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  transition: .25s border-color;
+  cursor: pointer;
+  background-color: #fff;
+
+  &:hover {
+    border-color: #231f20;
+  }
+
+  .splide__slide & {
+    height: 100%;
+  }
+
+	&__img {
+    img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+	}
+
+	&__content {
+    padding: 24px 36px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+
+	}
+
+	&__tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 0 1em;
+	}
+
+	&__tag {
+    background-color: #41D9C5;
+    border-radius: 16px 16px 2px 16px;
+    color: #231F20;
+    font-size: 11px;
+    padding: 8px 16px;
+    line-height: 1em;
+    margin: 0 8px 4px 0;
+    font-weight: 700;
+    
+    .card__title & {
+      color: #fff;
+      margin: 0 0 0 1em;
+      position: relative;
+      top: -.5em; 
+      padding: 5px 12px;
+    }
+	}
+
+	&__title {
+    font-size: 20px;
+    font-weight: 700;
+    padding: 0 0 1.25em;
+    line-height: 1.25em;
+
+    @media screen and (min-width: 480px) {
+      font-size: 24px;
+    }
+	}
+
+	&__row {
+    display: flex;
+    padding: 0 0 1.5em;
+
+    &:last-child {
+      padding: 0;
+    }
+
+		&--space-between {
+      justify-content: space-between;
+		}
+
+		&--end {
+      justify-content: flex-end;
+		}
+
+	}
+
+	&__cta {
+    font-size: 14px;
+    color: #F05A22;
+    font-weight: 700;
+    text-decoration: none;
+    transition: .25s border-color;
+    border-bottom: 1px solid transparent;
+
+    &:after {
+      content: ' →';
+    }
+
+    &:hover {
+      border-color: #F05A22;
+    }
+	}
+
+	&__certificate {
+
+	}
+
+	&__duration {
+    color: #A7A5A5;
+    font-size: 14px;
+    padding: 1px 0 1px 22px;
+    background-image: url('../img/ui/clock.svg');
+    background-repeat: no-repeat;
+    background-position: center left;
+    background-size: contain;
+    line-height: 1em;
+	}
+
+}

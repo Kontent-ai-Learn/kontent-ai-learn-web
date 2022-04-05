@@ -134,8 +134,13 @@ const getUrlMap = require('../general/urlMap');
         });
     };
     const traniningCourse = async (res) => {
+        const urlMap = await ensureSingle(res, 'urlMap', async () => {
+            return await getUrlMap(res);
+        });
         return await requestDelivery({
             type: 'training_course2',
+            resolveRichText: true,
+            urlMap: urlMap,
             ...KCDetails(res)
         });
     };
@@ -182,6 +187,13 @@ const getUrlMap = require('../general/urlMap');
         return await requestDelivery({
             data: 'taxonomy',
             taxonomy: 'training_persona',
+            ...KCDetails(res)
+        });
+    };
+    const trainingTopicTaxonomyGroup = async (res) => {
+        return await requestDelivery({
+            data: 'taxonomy',
+            taxonomy: 'training_topic',
             ...KCDetails(res)
         });
     };
@@ -313,6 +325,7 @@ module.exports = {
     survey,
     termDefinitions,
     trainingPersonaTaxonomyGroup,
+    trainingTopicTaxonomyGroup,
     trainingSubscriptions,
     traniningCourse,
     traniningUser,

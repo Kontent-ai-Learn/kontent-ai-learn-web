@@ -103,6 +103,7 @@ main {
     padding: 0 1em;
     min-height: ~"calc(100vh - 286px)";
     display: block;
+    position: relative;
 
     @media screen and (min-width: 480px) {
         min-height: ~"calc(100vh - 331px)";
@@ -324,6 +325,25 @@ kontent-smart-link-element {
     }
 }
 
+.utilities-lp-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    background-image: url('../img/ui/lp-petils.svg');
+    background-position: top -150px right -450px;
+    background-repeat: no-repeat;
+    background-size: 900px auto;
+
+    @media screen and (min-width: 1024px) {
+        background-size: auto;
+        background-position: top -330px right -750px;
+    }
+
+}
+
 [data-once]:not([href]) {
     cursor: default;
     background-color: #919091 !important;
@@ -338,5 +358,12 @@ kontent-smart-link-element {
 
     span:last-child {
         display: none;
+    }
+}
+
+.utilities-dot {
+    &:after {
+        content: '.';
+        color: #f05a22;
     }
 }

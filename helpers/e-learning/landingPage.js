@@ -1,28 +1,34 @@
-const elearningUser = require('./user');
-const elearningScorm = require('./scorm');
+const cacheHandle = require('../cache/handle');
+const getContent = require('../kontent/getContent');
+const { isCodenameInMultipleChoice } = require('../general/helper');
 
-/* const getPromoted = (item) => {
-  if (!(item && item.system.type === 'training_course2')) return null;
+const getData = async (content, res) => {
+  const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+    return await getContent.traniningCourse(res);
+  });
+  const trainingTopicTaxonomyGroup = await cacheHandle.evaluateSingle(res, 'trainingTopicTaxonomyGroup', async () => {
+    return await getContent.trainingTopicTaxonomyGroup(res);
+  });
 
-  const promoted = {
-    title: item.title.value,
-    description: item.description.value,
-    thumbnail: item.thumbnail.value[0].url,
-    isFree: item.is_free ? helper.isCodenameInMultipleChoice(item.is_free.value, 'yes') : false,
+  const promoted = trainingCourses.find((item) => item.system.codename === content.promoted_course.value[0].system.codename);
+  const topics = trainingTopicTaxonomyGroup.taxonomy.terms.map((topic) => {
+    return {
+      codename: topic.codename,
+      name: topic.name,
+      courses: trainingCourses.filter((course) => {
+        return isCodenameInMultipleChoice(course.personas___topics__training_topic.value, topic.codename);
+      })
+    }
+  });
+
+  const data = {
+    promoted: promoted,
+    topics: topics
   };
 
-  return promoted;
-}; */
-
-const init = async (req, res) => {
-  if (!req?.user?.email) return { message: 'User is not authenticated.' };
-  const user = await elearningUser.getUser(req.user.email, res);
-  if (!user) return { message: 'User does not have access to e-learning.' };
-
-  const userRegistartions = await elearningScorm.getUserRegistrations(user.email);
-  return userRegistartions;
+  return data;
 };
 
 module.exports = {
-  init
+  getData
 };

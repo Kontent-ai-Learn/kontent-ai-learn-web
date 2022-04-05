@@ -39,7 +39,7 @@ const userHasElearningAccess = async (user, res) => {
 
 const isCourseAvailable = async (user, content, res) => {
   if (!user || user.error_id) return false;
-  const isFreeCourse = content?.is_free ? isCodenameInMultipleChoice(content?.is_free.value, 'yes') : false;
+  const isFreeCourse = content?.is_free ? isCodenameInMultipleChoice(content.is_free.value, 'yes') : false;
   if (isFreeCourse) return true;
   return await userHasElearningAccess(user, res);
 };
