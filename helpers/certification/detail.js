@@ -89,7 +89,7 @@ const getPrivate = async (UIMessages, certificationTest, req, res) => {
   if (user.code) {
     data.renderGeneralMessage = true;
     data.textUIMessageCodename = user.code === 'CR404' ? 'sign_in_error_subscription_missing_text' : 'sign_in_error_text';
-    data.renderAs = 'text';
+    data.renderAs = 'plaintext';
   } else if (!(await elearningUser.isCourseAvailable(user, certificationTest, res))) {
     data.renderGeneralMessage = true;
     data.textUIMessageCodename = 'training___cta_buy_course';

@@ -18,7 +18,7 @@ const trainingCourse = (() => {
     const markup = `
       <div class="article__row-links">
         ${data.renderAs === 'plaintext' ? data.text : ''}
-        ${data.renderAs === 'text' ? `<div  class="article__row"><div class="callout callout--info"><div><p>${data.text}</p></div></div></div>` : ''}
+        ${data.renderAs === 'text' ? `<div class="article__row"><div class="callout callout--info"><div><p>${data.text}</p></div></div></div>` : ''}
         ${data.renderAs === 'button' && (data.id || data.action) ? `<span class="call-to-action" ${data.id ? `id="${data.id}"` : ''} ${data.action === 'intercom' ? `data-click="support-async"` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${data.text}</span><span></span></span>` : ''}
         ${data.renderAs === 'button' && data.url ? `<a class="call-to-action" href="${data.url}" ${data.attr ? data.attr : ''} ${data.target ? `target=${data.target}` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${data.text}</span><span></span></a>` : ''}
         ${data.renderAs === 'button' && data.qs ? `<a class="call-to-action" href="${window.location.href.split('#')[0].split('?')[0]}?${data.qs}" ${data.target ? `target=${data.target}` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${data.text}</span><span></span></a>` : ''}

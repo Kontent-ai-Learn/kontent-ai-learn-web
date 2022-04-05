@@ -229,7 +229,7 @@ const handleUnusedItems = async (type, deliveryClient, urlMap) => {
             if (!isInUrlMap && item._raw.system.workflow_step !== 'archived') {
                 urlMap.push(getMapItem({
                     codename: item.system.codename,
-                    url: `/learn/other/${item.system.codename}/`,
+                    url: `/learn/other/${item.url.value}/`,
                     date: item.system.lastModified,
                     visibility: item.visibility && item.visibility.value.length ? item.visibility.value : null,
                     type: type
