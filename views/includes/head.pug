@@ -63,6 +63,8 @@ if (containsChangelog)
     script(src=`/learn/js/changelog.min.js?v=${deployVersion}`, defer='')
 if (containsTrainingCourse)
     script(src=`/learn/js/elearning.min.js?v=${deployVersion}`, defer='')
+if (isLandingPage)
+    script(src=`/learn/js/landing-page.min.js?v=${deployVersion}`, defer='')
 if canonicalUrl
     link(rel='canonical', href=`${canonicalUrl}`)
 link(rel='apple-touch-icon', sizes='57x57', href='/learn/img/favicon/apple-icon-57x57.png')

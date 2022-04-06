@@ -18,35 +18,38 @@ block content
           a(href=`#${content.promoted.url.value}`).tile__cta 
             span Course detail
             span
-    .landing-page__filter
-      .landing-page__filter-item(data-lp-roles)
-      .landing-page__filter-item(data-lp-progress)
-      .landing-page__filter-item(data-lp-search)
-    .landing-page__items
+    .landing-page__filter(data-lp-filter-group)
+      .landing-page__filter-group
+        .landing-page__filter-item(data-lp-roles)
+        .landing-page__filter-item(data-lp-progress)
+      .landing-page__filter-group
+        .landing-page__filter-item(data-lp-search)
+    .landing-page__items(data-lp-filter-container)
       each topic in content.topics
         if (topic.courses.length)
-          h2.landing-page__subheading !{topic.name}
-          .landing-page__courses.splide
-            .splide__track
-              ul.splide__list
-                each course in topic.courses
-                  li.splide__slide
-                    .card&attributes(smartLink?.itemId(course.system.id))
-                      .card__img&attributes(smartLink?.elementCodename('thumbnail'))
-                        img(src=course.thumbnail.value[0].url)
-                      .card__content
-                        .card__top
-                          if (course.personas___topics__training_persona.value.length)
-                            ul.card__tag-list
-                              each persona in course.personas___topics__training_persona.value
-                                li.card__tag !{persona.name}
-                          h3.card__title&attributes(smartLink?.elementCodename('title')) !{course.title.value}
-                            - const isFree = course.is_free ? helper.isCodenameInMultipleChoice(course.is_free.value, 'yes') : false;
-                            if (isFree)
-                              span.card__tag.card__tag--green&attributes(smartLink?.elementCodename('is_free')) !{UIMessages.training___free_course_label.value}
-                        .card__bottom
-                          .card__row.card__row--space-between
-                            .card__cta Course detail
-                            .card__certificate
-                          .card__row.card__row--end
-                            .card__duration&attributes(smartLink?.elementCodename('duration')) !{course.duration.value} min
+          .landing-page__courses-group
+            h2.landing-page__subheading !{topic.name}
+            .landing-page__courses.splide
+              .splide__track
+                ul.splide__list
+                  each course in topic.courses
+                    li.splide__slide(data-lp-filter-item)
+                      .card&attributes(smartLink?.itemId(course.system.id))
+                        .card__img&attributes(smartLink?.elementCodename('thumbnail'))
+                          img(src=course.thumbnail.value[0].url)
+                        .card__content
+                          .card__top
+                            if (course.personas___topics__training_persona.value.length)
+                              ul.card__tag-list
+                                each persona in course.personas___topics__training_persona.value
+                                  li.card__tag(data-lp-persona=persona.codename) !{persona.name}
+                            h3.card__title&attributes(smartLink?.elementCodename('title')) !{course.title.value}
+                              - const isFree = course.is_free ? helper.isCodenameInMultipleChoice(course.is_free.value, 'yes') : false;
+                              if (isFree)
+                                span.card__tag.card__tag--green&attributes(smartLink?.elementCodename('is_free')) !{UIMessages.training___free_course_label.value}
+                          .card__bottom
+                            .card__row.card__row--space-between
+                              .card__cta Course detail
+                              .card__certificate
+                            .card__row.card__row--end
+                              .card__duration&attributes(smartLink?.elementCodename('duration')) !{course.duration.value} min

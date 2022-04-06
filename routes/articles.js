@@ -190,6 +190,7 @@ const getData = async (req, res) => {
                 res: res,
                 postprocessMarkup: postprocessMarkup,
                 slug: slug,
+                isLandingPage: true,
                 isPreview: KCDetails.isPreview,
                 itemId: content[0].system.id || null,
                 title: content[0].title.value || '',

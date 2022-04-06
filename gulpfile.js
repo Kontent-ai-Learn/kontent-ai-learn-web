@@ -82,7 +82,8 @@ gulp.task('js-app', () => {
       'public/learn/js/src/app/training-course.js',
       'node_modules/@splidejs/splide/dist/js/splide.js',
       'public/learn/js/src/app/carousel.js',
-      'public/learn/js/src/app/landing-page.js',
+      'public/learn/js/src/app/landing-page/sliders.js',
+      'public/learn/js/src/app/landing-page/api.js',
       'public/learn/js/src/app/survey.js',
       'public/learn/js/src/app/certification-test.js',
     ])
@@ -147,6 +148,20 @@ gulp.task('js-elearning', () => {
       'public/learn/js/src/filter/filter-elearning.js'
     ])
     .pipe(concat('elearning.js'))
+    .pipe(uglify())
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest('public/learn/js'))
+});
+
+gulp.task('js-landing-page', () => {
+  return gulp.src([
+      'node_modules/mixitup/dist/mixitup.min.js',
+      'public/learn/js/src/filter/mixitup/mixitup-multifilter.js',
+      'public/learn/js/src/filter/filter-landing-page.js'
+    ])
+    .pipe(concat('landing-page.js'))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
@@ -254,6 +269,8 @@ gulp.task('css-app', () => {
       'public/learn/css/src/components/landing-page.less',
       'public/learn/css/src/components/tile.less',
       'public/learn/css/src/components/card.less',
+      'public/learn/css/src/components/dropdown.less',
+      'public/learn/css/src/components/filter-search.less',
       'public/learn/css/src/general/print.less',
     ])
     .pipe(concat('app.less'))
@@ -334,12 +351,12 @@ gulp.task('reload', (done) => {
 });
 
 gulp.task('build-js-app', gulp.parallel(['js-app', 'js-reference']));
-gulp.task('build-js-filer', gulp.parallel(['js-changelog', 'js-elearning']));
+gulp.task('build-js-filter', gulp.parallel(['js-changelog', 'js-elearning', 'js-landing-page']));
 gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service-check']));
 
 gulp.task('watch', (done) => {
-  gulp.watch('public/learn/js/src/app/*.js', gulp.series(['build-js-app', 'reload']));
-  gulp.watch('public/learn/js/src/filter/*.js', gulp.series(['build-js-filer', 'reload']));
+  gulp.watch('public/learn/js/src/app/**/*.js', gulp.series(['build-js-app', 'reload']));
+  gulp.watch('public/learn/js/src/filter/*.js', gulp.series(['build-js-filter', 'reload']));
   gulp.watch('public/learn/js/src/service-check/*.js', gulp.series(['js-service-check', 'reload']));
   gulp.watch('public/learn/css/src/**/*.less', gulp.series(['build-css', 'reload']));
   done();
@@ -372,7 +389,7 @@ gulp.task('observe', async () => {
   })
 });
 
-gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-elearning', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'js-service-check', 'css-app', 'css-reference', 'css-kontentsmartlink', 'css-service-check']));
+gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-elearning', 'js-landing-page', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'js-service-check', 'css-app', 'css-reference', 'css-kontentsmartlink', 'css-service-check']));
 
 gulp.task('develop', gulp.series(['build', 'observe']));
 

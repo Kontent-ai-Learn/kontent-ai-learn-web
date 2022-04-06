@@ -1,34 +1,9 @@
-const landingPage = (() => {
-  const requestInfo = async (token) => {
-    let accessType = 'public';
-    const fetchOptions = {
-      method: 'POST'
-    };
-
-    if (token) {
-      fetchOptions.headers = { Authorization: `Bearer ${token}` };
-      accessType = 'private';
-    }
-
-    const result = await fetch(`/learn/api/landing-page/${accessType}`, fetchOptions);
-    return await result.json();
-  };
-
-  const getInfo = async () => {
-    const container = document.querySelector('[data-lp]');
-    if (!container) return;
-
-    const user = await auth0.ensureUserSignedIn();
-    const token = user ? user.__raw : null;
-    const data = await requestInfo(token);
-    console.log(data);
-  };
-
+window.landingPageSliders = [];
+(() => {
   const initSliders = () => {
     const elms = document.querySelectorAll('.landing-page__items .splide');
 
     const options = {
-      type: 'loop',
       gap: '36px',
       perPage: 3,
       perMove: 1,
@@ -47,13 +22,11 @@ const landingPage = (() => {
   
     for (let i = 0; i < elms.length; i++) {
       elms[i].classList.add('landing-page__items--init');
-      new Splide(elms[i], options).mount();
+      const splideInstance = new Splide(elms[i], options);
+      splideInstance.mount();
+      window.landingPageSliders.push(splideInstance);
     }
   };
 
   initSliders();
-
-  return {
-    getInfo: getInfo
-  }
 })();
