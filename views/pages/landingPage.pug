@@ -1,5 +1,6 @@
 extends ../includes/layout.pug
 block content
+  script var pathRoot = '!{pathRoot}';
   .utilities-lp-bg
   main.landing-page(id='main', data-lp)
     h1.landing-page__heading.utilities-dot !{title}
@@ -15,7 +16,7 @@ block content
               span.tile__tag.tile__tag--green&attributes(smartLink?.elementCodename('is_free')) !{UIMessages.training___free_course_label.value}
           if helper.isNotEmptyRichText(content.promoted.description.value)
             .tile__description&attributes(smartLink?.elementCodename('description')) !{postprocessMarkup(content.promoted.description.value, res)}
-          a(href=`${helper.getPathWithoutQS(req.originalUrl)}${content.promoted.url.value}/`, data-lp-link, data-lp-lighbox-invoke=content.promoted.system.codename).tile__cta 
+          a(href=`${pathRoot}${content.promoted.url.value}/`, data-lp-link, data-lp-lightbox-invoke=content.promoted.system.codename).tile__cta 
             span Course detail
             span
     .landing-page__filter(data-lp-filter-group)
@@ -34,8 +35,8 @@ block content
                 ul.splide__list
                   each course in topic.courses
                     li.splide__slide(data-lp-filter-item)
-                      .card(data-lp-lightbox, data-lp-item=course.system.codename)&attributes(smartLink?.itemId(course.system.id))
-                        a.card__link(href=`${helper.getPathWithoutQS(req.originalUrl)}${course.url.value}/`, data-lp-link)
+                      .card(data-lp-lightbox, data-lp-item=course.system.codename)&attributes(smartLink?.itemId(course.system.id))&attributes((detailCourse && detailCourse.system.codename) === course.system.codename ? { 'data-lp-lightbox-autoinvoke' : '' } : {})
+                        a.card__link(href=`${pathRoot}${course.url.value}/`, data-lp-link)
                         .card__img&attributes(smartLink?.elementCodename('thumbnail'))
                           if (course.thumbnail)
                             img(src=course.thumbnail.value[0].url, data-lp-lightbox-data='image')

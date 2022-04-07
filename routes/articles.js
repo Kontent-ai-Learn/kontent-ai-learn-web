@@ -146,8 +146,17 @@ const getData = async (req, res) => {
 
     const platformsConfigPairings = await getContent.platformsConfigPairings(res);
 
-    const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
+    let urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
+    let detailCodename;
     if (!urlMapItem) return null;
+    if (urlMapItem.type === 'training_course2' || urlMapItem.type === 'training_certification_test') {
+        const url = helper.removePathLastSegments(helper.getPathWithoutTrailingSlash(urlMapItem.url), 1);
+        const urlMapItemTemp = helper.getMapItemByUrl(url, urlMap);
+        if (urlMapItemTemp.type === 'landing_page') {
+            detailCodename = urlMapItem.codename;
+            urlMapItem = urlMapItemTemp;
+        }
+    }
     let content = await getItemContent(urlMapItem, urlMap, res);
 
     let view = 'pages/article';
@@ -167,7 +176,7 @@ const getData = async (req, res) => {
                 redirectCode: 301,
                 redirectUrl: `${pathUrl}${content[0].subpages.value[0].url.value}/${queryHash ? `?${queryHash}` : ''}`
             }
-        } else if (content[0].system.type === 'training_course2') {
+        } /* else if (content[0].system.type === 'training_course2') {
             if (req.query.id) {
                 res = fastly.preventCaching(res);
                 const link = await scorm.getTrainingRegistrationLink(req.query.id, content[0].system.codename, res);
@@ -179,11 +188,23 @@ const getData = async (req, res) => {
                 }
             }
             view = 'pages/trainingCourse';
-        } else if (content[0].system.type === 'training_certification_test') {
+        } */ else if (content[0].system.type === 'training_certification_test') {
             view = 'pages/certificationTestDetail';
             content[0].question_groups.value.forEach(item => { testQuestionsNumber += item.number_of_questions.value });
         } else if (content[0].system.type === 'landing_page') {
             view = 'pages/landingPage';
+
+            let detailCourse;
+            const data = await elearningLandingPage.getData(content[0], res);
+            if (detailCodename) {
+                for (let i = 0; i < data.topics.length; i++) {
+                    for (let j = 0; j < data.topics[i].courses.length; j++) {
+                        if (data.topics[i].courses[j].system.codename === detailCodename) {
+                            detailCourse = data.topics[i].courses[j];
+                        }
+                    }
+                }
+            }
 
             return {
                 req: req,
@@ -193,8 +214,10 @@ const getData = async (req, res) => {
                 isLandingPage: true,
                 isPreview: KCDetails.isPreview,
                 itemId: content[0].system.id || null,
-                title: content[0].page_title.value || '',
-                content: await elearningLandingPage.getData(content[0], res),
+                detailCourse: detailCourse,
+                pathRoot: urlMapItem.url,
+                title: detailCourse ? detailCourse.title.value : content[0]?.page_title.value || '',
+                content: data,
                 navigation: home && home.length ? home[0].subpages.value : null,
                 footer: footer && footer.length ? footer[0] : null,
                 UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,

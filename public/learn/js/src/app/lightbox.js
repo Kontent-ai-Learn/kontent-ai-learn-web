@@ -48,12 +48,16 @@
     }, 100);
   };
 
-  const zoomItem = (elemSelector, basicLightboxInstance, content, figcaption, closeUrl) => {
-    let closeMarkup = '<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><div class="basicLightbox__close"></div></div>';
-    if (closeUrl) {
-      closeMarkup = `<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><a href="${closeUrl}" data-lp-link class="basicLightbox__close"></a></div>`;
-    }
-    basicLightboxInstance = window.basicLightbox.create(`${closeMarkup}${content}${figcaption}`);
+  const zoomItem = (elemSelector, basicLightboxInstance, content, figcaption, callback, link) => {
+    const closeMarkup = '<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><div class="basicLightbox__close"></div></div>';
+    basicLightboxInstance = window.basicLightbox.create(`${closeMarkup}${content}${figcaption}`, {
+      onShow: () => {
+        if (callback && link) callback(link);
+      },
+      onClose: () => {
+        if (callback) callback();
+      }
+    });
     basicLightboxInstance.show();
 
     if (elemSelector === 'video') {
@@ -209,53 +213,105 @@
   };
 
   const initLightboxOnLandingPage = () => {
-    const currentPath = window.location.pathname;
-    setTimeout(() => {
-      const initLightbox = () => {
-        document.querySelector('body').addEventListener('click', (e) => {
-          const item = e.target.closest('[data-lp-lightbox]');
-          if (!item) return;
+
+    const handleUrl = (path) => {
+      const url = path || pathRoot || '';
+      window.history.pushState('', '', url);
+
+      console.log('hit ' + url);
+
+      if (ga) {
+        //ga('create', 'UA-134087903-1', 'auto');
+        ga('send', 'pageview', url);
+      }
+    };  
+
+    const handleLightBox = (e) => {
+      let item;
+      let link;
+      let linkUrl;
+      let callback;
+      let target;
+      if (e) {
+        target = e.target;
+        item = target.closest('[data-lp-lightbox-invoke]');
+        console.log(item)
+        if (item) {
+          const codename = item.getAttribute('data-lp-lightbox-invoke');
+          target = document.querySelector(`[data-lp-lightbox][data-lp-item="${codename}"]`);
+        }
+        item = target.closest('[data-lp-lightbox]');
+        console.log(target)
+        if (item && e.preventDefault) {
+          link = target.closest('[data-lp-link]');
+          callback = handleUrl;
           e.preventDefault();
+        }
+      } else {
+        item = document.querySelector(`[data-lp-lightbox-autoinvoke]`);
+        callback = handleUrl;
+      }
+      if (!item) return;
 
-          const image = item.querySelector('[data-lp-lightbox-data="image"]');
-          const title = item.querySelector('[data-lp-lightbox-data="title"]');
-          const description = item.querySelector('[data-lp-lightbox-data="description"]');
-          const personas = item.querySelectorAll('[data-lp-persona]');
-          const duration = item.querySelector('[data-lp-lightbox-data="duration"]');
-          const isFree = item.querySelector('[data-lp-lightbox-data="free"]');
+      if (link) linkUrl = link.getAttribute('href');
 
-          const markup = `
-          <div class="card card--lightbox">
-            <div class="card__img">
-              <img src="${image.getAttribute('src')}">
-              <div class="card__content">
-                <div class="card__row card__row--space-between card__row--align-items-center">
-                  <ul class="card__tag-list">
-                    ${Array.from(personas).map((tag) => `<li class="card__tag">${tag.innerHTML}</li>`).join('')}
-                  </ul>
-                  <div class="card__duration">${duration.innerHTML}</div>
-                </div>
-                <h3 class="card__title">${title.innerHTML}</h3>
-                <div class="card__description">${description.innerHTML}</div>
+      const image = item.querySelector('[data-lp-lightbox-data="image"]');
+      const title = item.querySelector('[data-lp-lightbox-data="title"]');
+      const description = item.querySelector('[data-lp-lightbox-data="description"]');
+      const personas = item.querySelectorAll('[data-lp-persona]');
+      const duration = item.querySelector('[data-lp-lightbox-data="duration"]');
+      const isFree = item.querySelector('[data-lp-lightbox-data="free"]');
 
-                <div class="card__row card__row--space-between">
-                  <div class="card__actions">
-                    ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
-                    ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
-                  </div>
-                  <div class="card__certificate">
-                  </div>
-                </div>
+      const markup = `
+      <div class="card card--lightbox">
+        <div class="card__img">
+          <img src="${image.getAttribute('src')}">
+          <div class="card__content">
+            <div class="card__row card__row--space-between card__row--align-items-center">
+              <ul class="card__tag-list">
+                ${Array.from(personas).map((tag) => `<li class="card__tag">${tag.innerHTML}</li>`).join('')}
+              </ul>
+              <div class="card__duration">${duration.innerHTML}</div>
+            </div>
+            <h3 class="card__title">${title.innerHTML}</h3>
+            <div class="card__description">${description.innerHTML}</div>
+
+            <div class="card__row card__row--space-between">
+              <div class="card__actions">
+                ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
+                ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
+              </div>
+              <div class="card__certificate">
               </div>
             </div>
-          </div>;`
-          
-          const wrap = document.createElement('div');
-          wrap.innerHTML = markup;
+          </div>
+        </div>
+      </div>;`
+      
+      const wrap = document.createElement('div');
+      wrap.innerHTML = markup;
 
-          let instance;
-          instance = zoomItem('.card', instance, wrap.innerHTML, '', currentPath);
-        })
+      let instance;
+      instance = zoomItem('.card', instance, wrap.innerHTML, '', callback, linkUrl);
+      return instance;
+    };
+
+    setTimeout(() => {
+      const initLightbox = () => {
+        let instance = handleLightBox();
+        document.querySelector('body').addEventListener('click', (e) => {
+          instance = handleLightBox(e);
+        });
+        window.onpopstate = window.onpushstate = function(e) {
+          if (instance && instance.visible()) {
+            instance.onClose = null;
+            instance.close();
+          } else {
+            const item = document.querySelector(`[data-lp-link][href="${window.location.pathname}"]:not([data-lp-lighbox-invoke])`);
+            if (!item) return;
+            instance = handleLightBox({ target: item });
+          }
+        };
       }
 
       initLightboxOnElemsAvailable('[data-lp-lightbox]', initLightbox);
