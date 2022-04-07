@@ -142,6 +142,9 @@ const componentsResolvers = [{
     type: 'carousel',
     resolver: richTextResolverTemplates.carousel
 }, {
+    type: 'run_in_postman_button',
+    resolver: richTextResolverTemplates.runInPostmanButton
+}, {
     type: 'training_question_for_survey_and_test',
     resolver: richTextResolverTemplates.question
 }, {
