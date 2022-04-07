@@ -9,7 +9,7 @@ const getData = async (content, res) => {
   const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
     return await getContent.certificationTest(res);
   });
-  const courses = [...trainingCourses, ...certificationTests.items]
+  const courses = [...trainingCourses, ...certificationTests.items];
 
   const trainingTopicTaxonomyGroup = await cacheHandle.evaluateSingle(res, 'trainingTopicTaxonomyGroup', async () => {
     return await getContent.trainingTopicTaxonomyGroup(res);

@@ -245,7 +245,7 @@ const handleUnusedItems = async (type, deliveryClient, urlMap) => {
     return urlMap;
 };
 
-const handleContentType = async (deliveryClient, urlMap, codename, pathSegment) => {
+const handleContentType = async (deliveryClient, urlMap, codename, pathSegment, exclude) => {
     const { items, error } = await queryDeliveryType(codename, 1, deliveryClient);
 
     if (items && items.items) {
@@ -255,7 +255,7 @@ const handleContentType = async (deliveryClient, urlMap, codename, pathSegment) 
                     codename: item.system.codename,
                     url: `/learn/${pathSegment}/${item.url.value}/`,
                     date: item.system.lastModified,
-                    visibility: [{ codename: 'excluded_from_search' }],
+                    visibility: exclude ? [{ codename: 'excluded_from_search' }] : null,
                     type: item.system.type
                 }, fields));
             }
@@ -264,6 +264,43 @@ const handleContentType = async (deliveryClient, urlMap, codename, pathSegment) 
 
     if (error) {
         errorAppInsights.log('DELIVERY_API_ERROR', items);
+    }
+
+    return urlMap;
+};
+
+const handleLandingPage = async (deliveryClient, urlMap, codenames) => {
+    const lpItems = [];
+    const trainingItems = [];
+    for (let i = 0; i < urlMap.length; i++) {
+        if (urlMap[i].type === 'landing_page') {
+            lpItems.push(urlMap[i]);
+        }
+    }
+
+    for await (const codename of codenames) {
+        const { items, error } = await queryDeliveryType(codename, 1, deliveryClient);
+        if (items && items.items) {
+            trainingItems.push(...items.items);
+        }
+
+        if (error) {
+            errorAppInsights.log('DELIVERY_API_ERROR', items);
+        }
+    }
+
+    for (let i = 0; i < lpItems.length; i++) {
+        for (let j = 0; j < trainingItems.length; j++) {
+            if (!trainingItems[j]._raw.system.workflow_step !== 'archived') {
+                urlMap.push(getMapItem({
+                    codename: trainingItems[j].system.codename,
+                    url: `${lpItems[i].url}${trainingItems[j].url.value}/`,
+                    date: trainingItems[j].system.lastModified,
+                    visibility: null,
+                    type: trainingItems[j].system.type
+                }, fields));
+            }
+        }
     }
 
     return urlMap;
@@ -309,8 +346,9 @@ const getUrlMap = async (res, isSitemap) => {
     });
     urlMap = await handleUnusedItems('article', deliveryClient, urlMap);
     urlMap = await handleUnusedItems('training_course2', deliveryClient, urlMap);
-    urlMap = await handleContentType(deliveryClient, urlMap, 'training_survey', 'survey');
-    urlMap = await handleContentType(deliveryClient, urlMap, 'training_certification_test', 'get-certified');
+    urlMap = await handleContentType(deliveryClient, urlMap, 'training_survey', 'survey', true);
+    urlMap = await handleContentType(deliveryClient, urlMap, 'training_certification_test', 'get-certified', true);
+    urlMap = await handleLandingPage(deliveryClient, urlMap, ['training_certification_test', 'training_course2'])
 
     return urlMap;
 };

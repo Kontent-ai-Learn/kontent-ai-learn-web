@@ -193,7 +193,7 @@ const getData = async (req, res) => {
                 isLandingPage: true,
                 isPreview: KCDetails.isPreview,
                 itemId: content[0].system.id || null,
-                title: content[0].title.value || '',
+                title: content[0].page_title.value || '',
                 content: await elearningLandingPage.getData(content[0], res),
                 navigation: home && home.length ? home[0].subpages.value : null,
                 footer: footer && footer.length ? footer[0] : null,

@@ -209,6 +209,7 @@
   };
 
   const initLightboxOnLandingPage = () => {
+    const currentPath = window.location.pathname;
     setTimeout(() => {
       const initLightbox = () => {
         document.querySelector('body').addEventListener('click', (e) => {
@@ -253,7 +254,7 @@
           wrap.innerHTML = markup;
 
           let instance;
-          instance = zoomItem('.card', instance, wrap.innerHTML, '', '/learn/e-learning/e-learning-dev/');
+          instance = zoomItem('.card', instance, wrap.innerHTML, '', currentPath);
         })
       }
 
