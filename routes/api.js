@@ -51,13 +51,7 @@ router.post('/training-certification/detail/public', async (req, res) => {
   return res.send(data);
 });
 
-router.post('/landing-page/private', jwtCheck, async (req, res) => {
-  res = fastly.preventCaching(res);
-  const data = await elearningLandingPageApi.init(req, res);
-  return res.send(data);
-});
-
-router.post('/landing-page/public', async (req, res) => {
+router.post('/landing-page/', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
   const data = await elearningLandingPageApi.init(req, res);
   return res.send(data);

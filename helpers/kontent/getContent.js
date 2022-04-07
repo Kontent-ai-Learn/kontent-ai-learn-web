@@ -126,7 +126,7 @@ const getUrlMap = require('../general/urlMap');
         });
         return await requestDelivery({
             type: 'training_certification_test',
-            depth: 4,
+            depth: codename ? 4 : 1,
             codename: codename,
             resolveRichText: true,
             urlMap: urlMap,

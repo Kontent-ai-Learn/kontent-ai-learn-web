@@ -48,8 +48,12 @@
     }, 100);
   };
 
-  const zoomItem = (elemSelector, basicLightboxInstance, content, figcaption) => {
-    basicLightboxInstance = window.basicLightbox.create(`<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><div class="basicLightbox__close"></div></div>${content}${figcaption}`);
+  const zoomItem = (elemSelector, basicLightboxInstance, content, figcaption, closeUrl) => {
+    let closeMarkup = '<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><div class="basicLightbox__close"></div></div>';
+    if (closeUrl) {
+      closeMarkup = `<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><a href="${closeUrl}" data-lp-link class="basicLightbox__close"></a></div>`;
+    }
+    basicLightboxInstance = window.basicLightbox.create(`${closeMarkup}${content}${figcaption}`);
     basicLightboxInstance.show();
 
     if (elemSelector === 'video') {
@@ -204,8 +208,62 @@
     }, 0);
   };
 
+  const initLightboxOnLandingPage = () => {
+    setTimeout(() => {
+      const initLightbox = () => {
+        document.querySelector('body').addEventListener('click', (e) => {
+          const item = e.target.closest('[data-lp-lightbox]');
+          if (!item) return;
+          e.preventDefault();
+
+          const image = item.querySelector('[data-lp-lightbox-data="image"]');
+          const title = item.querySelector('[data-lp-lightbox-data="title"]');
+          const description = item.querySelector('[data-lp-lightbox-data="description"]');
+          const personas = item.querySelectorAll('[data-lp-persona]');
+          const duration = item.querySelector('[data-lp-lightbox-data="duration"]');
+          const isFree = item.querySelector('[data-lp-lightbox-data="free"]');
+
+          const markup = `
+          <div class="card card--lightbox">
+            <div class="card__img">
+              <img src="${image.getAttribute('src')}">
+              <div class="card__content">
+                <div class="card__row card__row--space-between card__row--align-items-center">
+                  <ul class="card__tag-list">
+                    ${Array.from(personas).map((tag) => `<li class="card__tag">${tag.innerHTML}</li>`).join('')}
+                  </ul>
+                  <div class="card__duration">${duration.innerHTML}</div>
+                </div>
+                <h3 class="card__title">${title.innerHTML}</h3>
+                <div class="card__description">${description.innerHTML}</div>
+
+                <div class="card__row card__row--space-between">
+                  <div class="card__actions">
+                    ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
+                    ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
+                  </div>
+                  <div class="card__certificate">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>;`
+          
+          const wrap = document.createElement('div');
+          wrap.innerHTML = markup;
+
+          let instance;
+          instance = zoomItem('.card', instance, wrap.innerHTML, '', '/learn/e-learning/e-learning-dev/');
+        })
+      }
+
+      initLightboxOnElemsAvailable('[data-lp-lightbox]', initLightbox);
+    }, 0);
+  };
+
   initLightboxOnImages();
   initLightboxOnEmbeds();
   initLightboxOnChangelog();
   initLightboxOnVideos();
+  initLightboxOnLandingPage();
 })();

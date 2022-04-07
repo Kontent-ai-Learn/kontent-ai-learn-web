@@ -1,6 +1,6 @@
 const landingPage = (() => {
   const addSignInButton = () => {
-    const container = document.querySelector('.landing-page__auth');
+    const container = document.querySelector('[data-lp-auth]');
     if (!container) return;
 
     const button = document.createElement('a');
@@ -16,27 +16,25 @@ const landingPage = (() => {
   };
 
   const requestInfo = async (token) => {
-    let accessType = 'public';
     const fetchOptions = {
       method: 'POST'
     };
 
     if (token) {
       fetchOptions.headers = { Authorization: `Bearer ${token}` };
-      accessType = 'private';
-    } else {
-      addSignInButton();
+      const result = await fetch(`/learn/api/landing-page`, fetchOptions);
+      return await result.json();
     }
+    addSignInButton();
 
-    const result = await fetch(`/learn/api/landing-page/${accessType}`, fetchOptions);
-    return await result.json();
+    return null
   };
 
   const getInfo = async () => {
     const container = document.querySelector('[data-lp]');
     if (!container) return;
 
-    const user = await auth0.ensureUserSignedIn();
+    window.user = await auth0.ensureUserSignedIn();
     const token = user ? user.__raw : null;
     const data = await requestInfo(token);
     console.log(data);

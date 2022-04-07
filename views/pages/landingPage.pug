@@ -15,7 +15,7 @@ block content
               span.tile__tag.tile__tag--green&attributes(smartLink?.elementCodename('is_free')) !{UIMessages.training___free_course_label.value}
           if helper.isNotEmptyRichText(content.promoted.description.value)
             .tile__description&attributes(smartLink?.elementCodename('description')) !{postprocessMarkup(content.promoted.description.value, res)}
-          a(href=`#${content.promoted.url.value}`).tile__cta 
+          a(href=`/learn/e-learning/e-learning-dev/${content.promoted.url.value}/`, data-lp-link, data-lp-lighbox-invoke=content.promoted.system.codename).tile__cta 
             span Course detail
             span
     .landing-page__filter(data-lp-filter-group)
@@ -34,22 +34,30 @@ block content
                 ul.splide__list
                   each course in topic.courses
                     li.splide__slide(data-lp-filter-item)
-                      .card&attributes(smartLink?.itemId(course.system.id))
+                      .card(data-lp-lightbox, data-lp-item=course.system.codename)&attributes(smartLink?.itemId(course.system.id))
+                        a.card__link(href=`/learn/e-learning/e-learning-dev/${course.url.value}/`, data-lp-link)
                         .card__img&attributes(smartLink?.elementCodename('thumbnail'))
-                          img(src=course.thumbnail.value[0].url)
+                          if (course.thumbnail)
+                            img(src=course.thumbnail.value[0].url, data-lp-lightbox-data='image')
                         .card__content
                           .card__top
                             if (course.personas___topics__training_persona.value.length)
-                              ul.card__tag-list
+                              ul.card__tag-list(data-lp-lightbox-data='personas')
                                 each persona in course.personas___topics__training_persona.value
                                   li.card__tag(data-lp-persona=persona.codename) !{persona.name}
-                            h3.card__title&attributes(smartLink?.elementCodename('title')) !{course.title.value}
+                            h3.card__title(data-lp-lightbox-data='title')&attributes(smartLink?.elementCodename('title')) !{course.title.value}
                               - const isFree = course.is_free ? helper.isCodenameInMultipleChoice(course.is_free.value, 'yes') : false;
                               if (isFree)
-                                span.card__tag.card__tag--green&attributes(smartLink?.elementCodename('is_free')) !{UIMessages.training___free_course_label.value}
+                                span(data-lp-lightbox-data='free').card__tag.card__tag--green&attributes(smartLink?.elementCodename('is_free')) !{UIMessages.training___free_course_label.value}
+                            .card__description(data-lp-lightbox-data='description')
+                              if (course.description && helper.isNotEmptyRichText(course.description.value))
+                                | !{postprocessMarkup(course.description.value, res)}
+                              if (course.introduction && helper.isNotEmptyRichText(course.introduction.value))
+                                |!{postprocessMarkup(course.introduction.value, res)}
                           .card__bottom
                             .card__row.card__row--space-between
                               .card__cta Course detail
                               .card__certificate
                             .card__row.card__row--end
-                              .card__duration&attributes(smartLink?.elementCodename('duration')) !{course.duration.value} min
+                              - const durationProperty = course.duration ? 'duration' : 'test_duration';
+                              .card__duration(data-lp-lightbox-data='duration')&attributes(smartLink?.elementCodename(durationProperty)) !{course[durationProperty].value} min

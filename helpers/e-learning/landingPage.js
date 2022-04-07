@@ -6,6 +6,11 @@ const getData = async (content, res) => {
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
     return await getContent.traniningCourse(res);
   });
+  const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
+    return await getContent.certificationTest(res);
+  });
+  const courses = [...trainingCourses, ...certificationTests.items]
+
   const trainingTopicTaxonomyGroup = await cacheHandle.evaluateSingle(res, 'trainingTopicTaxonomyGroup', async () => {
     return await getContent.trainingTopicTaxonomyGroup(res);
   });
@@ -15,7 +20,7 @@ const getData = async (content, res) => {
     return {
       codename: topic.codename,
       name: topic.name,
-      courses: trainingCourses.filter((course) => {
+      courses: courses.filter((course) => {
         return isCodenameInMultipleChoice(course.personas___topics__training_topic.value, topic.codename);
       })
     }

@@ -308,6 +308,7 @@ const invalidate = async (req, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingSubscriptions');
         await deleteSpecificKeys(KCDetails, itemsByTypes.trainingSurveys, res);
         await deleteSpecificKeys(KCDetails, itemsByTypes.trainingCertificationTests, res);
+        await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingCertificationTests');
         await invalidatePDFs(items, res);
         await fastly.purgeFinal(itemsByTypes, req, res);
     }
