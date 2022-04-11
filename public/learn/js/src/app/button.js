@@ -7,7 +7,8 @@
             e.target.matches('.button') || 
             e.target.matches('.call-to-action') || 
             e.target.matches('[class*="DownloadButton"]') ||
-            e.target.matches('.tile__cta')
+            e.target.matches('.tile__cta') ||
+            e.target.matches('.card__certificate-link')
         )) {
             var rect = e.target.getBoundingClientRect();
             var top = e.clientY - rect.top;

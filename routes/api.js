@@ -57,6 +57,12 @@ router.post('/landing-page/', jwtCheck, async (req, res) => {
   return res.send(data);
 });
 
+router.post('/landing-page/registration', jwtCheck, async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await elearningLandingPageApi.registration(req, res);
+  return res.send(data);
+});
+
 router.post('/get-certified', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
   const data = await certificationAttempt.init(req.body, res);

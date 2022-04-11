@@ -21,7 +21,7 @@
   };
 
   const registerCloseOnElemClick = (instance, elemSelector) => {
-    document.querySelector(elemSelector).addEventListener('click', function () {
+    document.querySelector(elemSelector).addEventListener('click', () => {
       if (instance && instance.close) {
         instance.close();
       }
@@ -48,9 +48,18 @@
     }, 100);
   };
 
+  const registerCloseOnPlaceholder = (instance) => {
+    document.querySelector('body').addEventListener('click', (e) => {
+      const shouldClose = e.target.closest('.basicLightbox__placeholder') && !e.target.closest('.basicLightbox__content-container');
+      if (instance && instance.close && e.target.closest && shouldClose) {
+        instance.close();
+      }
+    });
+  };
+
   const zoomItem = (elemSelector, basicLightboxInstance, content, figcaption, callback, link) => {
     const closeMarkup = '<div class="basicLightbox__close-container basicLightbox__close-container--hidden"><div class="basicLightbox__close"></div></div>';
-    basicLightboxInstance = window.basicLightbox.create(`${closeMarkup}${content}${figcaption}`, {
+    basicLightboxInstance = window.basicLightbox.create(`<div class="basicLightbox__content-container">${closeMarkup}${content}${figcaption}</div>`, {
       onShow: () => {
         if (callback && link) callback(link);
       },
@@ -72,6 +81,7 @@
 
     showCloseButtonOnElemLoaded(elemSelector, basicLightboxInstance);
     registerCloseOnEsc(basicLightboxInstance);
+    registerCloseOnPlaceholder(basicLightboxInstance);
 
     return basicLightboxInstance;
   };
@@ -218,8 +228,6 @@
       const url = path || pathRoot || '';
       window.history.pushState('', '', url);
 
-      console.log('hit ' + url);
-
       if (ga) {
         //ga('create', 'UA-134087903-1', 'auto');
         ga('send', 'pageview', url);
@@ -235,13 +243,11 @@
       if (e) {
         target = e.target;
         item = target.closest('[data-lp-lightbox-invoke]');
-        console.log(item)
         if (item) {
-          const codename = item.getAttribute('data-lp-lightbox-invoke');
-          target = document.querySelector(`[data-lp-lightbox][data-lp-item="${codename}"]`);
+          const id = item.getAttribute('data-lp-lightbox-invoke');
+          target = document.querySelector(`[data-lp-lightbox][data-lp-item="${id}"]`);
         }
         item = target.closest('[data-lp-lightbox]');
-        console.log(target)
         if (item && e.preventDefault) {
           link = target.closest('[data-lp-link]');
           callback = handleUrl;
@@ -261,9 +267,11 @@
       const personas = item.querySelectorAll('[data-lp-persona]');
       const duration = item.querySelector('[data-lp-lightbox-data="duration"]');
       const isFree = item.querySelector('[data-lp-lightbox-data="free"]');
+      const id = item.getAttribute('data-lp-item');
+      
 
       const markup = `
-      <div class="card card--lightbox">
+      <div class="card card--lightbox" data-lp-active-lightbox="${id}">
         <div class="card__img">
           <img src="${image.getAttribute('src')}">
           <div class="card__content">
@@ -276,17 +284,12 @@
             <h3 class="card__title">${title.innerHTML}</h3>
             <div class="card__description">${description.innerHTML}</div>
 
-            <div class="card__row card__row--space-between">
-              <div class="card__actions">
-                ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
-                ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
-              </div>
-              <div class="card__certificate">
-              </div>
+            <div class="card__row card__row--space-between card__row--actions" data-lp-active-lightbox-actions>
+              ${landingPage.renderLigthboxActions(id, isFree)}
             </div>
           </div>
         </div>
-      </div>;`
+      </div>`
       
       const wrap = document.createElement('div');
       wrap.innerHTML = markup;

@@ -234,6 +234,33 @@ const scorm = {
 
     return null;
   },
+  createRegistrationLink: async (user, courseId, res) => {
+    let linkData = null;
+    const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+      return await getContent.traniningCourse(res);
+    });
+    const course = trainingCourses.find(item => item.system.id === courseId);
+    const scormCourseId = getCourseId(course, res);
+
+    if (!isPreview(res.locals.previewapikey)) {
+      const registrationId = getRegistrationId(user.email, scormCourseId);
+      const registrationExists = await getRegistrationExistence(registrationId);
+
+      if (!registrationExists) {
+        await createRegistration(user, scormCourseId, registrationId);
+      }
+
+      linkData = await getRegistrationLink(registrationId, course.course_survey.value?.[0]?.system?.codename, scormCourseId, res);
+    } else {
+      linkData = await getCoursePreviewLink(scormCourseId, course.course_survey.value?.[0]?.system?.codename, res);
+    }
+
+    if (linkData?.launchLink) {
+      return linkData.launchLink;
+    }
+
+    return null;
+  },
   handleTrainingCourse: async (user, course, req, res) => {
     const courseId = getCourseId(course, res);
     let registrationData = null;

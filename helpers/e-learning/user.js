@@ -73,4 +73,5 @@ const getUser = async (email, res) => {
 module.exports = {
   getUser,
   isCourseAvailable,
+  userHasElearningAccess,
 }

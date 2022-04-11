@@ -14,8 +14,6 @@ const platforms = require('../helpers/general/platforms');
 const resolveCustomRichText = require('../helpers/resolve/customRichText');
 const smartLink = require('../helpers/kontent/smartLink');
 const getUrlMap = require('../helpers/general/urlMap');
-const scorm = require('../helpers/services/scorm');
-const fastly = require('../helpers/services/fastly');
 const elearningLandingPage = require('../helpers/e-learning/landingPage');
 
 let cookiesPlatform;
@@ -176,19 +174,7 @@ const getData = async (req, res) => {
                 redirectCode: 301,
                 redirectUrl: `${pathUrl}${content[0].subpages.value[0].url.value}/${queryHash ? `?${queryHash}` : ''}`
             }
-        } /* else if (content[0].system.type === 'training_course2') {
-            if (req.query.id) {
-                res = fastly.preventCaching(res);
-                const link = await scorm.getTrainingRegistrationLink(req.query.id, content[0].system.codename, res);
-                if (link) {
-                    return {
-                        redirectCode: 303,
-                        redirectUrl: link
-                    }
-                }
-            }
-            view = 'pages/trainingCourse';
-        } */ else if (content[0].system.type === 'training_certification_test') {
+        } else if (content[0].system.type === 'training_certification_test') {
             view = 'pages/certificationTestDetail';
             content[0].question_groups.value.forEach(item => { testQuestionsNumber += item.number_of_questions.value });
         } else if (content[0].system.type === 'landing_page') {
@@ -217,6 +203,7 @@ const getData = async (req, res) => {
                 detailCourse: detailCourse,
                 pathRoot: urlMapItem.url,
                 title: detailCourse ? detailCourse.title.value : content[0]?.page_title.value || '',
+                description: detailCourse ? helper.stripTags(detailCourse.description.value).substring(0, 300) : '',
                 content: data,
                 navigation: home && home.length ? home[0].subpages.value : null,
                 footer: footer && footer.length ? footer[0] : null,
