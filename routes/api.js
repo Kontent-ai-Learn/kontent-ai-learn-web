@@ -9,6 +9,7 @@ const certificationEmail = require('../helpers/certification/email');
 const surveyAttempt = require('../helpers/survey/attempt');
 const elearningLandingPageApi = require('../helpers/e-learning/landingPageApi');
 const fastly = require('../helpers/services/fastly');
+const userProfile = require('../helpers/user/profile');
 
 const jwtCheck = jwt({
   secret: jwksRsa.expressJwtSecret({
@@ -51,7 +52,7 @@ router.post('/training-certification/detail/public', async (req, res) => {
   return res.send(data);
 });
 
-router.post('/landing-page/', jwtCheck, async (req, res) => {
+router.post('/landing-page', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
   const data = await elearningLandingPageApi.init(req, res);
   return res.send(data);
@@ -79,6 +80,18 @@ router.post('/e-learning/expiration-notifications', async (req, res) => {
   res = fastly.preventCaching(res);
   await certificationEmail.handleExpirations(res);
   return res.end();
+});
+
+router.get('/user/profile', jwtCheck, async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await userProfile.get(req?.user.email);
+  return res.send(data);
+});
+
+router.post('/user/profile', jwtCheck, async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await userProfile.createUpdate(req?.user.email, req.body);
+  return res.send(data);
 });
 
 module.exports = router;

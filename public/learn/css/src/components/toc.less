@@ -1,0 +1,66 @@
+.toc {
+  display: inline-block;
+
+	&__checkbox {
+    display: none;
+
+    &:checked {
+      & + .toc__label {
+        &:before {
+          border-color: #F05A22;
+          background-color: #F05A22;
+        }
+
+        &:after {
+          position: absolute;
+          content: '';
+          top: .625em;
+          left: .55em;
+          width: .25em;
+          height: .675em;
+          transform: rotate(45deg);
+          border: 2px solid #fff;
+          border-width: 0 2px 2px 0;
+          border-radius: 2px;
+        }
+      }
+    }
+	}
+
+	&__label {
+    position: relative;
+    padding: .5em 1em .5em 2.125em;
+    font-size: .875em;
+    line-height: 1.375em;
+
+    a {
+      color: #f05a22;
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    &:before {
+      content: '';
+      width: 1.25em;
+      height: 1.25em; 
+      border-radius: .5em .5em .25em;
+      background-color: transparent;
+      position: absolute;
+      left: 0;
+      top: 0.325em;
+      border: 2px solid rgba(35,31,32,0.5);
+  }
+
+    &:hover {
+      margin: 0;
+      color: #F05A22;
+
+      &:before {
+          border-color: #F05A22;
+      }
+    }
+	}
+}

@@ -284,8 +284,7 @@
               <div class="card__duration">${duration.innerHTML}</div>
             </div>
             <h3 class="card__title">${title.innerHTML}</h3>
-            <div class="card__description">${description.innerHTML}</div>
-
+            <div class="card__description">${description.innerHTML}</div>  
             ${isComingSoon ? `
               <strong class="card__message">${window.UIMessages.comingSoon}</strong>
             ` : `

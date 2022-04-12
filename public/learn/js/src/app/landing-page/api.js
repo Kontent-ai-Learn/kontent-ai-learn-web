@@ -89,19 +89,50 @@ const landingPage = (() => {
       isFree = courseItem.isFree;
     }
 
-    return `<div class="card__actions">
-              ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
-              ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
-              ${window.user && courseItem ? `<span onclick="landingPage.registration('${courseItem.id}')" class="button"><span>${courseItem.label}</span><span></span></span>` : ''}
-              ${window.user && examItem && examItem.url ? `<a href="${examItem.url}" class="button"><span>${examItem.label}</span><span></span></a>` : ''}
-              ${window.user && examItem && examItem.message ? `<strong class="card__message">${examItem.message}</strong>` : ''}
-              ${window.userElearningData && window.userElearningData.code === 3 && !isFree ? `<span class="call-to-action" onclick="window.Intercom && window.Intercom('show')"><span>${window.userElearningData.message}</span><span></span></span>` : ''}
-              ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2) ? window.userElearningData.message : ''}
-              </div>
-            <div class="card__certificate">
-              ${certificate ? `<a class="card__certificate-link" href="${certificate.url}" target="_blank"><span>${window.UIMessages.downloadCertificate}</span><span></span></a>` : ''}
-              ${certificate ? `<a class="card__a" href=${`https://www.linkedin.com/profile/add?startTask=${certificate.name}&name=${certificate.name}&organizationId=373060&issueYear=${certificate.issued[0]}&issueMonth=${certificate.issued[1]}&${certificate.expiration ? `expirationYear=${certificate.expiration[0]}&expirationMonth=${certificate.expiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>` : ''}
-            </div>`;
+    return `
+      ${window.userProfile ? `<div class="card__toc"><label class="toc" for="toc"><input id="toc" type="checkbox" class="toc__checkbox" data-lp-toc${window.userProfile.toc ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.toc)}</div></label></div>`: ''}
+      <div class="card__actions">
+        ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
+        ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
+        ${window.user && courseItem && window.userProfile ? `<span onclick="landingPage.registration('${courseItem.id}')" class="button" data-lp-disabled="${!window.userProfile.toc}"><span>${courseItem.label}</span><span></span></span>` : ''}
+        ${window.user && examItem && examItem.url && window.userProfile ? `<a href="${examItem.url}" class="button" data-lp-disabled="${!window.userProfile.toc}"><span>${examItem.label}</span><span></span></a>` : ''}
+        ${window.user && examItem && examItem.message ? `<strong class="card__message">${examItem.message}</strong>` : ''}
+        ${window.userElearningData && window.userElearningData.code === 3 && !isFree ? `<span class="call-to-action" onclick="window.Intercom && window.Intercom('show')"><span>${window.userElearningData.message}</span><span></span></span>` : ''}
+        ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2) ? window.userElearningData.message : ''}
+      </div>
+      <div class="card__certificate">
+        ${certificate ? `<a class="card__certificate-link" href="${certificate.url}" target="_blank"><span>${window.UIMessages.downloadCertificate}</span><span></span></a>` : ''}
+        ${certificate ? `<a class="card__a" href=${`https://www.linkedin.com/profile/add?startTask=${certificate.name}&name=${certificate.name}&organizationId=373060&issueYear=${certificate.issued[0]}&issueMonth=${certificate.issued[1]}&${certificate.expiration ? `expirationYear=${certificate.expiration[0]}&expirationMonth=${certificate.expiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>` : ''}
+      </div>`;
+  };
+
+  const handleToc = (profile, email, token) => {
+    if (profile.toc) {
+      const tocElems = document.querySelectorAll('[data-lp-toc]');
+      for (let i = 0; i < tocElems.length; i++) {
+        tocElems[i].checked = true;
+      }
+    }
+
+    document.querySelector('body').addEventListener('click', async (e) => {
+      const item = e.target.closest('[data-lp-toc]');
+      if (item) {
+        const disabled = document.querySelectorAll('[data-lp-disabled]');
+        for (let i = 0; i < disabled.length; i++) {
+          disabled[i].setAttribute('data-lp-disabled', !item.checked);
+        }
+
+        window.userProfile = await updateUserProfile(token, {
+          email: email,
+          toc: !!item.checked
+        });
+      }
+
+      const disabled = e.target.closest('[data-lp-disabled="true"]');
+      if (disabled) {
+        e.preventDefault();
+      }
+    });
   };
 
   const addLightboxActions = () => {
@@ -116,12 +147,38 @@ const landingPage = (() => {
 
     if (token) {
       fetchOptions.headers = { Authorization: `Bearer ${token}` };
-      const result = await fetch(`/learn/api/landing-page`, fetchOptions);
+      const result = await fetch(`/learn/api/landing-page/`, fetchOptions);
       return await result.json();
     }
     addSignInButton();
 
-    return null
+    return null;
+  };
+
+  const requestUserProfile = async (token) => {
+    if (!token) return null;
+    const fetchOptions =  { 
+      headers : { 
+        Authorization: `Bearer ${token}` 
+      }
+    };
+    const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
+    return await result.json();
+  };
+
+  const updateUserProfile = async (token, body) => {
+    const fetchOptions = {
+      method: 'POST',
+      body: JSON.stringify(body)
+    };
+
+    if (token) {
+      fetchOptions.headers = { Authorization: `Bearer ${token}` };
+      const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
+      return await result.json();
+    }
+
+    return null;
   };
 
   const getInfo = async () => {
@@ -130,19 +187,17 @@ const landingPage = (() => {
 
     window.user = await auth0.ensureUserSignedIn();
     const token = user ? user.__raw : null;
-    window.userElearningData = await requestInfo(token);
-    console.log(window.userElearningData);
-    if (window.userElearningData) {
-      addLightboxActions();
-      addCetificateLinks(window.userElearningData);
-      addPromoted(window.userElearningData.courses.find(item => item.promoted));
-
-      const event = new Event('userElearningDataEvent');
-      document.querySelector('body').dispatchEvent(event);
-    }
+    [window.userElearningData, window.userProfile] = await Promise.all([requestInfo(token), requestUserProfile(token)]);
+    addLightboxActions();
+    addCetificateLinks(window.userElearningData);
+    addPromoted(window.userElearningData.courses.find(item => item.promoted));
+    const event = new Event('userElearningDataEvent');
+    document.querySelector('body').dispatchEvent(event);
+    handleToc(window.userProfile, user.email, token);
   };
 
   const registration = async (id) => {
+    if (!window.userProfile.toc) return;
     if (!window.user) window.user = await auth0.ensureUserSignedIn();
     const token = window.user ? window.user.__raw : null;
     const fetchOptions = {
@@ -155,7 +210,7 @@ const landingPage = (() => {
     let data = null;
     if (token) {
       fetchOptions.headers = { Authorization: `Bearer ${token}` };
-      const result = await fetch(`/learn/api/landing-page/registration`, fetchOptions);
+      const result = await fetch(`/learn/api/landing-page/registration/`, fetchOptions);
       data = await result.json();
     }
 

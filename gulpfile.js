@@ -271,6 +271,7 @@ gulp.task('css-app', () => {
       'public/learn/css/src/components/card.less',
       'public/learn/css/src/components/dropdown.less',
       'public/learn/css/src/components/filter-search.less',
+      'public/learn/css/src/components/toc.less',
       'public/learn/css/src/general/print.less',
     ])
     .pipe(concat('app.less'))

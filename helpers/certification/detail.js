@@ -4,7 +4,6 @@ const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const elearningUser = require('../e-learning/user');
 const certificationDatabase = require('./database');
-const certificationAttempt = require('./attempt');
 
 const getCertificateData = (attempt, certificationTest) => {
   return {

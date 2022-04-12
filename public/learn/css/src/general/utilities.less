@@ -344,20 +344,21 @@ kontent-smart-link-element {
 
 }
 
-[data-once]:not([href]) {
-    cursor: default;
+[data-once]:not([href]), [data-lp-disabled="true"] {
+    cursor: default !important;
     background-color: #919091 !important;
     box-shadow: 0 0 0 1px #919091 !important; 
 
     &:hover,
     &:active {
+        background-color: #919091 !important;
         span {
             background-color: transparent !important;
         }
     }
 
     span:last-child {
-        display: none;
+        display: none !important;
     }
 }
 
