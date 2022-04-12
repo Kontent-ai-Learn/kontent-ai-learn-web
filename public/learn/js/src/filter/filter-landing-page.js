@@ -14,6 +14,17 @@
     }
     return personas;
   };
+
+  const getUniqueProgresses = () => {
+    if (!window.userElearningData) return;
+    const progresses = [];
+    for (let i = 0; i < window.userElearningData.courses.length; i++) {
+      const existingItem = progresses.find(item => item.codename === window.userElearningData.courses[i].progress.codename);
+      if (existingItem) continue;
+      progresses.push(window.userElearningData.courses[i].progress);
+    }
+    return progresses;
+  };
   
   const createDropDownInteractions = (dropdown) => {
     if (!dropdown) return;
@@ -134,6 +145,22 @@
     }
   };
 
+  const createFilterProgressAttributes = () => {
+    if (!window.userElearningData) return;
+    const filterItems = document.querySelectorAll('[data-lp-filter-item]');
+
+    for (let i = 0; i < filterItems.length; i++) {
+      const classList = ['f-reset-progress'];
+      const card = filterItems[i].querySelector('[data-lp-item]');
+      if (!card) continue;
+      const id = card.getAttribute('data-lp-item');
+      const elearningItem = window.userElearningData.courses.find(item => item.id === id);
+      if (!elearningItem) continue;
+      classList.push(`f-${elearningItem.progress.codename}`);
+      filterItems[i].classList.add(...classList);
+    }
+  };
+
   const updateGroups = () => {
     const groups = document.querySelectorAll('.landing-page__courses-group');
     for (let i = 0; i < groups.length; i++) {
@@ -195,6 +222,8 @@
         }
       }
     });
+
+    return mixer;
   };
 
   const personas = getUniquePersonas();
@@ -206,5 +235,17 @@
   hideDropDownsOnClick();
   createFilterAttributes();
   updateGroups();
-  initFilter();
+  const mixer = initFilter();
+
+  document.querySelector('body').addEventListener('userElearningDataEvent', function (e) {
+    const progresses = getUniqueProgresses();
+    const progressContainer = document.querySelector('[data-lp-progress]');
+    createDropDownMarkup(progresses, 'All courses', 'progress', progressContainer);
+    createFilterProgressAttributes();
+
+    if (mixer) {
+      mixer.destroy();
+      initFilter();
+    }
+  }, false);
 })();

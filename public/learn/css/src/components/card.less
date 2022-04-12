@@ -181,6 +181,7 @@
   &--lightbox {
     overflow: auto;
     max-width: 768px;
+    max-height: 95%;
     border: none;
     border-radius: 40px 0 0 40px;
 
@@ -284,6 +285,11 @@
     }
   }
 
+  &__message {
+    font-size: 1.25em;
+    padding: 0 0 .5em;
+  }
+
   &__certificate-link {
     font-weight: 700;
     border: 2px solid #41D9C5;
@@ -298,6 +304,7 @@
     font-size: .75em;
     text-align: center;
     line-height: 1.25em;
+    z-index: 1000;
 
     &:after {
       content: ' ↓';

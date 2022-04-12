@@ -11,7 +11,7 @@ const urlAliases = async (req, res, next) => {
         return getContent.articles(res);
     });
     const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-        return await getContent.traniningCourse(res);
+        return await getContent.trainingCourse(res);
     });
     const references = await cacheHandle.ensureSingle(res, 'apiSpecifications', async () => {
         return getContent.references(res);

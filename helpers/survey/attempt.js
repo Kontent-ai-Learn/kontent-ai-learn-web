@@ -10,7 +10,7 @@ const init = async (req, res) => {
   let courseIdTrainingCourse = req.body.courseid.replace('_preview', '');
   courseIdTrainingCourse = courseIdTrainingCourse.replace('dev_', '');
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-    return await getContent.traniningCourse(res);
+    return await getContent.trainingCourse(res);
   });
   const trainingCourse = trainingCourses.find(item => item.system.id === courseIdTrainingCourse);
 

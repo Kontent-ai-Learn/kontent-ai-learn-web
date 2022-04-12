@@ -7,6 +7,7 @@ const getUrlMap = require('../general/urlMap');
 const isPreview = require('../kontent/isPreview');
 const scorm = require('../services/scorm');
 const { isCodenameInMultipleChoice } = require('../general/helper');
+const certificationDetail = require('../certification/detail');
 
 const getScormRegistration = (id, registrations) => {
   for (let i = 0; i < registrations.length; i++) {
@@ -56,7 +57,31 @@ const getLabel = (registration, UIMessages, res) => {
     case 'INCOMPLETE': return UIMessages.training___cta_resume_course.value;
     default: return UIMessages.training___cta_start_course.value;
   }
-}
+};
+
+const getProgress = (registration, UIMessages, res) => {
+  let messageCodename = '';
+  if (!registration) {
+    messageCodename = 'training___course_status_unknown';
+  } else {
+    let codename = registration.activityDetails?.activityCompletion;
+
+    if (isPreview(res.locals.previewapikey)) {
+      codename = 'PREVIEW';
+    }
+
+    switch (codename) {
+      case 'PREVIEW': messageCodename = 'training___course_status_preview'; break;
+      case 'COMPLETED': messageCodename = 'training___course_status_completed'; break;
+      case 'INCOMPLETE': messageCodename = 'training___course_status_incomplete'; break;
+      default: messageCodename = 'training___course_status_unknown'; break;
+    }
+  }
+  return {
+    name: UIMessages[messageCodename].value,
+    codename: messageCodename
+  };
+};
 
 const init = async (req, res) => {
   const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
@@ -88,7 +113,7 @@ const init = async (req, res) => {
   }
 
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-    return await getContent.traniningCourse(res);
+    return await getContent.trainingCourse(res);
   });
   const userRegistartions = await elearningScorm.getUserRegistrations(user.email);
 
@@ -118,8 +143,19 @@ const init = async (req, res) => {
       label: label,
       certificate: certificate,
       promoted: trainingCourses[i].system.id === lastAccessId,
-      isFree: isFree
+      isFree: isFree,
+      progress: getProgress(registration, UIMessages, res)
     })
+  }
+
+  const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
+    return await getContent.certificationTest(res);
+  });
+
+  state.exams = [];
+  for await (const test of certificationTests.items) {
+    const exam = await certificationDetail.getCertificationInfo(user, test);
+    state.exams.push(exam);
   }
 
   return state;
@@ -128,7 +164,7 @@ const init = async (req, res) => {
 const registration = async (req, res) => {
   const courseId = req.body.id;
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-    return await getContent.traniningCourse(res);
+    return await getContent.trainingCourse(res);
   });
   const course = trainingCourses.find(item => item.system.id === courseId);
   let isFree = false;

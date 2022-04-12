@@ -70,7 +70,7 @@ router.post('/:slug', asyncHandler(async (req, res, next) => {
     return await getUrlMap(res);
   });
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-    return await getContent.traniningCourse(res);
+    return await getContent.trainingCourse(res);
   });
   const trainingCourse = trainingCourses.find(item => item?.system.id === courseIdTrainingCourse);
   if (!trainingCourse) return next();

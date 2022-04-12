@@ -123,7 +123,7 @@ const getPublic = (UIMessages, course) => {
 const getTrainingCourseDetail = async (codename, req, res) => {
   let data = null;
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-    return await getContent.traniningCourse(res);
+    return await getContent.trainingCourse(res);
   });
   const UIMessagesObj = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
     return await getContent.UIMessages(res);

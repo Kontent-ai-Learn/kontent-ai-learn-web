@@ -36,7 +36,8 @@ block content
                 ul.splide__list
                   each course in topic.courses
                     li.splide__slide(data-lp-filter-item)
-                      .card(data-lp-lightbox, data-lp-item=course.system.id)&attributes(smartLink?.itemId(course.system.id))&attributes((detailCourse && detailCourse.system.codename) === course.system.codename ? { 'data-lp-lightbox-autoinvoke' : '' } : {})
+                      - const comingSoon = helper.isCodenameInMultipleChoice(course.display_options ? course.display_options.value : [], 'hide_cta_button');
+                      .card(data-lp-lightbox, data-lp-item=course.system.id)&attributes(smartLink?.itemId(course.system.id))&attributes((detailCourse && detailCourse.system.codename) === course.system.codename ? { 'data-lp-lightbox-autoinvoke' : '' } : {})&attributes(comingSoon ? { 'data-lp-comingsoon' : '' } : '')
                         a.card__link(href=`${pathRoot}${course.url.value}/`, data-lp-link)
                         .card__img&attributes(smartLink?.elementCodename('thumbnail'))
                           if (course.thumbnail)

@@ -199,7 +199,7 @@ const scorm = {
   getTrainingRegistrationLink: async (id, codename, res) => {
     let linkData = null;
     const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-      return await getContent.traniningCourse(res);
+      return await getContent.trainingCourse(res);
     });
     const course = trainingCourses.find(item => item.system.codename === codename);
 
@@ -237,7 +237,7 @@ const scorm = {
   createRegistrationLink: async (user, courseId, res) => {
     let linkData = null;
     const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-      return await getContent.traniningCourse(res);
+      return await getContent.trainingCourse(res);
     });
     const course = trainingCourses.find(item => item.system.id === courseId);
     const scormCourseId = getCourseId(course, res);

@@ -71,11 +71,16 @@
 	}
 
   &__filter-group {
-
+    display: flex;
+    flex-wrap: wrap;
   }
 
 	&__filter-item {
-    padding: 0 0 4px;
+    padding: 0 1em .5em 0;
+
+    &:last-child {
+      padding-right: 0;
+    }
 	}
 
 	&__items {

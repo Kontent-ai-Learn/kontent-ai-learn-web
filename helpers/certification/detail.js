@@ -8,10 +8,10 @@ const certificationAttempt = require('./attempt');
 
 const getCertificateData = (attempt, certificationTest) => {
   return {
-    public_url: `/learn/get-certified/exam/${attempt.id}/certificate/`,
-    issued_date: moment(attempt.end).format('YYYY/MM/DD'),
-    expiration_date: moment(attempt.certificate_expiration).format('YYYY/MM/DD'),
-    course_name: certificationTest.title.value
+    url: `/learn/get-certified/exam/${attempt.id}/certificate/`,
+    issued: moment(attempt.end).format('YYYY/MM/DD'),
+    expiration: moment(attempt.certificate_expiration).format('YYYY/MM/DD'),
+    name: certificationTest.title.value
   }
 };
 
@@ -39,18 +39,18 @@ const getCertificationInfo = async (user, certificationTest) => {
   if (successfullAttempt) {
     const result = {
       certificate: getCertificateData(successfullAttempt, certificationTest),
-      signedIn: true
+      id: certificationTest.system.id
     };
 
     const now = moment();
     const expiration = moment(successfullAttempt.certificate_expiration);
     const dateDiff = expiration.diff(now, 'days');
     if (dateDiff < 7) {
-      result.text = 'Start exam';
+      result.label = 'Start exam';
       result.url = `/learn/get-certified/${certificationTest.url.value}/`;
       result.renderAs = 'button';
     } else {
-      result.text = 'You have successfully passed the exam.';
+      result.message = 'You have successfully passed the exam.';
       result.renderAs ='text';
     }
     return result;
@@ -65,20 +65,18 @@ const getCertificationInfo = async (user, certificationTest) => {
 
     if ((attemptStartDurationMs < nowMs && !attemptInPastDay[0].certificate_expiration) || (attemptStartDurationMs >= nowMs && attemptInPastDay[0].end)) {
       return {
-        text: `You didn’t pass this time. You can try again in <span data-timer="${certificationAttempt.getNextSeconds(attemptInPastDay[0].start)}"></span>.`,
-        renderAs: 'text',
-        signedIn: true
+        id: certificationTest.system.id,
+        message: 'You didn’t pass this time. You can try again in 24 hours after your unsuccessful attempt.',
       }
     }
   }
 
   return {
-    text: 'Start exam',
+    id: certificationTest.system.id,
+    label: 'Start exam',
     url: `/learn/get-certified/${certificationTest.url.value}/`,
     target: '_self',
     attr: 'data-once',
-    renderAs: 'button',
-    signedIn: true
   };
 };
 
@@ -151,5 +149,6 @@ const getByAttemptId = async (codename, attemptId, res) => {
 
 module.exports = {
   get,
-  getByAttemptId
+  getByAttemptId,
+  getCertificationInfo
 };

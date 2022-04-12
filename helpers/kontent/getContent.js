@@ -133,7 +133,7 @@ const getUrlMap = require('../general/urlMap');
             ...KCDetails(res)
         });
     };
-    const traniningCourse = async (res) => {
+    const trainingCourse = async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
         });
@@ -327,7 +327,7 @@ module.exports = {
     trainingPersonaTaxonomyGroup,
     trainingTopicTaxonomyGroup,
     trainingSubscriptions,
-    traniningCourse,
+    trainingCourse,
     traniningUser,
     tree,
     UIMessages

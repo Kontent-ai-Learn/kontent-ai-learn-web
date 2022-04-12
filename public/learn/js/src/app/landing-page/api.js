@@ -1,7 +1,9 @@
 const landingPage = (() => {
-  const addCetificateLinks = (data) => {
-    if (!data) return;
+  const addCetificateLinks = (elearningData) => {
+    if (!elearningData) return;
     const containers = document.querySelectorAll('[data-lp-item]');
+
+    const data = [...elearningData.courses, ...elearningData.exams];
 
     for (let i = 0; i < containers.length; i++) {
       const itemId = containers[i].getAttribute('data-lp-item');
@@ -70,18 +72,20 @@ const landingPage = (() => {
     }
     const courseData = window.userElearningData || {};
     const courseItem = courseData.courses ? courseData.courses.find(item => id === item.id) : null;
+    const examItem = courseData.exams ? courseData.exams.find(item => id === item.id) : null;
 
     let certificate;
-    if (courseItem && courseItem.certificate) {
+    if ((courseItem && courseItem.certificate) || (examItem && examItem.certificate)) {
+      const item = courseItem || examItem;
       certificate = {
-        issued: courseItem.certificate.issued.split('/').map(x => parseInt(x)),
-        expiration: courseItem.certificate.expiration ? courseItem.certificate.expiration.split('/').map(x => parseInt(x)) : null,
-        name:  encodeURIComponent(`${window.UIMessages.productName} ${courseItem.certificate.name}`),
-        url: courseItem.certificate.url
+        issued: item.certificate.issued.split('/').map(x => parseInt(x)),
+        expiration: item.certificate.expiration ? item.certificate.expiration.split('/').map(x => parseInt(x)) : null,
+        name:  encodeURIComponent(`${window.UIMessages.productName} ${item.certificate.name}`),
+        url: item.certificate.url
       }
     }
 
-    if (typeof isFree === 'undefined') {
+    if (typeof isFree === 'undefined' && courseItem) {
       isFree = courseItem.isFree;
     }
 
@@ -89,6 +93,8 @@ const landingPage = (() => {
               ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
               ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
               ${window.user && courseItem ? `<span onclick="landingPage.registration('${courseItem.id}')" class="button"><span>${courseItem.label}</span><span></span></span>` : ''}
+              ${window.user && examItem && examItem.url ? `<a href="${examItem.url}" class="button"><span>${examItem.label}</span><span></span></a>` : ''}
+              ${window.user && examItem && examItem.message ? `<strong class="card__message">${examItem.message}</strong>` : ''}
               ${window.userElearningData && window.userElearningData.code === 3 && !isFree ? `<span class="call-to-action" onclick="window.Intercom && window.Intercom('show')"><span>${window.userElearningData.message}</span><span></span></span>` : ''}
               ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2) ? window.userElearningData.message : ''}
               </div>
@@ -128,8 +134,11 @@ const landingPage = (() => {
     console.log(window.userElearningData);
     if (window.userElearningData) {
       addLightboxActions();
-      addCetificateLinks(window.userElearningData.courses);
+      addCetificateLinks(window.userElearningData);
       addPromoted(window.userElearningData.courses.find(item => item.promoted));
+
+      const event = new Event('userElearningDataEvent');
+      document.querySelector('body').dispatchEvent(event);
     }
   };
 

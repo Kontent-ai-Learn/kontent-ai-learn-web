@@ -242,6 +242,7 @@
       let target;
       if (e) {
         target = e.target;
+        if (target.closest('[data-lp-certificate]')) return;
         item = target.closest('[data-lp-lightbox-invoke]');
         if (item) {
           const id = item.getAttribute('data-lp-lightbox-invoke');
@@ -268,6 +269,7 @@
       const duration = item.querySelector('[data-lp-lightbox-data="duration"]');
       const isFree = item.querySelector('[data-lp-lightbox-data="free"]');
       const id = item.getAttribute('data-lp-item');
+      const isComingSoon = item.hasAttribute('data-lp-comingsoon');
       
 
       const markup = `
@@ -284,9 +286,13 @@
             <h3 class="card__title">${title.innerHTML}</h3>
             <div class="card__description">${description.innerHTML}</div>
 
-            <div class="card__row card__row--space-between card__row--actions" data-lp-active-lightbox-actions>
-              ${landingPage.renderLigthboxActions(id, isFree)}
-            </div>
+            ${isComingSoon ? `
+              <strong class="card__message">${window.UIMessages.comingSoon}</strong>
+            ` : `
+              <div class="card__row card__row--space-between card__row--actions" data-lp-active-lightbox-actions>
+                ${landingPage.renderLigthboxActions(id, isFree)}
+              </div>
+            `}
           </div>
         </div>
       </div>`

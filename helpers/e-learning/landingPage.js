@@ -4,7 +4,7 @@ const { isCodenameInMultipleChoice } = require('../general/helper');
 
 const getData = async (content, res) => {
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-    return await getContent.traniningCourse(res);
+    return await getContent.trainingCourse(res);
   });
   const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
     return await getContent.certificationTest(res);
