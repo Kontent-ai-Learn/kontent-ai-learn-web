@@ -203,6 +203,7 @@ const getData = async (req, res) => {
                 detailCourse: detailCourse,
                 pathRoot: urlMapItem.url,
                 title: detailCourse ? detailCourse.title.value : content[0]?.page_title.value || '',
+                pageHeading: content[0]?.page_title.value || '',
                 description: detailCourse ? helper.stripTags(detailCourse.description.value).substring(0, 300) : '',
                 content: data,
                 navigation: home && home.length ? home[0].subpages.value : null,

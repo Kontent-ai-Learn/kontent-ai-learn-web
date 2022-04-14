@@ -189,11 +189,15 @@ const landingPage = (() => {
     const token = user ? user.__raw : null;
     [window.userElearningData, window.userProfile] = await Promise.all([requestInfo(token), requestUserProfile(token)]);
     addLightboxActions();
-    addCetificateLinks(window.userElearningData);
-    addPromoted(window.userElearningData.courses.find(item => item.promoted));
+    if (window.userElearningData) {
+      addCetificateLinks(window.userElearningData);
+      addPromoted(window.userElearningData.courses.find(item => item.promoted));
+    }
     const event = new Event('userElearningDataEvent');
     document.querySelector('body').dispatchEvent(event);
-    handleToc(window.userProfile, user.email, token);
+    if (window.userProfile) {
+      handleToc(window.userProfile, user.email, token);
+    }
   };
 
   const registration = async (id) => {

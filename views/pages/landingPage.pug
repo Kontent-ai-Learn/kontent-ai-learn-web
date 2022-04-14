@@ -3,7 +3,7 @@ block content
   script var pathRoot = '!{pathRoot}';
   .utilities-lp-bg
   main.landing-page(id='main', data-lp)
-    h1.landing-page__heading.utilities-dot !{title}
+    h1.landing-page__heading.utilities-dot !{pageHeading}
     .landing-page__auth(data-lp-auth)
     .landing-page__promoted(data-lp-promoted)
       .tile&attributes(smartLink?.itemId(content.promoted.system.id))
@@ -40,7 +40,7 @@ block content
                       .card(data-lp-lightbox, data-lp-item=course.system.id)&attributes(smartLink?.itemId(course.system.id))&attributes((detailCourse && detailCourse.system.codename) === course.system.codename ? { 'data-lp-lightbox-autoinvoke' : '' } : {})&attributes(comingSoon ? { 'data-lp-comingsoon' : '' } : '')
                         a.card__link(href=`${pathRoot}${course.url.value}/`, data-lp-link)
                         .card__img&attributes(smartLink?.elementCodename('thumbnail'))
-                          if (course.thumbnail)
+                          if (course.thumbnail && course.thumbnail.value.length)
                             img(src=course.thumbnail.value[0].url, data-lp-lightbox-data='image')
                         .card__content
                           .card__top
