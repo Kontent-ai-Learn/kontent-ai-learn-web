@@ -66,9 +66,12 @@ const landingPage = (() => {
   };
 
   const renderLigthboxActions = (id, isFree) => {
+    const activeLightbox = document.querySelector('[data-lp-active-lightbox]');
     if (!id) {
-      const activeLightbox = document.querySelector('[data-lp-active-lightbox]');
       if (activeLightbox) id = activeLightbox.getAttribute('data-lp-active-lightbox');
+    }
+    if (!isFree) {
+      if (activeLightbox) isFree = !!activeLightbox.querySelector('[data-lp-lightbox-data="free"]');
     }
     const courseData = window.userElearningData || {};
     const courseItem = courseData.courses ? courseData.courses.find(item => id === item.id) : null;

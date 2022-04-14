@@ -244,15 +244,21 @@
         target = e.target;
         if (target.closest('[data-lp-certificate]')) return;
         item = target.closest('[data-lp-lightbox-invoke]');
+
         if (item) {
           const id = item.getAttribute('data-lp-lightbox-invoke');
-          target = document.querySelector(`[data-lp-lightbox][data-lp-item="${id}"]`);
+          item = document.querySelector(`[data-lp-lightbox][data-lp-item="${id}"]`);
+          link = item.querySelector('[data-lp-link]');
+        } else {
+          item = target.closest('[data-lp-lightbox]');
+          if (item) {
+            link = target.closest('[data-lp-link]');
+          }
         }
-        item = target.closest('[data-lp-lightbox]');
+        
         if (item && e.preventDefault) {
-          link = target.closest('[data-lp-link]');
-          callback = handleUrl;
           e.preventDefault();
+          callback = handleUrl;
         }
       } else {
         item = document.querySelector(`[data-lp-lightbox-autoinvoke]`);
@@ -270,8 +276,7 @@
       const isFree = item.querySelector('[data-lp-lightbox-data="free"]');
       const id = item.getAttribute('data-lp-item');
       const isComingSoon = item.hasAttribute('data-lp-comingsoon');
-      
-
+ 
       const markup = `
       <div class="card card--lightbox" data-lp-active-lightbox="${id}">
         <div class="card__img">

@@ -150,14 +150,13 @@
     const filterItems = document.querySelectorAll('[data-lp-filter-item]');
 
     for (let i = 0; i < filterItems.length; i++) {
-      const classList = ['f-reset-progress'];
+      filterItems[i].classList.add('f-reset-progress');
       const card = filterItems[i].querySelector('[data-lp-item]');
       if (!card) continue;
       const id = card.getAttribute('data-lp-item');
       const elearningItem = window.userElearningData.courses.find(item => item.id === id);
       if (!elearningItem) continue;
-      classList.push(`f-${elearningItem.progress.codename}`);
-      filterItems[i].classList.add(...classList);
+      filterItems[i].classList.add(`f-${elearningItem.progress.codename}`);
     }
   };
 
