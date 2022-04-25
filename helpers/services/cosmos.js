@@ -1,5 +1,6 @@
 const { CosmosClient } = require('@azure/cosmos');
-const errorAppInsights = require('../error/appInsights')
+const errorAppInsights = require('../error/appInsights');
+const app = require('../../app');
 
 const initDatabase = async (containerId) => {
   if (!app.cosmosClient) {
