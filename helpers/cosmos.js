@@ -8,9 +8,12 @@ const logAppInsightsError = (error) => {
 };
 
 const initDatabase = async (containerId) => {
-  const client = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
+  if (!app.cosmosClient) {
+    app.cosmosClient = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
+  }
+
   try {
-    const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
+    const { database } = await app.cosmosClient.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
     const { container } = await database.containers.createIfNotExists({ id: containerId });
     return container;
   } catch (error) {

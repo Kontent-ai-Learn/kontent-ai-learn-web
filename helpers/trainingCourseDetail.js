@@ -136,7 +136,7 @@ const getLmsServiceName = (course) => {
   let serviceName = null;
 
   if (course?.system.id) serviceName = 'scorm';
-  if (course?.talentlms_course_id.value) serviceName = 'tlms';
+  // if (course?.talentlms_course_id.value) serviceName = 'tlms';
 
   return serviceName;
 }
