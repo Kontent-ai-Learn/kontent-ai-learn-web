@@ -1,5 +1,6 @@
 require('dotenv').config();
 const appInsights = require('applicationinsights');
+const { CosmosClient } = require('@azure/cosmos');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -32,6 +33,11 @@ if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
   appInsights.setup();
   appInsights.start();
   exports.appInsights = appInsights;
+}
+
+if (process.env.COSMOSDB_ENDPOINT && process.env.COSMOSDB_KEY) {
+  const cosmosClient = new CosmosClient({ endpoint: process.env.COSMOSDB_ENDPOINT, key: process.env.COSMOSDB_KEY });
+  exports.cosmosClient = cosmosClient;
 }
 
 if (!process.env.baseURL.includes('localhost')) {
