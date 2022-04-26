@@ -3,7 +3,6 @@ const CryptoJS = require('crypto-js');
 const moment = require('moment');
 const cacheHandle = require('../cache/handle');
 const { getDomain } = require('../general/helper');
-const getUrlMap = require('../general/urlMap');
 const getContent = require('../kontent/getContent');
 const isPreview = require('../kontent/isPreview');
 
@@ -97,16 +96,13 @@ const getRegistrationData = async (registrationId) => {
   return registrationData;
 };
 
-const getRegistrationLink = async (registrationId, surveyCodename, courseId, res) => {
+const getRegistrationLink = async (registrationId, courseId) => {
   const url = `${settings.registrationsUrl}/${registrationId}/launchLink`;
-  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
-    return await getUrlMap(res);
-  });
-  const redirectUrl = urlMap.find(item => item.codename === surveyCodename);
+  const redirectUrl = '/learn/survey/';
 
   const data = {
     expiry: 300,
-    redirectOnExitUrl: `${getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
+    redirectOnExitUrl: `${getDomain()}${redirectUrl}?courseid=${courseId}`,
   };
   let linkData = {};
 
@@ -128,16 +124,13 @@ const getRegistrationLink = async (registrationId, surveyCodename, courseId, res
   return linkData;
 };
 
-const getCoursePreviewLink = async (courseId, surveyCodename, res) => {
+const getCoursePreviewLink = async (courseId) => {
   const url = `${settings.coursesUrl}/${courseId}/preview`;
-  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
-    return await getUrlMap(res);
-  });
-  const redirectUrl = urlMap.find(item => item.codename === surveyCodename);
+  const redirectUrl = '/learn/survey/';
 
   const data = {
     expiry: 300,
-    redirectOnExitUrl: `${getDomain()}${redirectUrl?.url}?courseid=${courseId}`,
+    redirectOnExitUrl: `${getDomain()}${redirectUrl}?courseid=${courseId}`,
   };
   let linkData = {};
 
@@ -204,9 +197,9 @@ const scorm = {
     const course = trainingCourses.find(item => item.system.codename === codename);
 
     if (isPreview(res.locals.previewapikey)) {
-      linkData = await getCoursePreviewLink(id, course.course_survey.value?.[0]?.system?.codename, res);
+      linkData = await getCoursePreviewLink(id);
     } else {
-      linkData = await getRegistrationLink(id, course.course_survey.value?.[0]?.system?.codename, getCourseId(course, res), res);
+      linkData = await getRegistrationLink(id, getCourseId(course, res));
     }
 
     if (linkData?.launchLink) {
@@ -250,9 +243,9 @@ const scorm = {
         await createRegistration(user, scormCourseId, registrationId);
       }
 
-      linkData = await getRegistrationLink(registrationId, course.course_survey.value?.[0]?.system?.codename, scormCourseId, res);
+      linkData = await getRegistrationLink(registrationId, scormCourseId, res);
     } else {
-      linkData = await getCoursePreviewLink(scormCourseId, course.course_survey.value?.[0]?.system?.codename, res);
+      linkData = await getCoursePreviewLink(scormCourseId);
     }
 
     if (linkData?.launchLink) {

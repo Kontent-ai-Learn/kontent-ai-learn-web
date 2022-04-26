@@ -1,4 +1,5 @@
 const cosmos = require('../services/cosmos');
+const errorAppInsights = require('../error/appInsights');
 
 const get = async (email) => {
   try {
@@ -14,7 +15,7 @@ const get = async (email) => {
     const { resources } = await db.items.query(query).fetchAll();
     if (resources.length) return resources[0];
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
   return {};
 };
@@ -35,7 +36,7 @@ const createUpdate = async (email, body) => {
 
     if (data.resource) data = data.resource;
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
   return data;
 };

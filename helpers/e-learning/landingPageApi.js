@@ -1,10 +1,9 @@
 const moment = require('moment');
-const elearningScorm = require('./scorm');
+const elearningRegistration = require('./registration');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const getUrlMap = require('../general/urlMap');
 const isPreview = require('../kontent/isPreview');
-const scorm = require('../services/scorm');
 const { isCodenameInMultipleChoice } = require('../general/helper');
 const certificationDetail = require('../certification/detail');
 
@@ -115,7 +114,7 @@ const init = async (req, res) => {
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
     return await getContent.trainingCourse(res);
   });
-  const userRegistartions = await elearningScorm.getUserRegistrations(user.email);
+  const userRegistartions = await elearningRegistration.getUserRegistrations(user.email);
 
   if (!state.code) {
     state.code = 4; // User has e-learning access;
@@ -162,6 +161,7 @@ const init = async (req, res) => {
 };
 
 const registration = async (req, res) => {
+  const scorm = require('../services/scorm');
   const elearningUser = require('./user');
   const courseId = req.body.id;
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {

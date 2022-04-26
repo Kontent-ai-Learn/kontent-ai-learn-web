@@ -9,9 +9,8 @@ const getUrlMap = require('../helpers/general/urlMap');
 const isPreview = require('../helpers/kontent/isPreview');
 const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
 const smartLink = require('../helpers/kontent/smartLink');
-const surveyAttempt = require('../helpers/survey/attempt')
 
-router.get('/:slug', asyncHandler(async (req, res, next) => {
+router.get('/', asyncHandler(async (req, res, next) => {
   const home = await cacheHandle.ensureSingle(res, 'home', async () => {
     return getContent.home(res);
   });
@@ -19,17 +18,6 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
   if (!home.length) {
     return next();
   }
-
-  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
-    return await getUrlMap(res);
-  });
-  const urlMapItem = helper.getMapItemByUrl(req.originalUrl, urlMap);
-  if (!urlMapItem) return next();
-  const content = await cacheHandle.evaluateSingle(res, urlMapItem.codename, async () => {
-    return await getContent.survey(res, urlMapItem.codename);
-  });
-  if (!content.items.length) return next();
-
   const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
     return getContent.footer(res);
   });
@@ -43,14 +31,10 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
     req: req,
     res: res,
     postprocessMarkup: postprocessMarkup,
+    title: 'Survey',
     slug: req.params.slug,
     isPreview: siteIsPreview,
     language: res.locals.language,
-    itemId: content.items[0].system.id,
-    itemCodename: urlMapItem.codename,
-    title: content.items[0].title.value,
-    introduction: content.items[0].short_introduction.value,
-    description: helper.stripTags(content.items[0].short_introduction.value).substring(0, 300),
     navigation: home[0].subpages.value,
     footer: footer && footer.length ? footer[0] : null,
     UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
@@ -60,7 +44,8 @@ router.get('/:slug', asyncHandler(async (req, res, next) => {
   });
 }));
 
-router.post('/:slug', asyncHandler(async (req, res, next) => {
+router.post('/', asyncHandler(async (req, res, next) => {
+  const surveyAttempt = require('../helpers/survey/attempt');
   const attempt = await surveyAttempt.handle(req.body);
 
   let courseIdTrainingCourse = attempt.course_id.replace('_preview', '');
@@ -77,7 +62,7 @@ router.post('/:slug', asyncHandler(async (req, res, next) => {
   const urlMapCourseItem = urlMap.find(item => item.codename === trainingCourse.system.codename);
   if (!urlMapCourseItem) return next();
 
-  return res.redirect(`${urlMapCourseItem.url}#trainingAction`);
+  return res.redirect(`${urlMapCourseItem.url}`);
 }));
 
 module.exports = router;

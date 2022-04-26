@@ -1,11 +1,11 @@
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const { isCodenameInMultipleChoice } = require('../general/helper');
-const scorm = require('../services/scorm');
 const errorEmail = require('../error/email');
 const errorAppInsights = require('../error/appInsights');
 
 const getTrainingCourseInfoFromScorm = async (user, course, UIMessages, req, res) => {
+  const scorm = require('../services/scorm');
   const courseId = course?.system.id;
   if (!courseId && courseId !== 0) return null;
   let redirectToScorm = false;

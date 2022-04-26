@@ -1,4 +1,4 @@
-const app = require('../general/app');
+const app = require('../../app');
 const consola = require('consola');
 
 const log = (prefix, error) => {

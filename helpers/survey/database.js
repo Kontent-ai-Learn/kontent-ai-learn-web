@@ -1,7 +1,6 @@
 const surveyData = require('./data');
-const cacheHandle = require('../cache/handle');
-const getContent = require('../kontent/getContent');
 const cosmos = require('../services/cosmos');
+const errorAppInsights = require('../error/appInsights');
 
 const getUserCourseAttempt = async (body) => {
   const { courseid, email } = body;
@@ -28,7 +27,7 @@ const getUserCourseAttempt = async (body) => {
       attempt = resources[0];
     }
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
 
   return attempt;
@@ -40,7 +39,7 @@ const updateAttempt = async (attempt) => {
     const itemToUpdate = await db.item(attempt.id);
     await itemToUpdate.replace(attempt);
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
 };
 
@@ -63,19 +62,17 @@ const getAttempt = async (id) => {
       attempt = resources[0];
     }
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
 
   return attempt;
 };
 
-const createAttempt = async (body, user, res) => {
-  const { codename, email, courseid } = body;
+const createAttempt = async (body, user, survey) => {
+  const { email, courseid } = body;
   let attempt = null;
 
-  const survey = await cacheHandle.evaluateSingle(res, codename, async () => {
-    return await getContent.survey(res, codename);
-  });
+  if (!survey.items.length) return attempt;
 
   const questions = surveyData.getQuestions(survey);
 
@@ -92,7 +89,7 @@ const createAttempt = async (body, user, res) => {
       questions: questions
     });
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
 
   return attempt;

@@ -1,5 +1,6 @@
 const cosmos = require('../services/cosmos');
 const certificationData = require('./data');
+const errorAppInsights = require('../error/appInsights');
 
 const successfullAttemptExists = async (body, timespan = 0) => {
   const { codename, email } = body;
@@ -26,7 +27,7 @@ const successfullAttemptExists = async (body, timespan = 0) => {
       attempt = resources[0];
     }
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
 
   return attempt;
@@ -38,7 +39,7 @@ const updateAttempt = async (attempt) => {
     const itemToUpdate = await db.item(attempt.id);
     await itemToUpdate.replace(attempt);
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
 };
 
@@ -61,7 +62,7 @@ const getAttempt = async (id) => {
       attempt = resources[0];
     }
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
 
   return attempt;
@@ -91,7 +92,7 @@ const checkAttemptInPastDay = async (email, codename) => {
     const { resources } = await db.items.query(query).fetchAll();
     return resources;
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
     return null;
   }
 };
@@ -125,7 +126,7 @@ const checkCreateAttempt = async (body, res) => {
         test: certificationTestData
       });
     } catch (error) {
-      cosmos.logAppInsightsError(error);
+      errorAppInsights.log('COSMOSDB_ERROR', error);
     }
   } else {
     attempt = {};
@@ -156,7 +157,7 @@ const getExpirationAttempts = async () => {
       attempts = resources;
     }
   } catch (error) {
-    cosmos.logAppInsightsError(error);
+    errorAppInsights.log('COSMOSDB_ERROR', error);
   }
 
   return attempts;

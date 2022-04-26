@@ -6,7 +6,6 @@ const trainingCourseDetail = require('../helpers/e-learning/trainingCourseDetail
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationDetail = require('../helpers/certification/detail');
 const certificationEmail = require('../helpers/certification/email');
-const surveyAttempt = require('../helpers/survey/attempt');
 const elearningLandingPageApi = require('../helpers/e-learning/landingPageApi');
 const fastly = require('../helpers/services/fastly');
 const userProfile = require('../helpers/user/profile');
@@ -71,6 +70,7 @@ router.post('/get-certified', jwtCheck, async (req, res) => {
 });
 
 router.post('/survey', jwtCheck, async (req, res) => {
+  const surveyAttempt = require('../helpers/survey/attempt');
   res = fastly.preventCaching(res);
   const data = await surveyAttempt.init(req, res);
   return res.send(data);

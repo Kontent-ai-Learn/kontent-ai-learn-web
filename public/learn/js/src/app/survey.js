@@ -1,9 +1,8 @@
 const survey = (() => {
-  const requestFormData = async (itemCodename, courseid, user, token) => {
+  const requestFormData = async (courseid, user, token) => {
     const fetchOptions = {
       method: 'POST',
       body: JSON.stringify({
-        codename: itemCodename,
         courseid: courseid,
         email: user.email,
         username: user.name
@@ -87,35 +86,42 @@ const survey = (() => {
     overlay.classList.add('survey__overlay--hidden');
   };
 
+  const renderContent = (formData, container) => {
+    const title = container.querySelector('[data-survey="title"]');
+    const introduction = container.querySelector('[data-survey="introduction"]');
 
-  const getSurvey = async (user) => {
+    if (title) title.innerHTML = JSON.parse(formData.content.title);
+    if (introduction) introduction.innerHTML = JSON.parse(formData.content.introduction);
+  }
+
+  const getSurvey = async (user, container) => {
     if (!user) return;
     const token = user ? user.__raw : null;
-    const elem = document.querySelector('[data-survey]');
-    const codename = elem ? elem.getAttribute('data-survey') : null
+    const elemQuestions = container.querySelector('[data-survey="questions"]');
     const courseid = window.helper.getParameterByName('courseid');
-    if (!(token && codename && courseid)) return;
-    const formData = await requestFormData(codename, courseid, user, token);
+    if (!(token && courseid)) return;
+    const formData = await requestFormData(courseid, user, token);
 
     if (formData.code === 200) {
-      renderForm(formData, elem);
-      makeAnswersInteractive(elem);
+      renderContent(formData, container)
+      renderForm(formData, elemQuestions);
+      makeAnswersInteractive(elemQuestions);
       hideOverlay();
     } else if (formData.code === 401) {
       if (formData.data && formData.data.redirect_url) {
         window.location.replace(formData.data.redirect_url);
       } else {
-        elem.innerHTML = `Access in now allowed.`;
+        elemQuestions.innerHTML = `Access in now allowed.`;
       }
     }
   };
 
   const getInfo = async () => {
-    const container = document.querySelector('[data-survey]');
+    const container = document.querySelector('[data-form-survey]');
     if (container) {
       const user = await auth0.ensureUserSignedIn();
       if (user) {
-        await getSurvey(user);
+        await getSurvey(user, container);
       } else {
         await auth0.login();
       }

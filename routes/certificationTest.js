@@ -17,7 +17,6 @@ const smartLink = require('../helpers/kontent/smartLink');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationEmail = require('../helpers/certification/email');
 const certificationData = require('../helpers/certification/data');
-const scorm = require('../helpers/services/scorm');
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
   const home = await cacheHandle.ensureSingle(res, 'home', async () => {
@@ -188,6 +187,7 @@ router.get('/exam/:attemptid/certificate/pdf', asyncHandler(async (req, res, nex
 }));
 
 router.get('/course/:registrationId/certificate', asyncHandler(async (req, res, next) => {
+  const scorm = require('../helpers/services/scorm');
   const registrationData = await scorm.getRegistrationIdData(req.params.registrationId);
   if (!registrationData) return next();
 
@@ -232,6 +232,7 @@ a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
 }));
 
 router.get('/course/:registrationId/certificate/pdf', asyncHandler(async (req, res, next) => {
+  const scorm = require('../helpers/services/scorm');
   const registrationData = await scorm.getRegistrationIdData(req.params.registrationId);
   if (!registrationData) return next();
 

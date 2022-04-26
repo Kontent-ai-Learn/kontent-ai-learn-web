@@ -43,6 +43,7 @@ const orderLinkedItemCodenames = (orderedMarkup) => {
 };
 
 const getQuestions = (survey) => {
+  if (!survey.items.length) return null;
   const items = [];
   const linkedItems = survey.linkedItems;
 
