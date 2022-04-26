@@ -1,12 +1,12 @@
 const surveyData = require('./data');
 const surveyDatabase = require('./database');
-const elearningUser = require('../e-learning/user');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const scorm = require('../services/scorm');
 const getUrlMap = require('../general/urlMap');
 
 const init = async (req, res) => {
+  const elearningUser = require('../e-learning/user');
   let courseIdTrainingCourse = req.body.courseid.replace('_preview', '');
   courseIdTrainingCourse = courseIdTrainingCourse.replace('dev_', '');
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {

@@ -1,8 +1,6 @@
 const moment = require('moment');
-
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
-const elearningUser = require('../e-learning/user');
 const certificationDatabase = require('./database');
 
 const getCertificateData = (attempt, certificationTest) => {
@@ -80,6 +78,7 @@ const getCertificationInfo = async (user, certificationTest) => {
 };
 
 const getPrivate = async (UIMessages, certificationTest, req, res) => {
+  const elearningUser = require('../e-learning/user');
   const data = {};
   const user = await elearningUser.getUser(req?.user?.email, res);
 

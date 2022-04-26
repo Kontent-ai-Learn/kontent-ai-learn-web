@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "scripts": {
         "start": "node server.js",
+        "develop": "nodemon server.js",
         "debug": "gulp",
         "test": "npx eslint .",
         "postinstall": "gulp build"

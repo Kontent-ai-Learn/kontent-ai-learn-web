@@ -2,7 +2,6 @@ const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const { isCodenameInMultipleChoice } = require('../general/helper');
 const scorm = require('../services/scorm');
-const elearningUser = require('./user');
 const errorEmail = require('../error/email');
 const errorAppInsights = require('../error/appInsights');
 
@@ -65,6 +64,7 @@ const getTrainingCourseInfoFromScorm = async (user, course, UIMessages, req, res
 };
 
 const getPrivate = async (UIMessages, course, req, res) => {
+  const elearningUser = require('./user');
   const hideCta = isCodenameInMultipleChoice(course.display_options.value, 'hide_cta');
   const data = {};
   const user = await elearningUser.getUser(req?.user?.email, res);

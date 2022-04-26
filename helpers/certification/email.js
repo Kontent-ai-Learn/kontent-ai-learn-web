@@ -2,7 +2,6 @@
 const axios = require('axios');
 const sendGridEmail = require('../services/sendgrid');
 const certificationDatabase = require('./database')
-const elearningUser = require('../e-learning/user');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const { makeLinksAbsolute, getDomain } = require('../general/helper');
@@ -14,6 +13,7 @@ const resolveMacros = (text, macros) => {
 };
 
 const getMacrosValues = async (attempt, res) => {
+  const elearningUser = require('../e-learning/user');
   const user = await elearningUser.getUser(attempt.email, res);
   const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
     return await getContent.UIMessages(res);

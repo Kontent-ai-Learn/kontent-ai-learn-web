@@ -1,5 +1,4 @@
 const moment = require('moment');
-const elearningUser = require('./user');
 const elearningScorm = require('./scorm');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
@@ -84,6 +83,7 @@ const getProgress = (registration, UIMessages, res) => {
 };
 
 const init = async (req, res) => {
+  const elearningUser = require('./user');
   const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
@@ -162,6 +162,7 @@ const init = async (req, res) => {
 };
 
 const registration = async (req, res) => {
+  const elearningUser = require('./user');
   const courseId = req.body.id;
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
     return await getContent.trainingCourse(res);

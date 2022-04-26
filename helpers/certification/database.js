@@ -1,6 +1,5 @@
 const cosmos = require('../services/cosmos');
 const certificationData = require('./data');
-const elearningUser = require('../e-learning/user');
 
 const successfullAttemptExists = async (body, timespan = 0) => {
   const { codename, email } = body;
@@ -98,6 +97,7 @@ const checkAttemptInPastDay = async (email, codename) => {
 };
 
 const checkCreateAttempt = async (body, res) => {
+  const elearningUser = require('../e-learning/user');
   const { codename, email } = body;
   let attempt = null;
 

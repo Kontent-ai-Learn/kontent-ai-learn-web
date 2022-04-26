@@ -1,8 +1,8 @@
 const certificationDatabase = require('./database');
 const certificationData = require('./data');
-const elearningUser = require('../e-learning/user');
 
 const init = async (body, res) => {
+  const elearningUser = require('../e-learning/user');
   const user = await elearningUser.getUser(body.email, res);
   if (!(await elearningUser.isCourseAvailable(user, null, res)) || user.error_id) {
     return {
