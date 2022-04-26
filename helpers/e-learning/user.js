@@ -65,6 +65,9 @@ const getUser = async (email, res) => {
       return {
         email: email
       }
+      if (!user.email.endsWith('@kentico.com')) {
+        errCode = userSubscriptionService.errCode;
+      }
     }
   }
   return null;
