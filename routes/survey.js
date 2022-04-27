@@ -5,7 +5,6 @@ const asyncHandler = require('express-async-handler');
 const cacheHandle = require('../helpers/cache/handle');
 const getContent = require('../helpers/kontent/getContent');
 const helper = require('../helpers/general/helper');
-const getUrlMap = require('../helpers/general/urlMap');
 const isPreview = require('../helpers/kontent/isPreview');
 const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
 const smartLink = require('../helpers/kontent/smartLink');
@@ -42,27 +41,6 @@ router.get('/', asyncHandler(async (req, res, next) => {
     helper: helper,
     smartLink: siteIsPreview ? smartLink : null
   });
-}));
-
-router.post('/', asyncHandler(async (req, res, next) => {
-  const surveyAttempt = require('../helpers/survey/attempt');
-  const attempt = await surveyAttempt.handle(req.body);
-
-  let courseIdTrainingCourse = attempt.course_id.replace('_preview', '');
-  courseIdTrainingCourse = courseIdTrainingCourse.replace('dev_', '');
-
-  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
-    return await getUrlMap(res);
-  });
-  const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-    return await getContent.trainingCourse(res);
-  });
-  const trainingCourse = trainingCourses.find(item => item?.system.id === courseIdTrainingCourse);
-  if (!trainingCourse) return next();
-  const urlMapCourseItem = urlMap.find(item => item.codename === trainingCourse.system.codename);
-  if (!urlMapCourseItem) return next();
-
-  return res.redirect(`${urlMapCourseItem.url}`);
 }));
 
 module.exports = router;

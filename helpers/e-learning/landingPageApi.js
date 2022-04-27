@@ -185,5 +185,7 @@ const registration = async (req, res) => {
 
 module.exports = {
   init,
-  registration
+  registration,
+  getScormRegistration,
+  getCertificate
 };

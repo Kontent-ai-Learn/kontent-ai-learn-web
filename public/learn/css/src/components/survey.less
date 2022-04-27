@@ -57,4 +57,48 @@
     display: block;
   }
 
+  &__thanks {
+    font-size: 2em;
+    padding: 1em 0;
+    font-weight: 700;
+  }
+
+  &__courses {
+    padding: 0 0 1.5em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .card {
+      width: 31%;
+    }
+  }
+
+  &__certificate {
+    padding: 0 0 1.5em;
+
+    a {
+      color: #f05a22;
+      display: inline-block;
+      padding: 0 1em 0 0;
+
+      &:hover,
+      &:active {
+        text-decoration: none;
+      }
+    }
+  }
+
+  &__after {
+    &--loading {
+      width: 48px;
+      height: 48px;
+      background-image: url('../img/loader.gif');
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-color: #fff;
+      background-size: contain;
+    }
+  }
+
 }

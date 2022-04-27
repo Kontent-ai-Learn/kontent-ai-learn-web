@@ -34,7 +34,13 @@
     if (!(label && list)) return;
     
     label.addEventListener('click', () => {
-      dropdown.classList.toggle('dropdown--active');
+      const isActive = dropdown.classList.contains('dropdown--active');
+      if (isActive) {
+        dropdown.classList.remove('dropdown--active');
+      } else {
+        hideDropDowns();
+        dropdown.classList.add('dropdown--active');
+      }
     });
 
     list.addEventListener('click', (e) => {
@@ -86,15 +92,20 @@
     createDropDownInteractions(dropdown);
   };
 
+  const hideDropDowns = () => {
+    const body = document.querySelector('body');
+    const dropdowns = body.querySelectorAll('.dropdown');
+    for (let i = 0; i < dropdowns.length; i++) {
+      dropdowns[i].classList.remove('dropdown--active');
+    }
+  };
+
   const hideDropDownsOnClick = () => {
     const body = document.querySelector('body');
 
     body.addEventListener('click', (e) => {
       if (!e.target.matches('[class*="dropdown"]')) {
-        const dropdowns = body.querySelectorAll('.dropdown');
-        for (let i = 0; i < dropdowns.length; i++) {
-          dropdowns[i].classList.remove('dropdown--active');
-        }
+        hideDropDowns();
       }
     });
   };

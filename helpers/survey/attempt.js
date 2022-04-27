@@ -5,6 +5,56 @@ const getContent = require('../kontent/getContent');
 const getUrlMap = require('../general/urlMap');
 const elearningRegistration = require('../e-learning/registration');
 const { isCodenameInMultipleChoice } = require('../general/helper');
+const { getCertificate, getScormRegistration } = require('../e-learning/landingPageApi');
+
+const getCoursesInCurrentTopic = (currentCourse, allCourses) => {
+  const data = []
+  const currentCourseTopics = currentCourse.personas___topics__training_topic.value;
+  for (let i = 0; i < currentCourseTopics.length; i++) {
+    const topicCourses = allCourses.filter((course) => {
+      return isCodenameInMultipleChoice(course.personas___topics__training_topic.value, currentCourseTopics[i].codename);
+    });
+    data.push(...topicCourses);
+  }
+  return data;
+};
+
+const getNextCourses = (currentCourse, allCourses, userRegistrations) => {
+  const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.activityDetails.activityCompletion === 'COMPLETED');
+
+  const allIncompletedCourses = [];
+  for (let i = 0; i < allCourses.length; i++) {
+    let completed = false;
+    for (let j = 0; j < userRegistrationsCompleted.length; j++) {
+      const courseId = userRegistrationsCompleted[j].course.id.replace('dev_', '').replace('_preview', '');
+      if (allCourses[i].system.id === courseId) {
+          completed = true;
+      }
+    }
+    if (!completed) {
+      allIncompletedCourses.push(allCourses[i]);
+    }
+  }
+
+  const coursesInCurrentTopic = getCoursesInCurrentTopic(currentCourse, allIncompletedCourses);
+
+  let courses = [];
+  const coursesRecommended = [];
+  if (coursesInCurrentTopic.length) {
+    courses = coursesInCurrentTopic;
+  } else {
+    courses = allIncompletedCourses;
+  }
+
+  for (let i = 0; i < courses.length; i++) {
+    coursesRecommended.push({
+      id: courses[i].system.id,
+      title: courses[i].title.value
+    })
+  }
+
+  return coursesRecommended;
+};
 
 const getSurveyCodename = async (currentCourse, allCourses, email) => {
   const LONG_CODENAME = 'long_survey';
@@ -14,15 +64,7 @@ const getSurveyCodename = async (currentCourse, allCourses, email) => {
     return LONG_CODENAME;
   }
 
-  const currentCourseTopics = currentCourse.personas___topics__training_topic.value;
-  const coursesInCurrentTopic = [];
-
-  for (let i = 0; i < currentCourseTopics.length; i++) {
-    const topicCourses = allCourses.filter((course) => {
-      return isCodenameInMultipleChoice(course.personas___topics__training_topic.value, currentCourseTopics[i].codename);
-    });
-    coursesInCurrentTopic.push(...topicCourses);
-  }
+  const coursesInCurrentTopic = getCoursesInCurrentTopic(currentCourse, allCourses);
 
   const userRegistrations = await elearningRegistration.getUserRegistrations(email);
   const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.activityDetails.activityCompletion === 'COMPLETED');
@@ -127,7 +169,41 @@ const handle = async (body) => {
   return attempt;
 };
 
+const after = async (attempt, res) => {
+  const data = {};
+  data.messages = {};
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return await getContent.UIMessages(res);
+  });
+
+  if (UIMessages.length) {
+    data.messages.thank_you = UIMessages[0].traning___survey___thank_you.value;
+    data.messages.back_title = UIMessages[0].traning___button___overview.value;
+  }
+
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
+    return await getUrlMap(res);
+  });
+  const urlMapItem = urlMap.find(item => item.type === 'landing_page');
+  if (urlMapItem) {
+    data.messages.back_url = urlMapItem.url;
+  }
+
+  const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+    return await getContent.trainingCourse(res);
+  });
+  const courseId = attempt.course_id.replace('dev_', '').replace('_preview', '');
+  const course = trainingCourses.find(item => item.system.id === courseId);
+  const userRegistrations = await elearningRegistration.getUserRegistrations(attempt.email);
+  const registration = getScormRegistration(courseId, userRegistrations);
+  data.certificate = getCertificate(registration, course);
+  data.courses = getNextCourses(course, trainingCourses, userRegistrations);
+
+  return data;
+};
+
 module.exports = {
   init,
-  handle
+  handle,
+  after
 };

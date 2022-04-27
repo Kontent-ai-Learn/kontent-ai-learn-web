@@ -111,6 +111,7 @@ const trainingCourse = (() => {
   };
 
   return {
-    getInfo: getInfo
+    getInfo: getInfo,
+    getLinkedInLink: getLinkedInLink
   };
 })();

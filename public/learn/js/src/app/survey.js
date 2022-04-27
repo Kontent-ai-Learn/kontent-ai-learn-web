@@ -1,4 +1,81 @@
 const survey = (() => {
+  const initFormSubmitAction = (token) => {
+    const form = document.querySelector('[data-survey-form]');
+    if (!form) return;
+    const readData = () => {
+      const data = {};
+      const inputs = form.querySelectorAll('input[type="radio"]:checked, textarea, input[type="hidden"]');
+      for (let i = 0; i < inputs.length; i++) {
+        data[inputs[i].getAttribute('name')] = inputs[i].value;
+      }
+      return data;
+    };
+
+    const submitData = async (data, token) => {
+      const fetchOptions = {
+        method: 'POST',
+        body: JSON.stringify(data)
+      };
+  
+      if (token) {
+        fetchOptions.headers = { Authorization: `Bearer ${token}` };
+      }
+      const result = await fetch(`/learn/api/survey/submit`, fetchOptions);
+      return await result.json();
+    };
+
+    form.addEventListener('click', async (e) => {
+      const button = e.target.closest('[data-survey-form-submit]')
+      if (!button) return;
+      e.preventDefault();
+
+      button.remove();
+      const afterElem = document.querySelector('[data-survey="after"]');
+      if (afterElem) {
+        afterElem.classList.add('survey__after--loading');
+      }
+
+      const data = readData();
+      const response = await submitData(data, token);
+
+      if (afterElem) {
+        console.log(response);
+        afterElem.innerHTML = `
+          <div class="survey__thanks">${response.messages.thank_you}</div>
+          <div class="survey__certificate">
+            <a href="${response.certificate.url}" target="_blank">${UIMessages.downloadCertificate}</a>
+            <a href=${`https://www.linkedin.com/profile/add?startTask=${response.certificate.name}&name=${response.certificate.name}&organizationId=373060&issueYear=${response.certificate.issued[0]}&issueMonth=${response.certificate.issued[1]}&${response.certificate.expiration ? `expirationYear=${response.certificate.expiration[0]}&expirationMonth=${response.certificate.expiration[1]}` : ''}&certUrl=${!response.certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${response.certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>
+          </div>
+          <div class="survey__courses">
+            ${response.courses.map(item => {
+              return `
+                <div class="card">
+                  <div class="card__content">
+                    <div class="card__top">
+                      <h3 class="card__title" data-lp-lightbox-data="title">${item.title}</h3>
+                    </div>
+                  </div>
+                </div>
+              `
+            }).join('')}
+          </div>
+          <div class="survey__back">
+            <a href="${response.messages.back_url}" class="button">
+              <span>${response.messages.back_title}</span>
+              <span></span>
+            </a>
+          </div>
+        `;
+        afterElem.classList.remove('survey__after--loading');
+        afterElem.scrollIntoView({
+          block: 'start',
+          behavior: 'smooth'
+        });
+      }
+    });
+    
+  };
+
   const requestFormData = async (courseid, user, token) => {
     const fetchOptions = {
       method: 'POST',
@@ -58,15 +135,17 @@ const survey = (() => {
     return markup;
   };
 
-  const renderForm = (formData, container) => {
+  const renderForm = (formData, container, token) => {
     const data = formData.data.questions;
 
-    let markup = `<form class="survey__form" action="${window.location.pathname}" method="post" data-survey-form>`;
+    let markup = `<div class="survey__form" data-survey-form>`;
     markup += renderQuestions(data);
     markup += `<input type="hidden" name="attempt" value="${formData.data.id}">`;
-    markup += `<button class="button survey__button"><span>Submit</span><span></span></button></form>`;
+    markup += `<button class="button survey__button" data-survey-form-submit><span>Submit</span><span></span></button></div>`;
 
     container.innerHTML = markup;
+
+    initFormSubmitAction(token);
   };
 
   const makeAnswersInteractive = (elem) => {
@@ -104,7 +183,7 @@ const survey = (() => {
 
     if (formData.code === 200) {
       renderContent(formData, container)
-      renderForm(formData, elemQuestions);
+      renderForm(formData, elemQuestions, token);
       makeAnswersInteractive(elemQuestions);
       hideOverlay();
     } else if (formData.code === 401) {

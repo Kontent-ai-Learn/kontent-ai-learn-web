@@ -76,6 +76,14 @@ router.post('/survey', jwtCheck, async (req, res) => {
   return res.send(data);
 });
 
+router.post('/survey/submit', async (req, res) => {
+  const surveyAttempt = require('../helpers/survey/attempt');
+  res = fastly.preventCaching(res);
+  const attempt = await surveyAttempt.handle(req.body);
+  const data = await surveyAttempt.after(attempt, res);
+  return res.send(data);
+});
+
 router.post('/e-learning/expiration-notifications', async (req, res) => {
   res = fastly.preventCaching(res);
   await certificationEmail.handleExpirations(res);
