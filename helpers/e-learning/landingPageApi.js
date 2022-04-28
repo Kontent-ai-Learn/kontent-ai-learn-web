@@ -187,5 +187,8 @@ module.exports = {
   init,
   registration,
   getScormRegistration,
-  getCertificate
+  getCertificate,
+  getProgress,
+  getLabel,
+  getCourseUrl
 };

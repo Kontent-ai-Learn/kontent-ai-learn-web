@@ -63,4 +63,5 @@ block content
                               .card__certificate(data-lp-certificate)
                             .card__row.card__row--end
                               - const durationProperty = course.duration ? 'duration' : 'test_duration';
-                              .card__duration(data-lp-lightbox-data='duration')&attributes(smartLink?.elementCodename(durationProperty)) !{course[durationProperty].value} min
+                              if (course[durationProperty].value)
+                                .card__duration(data-lp-lightbox-data='duration')&attributes(smartLink?.elementCodename(durationProperty)) !{course[durationProperty].value} min

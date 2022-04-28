@@ -64,7 +64,7 @@
         if (callback && link) callback(link);
       },
       onClose: () => {
-        if (callback) callback();
+        if (callback && link) callback();
       }
     });
     basicLightboxInstance.show();
@@ -280,13 +280,13 @@
       const markup = `
       <div class="card card--lightbox" data-lp-active-lightbox="${id}">
         <div class="card__img">
-          <img src="${image.getAttribute('src')}">
+          ${image ? `<img src="${image.getAttribute('src')}">` : ''}
           <div class="card__content">
             <div class="card__row card__row--space-between card__row--align-items-center">
               <ul class="card__tag-list">
                 ${Array.from(personas).map((tag) => `<li class="card__tag">${tag.innerHTML}</li>`).join('')}
               </ul>
-              <div class="card__duration">${duration.innerHTML}</div>
+              ${duration ? `<div class="card__duration">${duration.innerHTML}</div>` : ''}
             </div>
             <h3 class="card__title">${title.innerHTML}</h3>
             <div class="card__description">${description.innerHTML}</div>  

@@ -58,7 +58,12 @@ const landingPage = (() => {
     const descriptionPromoted = elemPromoted.querySelector(`[data-lp-lightbox-data="description"]`);
     const linkPromoted = elemPromoted.querySelector(`[data-lp-link]`);
 
-    imagePromoted.setAttribute('src', image.getAttribute('src'));
+    if (image) {
+      imagePromoted.setAttribute('src', image.getAttribute('src'));
+    } else {
+      imagePromoted.remove();
+    }
+    
     titlePromoted.innerHTML = title.innerHTML;
     descriptionPromoted.innerHTML = description.innerHTML;
     linkPromoted.setAttribute('href', link.getAttribute('href'));
@@ -76,7 +81,6 @@ const landingPage = (() => {
     const courseData = window.userElearningData || {};
     const courseItem = courseData.courses ? courseData.courses.find(item => id === item.id) : null;
     const examItem = courseData.exams ? courseData.exams.find(item => id === item.id) : null;
-
     let certificate;
     if ((courseItem && courseItem.certificate) || (examItem && examItem.certificate)) {
       const item = courseItem || examItem;
@@ -150,8 +154,12 @@ const landingPage = (() => {
 
     if (token) {
       fetchOptions.headers = { Authorization: `Bearer ${token}` };
-      const result = await fetch(`/learn/api/landing-page/`, fetchOptions);
-      return await result.json();
+      try {
+        const result = await fetch(`/learn/api/landing-page/`, fetchOptions);
+        return await result.json();
+      } catch (error) {
+        console.error(error);
+      }
     }
     addSignInButton();
 
@@ -160,13 +168,20 @@ const landingPage = (() => {
 
   const requestUserProfile = async (token) => {
     if (!token) return null;
+
     const fetchOptions =  { 
+      method: 'GET',
       headers : { 
         Authorization: `Bearer ${token}` 
       }
     };
-    const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
-    return await result.json();
+    
+    try {
+      const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
+      return await result.json();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateUserProfile = async (token, body) => {
@@ -229,8 +244,10 @@ const landingPage = (() => {
   };
   
   return {
-    getInfo: getInfo,
-    registration: registration,
-    renderLigthboxActions: renderLigthboxActions
+    getInfo,
+    registration,
+    renderLigthboxActions,
+    requestUserProfile,
+    handleToc,
   }
 })();

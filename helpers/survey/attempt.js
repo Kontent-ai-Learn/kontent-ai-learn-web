@@ -4,8 +4,8 @@ const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const getUrlMap = require('../general/urlMap');
 const elearningRegistration = require('../e-learning/registration');
-const { isCodenameInMultipleChoice } = require('../general/helper');
-const { getCertificate, getScormRegistration } = require('../e-learning/landingPageApi');
+const { isCodenameInMultipleChoice, isNotEmptyRichText } = require('../general/helper');
+const { getCertificate, getScormRegistration, getProgress, getLabel, getCourseUrl } = require('../e-learning/landingPageApi');
 
 const getCoursesInCurrentTopic = (currentCourse, allCourses) => {
   const data = []
@@ -19,7 +19,7 @@ const getCoursesInCurrentTopic = (currentCourse, allCourses) => {
   return data;
 };
 
-const getNextCourses = (currentCourse, allCourses, userRegistrations) => {
+const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages, urlMap, res) => {
   const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.activityDetails.activityCompletion === 'COMPLETED');
 
   const allIncompletedCourses = [];
@@ -47,9 +47,22 @@ const getNextCourses = (currentCourse, allCourses, userRegistrations) => {
   }
 
   for (let i = 0; i < courses.length; i++) {
+    const currentRegistration = getScormRegistration(courses[i].system.id, userRegistrations);
     coursesRecommended.push({
       id: courses[i].system.id,
-      title: courses[i].title.value
+      title: courses[i].title.value,
+      image: courses[i].thumbnail?.value?.[0]?.url,
+      personas: courses[i].personas___topics__training_persona.value,
+      isFree: isCodenameInMultipleChoice(courses[i].is_free.value, 'yes'),
+      freeLabel: UIMessages.training___free_course_label.value,
+      description: isNotEmptyRichText(courses[i].description.value) ? courses[i].description.value : '',
+      detailsLabel: UIMessages.training___view_details.value,
+      duration: courses[i].duration.value,
+      url: getCourseUrl(currentRegistration, courses[i], urlMap),
+      certificate: null,
+      label: getLabel(currentRegistration, UIMessages, res),
+      progress: getProgress(currentRegistration, UIMessages, res),
+      promoted: false,
     })
   }
 
@@ -177,17 +190,21 @@ const after = async (attempt, res) => {
   });
 
   if (UIMessages.length) {
-    data.messages.thank_you = UIMessages[0].traning___survey___thank_you.value;
+    data.messages.thank_you = UIMessages[0].training___certificate___opening.value;
     data.messages.back_title = UIMessages[0].traning___button___overview.value;
+  }
+
+  const survey = await cacheHandle.evaluateSingle(res, attempt.codename, async () => {
+    return await getContent.survey(res, attempt.codename);
+  });
+
+  if (survey.items.length) {
+    data.messages.cta_message = survey.items[0].ui_message_and_cta.value;
   }
 
   const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
   });
-  const urlMapItem = urlMap.find(item => item.type === 'landing_page');
-  if (urlMapItem) {
-    data.messages.back_url = urlMapItem.url;
-  }
 
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
     return await getContent.trainingCourse(res);
@@ -197,8 +214,8 @@ const after = async (attempt, res) => {
   const userRegistrations = await elearningRegistration.getUserRegistrations(attempt.email);
   const registration = getScormRegistration(courseId, userRegistrations);
   data.certificate = getCertificate(registration, course);
-  data.courses = getNextCourses(course, trainingCourses, userRegistrations);
-
+  data.courses = getNextCourses(course, trainingCourses, userRegistrations, UIMessages[0], urlMap, res);
+  data.code = 4;
   return data;
 };
 

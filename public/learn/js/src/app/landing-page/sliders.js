@@ -1,7 +1,7 @@
 window.landingPageSliders = [];
-(() => {
+const landingPageSliders = (() => {
   const initSliders = () => {
-    const elms = document.querySelectorAll('.landing-page__items .splide');
+    const elms = document.querySelectorAll('.landing-page__items .splide, .survey__courses .splide');
 
     const options = {
       gap: '36px',
@@ -29,4 +29,8 @@ window.landingPageSliders = [];
   };
 
   initSliders();
+
+  return {
+    initSliders
+  }
 })();
