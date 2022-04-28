@@ -79,7 +79,6 @@ gulp.task('js-app', () => {
       'public/learn/js/src/app/scrollto.js',
       'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
       'public/learn/js/src/app/auth0.js',
-      'public/learn/js/src/app/training-course.js',
       'node_modules/@splidejs/splide/dist/js/splide.js',
       'public/learn/js/src/app/carousel.js',
       'public/learn/js/src/app/landing-page/sliders.js',
@@ -134,20 +133,6 @@ gulp.task('js-changelog', () => {
       'public/learn/js/src/filter/filter-changelog.js'
     ])
     .pipe(concat('changelog.js'))
-    .pipe(uglify())
-    .pipe(rename({
-      suffix: '.min'
-    }))
-    .pipe(gulp.dest('public/learn/js'))
-});
-
-gulp.task('js-elearning', () => {
-  return gulp.src([
-      'node_modules/mixitup/dist/mixitup.min.js',
-      'public/learn/js/src/filter/helper-filter.js',
-      'public/learn/js/src/filter/filter-elearning.js'
-    ])
-    .pipe(concat('elearning.js'))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
@@ -352,7 +337,7 @@ gulp.task('reload', (done) => {
 });
 
 gulp.task('build-js-app', gulp.parallel(['js-app', 'js-reference']));
-gulp.task('build-js-filter', gulp.parallel(['js-changelog', 'js-elearning', 'js-landing-page']));
+gulp.task('build-js-filter', gulp.parallel(['js-changelog', 'js-landing-page']));
 gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service-check']));
 
 gulp.task('watch', (done) => {
@@ -390,7 +375,7 @@ gulp.task('observe', async () => {
   })
 });
 
-gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-elearning', 'js-landing-page', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'js-service-check', 'css-app', 'css-reference', 'css-kontentsmartlink', 'css-service-check']));
+gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-landing-page', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'js-service-check', 'css-app', 'css-reference', 'css-kontentsmartlink', 'css-service-check']));
 
 gulp.task('develop', gulp.series(['build', 'observe']));
 

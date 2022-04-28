@@ -131,9 +131,6 @@ const componentsResolvers = [{
     type: 'terminology',
     resolver: resolveRichText.terminology
 }, {
-    type: 'training_course2',
-    resolver: resolveRichText.trainingCourse
-}, {
     type: 'quote',
     resolver: resolveRichText.quote
 }, {
@@ -154,9 +151,6 @@ const componentsResolvers = [{
 }, {
     type: 'training_answer_for_survey_and_test',
     resolver: resolveRichText.answer
-}, {
-    type: 'training_certification_test',
-    resolver: resolveRichText.certificationTest
 }];
 
 const richTextResolver = (item, config) => {

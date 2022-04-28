@@ -108,9 +108,7 @@ window.addEventListener('load', async () => {
     auth0.client = await configureClient();
     await processLoginState();
     await handleNavigationUI();
-    if (typeof trainingCourse !== 'undefined') {
-        await trainingCourse.getInfo();
-    }
+
     if (typeof survey !== 'undefined') {
         await survey.getInfo();
     }

@@ -35,13 +35,9 @@ const getItemContent = async (item, urlMap, res) => {
         settings.urlMap = urlMap;
     }
 
-    let content = await cacheHandle.evaluateSingle(res, item.codename, async () => {
+    const content = await cacheHandle.evaluateSingle(res, item.codename, async () => {
         return await requestDelivery(settings);
     });
-
-    if (item.type === 'training_certification_test') {
-        content = content.items;
-    }
 
     return content;
 };
@@ -165,7 +161,6 @@ const getData = async (req, res) => {
     const platformsConfig = await platforms.getPlatformsConfig(res);
     let preselectedPlatform;
     let canonicalUrl;
-    let testQuestionsNumber = 0;
     cookiesPlatform = req.cookies['KCDOCS.preselectedLanguage'];
 
     if (content && content.length) {
@@ -174,9 +169,6 @@ const getData = async (req, res) => {
                 redirectCode: 301,
                 redirectUrl: `${pathUrl}${content[0].subpages.value[0].url.value}/${queryHash ? `?${queryHash}` : ''}`
             }
-        } else if (content[0].system.type === 'training_certification_test') {
-            view = 'pages/certificationTestDetail';
-            content[0].question_groups.value.forEach(item => { testQuestionsNumber += item.number_of_questions.value });
         } else if (content[0].system.type === 'landing_page') {
             view = 'pages/landingPage';
 
@@ -313,13 +305,11 @@ const getData = async (req, res) => {
 
     let containsChangelog;
     let containsTerminology;
-    let containsTrainingCourse;
     let releaseNoteContentType;
-    let trainingPersonaTaxonomyGroup;
+
     if (content && content.length && content[0].content) {
         containsChangelog = helper.hasLinkedItemOfType(content[0].content, 'changelog');
         containsTerminology = helper.hasLinkedItemOfType(content[0].content, 'terminology');
-        containsTrainingCourse = helper.hasLinkedItemOfType(content[0].content, 'training_course2');
 
         if (containsChangelog) {
             req.app.locals.changelogPath = helper.getPathWithoutQS(req.originalUrl);
@@ -330,13 +320,6 @@ const getData = async (req, res) => {
 
         if (containsTerminology) {
             req.app.locals.terminologyPath = helper.getPathWithoutQS(req.originalUrl);
-        }
-
-        if (containsTrainingCourse) {
-            req.app.locals.elearningPath = helper.getPathWithoutQS(req.originalUrl);
-            trainingPersonaTaxonomyGroup = await cacheHandle.evaluateSingle(res, 'trainingPersonaTaxonomyGroup', async () => {
-                return await getContent.trainingPersonaTaxonomyGroup(res);
-            });
         }
 
         body = await resolveCustomRichText(body, res);
@@ -376,12 +359,9 @@ const getData = async (req, res) => {
         preselectedPlatform: preselectedPlatform,
         containsChangelog: containsChangelog,
         releaseNoteContentType: releaseNoteContentType,
-        containsTrainingCourse: containsTrainingCourse,
-        trainingPersonaTaxonomyGroup: trainingPersonaTaxonomyGroup,
         hideAuthorLastModified: content && content.length && content[0].display_options ? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_metadata') : false,
         hideFeedback: content && content.length && content[0].display_options? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_feedback') : false,
-        readingTime: content && content.length && content[0].content ? helper.getReadingTime(content[0].content.value) : null,
-        testQuestionsNumber: testQuestionsNumber
+        readingTime: content && content.length && content[0].content ? helper.getReadingTime(content[0].content.value) : null
     };
 };
 

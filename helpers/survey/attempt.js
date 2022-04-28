@@ -53,6 +53,7 @@ const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages
       title: courses[i].title.value,
       image: courses[i].thumbnail?.value?.[0]?.url,
       personas: courses[i].personas___topics__training_persona.value,
+      comingSoon: isCodenameInMultipleChoice(courses[i].display_options ? courses[i].display_options.value : [], 'hide_cta_button'),
       isFree: isCodenameInMultipleChoice(courses[i].is_free.value, 'yes'),
       freeLabel: UIMessages.training___free_course_label.value,
       description: isNotEmptyRichText(courses[i].description.value) ? courses[i].description.value : '',

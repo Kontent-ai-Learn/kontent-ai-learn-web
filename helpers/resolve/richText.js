@@ -6,7 +6,6 @@ const {
     generateAnchor,
     getPrismClassName,
     injectHTMLAttr,
-    isCodenameInMultipleChoice,
     isNotEmptyRichText,
     removeNewLines,
     removeQuotes,
@@ -557,81 +556,6 @@ const richText = {
     },
     terminology: (item, config) => {
         return `<div id="terminology-resolve"${getSmartLinkAttr(config, item.system.id, 'component')}></div>`;
-    },
-    certificationTest: (item, config) => {
-        const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
-        const url = urlMapItem.length ? urlMapItem[0].url : null;
-
-        return `
-            <div class="article__teaser"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
-                <h3${getSmartLinkAttr(config, 'title', 'element')}>${url ? `<a href="${url}">${item.title.value}</a>` : `${item.title.value}`}</h3>
-                ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
-                <div class="article__introduction">
-                    <div class="article__introduction-content">
-                        <div${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>
-                            ${item.description.value}
-                        </div>
-                        ${url && config.UIMessages && config.UIMessages.training___view_details
-                            ? `  
-                            <a href="${url}" class="call-to-action call-to-action--small"${getSmartLinkAttr(config, config.UIMessages.system.id, 'item')}${getSmartLinkAttr(config, 'training___view_details', 'element')}>
-                                <span>${config.UIMessages.training___view_details.value}</span>
-                                <span></span>
-                            </a>
-                        `
-                        : ''}              
-                    </div>
-                </div>
-            </div>`;
-    },
-    trainingCourse: (item, config) => {
-        const personas = item.personas___topics__training_persona.value;
-        const urlMapItem = config.urlMap.filter(itemUrlMap => itemUrlMap.codename === item.system.codename);
-        const url = urlMapItem.length ? urlMapItem[0].url : null;
-        const isFree = item.is_free ? isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
-        const imageWidth = item.thumbnail.value[0] ? item.thumbnail.value[0].width || 0 : 0;
-        const imageHeight = item.thumbnail.value[0] ? item.thumbnail.value[0].height || 0 : 0;
-        const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${imageWidth}" height="${imageHeight}"></svg>`;
-        const image = item.thumbnail.value.length ? `${item.thumbnail.value[0].url}?auto=format&w=116&fm=pjpg` : null;
-        const imageMarkup = image
-? `
-            <img class="lazy lazy--exclude-dnt" src='${placeholderSrc}' data-src="${image}" alt="" data-dpr data-lazy-onload loading="lazy" ${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
-            <noscript>
-                <img src="${image}" ${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'thumbnail', 'element')}>
-            </noscript>
-        `
-: '';
-
-        return `
-            <div class="article__teaser mix ${personas.map(item => `${item.codename}`).join(' ')}"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
-                <h3${getSmartLinkAttr(config, 'title', 'element')}>${url ? `<a href="${url}">${item.title.value}</a>` : `${item.title.value}`}${isFree ? `<span class="article__tag article__tag--blue">${config.UIMessages.training___free_course_label.value}</span>` : ''}</h3>
-                ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
-                <div class="article__introduction">
-                    ${image
-? `
-                        ${url ? `<a href="${url}" class="article__introduction-image">${imageMarkup}</a>` : `<div class="article__introduction-image">${imageMarkup}</div>`}
-                    `
-: ''}
-                    <div class="article__introduction-content">
-                        <div class="article__info-bar">
-                            ${personas.length ? `<ul class="article__tags"${getSmartLinkAttr(config, 'persona', 'element')}>` : ''}
-                            ${personas.map(item => `<li class="article__tags-item article__tags-item--green">${item.name}</li>`).join('')}
-                            ${personas.length ? '</ul>' : ''}
-                        </div>
-                        <div${getSmartLinkAttr(config, 'description', 'element')}${getSmartLinkAttrInner(item.description.value, config)}>
-                            ${item.description.value}
-                        </div>
-                        ${url && config.UIMessages && config.UIMessages.training___view_details
-? `  
-                            <a href="${url}" class="call-to-action call-to-action--small"${getSmartLinkAttr(config, config.UIMessages.system.id, 'item')}${getSmartLinkAttr(config, 'training___view_details', 'element')}>
-                                <span>${config.UIMessages.training___view_details.value}</span>
-                                <span></span>
-                            </a>
-                        `
-: ''}
-                    </div>
-                </div>
-            </div>
-        `;
     },
     quote: (item, config) => {
         return `<div class="quote"${getSmartLinkAttr(config, item.system.id, 'item')}>

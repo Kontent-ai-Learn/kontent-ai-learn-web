@@ -2,7 +2,6 @@ const express = require('express');
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const router = express.Router();
-const trainingCourseDetail = require('../helpers/e-learning/trainingCourseDetail');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationDetail = require('../helpers/certification/detail');
 const certificationEmail = require('../helpers/certification/email');
@@ -20,18 +19,6 @@ const jwtCheck = jwt({
   audience: process.env.AUTH0_CLIENT_ID,
   issuer: `https://${process.env.AUTH0_DOMAIN}/`,
   algorithms: ['RS256']
-});
-
-router.post('/training-course/detail/private', jwtCheck, async (req, res) => {
-  res = fastly.preventCaching(res);
-  const data = await trainingCourseDetail(req.body.codename, req, res);
-  return res.send(data);
-});
-
-router.post('/training-course/detail/public', async (req, res) => {
-  res = fastly.preventCaching(res);
-  const data = await trainingCourseDetail(req.body.codename, req, res);
-  return res.send(data);
 });
 
 router.post('/training-certification/detail/private', jwtCheck, async (req, res) => {

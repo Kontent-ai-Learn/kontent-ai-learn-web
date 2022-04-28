@@ -27,7 +27,7 @@ const survey = (() => {
           <div class="survey__thanks">${response.messages.thank_you}</div>
           <div class="survey__certificate">
             <a href="${response.certificate.url}" target="_blank">${UIMessages.downloadCertificate}</a>
-            <a href=${`https://www.linkedin.com/profile/add?startTask=${response.certificate.name}&name=${response.certificate.name}&organizationId=373060&issueYear=${response.certificate.issued[0]}&issueMonth=${response.certificate.issued[1]}&${response.certificate.expiration ? `expirationYear=${response.certificate.expiration[0]}&expirationMonth=${response.certificate.expiration[1]}` : ''}&certUrl=${!response.certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${response.certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>
+            <a href="${`https://www.linkedin.com/profile/add?startTask=${response.certificate.name}&name=${response.certificate.name}&organizationId=373060&issueYear=${response.certificate.issued[0]}&issueMonth=${response.certificate.issued[1]}&${response.certificate.expiration ? `expirationYear=${response.certificate.expiration[0]}&expirationMonth=${response.certificate.expiration[1]}` : ''}&certUrl=${!response.certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${response.certificate.url}`}" target="_blank">${window.UIMessages.addToLinkedIn}</a>
           </div>
           <div class="survey__message">${response.messages.cta_message}</div>
           <div class="survey__courses${response.courses.length < 3 ? ' survey__courses--no-arrows' : ''}">
@@ -37,7 +37,7 @@ const survey = (() => {
                   ${response.courses.map(item => {
                     return `
                       <li class="splide__slide">
-                        <div class="card" data-lp-lightbox data-lp-item="${item.id}">
+                        <div class="card" data-lp-lightbox data-lp-item="${item.id}"${item.comingSoon ? ' data-lp-comingsoon' : ''}>
                           ${item.image ? `<div class="card__img"><img src="${item.image}" data-lp-lightbox-data="image"></div>` : ''}
                           <div class="card__content">
                             <div class="card__top">
