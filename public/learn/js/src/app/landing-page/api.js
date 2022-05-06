@@ -25,20 +25,26 @@ const landingPage = (() => {
     }
   };
 
-  const addSignInButton = () => {
-    const container = document.querySelector('[data-lp-auth]');
-    if (!container) return;
-
+  const addButton = (type, container) => {
     const button = document.createElement('a');
     button.classList.add('button');
+    if (type === 'signup') button.classList.add('button--secondary');
     button.setAttribute('href', '#');
-    button.setAttribute('id', 'login');
+    button.setAttribute('id', type);
     const label = document.createElement('span');
-    label.innerHTML = window.UIMessages.signIn;
+    label.innerHTML = type === 'signup' ? window.UIMessages.signUp : window.UIMessages.signIn;
     const span = document.createElement('span');
     button.appendChild(label);
     button.appendChild(span);
     container.appendChild(button);
+  } ;
+
+  const addAuthButton = () => {
+    const container = document.querySelector('[data-lp-auth]');
+    if (!container) return;
+
+    addButton('login', container);
+    addButton('signup', container);
   };
 
   const addPromoted = (item) => {
@@ -70,6 +76,12 @@ const landingPage = (() => {
     linkPromoted.setAttribute('data-lp-lightbox-invoke', item.id);
   };
 
+  const removeLoadingFromPromoted = () => {
+    const elemPromoted = document.querySelector(`[data-lp-promoted="loading"]`);
+    if (!elemPromoted) return;
+    elemPromoted.setAttribute('data-lp-promoted', '');
+  };
+
   const renderLigthboxActions = (id, isFree) => {
     const activeLightbox = document.querySelector('[data-lp-active-lightbox]');
     if (!id) {
@@ -98,18 +110,20 @@ const landingPage = (() => {
 
     return `
       ${window.userProfile ? `<div class="card__toc"><label class="toc" for="toc"><input id="toc" type="checkbox" class="toc__checkbox" data-lp-toc${window.userProfile.toc ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.toc)}</div></label></div>`: ''}
-      <div class="card__actions">
-        ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
-        ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
-        ${window.user && courseItem && window.userProfile ? `<span onclick="landingPage.registration('${courseItem.id}')" class="button" data-lp-disabled="${!window.userProfile.toc}"><span>${courseItem.label}</span><span></span></span>` : ''}
-        ${window.user && examItem && examItem.url && window.userProfile ? `<a href="${examItem.url}" class="button" data-lp-disabled="${!window.userProfile.toc}"><span>${examItem.label}</span><span></span></a>` : ''}
-        ${window.user && examItem && examItem.message ? `<strong class="card__message">${examItem.message}</strong>` : ''}
-        ${window.userElearningData && window.userElearningData.code === 3 && !isFree ? `<span class="call-to-action" onclick="window.Intercom && window.Intercom('show')"><span>${window.userElearningData.message}</span><span></span></span>` : ''}
-        ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2) ? window.userElearningData.message : ''}
-      </div>
-      <div class="card__certificate">
-        ${certificate ? `<a class="card__certificate-link" href="${certificate.url}" target="_blank"><span>${window.UIMessages.downloadCertificate}</span><span></span></a>` : ''}
-        ${certificate ? `<a class="card__a" href=${`https://www.linkedin.com/profile/add?startTask=${certificate.name}&name=${certificate.name}&organizationId=373060&issueYear=${certificate.issued[0]}&issueMonth=${certificate.issued[1]}&${certificate.expiration ? `expirationYear=${certificate.expiration[0]}&expirationMonth=${certificate.expiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>` : ''}
+      <div class="card__actions-container">
+        <div class="card__actions">
+          ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
+          ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
+          ${window.user && courseItem && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}"><span onclick="landingPage.registration('${courseItem.id}')" class="button"><span>${courseItem.label}</span><span></span></span></div>` : ''}
+          ${window.user && examItem && examItem.url && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}"><a href="${examItem.url}" class="button"><span>${examItem.label}</span><span></span></a></div>` : ''}
+          ${window.user && examItem && examItem.message ? `<strong class="card__message">${examItem.message}</strong>` : ''}
+          ${window.userElearningData && window.userElearningData.code === 3 && !isFree ? `<span class="call-to-action" onclick="window.Intercom && window.Intercom('show')"><span>${window.userElearningData.message}</span><span></span></span>` : ''}
+          ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2) ? window.userElearningData.message : ''}
+        </div>
+        <div class="card__certificate" data-lp-disabled="${window.userProfile ? !window.userProfile.toc : 'true'}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}">
+          ${certificate ? `<a class="card__certificate-link" href="${certificate.url}" target="_blank"><span>${window.UIMessages.downloadCertificate}</span><span></span></a>` : ''}
+          ${certificate ? `<a class="card__a" href=${`https://www.linkedin.com/profile/add?startTask=${certificate.name}&name=${certificate.name}&organizationId=373060&issueYear=${certificate.issued[0]}&issueMonth=${certificate.issued[1]}&${certificate.expiration ? `expirationYear=${certificate.expiration[0]}&expirationMonth=${certificate.expiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>` : ''}
+        </div>
       </div>`;
   };
 
@@ -161,7 +175,7 @@ const landingPage = (() => {
         console.error(error);
       }
     }
-    addSignInButton();
+    addAuthButton();
 
     return null;
   };
@@ -211,6 +225,7 @@ const landingPage = (() => {
       addCetificateLinks(window.userElearningData);
       addPromoted(window.userElearningData.courses.find(item => item.promoted));
     }
+    removeLoadingFromPromoted();
     const event = new Event('userElearningDataEvent');
     document.querySelector('body').dispatchEvent(event);
     if (window.userProfile) {

@@ -23,9 +23,11 @@ const send = async (info) => {
   }
 
   try {
-    return await sgMail.send(msg);
+    await sgMail.send(msg);
+    return true;
   } catch (error) {
     errorAppInsights.log('SENDGRID_ERROR', JSON.stringify(error.response?.body.errors));
+    return false;
   }
 };
 

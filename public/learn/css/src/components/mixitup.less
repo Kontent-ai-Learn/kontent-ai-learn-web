@@ -53,9 +53,13 @@
     
 }
 
+.mixitup-container-noitems {
+    display: none;
+}
+
 .mixitup-container-failed {
-    &:before {
-        content: 'No items found.';
+    .mixitup-container-noitems {
+        display: block;
     }
 }
 

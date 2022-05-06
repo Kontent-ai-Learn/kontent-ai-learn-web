@@ -56,6 +56,63 @@
     &--small {
         padding: 12px 20px;
     }
+
+    &--secondary {
+        background-color: transparent;
+        box-shadow: none;
+        font-weight: 700;
+        border: 2px solid #41D9C5;
+        border-radius: 24px;
+        padding: 14px 24px;
+        color: #231F20 !important;
+        text-decoration: none;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        transition: color .4s ease-in-out;
+    
+        &:after {
+          content: ' →';
+          position: relative;
+          z-index: 2;
+        }
+    
+        span {
+          &:first-child {
+            position: relative;
+            z-index: 2;
+          }
+    
+          &:last-child {
+            background-color: #231f20;
+            position: absolute;
+            display: block;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            transition: width .4s ease-in-out, height .4s ease-in-out;
+            transform: translate3d(-50%, -50%, 0);
+            z-index: 1;
+          }
+        }
+    
+        &:hover,
+        &:active {
+          color: #fff !important;
+          box-shadow: none;
+    
+          &:after {
+            color: #41D9C5;
+          }
+    
+          span {
+            &:last-child {
+              width: 1000px;
+              height: 1000px;
+            }
+          }
+        }
+    }
 }
 
 .call-to-action {

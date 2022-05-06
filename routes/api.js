@@ -6,6 +6,7 @@ const certificationAttempt = require('../helpers/certification/attempt');
 const certificationDetail = require('../helpers/certification/detail');
 const certificationEmail = require('../helpers/certification/email');
 const elearningLandingPageApi = require('../helpers/e-learning/landingPageApi');
+const elearningReporting = require('../helpers/e-learning/reporting');
 const fastly = require('../helpers/services/fastly');
 const userProfile = require('../helpers/user/profile');
 
@@ -87,6 +88,13 @@ router.post('/user/profile', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
   const data = await userProfile.createUpdate(req?.user.email, req.body);
   return res.send(data);
+});
+
+router.post('/scorm/postback', async (req, res) => {
+  res = fastly.preventCaching(res);
+  console.log(req.body);
+  const success = await elearningReporting.addRecord(req.body);
+  return res.status(success ? 200 : 400).end();
 });
 
 module.exports = router;

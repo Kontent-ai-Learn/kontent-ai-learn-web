@@ -344,7 +344,7 @@ kontent-smart-link-element {
 
 }
 
-[data-once]:not([href]), [data-lp-disabled="true"] {
+[data-once]:not([href]), [data-lp-disabled="true"] .button {
     cursor: default !important;
     background-color: #919091 !important;
     box-shadow: 0 0 0 1px #919091 !important; 
@@ -359,6 +359,55 @@ kontent-smart-link-element {
 
     span:last-child {
         display: none !important;
+    }
+}
+
+[data-lp-disabled="true"].card__certificate {
+    .card__certificate-link {
+        color: #919091 !important;
+    }
+
+    * {
+        filter: grayscale(100%);
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+    }
+}
+
+[data-lp-disabled="true"][lp-disabled-tooltip] {
+    &::after {
+        display: none;
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        bottom: -1px;
+        justify-content: center;
+        align-items: center;
+        content: attr(lp-disabled-tooltip);
+        background-color: #fff;
+        color: #231f20;
+        font-size: 14px;
+        line-height: 1.375em;
+        border-radius: 1em;
+        white-space: break-spaces;
+        z-index: 99999;
+        text-align: center;
+    }
+
+    &:hover {
+        &::after {
+            display: flex;
+        }
     }
 }
 

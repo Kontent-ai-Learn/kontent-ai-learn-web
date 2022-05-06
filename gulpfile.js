@@ -130,7 +130,8 @@ gulp.task('js-changelog', () => {
       'public/learn/js/src/filter/mixitup/mixitup-multifilter.js',
       'public/learn/js/src/filter/mixitup/mixitup-pagination.js',
       'public/learn/js/src/filter/helper-filter.js',
-      'public/learn/js/src/filter/filter-changelog.js'
+      'public/learn/js/src/filter/filter-changelog.js',
+      'public/learn/js/src/filter/common.js'
     ])
     .pipe(concat('changelog.js'))
     .pipe(uglify())
@@ -144,7 +145,8 @@ gulp.task('js-landing-page', () => {
   return gulp.src([
       'node_modules/mixitup/dist/mixitup.min.js',
       'public/learn/js/src/filter/mixitup/mixitup-multifilter.js',
-      'public/learn/js/src/filter/filter-landing-page.js'
+      'public/learn/js/src/filter/filter-landing-page.js',
+      'public/learn/js/src/filter/common.js'
     ])
     .pipe(concat('landing-page.js'))
     .pipe(uglify())

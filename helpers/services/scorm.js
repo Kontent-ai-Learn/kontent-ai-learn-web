@@ -46,6 +46,8 @@ const getRegistrationLinkEndpoint = (id, req) => {
 const createRegistration = async (user, courseId, registrationId) => {
   const registration = {};
   const url = `${settings.registrationsUrl}`;
+  let baseURL = process.env.baseURL;
+  if (process.env.ngrok) baseURL = process.env.ngrok;
   const data = {
     courseId: courseId,
     registrationId: registrationId,
@@ -54,6 +56,12 @@ const createRegistration = async (user, courseId, registrationId) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email
+    },
+    postback: {
+      url: `${baseURL}/learn/api/scorm/postback/`,
+      resultsFormat: 'full',
+      legacy: false,
+      authType: 'httpbasic'
     }
   };
 
