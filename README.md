@@ -47,6 +47,13 @@ Without the following variables, certain features will not work on the website.
 * `appUrl` - URL specifying Kontent application related to the current environment
 * `Api2Pdf.ApiKey` - API key for the [api2PDF](https://www.api2pdf.com/) service
 * `APPINSIGHTS_INSTRUMENTATIONKEY` - Azure Application Insights key (used for application monitoring)
+* `COSMOSDB_ENDPOINT` - CosmosDB database endpoint URL 
+* `COSMOSDB_KEY` - CosmosDB database authorization key
+* `COSMOSDB_DATABASE` - CosmosDB database name
+* `COSMOSDB_CONTAINER_SURVEY` - CosmosDB database - Surveys container name
+* `COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT` - CosmosDB database - Certifications container name
+* `COSMOSDB_CONTAINER_PROFILE` - CosmosDB database - Profile container name
+* `COSMOSDB_CONTAINER_REPORTING` - CosmosDB database - Reporting (Scorm postaback payloads) container name
 * `GTM.id` - Google Tag Manager ID (used for analytics)
 * `Hotjar.id` - Hotjar application ID (used for analytics)
 * `Intercom.id` - Intercom account ID (used for support chat)
@@ -60,6 +67,8 @@ Without the following variables, certain features will not work on the website.
 * `SCORM_APP_ID` - Scorm Cloud Application ID
 * `SCORM_SECRET_KEY`- Scorm Cloud Secret key
 * `SCORM_HOST`- Kentico e-learning Scorm Cloud host URL
+* `SCORM_USERNAME`- Scorm Cloud postback endpoint auth user name
+* `SCORM_USERPWD`- Scorm Cloud postback endpoint auth user password
 * `ngrok` - ngrok tunnel URL (i.e. https://91a2c81a7f1f.ngrok.io) (useful for api2PDF service local development/testing)
 * `Recaptcha.v2.secret` - Google Recaptcha v2 secret API key (used for forms robot protection)
 * `Recaptcha.v2.site` - Google Recaptcha v2 site API key (used for forms robot protection)
