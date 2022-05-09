@@ -240,6 +240,7 @@
       let linkUrl;
       let callback;
       let target;
+      let activeActionsAttr = '';
       if (e) {
         target = e.target;
         if (target.closest('[data-lp-certificate]')) return;
@@ -263,6 +264,7 @@
       } else {
         item = document.querySelector(`[data-lp-lightbox-autoinvoke]`);
         callback = handleUrl;
+        activeActionsAttr = 'loading';
       }
       if (!item) return;
 
@@ -293,7 +295,7 @@
             ${isComingSoon ? `
               <strong class="card__message">${window.UIMessages.comingSoon}</strong>
             ` : `
-              <div class="card__row card__row--space-between card__row--actions" data-lp-active-lightbox-actions>
+              <div class="card__row card__row--space-between card__row--actions" data-lp-active-lightbox-actions="${activeActionsAttr}">
                 ${landingPage.renderLigthboxActions(id, isFree)}
               </div>
             `}

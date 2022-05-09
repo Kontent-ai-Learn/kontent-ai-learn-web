@@ -82,6 +82,12 @@ const landingPage = (() => {
     elemPromoted.setAttribute('data-lp-promoted', '');
   };
 
+  const removeLoadingFromLightboxActions = () => {
+    const elemActions = document.querySelector(`[data-lp-active-lightbox-actions="loading"]`);
+    if (!elemActions) return;
+    elemActions.setAttribute('data-lp-active-lightbox-actions', '');
+  };
+
   const renderLigthboxActions = (id, isFree) => {
     const activeLightbox = document.querySelector('[data-lp-active-lightbox]');
     if (!id) {
@@ -226,6 +232,7 @@ const landingPage = (() => {
       addPromoted(window.userElearningData.courses.find(item => item.promoted));
     }
     removeLoadingFromPromoted();
+    removeLoadingFromLightboxActions();
     const event = new Event('userElearningDataEvent');
     document.querySelector('body').dispatchEvent(event);
     if (window.userProfile) {
