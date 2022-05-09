@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
+const basicAuth = require('express-basic-auth');
 const router = express.Router();
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationDetail = require('../helpers/certification/detail');
@@ -90,9 +91,14 @@ router.post('/user/profile', jwtCheck, async (req, res) => {
   return res.send(data);
 });
 
-router.post('/scorm/postback', async (req, res) => {
+router.post('/scorm/postback', basicAuth((() => {
+  const credentials = {};
+  credentials[process.env.SCORM_USERNAME] = process.env.SCORM_USERPWD;
+  return {
+    users: credentials
+  };
+})()), async (req, res) => {
   res = fastly.preventCaching(res);
-  console.log(req.body);
   const success = await elearningReporting.addRecord(req.body);
   return res.status(success ? 200 : 400).end();
 });

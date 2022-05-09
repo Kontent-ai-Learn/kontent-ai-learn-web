@@ -2,6 +2,11 @@ const cosmos = require('../services/cosmos');
 const errorAppInsights = require('../error/appInsights');
 
 const addRecord = async (body) => {
+  if (body.id) {
+    body.registrationId = body.id;
+    delete body.id;
+  }
+
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_REPORTING);
     await db.items.create(body);

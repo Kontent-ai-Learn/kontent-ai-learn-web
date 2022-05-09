@@ -59,9 +59,11 @@ const createRegistration = async (user, courseId, registrationId) => {
     },
     postback: {
       url: `${baseURL}/learn/api/scorm/postback/`,
-      resultsFormat: 'full',
+      resultsFormat: 'course',
       legacy: false,
-      authType: 'httpbasic'
+      authType: 'httpbasic',
+      userName: process.env.SCORM_USERNAME,
+      password: process.env.SCORM_USERPWD
     }
   };
 
