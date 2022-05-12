@@ -120,13 +120,13 @@ const landingPage = (() => {
         <div class="card__actions">
           ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
           ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
-          ${window.user && courseItem && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}"><span onclick="landingPage.registration('${courseItem.id}')" class="button"><span>${courseItem.label}</span><span></span></span></div>` : ''}
-          ${window.user && examItem && examItem.url && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}"><a href="${examItem.url}" class="button"><span>${examItem.label}</span><span></span></a></div>` : ''}
+          ${window.user && courseItem && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false"><span onclick="landingPage.registration('${courseItem.id}')" class="button"><span>${courseItem.label}</span><span></span></span></div>` : ''}
+          ${window.user && examItem && examItem.url && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false"><a href="${examItem.url}" class="button"><span>${examItem.label}</span><span></span></a></div>` : ''}
           ${window.user && examItem && examItem.message ? `<strong class="card__message">${examItem.message}</strong>` : ''}
           ${window.userElearningData && window.userElearningData.code === 3 && !isFree ? `<span class="call-to-action" onclick="window.Intercom && window.Intercom('show')"><span>${window.userElearningData.message}</span><span></span></span>` : ''}
           ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2) ? window.userElearningData.message : ''}
         </div>
-        <div class="card__certificate" data-lp-disabled="${window.userProfile ? !window.userProfile.toc : 'true'}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}">
+        <div class="card__certificate" data-lp-disabled="${window.userProfile ? !window.userProfile.toc : 'true'}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false">
           ${certificate ? `<a class="card__certificate-link" href="${certificate.url}" target="_blank"><span>${window.UIMessages.downloadCertificate}</span><span></span></a>` : ''}
           ${certificate ? `<a class="card__a" href=${`https://www.linkedin.com/profile/add?startTask=${certificate.name}&name=${certificate.name}&organizationId=373060&issueYear=${certificate.issued[0]}&issueMonth=${certificate.issued[1]}&${certificate.expiration ? `expirationYear=${certificate.expiration[0]}&expirationMonth=${certificate.expiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>` : ''}
         </div>
@@ -142,8 +142,21 @@ const landingPage = (() => {
     }
 
     document.querySelector('body').addEventListener('click', async (e) => {
+      const item = e.target.closest('[data-lp-disabled="true"][lp-disabled-tooltip][lp-disabled-tooltip-active="false"]');
+      if (!item) return;
+      item.setAttribute('lp-disabled-tooltip-active', 'true');
+    });
+
+    document.querySelector('body').addEventListener('click', async (e) => {
       const item = e.target.closest('[data-lp-toc]');
       if (item) {
+        if (!!item.checked) {
+          const tooltips = document.querySelectorAll('[data-lp-disabled="true"][lp-disabled-tooltip][lp-disabled-tooltip-active="true"]');
+          for (let i = 0; i < tooltips.length; i++) {
+            tooltips[i].setAttribute('lp-disabled-tooltip-active', 'false');
+          }
+        }
+
         const disabled = document.querySelectorAll('[data-lp-disabled]');
         for (let i = 0; i < disabled.length; i++) {
           disabled[i].setAttribute('data-lp-disabled', !item.checked);
