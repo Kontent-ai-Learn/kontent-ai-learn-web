@@ -628,14 +628,15 @@
         min-height: 48px;
 
         &:empty {
-            width: 48px;
-            height: 48px;
-            background-image: url('../img/loader.gif');
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-color: #fff;
-            background-size: contain;
-            margin: 0 24px;
+            border-radius: 8px 20px 20px 20px;
+            width: 150px;
+            height: 24px;
+            min-height: 24px;
+            background-color: #e8e8e9;
+            background: linear-gradient(45deg, #bbb, #eee, #bbb, #eee);
+            background-size: 400% 400%;
+            animation: gradientLoading 6s ease infinite;
+            padding: 0;
         }
 
         &--result {
@@ -658,4 +659,16 @@
             margin-top: 0; 
         }
     }
+}
+
+@keyframes gradientLoading {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }

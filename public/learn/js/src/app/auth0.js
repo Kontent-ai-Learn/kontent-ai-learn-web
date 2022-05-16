@@ -118,5 +118,8 @@ window.addEventListener('load', async () => {
     if (typeof landingPage !== 'undefined') {
         await landingPage.getInfo();
     }
+    if (typeof certificationTestResults !== 'undefined') {
+        await certificationTestResults.getInfo();
+    }
     auth0.eventListeners();
 });
