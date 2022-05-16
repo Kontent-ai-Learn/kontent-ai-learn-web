@@ -1,3 +1,4 @@
+window.splideCarousels = [];
 (() => {
   const elms = document.getElementsByClassName('carousel');
 
@@ -22,6 +23,8 @@
 
   for (let i = 0; i < elms.length; i++) {
     elms[i].classList.add('carousel--init');
-    new Splide(elms[i], options).mount();
+    const splideCarousel = new Splide(elms[i], options);
+    splideCarousel.mount();
+    window.splideCarousels.push(splideCarousel);
   }
 })();
