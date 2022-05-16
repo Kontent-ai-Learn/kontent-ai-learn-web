@@ -95,19 +95,33 @@ const processLoginState = async () => {
 const handleNavigationUI = async () => {
     const navAuth = document.querySelector('[data-nav-auth]');
     if (!navAuth) return;
-    const user = await auth0.ensureUserSignedIn();
     
     let action = 'login';
-    if (user) {
+    if (window.user) {
         action = 'logout';
     }
     navAuth.innerHTML = `<a href="#" class="navigation__link navigation__link--auth" id="${action}">${action === 'login' ? window.UIMessages.signIn : window.UIMessages.signOut}</a>`
 };
 
+const prefillEmailAddressInForms = () => {
+    if (!window.user) return;
+    const emailInputs = document.querySelectorAll('input[type="email"]');
+
+    for (let i = 0; i < emailInputs.length; i++) {
+        console.log(window.user.email);
+        emailInputs[i].value = window.user.email;
+        if (emailInputs[i].classList.contains('form__input')) {
+            emailInputs[i].classList.add('form__input--value');
+        }
+    }
+};
+
 window.addEventListener('load', async () => {
     auth0.client = await configureClient();
     await processLoginState();
+    window.user = await auth0.ensureUserSignedIn();
     await handleNavigationUI();
+    prefillEmailAddressInForms();
 
     if (typeof survey !== 'undefined') {
         await survey.getInfo();

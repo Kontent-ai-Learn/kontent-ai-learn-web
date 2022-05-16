@@ -241,7 +241,6 @@ const survey = (() => {
   const getInfo = async () => {
     const container = document.querySelector('[data-form-survey]');
     if (container) {
-      window.user = await auth0.ensureUserSignedIn();
       if (window.user) {
         await getSurvey(container);
       } else {

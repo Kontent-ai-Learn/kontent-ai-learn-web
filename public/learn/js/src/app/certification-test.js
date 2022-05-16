@@ -164,8 +164,7 @@ const certificationTest = (() => {
   const getInfo = async () => {
     const container = document.querySelector('[data-certification-test]');
     if (container) {
-      const user = await auth0.ensureUserSignedIn();
-      if (user) {
+      if (window.user) {
         await getCertificationTest(user);
         window.helper.startTimer('[data-timer]');
       } else {

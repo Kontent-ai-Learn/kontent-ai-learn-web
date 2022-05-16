@@ -235,9 +235,9 @@ const landingPage = (() => {
   const getInfo = async () => {
     const container = document.querySelector('[data-lp]');
     if (!container) return;
+    if (!window.user) return;
 
-    window.user = await auth0.ensureUserSignedIn();
-    const token = user ? user.__raw : null;
+    const token = window.user ? window.user.__raw : null;
     [window.userElearningData, window.userProfile] = await Promise.all([requestInfo(token), requestUserProfile(token)]);
     addLightboxActions();
     if (window.userElearningData) {
@@ -254,8 +254,8 @@ const landingPage = (() => {
   };
 
   const registration = async (id) => {
+    if (!window.user) return;
     if (!window.userProfile.toc) return;
-    if (!window.user) window.user = await auth0.ensureUserSignedIn();
     const token = window.user ? window.user.__raw : null;
     const fetchOptions = {
       method: 'POST',
