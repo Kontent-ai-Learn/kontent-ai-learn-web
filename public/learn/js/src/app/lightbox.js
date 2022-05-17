@@ -82,6 +82,7 @@
     showCloseButtonOnElemLoaded(elemSelector, basicLightboxInstance);
     registerCloseOnEsc(basicLightboxInstance);
     registerCloseOnPlaceholder(basicLightboxInstance);
+    window.helper.startTimerDate();
 
     return basicLightboxInstance;
   };
@@ -301,7 +302,7 @@
             `}
           </div>
         </div>
-      </div>`
+      </div>`;
       
       const wrap = document.createElement('div');
       wrap.innerHTML = markup;

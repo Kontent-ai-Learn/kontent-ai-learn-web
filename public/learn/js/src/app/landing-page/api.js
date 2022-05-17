@@ -177,7 +177,10 @@ const landingPage = (() => {
 
   const addLightboxActions = () => {
     const activeLightboxActions = document.querySelector('[data-lp-active-lightbox-actions]');
-    if (activeLightboxActions) activeLightboxActions.innerHTML = renderLigthboxActions();
+    if (activeLightboxActions) {
+      activeLightboxActions.innerHTML = renderLigthboxActions();
+      window.helper.startTimerDate();
+    }
   };
 
   const requestInfo = async (token) => {

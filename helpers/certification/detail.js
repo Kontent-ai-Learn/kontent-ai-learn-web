@@ -57,13 +57,14 @@ const getCertificationInfo = async (user, certificationTest) => {
 
   if (attemptInPastDay && attemptInPastDay.length) {
     const attemptStart = new Date(attemptInPastDay[0].start);
-    const attemptStartDurationMs = attemptStart.getTime() + attemptInPastDay[0].test.duration * 60000;
+    const attemptStartDurationMs = attemptStart.getTime();
     const nowMs = (new Date()).getTime();
 
     if ((attemptStartDurationMs < nowMs && !attemptInPastDay[0].certificate_expiration) || (attemptStartDurationMs >= nowMs && attemptInPastDay[0].end)) {
+      const nextAttemptDateTime = (new Date(attemptStartDurationMs + 86400000)).toISOString();
       return {
         id: certificationTest.system.id,
-        message: 'You didn’t pass this time. You can try again in 24 hours after your unsuccessful attempt.',
+        message: `You didn’t pass this time. You can try again in <span data-timer-date="${nextAttemptDateTime}"></span>.`,
       }
     }
   }

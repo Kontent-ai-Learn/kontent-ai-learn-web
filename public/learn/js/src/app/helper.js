@@ -458,6 +458,17 @@ window.helper = (() => {
         }, 1000);
       };
 
+      const startTimerDate = () => {
+        const timer = document.querySelector('[data-timer-date]');
+        if (!timer) return;
+        const date = new Date(timer.getAttribute('data-timer-date'));
+        if(isNaN(date)) return;
+        const nowSec = (new Date()).getTime() / 1000;
+        const dateSec = date.getTime() / 1000;
+        timer.setAttribute('data-timer', Math.round(dateSec - nowSec));
+        startTimer('[data-timer-date][data-timer]');
+      };
+
       const removeHrefOnClick = () => {
         const items = document.querySelectorAll('[data-once]');
         const remove = (elem) => { 
@@ -506,6 +517,7 @@ window.helper = (() => {
         unwrapElement: unwrapElement,
         updateParameter: updateParameter,
         startTimer: startTimer,
+        startTimerDate: startTimerDate,
         removeHrefOnClick: removeHrefOnClick
     }
 })();
