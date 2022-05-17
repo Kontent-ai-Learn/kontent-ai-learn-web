@@ -3,7 +3,7 @@ block content
     .utilities-hero-bg&attributes(smartLink?.itemId(itemId))
         .hero
             .hero__wrapper
-                div.hero__note-link&attributes(smartLink?.elementCodename('intro_note')) !{postprocessMarkup(introNote, res)}
+                .hero__note-link(data-note-link)&attributes(smartLink?.elementCodename('intro_note')) !{postprocessMarkup(introNote, res)}
                 h1.hero__heading&attributes(smartLink?.elementCodename('title')) !{title}
                 form.hero__search(data-search-container='')
                     .hero__search-icon(aria-hidden='true')
