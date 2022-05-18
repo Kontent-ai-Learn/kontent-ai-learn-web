@@ -6,6 +6,7 @@ const {
     generateAnchor,
     getPrismClassName,
     injectHTMLAttr,
+    isCodenameInMultipleChoice,
     isNotEmptyRichText,
     removeNewLines,
     removeQuotes,
@@ -631,7 +632,45 @@ const richText = {
                         </div>
                     </div>
                 </div>`;
-    }
+    },
+    trainingCourse: (item, config) => {
+        const urlMapItem = config.urlMap.find(elem => elem.codename === item.system.codename);
+        let url = '#';
+        if (urlMapItem) url = urlMapItem.url;
+        const isFree = item.is_free ? isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
+        return `<div class="card card--article">
+                    <a class="card__link" href="${url}"></a>
+                    ${item.thumbnail && item.thumbnail.value.length
+                        ? `
+                        <div class="card__img">
+                            <img src="${item.thumbnail.value[0].url}">
+                        </div>
+                        `
+                    : ''}
+                    <div class="card__content">
+                        <div class="card__top">
+                            ${item.personas___topics__training_persona.value.length
+                                ? `
+                                <ul class="card__tag-list">
+                                    ${item.personas___topics__training_persona.value.map(elem => `<li class="card__tag">${elem.name}</li>`).join('')}
+                                </ul>
+                                `
+                            : ''}
+                            <span role="heading" class="card__title">
+                                ${item.title.value}${isFree ? '<span class="card__tag card__tag--green" data-lp-lightbox-data="free">Free</span>' : ''}
+                            </span>
+                        </div>
+                        <div class="card__bottom">
+                            <div class="card__row card__row--space-between">
+                                <div class="card__cta">View details</div>
+                            </div>
+                            <div class="card__row card__row--end">
+                                <div class="card__duration">${item.duration.value} min</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+    },
 };
 
 module.exports = richText;
