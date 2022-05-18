@@ -638,36 +638,25 @@ const richText = {
         let url = '#';
         if (urlMapItem) url = urlMapItem.url;
         const isFree = item.is_free ? isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
-        return `<div class="card card--article">
-                    <a class="card__link" href="${url}"></a>
+        return `<div class="tile tile--article">
                     ${item.thumbnail && item.thumbnail.value.length
                         ? `
-                        <div class="card__img">
+                        <div class="tile__img">
                             <img src="${item.thumbnail.value[0].url}">
                         </div>
                         `
                     : ''}
-                    <div class="card__content">
-                        <div class="card__top">
-                            ${item.personas___topics__training_persona.value.length
-                                ? `
-                                <ul class="card__tag-list">
-                                    ${item.personas___topics__training_persona.value.map(elem => `<li class="card__tag">${elem.name}</li>`).join('')}
-                                </ul>
-                                `
-                            : ''}
-                            <span role="heading" class="card__title">
-                                ${item.title.value}${isFree ? '<span class="card__tag card__tag--green" data-lp-lightbox-data="free">Free</span>' : ''}
-                            </span>
+                    <div class="tile__content">
+                        <span role="heading" class="tile__title">
+                            ${item.title.value}${isFree ? '<span class="tile__tag tile__tag--green">Free</span>' : ''}
+                        </span>
+                        <div class="tile__description">
+                            ${isNotEmptyRichText(item.description.value) ? item.description.value : ''}
                         </div>
-                        <div class="card__bottom">
-                            <div class="card__row card__row--space-between">
-                                <div class="card__cta">View details</div>
-                            </div>
-                            <div class="card__row card__row--end">
-                                <div class="card__duration">${item.duration.value} min</div>
-                            </div>
-                        </div>
+                        <a class="tile__cta" href="${url}"> 
+                            <span>View details</span>
+                            <span></span>
+                        </a>
                     </div>
                 </div>`;
     },
