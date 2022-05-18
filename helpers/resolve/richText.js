@@ -638,19 +638,19 @@ const richText = {
         let url = '#';
         if (urlMapItem) url = urlMapItem.url;
         const isFree = item.is_free ? isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
-        return `<div class="tile tile--article">
+        return `<div class="tile tile--article"${getSmartLinkAttr(config, item.system.id, 'item')}>
                     ${item.thumbnail && item.thumbnail.value.length
                         ? `
-                        <div class="tile__img">
+                        <div class="tile__img"${getSmartLinkAttr(config, 'thumbnail', 'element')}>
                             <img src="${item.thumbnail.value[0].url}">
                         </div>
                         `
                     : ''}
                     <div class="tile__content">
-                        <span role="heading" class="tile__title">
+                        <span role="heading" class="tile__title"${getSmartLinkAttr(config, 'title', 'element')}>
                             ${item.title.value}${isFree ? '<span class="tile__tag tile__tag--green">Free</span>' : ''}
                         </span>
-                        <div class="tile__description">
+                        <div class="tile__description"${getSmartLinkAttr(config, 'description', 'element')}>
                             ${isNotEmptyRichText(item.description.value) ? item.description.value : ''}
                         </div>
                         <a class="tile__cta" href="${url}"> 
