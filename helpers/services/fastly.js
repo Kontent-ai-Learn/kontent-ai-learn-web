@@ -114,7 +114,6 @@ const purgeAllUrls = async (res) => {
   for (let i = 0; i < uniqueUrls.length; i++) {
     await axiosPurge(validDomain, uniqueUrls[i]);
   }
-  await axiosPurge(validDomain, '/learn/redirect-urls');
 };
 
 const purgeAllTechUrls = async (res) => {
@@ -185,10 +184,6 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     }
   }
 
-  if (itemsByTypes.articles.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
-    await axiosPurge(axiosDomain, '/learn/redirect-urls');
-  }
-
   if (itemsByTypes.redirectRules.length) {
     for (let i = 0; i < itemsByTypes.redirectRules.length; i++) {
       await purgeRedirectRule(itemsByTypes.redirectRules[i].codename, res);
@@ -219,7 +214,7 @@ const preventCaching = (res) => {
 const handleGlobalCaching = (req, res) => {
   res.setHeader('Arr-Disable-Session-Affinity', 'True');
 
-  if (req.originalUrl.startsWith('/learn/cache-invalidate') || req.originalUrl.startsWith('/learn/redirect-urls') || req.originalUrl.startsWith('/learn/service-check')) {
+  if (req.originalUrl.startsWith('/learn/cache-invalidate') || req.originalUrl.startsWith('/learn/service-check')) {
     res.setHeader('Cache-Control', 'no-store, max-age=0');
   } else {
     res.setHeader('Cache-Control', 'max-age=60');

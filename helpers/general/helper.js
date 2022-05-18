@@ -469,7 +469,7 @@ const removeLinkedItemsSelfReferences = (items, codenames = []) => {
     return items;
 };
 
-const addTrailingSlash = (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? '/' : '';
+const addTrailingSlashTo = (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? `${url}/` : url;
 
 const injectHTMLAttr = (options) => {
     if (!options.markup || !options.selector || !options.attr || !options.attrValue) return `Invalid HTML attribute injection: ${options}`;
@@ -511,7 +511,7 @@ const makeLinksAbsolute = (domain, content) => {
 
 module.exports = {
     addTitlesToLinks,
-    addTrailingSlash,
+    addTrailingSlashTo,
     appendQueryParam,
     capitalizeFirstLetter,
     ensureProtocol,

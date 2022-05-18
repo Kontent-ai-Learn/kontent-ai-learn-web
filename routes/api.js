@@ -1,6 +1,5 @@
 const express = require('express');
-const jwt = require('express-jwt');
-const jwksRsa = require('jwks-rsa');
+
 const basicAuth = require('express-basic-auth');
 const router = express.Router();
 const certificationAttempt = require('../helpers/certification/attempt');
@@ -9,19 +8,8 @@ const certificationEmail = require('../helpers/certification/email');
 const elearningLandingPageApi = require('../helpers/e-learning/landingPageApi');
 const elearningReporting = require('../helpers/e-learning/reporting');
 const fastly = require('../helpers/services/fastly');
+const jwtCheck = require('../helpers/services/jwt');
 const userProfile = require('../helpers/user/profile');
-
-const jwtCheck = jwt({
-  secret: jwksRsa.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://${process.env.AUTH0_ISSUER_BASE_URL}/.well-known/jwks.json`
-  }),
-  audience: process.env.AUTH0_CLIENT_ID,
-  issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-  algorithms: ['RS256']
-});
 
 router.post('/training-certification/detail/private', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);

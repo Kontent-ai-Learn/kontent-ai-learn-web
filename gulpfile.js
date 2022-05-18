@@ -170,6 +170,21 @@ gulp.task('js-service-check', () => {
     .pipe(gulp.dest('public/learn/js'))
 });
 
+gulp.task('js-service', () => {
+  return gulp.src([
+      'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
+      'public/learn/js/src/app/helper.js',
+      'public/learn/js/src/service/redirects.js',
+      'public/learn/js/src/service/service.js'
+    ])
+    .pipe(concat('service.js'))
+    .pipe(uglify())
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest('public/learn/js'))
+});
+
 gulp.task('js-algolia', () => {
   return gulp.src([
       'node_modules/algoliasearch/dist/algoliasearch-lite.umd.js',
@@ -347,6 +362,7 @@ gulp.task('watch', (done) => {
   gulp.watch('public/learn/js/src/app/**/*.js', gulp.series(['build-js-app', 'reload']));
   gulp.watch('public/learn/js/src/filter/*.js', gulp.series(['build-js-filter', 'reload']));
   gulp.watch('public/learn/js/src/service-check/*.js', gulp.series(['js-service-check', 'reload']));
+  gulp.watch('public/learn/js/src/service/*.js', gulp.series(['js-service', 'reload']));
   gulp.watch('public/learn/css/src/**/*.less', gulp.series(['build-css', 'reload']));
   done();
 });
@@ -378,7 +394,7 @@ gulp.task('observe', async () => {
   })
 });
 
-gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-landing-page', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'js-service-check', 'css-app', 'css-reference', 'css-kontentsmartlink', 'css-service-check']));
+gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-landing-page', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'js-service-check', 'js-service', 'css-app', 'css-reference', 'css-kontentsmartlink', 'css-service-check']));
 
 gulp.task('develop', gulp.series(['build', 'observe']));
 

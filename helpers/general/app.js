@@ -6,10 +6,10 @@ const getUrlMap = require('./urlMap');
 const urlWhitelist = [
   '/learn/other/*',
   '/learn/form/*',
+  '/learn/service/*',
   '/learn/urlmap/',
   '/learn/favicon.ico',
   '/learn/rss/*',
-  '/learn/redirect-urls/',
   '/learn/cache-invalidate/',
   '/learn/service-check/*',
   '/learn/link-to/',

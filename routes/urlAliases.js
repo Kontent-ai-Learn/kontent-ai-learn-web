@@ -28,7 +28,7 @@ const urlAliases = async (req, res, next) => {
 
         aliases.forEach(alias => {
             alias = alias.trim().toLowerCase();
-            if (`/learn${alias}${helper.addTrailingSlash(alias)}` === `${originalUrl}${helper.addTrailingSlash(originalUrl)}`) {
+            if (`/learn${helper.addTrailingSlashTo(alias)}` === helper.addTrailingSlashTo(originalUrl)) {
                 redirectUrl = urlMap.filter(url => {
                     return url.codename === item.system.codename;
                 });
