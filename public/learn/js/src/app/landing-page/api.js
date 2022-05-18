@@ -126,7 +126,7 @@ const landingPage = (() => {
           ${window.userElearningData && window.userElearningData.code === 3 && !isFree ? `<span class="call-to-action" onclick="window.Intercom && window.Intercom('show')"><span>${window.userElearningData.message}</span><span></span></span>` : ''}
           ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2) ? window.userElearningData.message : ''}
         </div>
-        <div class="card__certificate" data-lp-disabled="${window.userProfile ? !window.userProfile.toc : 'true'}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false">
+        <div class="card__certificate" data-lp-disabled="${window.userProfile ? !window.userProfile.toc : 'false'}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false">
           ${certificate ? `<a class="card__certificate-link" href="${certificate.url}" target="_blank"><span>${window.UIMessages.downloadCertificate}</span><span></span></a>` : ''}
           ${certificate ? `<a class="card__a" href=${`https://www.linkedin.com/profile/add?startTask=${certificate.name}&name=${certificate.name}&organizationId=373060&issueYear=${certificate.issued[0]}&issueMonth=${certificate.issued[1]}&${certificate.expiration ? `expirationYear=${certificate.expiration[0]}&expirationMonth=${certificate.expiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>` : ''}
         </div>
