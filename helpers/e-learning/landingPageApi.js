@@ -42,15 +42,14 @@ const getCourseUrl = (registration, course, urlMap) => {
 };
 
 const getLabel = (registration, UIMessages, res) => {
-  if (!registration) return UIMessages.training___cta_start_course.value;
-  let codename = registration.activityDetails?.activityCompletion;
-
   if (isPreview(res.locals.previewapikey)) {
-    codename = 'PREVIEW';
+    return UIMessages.training___cta_preview_course.value;
   }
 
+  if (!registration) return UIMessages.training___cta_start_course.value;
+  const codename = registration.activityDetails?.activityCompletion;
+
   switch (codename) {
-    case 'PREVIEW': return UIMessages.training___cta_preview_course.value
     case 'COMPLETED': return UIMessages.training___cta_revisit_course.value;
     case 'INCOMPLETE': return UIMessages.training___cta_resume_course.value;
     default: return UIMessages.training___cta_start_course.value;
