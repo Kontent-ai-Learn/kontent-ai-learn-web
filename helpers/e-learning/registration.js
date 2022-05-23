@@ -1,5 +1,6 @@
 const axios = require('axios');
 const errorAppInsights = require('../error/appInsights');
+const isPreview = require('../kontent/isPreview');
 
 const settings = {
   auth: {
@@ -10,7 +11,31 @@ const settings = {
   coursesUrl: `https://${process.env.SCORM_HOST}/api/v2/courses`,
 };
 
-const getUserRegistrations = async (email) => {
+const filterRegistrationsEnv = (registrations, res) => {
+  const previewEnv = isPreview(res.locals.previewapikey);
+  const devEvn = process.env.isDevelopment === 'true';
+  let registrationsEnv = [];
+
+  if (previewEnv && devEvn) {
+    registrationsEnv = registrations.filter(item => item.course.id.endsWith('_preview') && item.course.id.startsWith('dev_'));
+  }
+
+  if (!previewEnv && devEvn) {
+    registrationsEnv = registrations.filter(item => !item.course.id.endsWith('_preview') && item.course.id.startsWith('dev_'));
+  }
+
+  if (!previewEnv && !devEvn) {
+    registrationsEnv = registrations.filter(item => !item.course.id.endsWith('_preview') && !item.course.id.startsWith('dev_'));
+  }
+
+  if (previewEnv && !devEvn) {
+    registrationsEnv = registrations.filter(item => item.course.id.endsWith('_preview') && !item.course.id.startsWith('dev_'));
+  }
+
+  return registrationsEnv;
+};
+
+const getUserRegistrations = async (email, res) => {
   try {
     const registrations = [];
     let more = 'first';
@@ -30,7 +55,9 @@ const getUserRegistrations = async (email) => {
       more = page.data.more;
     };
 
-    return registrations;
+    const registrationsEnv = filterRegistrationsEnv(registrations, res);
+
+    return registrationsEnv;
   } catch (error) {
     errorAppInsights.log('SCORM_ERROR', error);
   }

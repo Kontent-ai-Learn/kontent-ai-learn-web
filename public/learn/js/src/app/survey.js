@@ -22,13 +22,19 @@ const survey = (() => {
       [window.userElearningData, window.userProfile] = await Promise.all([submitData(data, token), landingPage.requestUserProfile(token)]);
       const response = window.userElearningData || {};
 
+      if (response.certificate) {
+        if (response.certificate.issued) {
+          response.certificate.issued = response.certificate.issued.split('/').map(x => parseInt(x));
+        }
+        if (response.certificate.expiration) {
+          response.certificate.expiration = response.certificate.expiration.split('/').map(x => parseInt(x));
+        }
+      }
+
       if (afterElem) {
         afterElem.innerHTML = `
           <div class="survey__thanks">${response.messages.thank_you}</div>
-          <div class="survey__certificate">
-            <a href="${response.certificate.url}" target="_blank">${UIMessages.downloadCertificate}</a>
-            <a href="${`https://www.linkedin.com/profile/add?startTask=${response.certificate.name}&name=${response.certificate.name}&organizationId=373060&issueYear=${response.certificate.issued[0]}&issueMonth=${response.certificate.issued[1]}&${response.certificate.expiration ? `expirationYear=${response.certificate.expiration[0]}&expirationMonth=${response.certificate.expiration[1]}` : ''}&certUrl=${!response.certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${response.certificate.url}`}" target="_blank">${window.UIMessages.addToLinkedIn}</a>
-          </div>
+          ${response.certificate ? `<div class="survey__certificate"><a href="${response.certificate.url}" target="_blank">${UIMessages.downloadCertificate}</a><a href="${`https://www.linkedin.com/profile/add?startTask=${response.certificate.name}&name=${response.certificate.name}&organizationId=373060&issueYear=${response.certificate.issued[0]}&issueMonth=${response.certificate.issued[1]}&${response.certificate.expiration ? `expirationYear=${response.certificate.expiration[0]}&expirationMonth=${response.certificate.expiration[1]}` : ''}&certUrl=${!response.certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${response.certificate.url}`}" target="_blank">${window.UIMessages.addToLinkedIn}</a></div>` : ''}
           <div class="survey__message">${response.messages.cta_message}</div>
           <div class="survey__courses${response.courses.length < 3 ? ' survey__courses--no-arrows' : ''}">
             <div class="splide">

@@ -70,7 +70,7 @@ const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages
   return coursesRecommended;
 };
 
-const getSurveyCodename = async (currentCourse, allCourses, email) => {
+const getSurveyCodename = async (currentCourse, allCourses, email, res) => {
   const LONG_CODENAME = 'long_survey';
   const SHORT_CODENAME = 'short_survey';
 
@@ -80,7 +80,7 @@ const getSurveyCodename = async (currentCourse, allCourses, email) => {
 
   const coursesInCurrentTopic = getCoursesInCurrentTopic(currentCourse, allCourses);
 
-  const userRegistrations = await elearningRegistration.getUserRegistrations(email);
+  const userRegistrations = await elearningRegistration.getUserRegistrations(email, res);
   const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.activityDetails.activityCompletion === 'COMPLETED');
 
   const completedCoursesInTopic = [];
@@ -139,7 +139,7 @@ const init = async (req, res) => {
     }
   }
 
-  const codename = await getSurveyCodename(trainingCourse, trainingCourses, req.body.email);
+  const codename = await getSurveyCodename(trainingCourse, trainingCourses, req.body.email, res);
   const survey = await cacheHandle.evaluateSingle(res, codename, async () => {
     return await getContent.survey(res, codename);
   });
@@ -212,7 +212,7 @@ const after = async (attempt, res) => {
   });
   const courseId = attempt.course_id.replace('dev_', '').replace('_preview', '');
   const course = trainingCourses.find(item => item.system.id === courseId);
-  const userRegistrations = await elearningRegistration.getUserRegistrations(attempt.email);
+  const userRegistrations = await elearningRegistration.getUserRegistrations(attempt.email, res);
   const registration = getScormRegistration(courseId, userRegistrations);
   data.certificate = getCertificate(registration, course);
   data.courses = getNextCourses(course, trainingCourses, userRegistrations, UIMessages[0], urlMap, res);

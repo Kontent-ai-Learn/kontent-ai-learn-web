@@ -113,7 +113,7 @@ const init = async (req, res) => {
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
     return await getContent.trainingCourse(res);
   });
-  const userRegistartions = await elearningRegistration.getUserRegistrations(user.email);
+  const userRegistartions = await elearningRegistration.getUserRegistrations(user.email, res);
 
   if (!state.code) {
     state.code = 4; // User has e-learning access;
