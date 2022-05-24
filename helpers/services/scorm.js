@@ -20,7 +20,10 @@ const handleEmptyErrorResponse = (response, requestUrl) => {
 };
 
 const getRegistrationId = (email, courseId) => {
-  return CryptoJS.MD5(`${email}${courseId}`).toString();
+  return {
+    lowerCase: CryptoJS.MD5(`${email.toLowerCase()}${courseId}`).toString(),
+    normalCase: CryptoJS.MD5(`${email}${courseId}`).toString(),
+  }
 };
 
 const getRegistrationExistence = async (registrationId) => {
@@ -37,6 +40,18 @@ const getRegistrationExistence = async (registrationId) => {
   }
 
   return exists;
+};
+
+const getCorrectCaseRegistrationId = async (registrationId) => {
+  if (!registrationId) return null;
+  const registrationExistsLower = await getRegistrationExistence(registrationId.lowerCase);
+  const registrationExistsNormal = await getRegistrationExistence(registrationId.normalCase);
+  let registrationIdCorrect = null;
+
+  if (registrationExistsNormal) registrationIdCorrect = registrationId.normalCase;
+  if (registrationExistsLower) registrationIdCorrect = registrationId.lowerCase;
+
+  return registrationIdCorrect;
 };
 
 const getRegistrationLinkEndpoint = (id, req) => {
@@ -229,10 +244,10 @@ const scorm = {
   },
   getUserCourseRegistration: async (email, courseId) => {
     const registrationId = getRegistrationId(email, courseId);
-    const registrationExists = await getRegistrationExistence(registrationId);
+    const registrationIdCorrect = await getCorrectCaseRegistrationId(registrationId);
 
-    if (registrationExists) {
-      return await getRegistrationData(registrationId);
+    if (registrationIdCorrect) {
+      return await getRegistrationData(registrationIdCorrect);
     }
 
     return null;
@@ -247,13 +262,14 @@ const scorm = {
 
     if (!isPreview(res.locals.previewapikey)) {
       const registrationId = getRegistrationId(user.email, scormCourseId);
-      const registrationExists = await getRegistrationExistence(registrationId);
+      let registrationIdCorrect = await getCorrectCaseRegistrationId(registrationId);
 
-      if (!registrationExists) {
-        await createRegistration(user, scormCourseId, registrationId);
+      if (!registrationIdCorrect) {
+        registrationIdCorrect = registrationId.lowerCase;
+        await createRegistration(user, scormCourseId, registrationIdCorrect);
       }
 
-      linkData = await getRegistrationLink(registrationId, scormCourseId, res);
+      linkData = await getRegistrationLink(registrationIdCorrect, scormCourseId, res);
     } else {
       linkData = await getCoursePreviewLink(scormCourseId);
     }
@@ -278,13 +294,14 @@ const scorm = {
 
     if (!isPreview(res.locals.previewapikey)) {
       const registrationId = getRegistrationId(user.email, courseId);
-      const registrationExists = await getRegistrationExistence(registrationId);
+      let registrationIdCorrect = await getCorrectCaseRegistrationId(registrationId);
 
-      if (!registrationExists) {
+      if (!registrationIdCorrect) {
         if (typeof req.query.enroll === 'undefined') {
           qs = 'enroll';
         } else {
-          const registrationCreated = await createRegistration(user, courseId, registrationId);
+          registrationIdCorrect = registrationId.lowerCase;
+          const registrationCreated = await createRegistration(user, courseId, registrationIdCorrect);
 
           if (registrationCreated.err) {
             return {
@@ -297,7 +314,7 @@ const scorm = {
       }
 
       if (!qs) {
-        registrationData = await getRegistrationData(registrationId);
+        registrationData = await getRegistrationData(registrationIdCorrect);
 
         if (registrationData.err) {
           return {
@@ -308,7 +325,7 @@ const scorm = {
         }
 
         progress = registrationData?.activityDetails?.activityCompletion;
-        url = getRegistrationLinkEndpoint(registrationId, req);
+        url = getRegistrationLinkEndpoint(registrationIdCorrect, req);
         certificate = getCertificate(registrationData, course);
       }
     } else {
