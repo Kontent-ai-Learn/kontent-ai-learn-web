@@ -9,10 +9,10 @@ const successfullAttemptExists = async (body, timespan = 0) => {
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
     const query = {
-        query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.certificate_expiration > @expirationAhead ORDER BY c.certificate_expiration DESC',
+        query: 'SELECT * FROM c WHERE LOWER(c.email) = @email AND c.test.codename = @codename AND c.certificate_expiration > @expirationAhead ORDER BY c.certificate_expiration DESC',
         parameters: [{
           name: '@email',
-          value: email
+          value: email.toLowerCase()
         }, {
           name: '@codename',
           value: codename
@@ -76,10 +76,10 @@ const checkAttemptInPastDay = async (email, codename) => {
 
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
     const query = {
-        query: 'SELECT * FROM c WHERE c.email = @email AND c.test.codename = @codename AND c.start > @start',
+        query: 'SELECT * FROM c WHERE LOWER(c.email) = @email AND c.test.codename = @codename AND c.start > @start',
         parameters: [{
           name: '@email',
-          value: email
+          value: email.toLowerCase()
         }, {
           name: '@codename',
           value: codename

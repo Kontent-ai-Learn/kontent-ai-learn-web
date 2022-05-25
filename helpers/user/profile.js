@@ -5,10 +5,10 @@ const get = async (email) => {
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_PROFILE);
     const query = {
-        query: 'SELECT * FROM c WHERE c.email = @email',
+        query: 'SELECT * FROM c WHERE LOWER(c.email) = @email',
         parameters: [{
           name: '@email',
-          value: email
+          value: email.toLowerCase()
         }]
     };
 

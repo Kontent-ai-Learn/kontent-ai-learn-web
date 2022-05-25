@@ -9,10 +9,10 @@ const getUserCourseAttempt = async (body) => {
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_SURVEY);
     const query = {
-        query: 'SELECT * FROM c WHERE c["end"] < @end AND c.email = @email AND c.course_id = @courseId',
+        query: 'SELECT * FROM c WHERE c["end"] < @end AND LOWER(c.email) = @email AND c.course_id = @courseId',
         parameters: [{
           name: '@email',
-          value: email
+          value: email.toLowerCase()
         }, {
           name: '@courseId',
           value: courseid
