@@ -90,6 +90,9 @@ const cacheKeys = [{
         name: 'trainingCourses',
         method: getContent.trainingCourse
     }, {
+        name: 'landingPages',
+        method: getContent.landingPage
+    }, {
         name: 'trainingSubscriptions',
         method: getContent.trainingSubscriptions
     }, {

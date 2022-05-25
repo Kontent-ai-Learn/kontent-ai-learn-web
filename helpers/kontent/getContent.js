@@ -150,6 +150,12 @@ const getUrlMap = require('../general/urlMap');
             ...KCDetails(res)
         });
     };
+    const landingPage = async (res) => {
+        return await requestDelivery({
+            type: 'landing_page',
+            ...KCDetails(res)
+        });
+    };
     const notFound = async (res) => {
         const urlMap = await ensureSingle(res, 'urlMap', async () => {
             return await getUrlMap(res);
@@ -311,6 +317,7 @@ module.exports = {
     footer,
     home,
     KCDetails,
+    landingPage,
     languages,
     navigationItems,
     normalizePlatforms,
