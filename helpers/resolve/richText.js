@@ -379,7 +379,6 @@ const richText = {
             const imageHeight = item.image.value[0] ? item.image.value[0]?.contract?.renditions?.default?.height || item.image.value[0].height || 0 : 0;
             const openLinkTag = url ? `<a href="${url}" target="_blank" class="no-icon"${getSmartLinkAttr(config, 'url', 'element')}>` : '';
             const closeLinkTag = url ? '</a>' : '';
-            const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${item.image.value[0].width}" height="${item.image.value[0].height}"></svg>`;
             const attributes = getImageAttributes(item, cssClass);
 
             if (item.image.value[0].url.endsWith('.gif')) {
@@ -400,7 +399,7 @@ const richText = {
             return `
                 <figure${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                     ${openLinkTag}
-                        <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src='${placeholderSrc}' data-src="${item.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-image' : ''}>
+                    <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src="${item.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-image' : ''}>
                     ${closeLinkTag}
                     <noscript>
                         ${openLinkTag}

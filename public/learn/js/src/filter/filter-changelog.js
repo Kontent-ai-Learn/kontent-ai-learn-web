@@ -61,6 +61,13 @@
         return page;
     };
 
+    var refreshSplideCarousel = function () {
+        if (!window.splideCarousels) return;
+        for(let i = 0; i < window.splideCarousels.length; i++) {
+            window.splideCarousels[i].refresh();
+        }
+    };
+
     var mixer = window.mixitup('.article__body', {
         animation: {
             enable: false
@@ -83,6 +90,7 @@
             onMixEnd: function () {
                 var state = mixer.getState();
                 updateUrl(helperFilter.getActiveItems('services'), getBreaking(), state.activePagination.page);
+                refreshSplideCarousel();
             }
         }
     });

@@ -164,10 +164,6 @@
                 max-width: 100%;
             }
         }
-
-        &.lazy {
-            padding: 0;
-        }
     }
 
     &__image {
@@ -352,6 +348,7 @@
             color: #908E8F;
             font-style: italic;
             line-height: 1.25em;  
+
             em {
                 font-style: normal;
             }
@@ -564,14 +561,6 @@
                 margin-bottom: 40px;
             } 
         }
-
-        & img.lazy {
-            margin: 0;
-            padding: 0;
-            @media screen and (min-width: 480px) {
-                margin-bottom: 40px;
-            } 
-        }
     }
 
     &__introduction-content {
@@ -646,6 +635,22 @@
                 display: none;
             }
         }
+    }
+
+    .splide__slide {
+        figure {
+            margin-bottom: 0;
+
+            img {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        figcaption {
+            text-align: center;
+        }
+        
     }
 }
 
