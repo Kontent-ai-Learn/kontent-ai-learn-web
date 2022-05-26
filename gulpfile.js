@@ -86,6 +86,7 @@ gulp.task('js-app', () => {
       'public/learn/js/src/app/survey.js',
       'public/learn/js/src/app/certification-test.js',
       'public/learn/js/src/app/certification-test-results.js',
+      'public/learn/js/src/app/note-link.js',
     ])
     .pipe(concat('app.js'))
     .pipe(uglify())
