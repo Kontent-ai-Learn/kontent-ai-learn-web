@@ -103,15 +103,27 @@ const handleNavigationUI = async () => {
     navAuth.innerHTML = `<a href="#" class="navigation__link navigation__link--auth" id="${action}">${action === 'login' ? window.UIMessages.signIn : window.UIMessages.signOut}</a>`
 };
 
+const removeOptionalFromLabel = (input) => {
+    const id = input.getAttribute('id');
+    const label = input.parentNode.querySelector(`label[for="${id}"]`);
+    if (!label) return;
+    let labelText = label.innerHTML;
+    if (!labelText.includes('(optional)')) return;
+    labelText = labelText.replace('(optional)', '').trim();
+    label.innerHTML = labelText;
+};
+
 const prefillEmailAddressInForms = () => {
     if (!window.user) return;
     const emailInputs = document.querySelectorAll('input[type="email"]');
 
     for (let i = 0; i < emailInputs.length; i++) {
-        console.log(window.user.email);
         emailInputs[i].value = window.user.email;
         if (emailInputs[i].classList.contains('form__input')) {
             emailInputs[i].classList.add('form__input--value');
+            emailInputs[i].setAttribute('disabled', 'disabled');
+            emailInputs[i].setAttribute('data-disabled', '');
+            removeOptionalFromLabel(emailInputs[i]);
         }
     }
 };
