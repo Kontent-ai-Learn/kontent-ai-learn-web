@@ -31,6 +31,7 @@ const createUpdate = async (email, body) => {
       body.id = user.id;
       data = await itemToUpdate.replace(body);
     } else {
+      body._partitionKey = email;
       data = await db.items.create(body);
     }
 

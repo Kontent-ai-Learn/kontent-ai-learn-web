@@ -9,6 +9,7 @@ const addRecord = async (body) => {
 
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_REPORTING);
+    body._partitionKey = body?.learner?.id;
     await db.items.create(body);
     return true;
   } catch (error) {

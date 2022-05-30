@@ -123,7 +123,8 @@ const checkCreateAttempt = async (body, res) => {
           expriration_ahead: null,
           expired: null
         },
-        test: certificationTestData
+        test: certificationTestData,
+        _partitionKey: email
       });
     } catch (error) {
       errorAppInsights.log('COSMOSDB_ERROR', error);
