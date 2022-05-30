@@ -87,7 +87,7 @@ const createAttempt = async (body, user, survey) => {
       start: new Date().toISOString(),
       end: null,
       questions: questions,
-      _partitionKey: email
+      _partitionKey: email.toLowerCase()
     });
   } catch (error) {
     errorAppInsights.log('COSMOSDB_ERROR', error);
