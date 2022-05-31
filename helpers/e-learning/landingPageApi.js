@@ -90,7 +90,11 @@ const init = async (req, res) => {
   });
   const UIMessages = UIMessagesObj && UIMessagesObj.length ? UIMessagesObj[0] : null;
 
-  const state = {};
+  const state = {
+    courses: [],
+    exams: []
+  };
+
   if (!req?.user?.email) return { message: 'User is not authenticated.' };
   const user = await elearningUser.getUser(req.user.email, res);
 
@@ -119,7 +123,6 @@ const init = async (req, res) => {
     state.code = 4; // User has e-learning access;
     state.message = '';
   }
-  state.courses = [];
 
   const lastAccess = userRegistartions
   .filter(item => item.lastAccessDate && item.activityDetails?.activityCompletion !== 'COMPLETED')
@@ -146,14 +149,15 @@ const init = async (req, res) => {
     })
   }
 
-  const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
-    return await getContent.certificationTest(res);
-  });
+  if (state.code === 4) {
+    const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
+      return await getContent.certificationTest(res);
+    });
 
-  state.exams = [];
-  for await (const test of certificationTests.items) {
-    const exam = await certificationDetail.getCertificationInfo(user, test);
-    state.exams.push(exam);
+    for await (const test of certificationTests.items) {
+      const exam = await certificationDetail.getCertificationInfo(user, test);
+      state.exams.push(exam);
+    }
   }
 
   return state;

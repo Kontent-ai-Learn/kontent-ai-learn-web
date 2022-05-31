@@ -26,7 +26,7 @@ else
     link(rel='stylesheet', href=`/learn/css/app.min.css?v=${deployVersion}`)
 if (req.query.pdf)
     link(rel='stylesheet', href=`/learn/css/pdf.css?v=${deployVersion}`)
-script var auth0Config = {domain:"#{process.env['AUTH0_DOMAIN']}",clientID:"#{process.env['AUTH0_CLIENT_ID']}",logoutUrl:"#{process.env['AUTH0_LOGOUT_URL']}"}
+script var auth0Config = {domain:"#{process.env['AUTH0_DOMAIN']}",clientID:"#{process.env['AUTH0_CLIENT_ID']}",logoutUrl:"#{process.env['AUTH0_LOGOUT_URL']}"};var appUrl="#{process.env['appUrl']}";
 if helper
     script var searchAPI={appid:"#{process.env['Search.AppId']}",apikey:"#{process.env['Search.ApiKey']}",indexname:"#{process.env['Search.IndexName']}"};
 if UIMessages

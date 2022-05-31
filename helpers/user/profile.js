@@ -29,6 +29,7 @@ const createUpdate = async (email, body) => {
     if (user && user.email) {
       const itemToUpdate = await db.item(user.id);
       body.id = user.id;
+      body._partitionKey = email.toLowerCase();
       data = await itemToUpdate.replace(body);
     } else {
       body._partitionKey = email.toLowerCase();
