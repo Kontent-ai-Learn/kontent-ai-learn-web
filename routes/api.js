@@ -8,6 +8,7 @@ const certificationDetail = require('../helpers/certification/detail');
 const certificationEmail = require('../helpers/certification/email');
 const elearningLandingPageApi = require('../helpers/e-learning/landingPageApi');
 const elearningReporting = require('../helpers/e-learning/reporting');
+const elearningProgress = require('../helpers/e-learning/progress');
 const fastly = require('../helpers/services/fastly');
 const userProfile = require('../helpers/user/profile');
 
@@ -99,7 +100,9 @@ router.post('/scorm/postback', basicAuth((() => {
   };
 })()), async (req, res) => {
   res = fastly.preventCaching(res);
-  const success = await elearningReporting.addRecord(req.body);
+  let success = false;
+  success = await elearningReporting.addRecord(req.body);
+  success = await elearningProgress.setRecord(req.body);
   return res.status(success ? 200 : 400).end();
 });
 
