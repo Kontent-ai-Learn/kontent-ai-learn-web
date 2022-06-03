@@ -9,7 +9,7 @@ const certificationDetail = require('../certification/detail');
 
 const getScormRegistration = (id, registrations) => {
   for (let i = 0; i < registrations.length; i++) {
-    const courseId = registrations[i].course.id.replace('dev_', '').replace('_preview', '');
+    const courseId = registrations[i].courseId.replace('dev_', '').replace('_preview', '');
     if (courseId === id) {
       return registrations[i];
     }
@@ -19,9 +19,9 @@ const getScormRegistration = (id, registrations) => {
 
 const getCertificate = (registration, course) => {
   if (!registration) return null;
-  if (registration.activityDetails?.activityCompletion === 'COMPLETED') {
+  if (registration.status === 'COMPLETED') {
     return {
-      url: `/learn/get-certified/course/${registration.id}/certificate/`,
+      url: `/learn/get-certified/course/${registration.registrationId}/certificate/`,
       name: course.title.value,
       issued: moment(registration.completedDate).format('YYYY/MM/DD'),
       expiration: null,
@@ -35,7 +35,7 @@ const getCourseUrl = (registration, course, urlMap) => {
   if (!mapItem) return null;
 
   if (registration) {
-    return `${mapItem.url}?id=${registration.id}`;
+    return `${mapItem.url}?id=${registration.registrationId}`;
   } else {
     return `${mapItem.url}?enroll`;
   }
@@ -47,7 +47,7 @@ const getLabel = (registration, UIMessages, res) => {
   }
 
   if (!registration) return UIMessages.training___cta_start_course.value;
-  const codename = registration.activityDetails?.activityCompletion;
+  const codename = registration.status;
 
   switch (codename) {
     case 'COMPLETED': return UIMessages.training___cta_revisit_course.value;
@@ -61,7 +61,7 @@ const getProgress = (registration, UIMessages, res) => {
   if (!registration) {
     messageCodename = 'training___course_status_unknown';
   } else {
-    let codename = registration.activityDetails?.activityCompletion;
+    let codename = registration.status;
 
     if (isPreview(res.locals.previewapikey)) {
       codename = 'PREVIEW';
@@ -129,7 +129,7 @@ const init = async (req, res) => {
   .sort((a, b) => {
     return new Date(b.lastAccessDate) - new Date(a.lastAccessDate);
   });
-  const lastAccessId = lastAccess?.[0]?.course.id.replace('dev_', '').replace('_preview', '');
+  const lastAccessId = lastAccess?.[0]?.courseId.replace('dev_', '').replace('_preview', '');
 
   for (let i = 0; i < trainingCourses.length; i++) {
     const isFree = isCodenameInMultipleChoice(trainingCourses[i].is_free.value, 'yes');

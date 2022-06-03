@@ -1,6 +1,5 @@
 const axios = require('axios');
 const CryptoJS = require('crypto-js');
-const moment = require('moment');
 const cacheHandle = require('../cache/handle');
 const { getDomain } = require('../general/helper');
 const getContent = require('../kontent/getContent');
@@ -52,10 +51,6 @@ const getCorrectCaseRegistrationId = async (registrationId) => {
   if (registrationExistsLower) registrationIdCorrect = registrationId.lowerCase;
 
   return registrationIdCorrect;
-};
-
-const getRegistrationLinkEndpoint = (id, req) => {
-    return `${(req.headers.referrer || req.headers.referer)?.split('?')[0]}?id=${id}`;
 };
 
 const createRegistration = async (user, courseId, registrationId) => {
@@ -177,28 +172,6 @@ const getCoursePreviewLink = async (courseId) => {
   return linkData;
 };
 
-const getCertificate = (registrationData, course) => {
-  if (registrationData?.activityDetails?.activityCompletion === 'COMPLETED') {
-    return {
-      course_id: registrationData.course.id,
-      course_name: course.title.value,
-      issued_date: moment(registrationData.completedDate).format('YYYY/MM/DD'),
-      expiration_date: null,
-      public_url: `/learn/get-certified/course/${registrationData.id}/certificate/`
-    };
-  }
-  return null;
-};
-
-const getCompletion = (codename, UIMessages) => {
-  switch (codename) {
-    case 'PREVIEW': return UIMessages.training___course_status_preview.value
-    case 'COMPLETED': return UIMessages.training___course_status_completed.value;
-    case 'INCOMPLETE': return UIMessages.training___course_status_incomplete.value;
-    default: return UIMessages.training___course_status_unknown.value;
-  }
-}
-
 const getCourseId = (course, res) => {
   let courseId = course?.system.id;
 
@@ -214,25 +187,6 @@ const getCourseId = (course, res) => {
 };
 
 const scorm = {
-  getTrainingRegistrationLink: async (id, codename, res) => {
-    let linkData = null;
-    const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
-      return await getContent.trainingCourse(res);
-    });
-    const course = trainingCourses.find(item => item.system.codename === codename);
-
-    if (isPreview(res.locals.previewapikey)) {
-      linkData = await getCoursePreviewLink(id);
-    } else {
-      linkData = await getRegistrationLink(id, getCourseId(course, res));
-    }
-
-    if (linkData?.launchLink) {
-      return linkData.launchLink;
-    }
-
-    return null;
-  },
   getRegistrationIdData: async (registrationId) => {
     const registrationExists = await getRegistrationExistence(registrationId);
 
@@ -279,67 +233,6 @@ const scorm = {
     }
 
     return null;
-  },
-  handleTrainingCourse: async (user, course, req, res) => {
-    const courseId = getCourseId(course, res);
-    let registrationData = null;
-    let certificate = null;
-    let qs = null;
-    let url = null;
-    let progress = null;
-
-    const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
-      return await getContent.UIMessages(res);
-    });
-
-    if (!isPreview(res.locals.previewapikey)) {
-      const registrationId = getRegistrationId(user.email, courseId);
-      let registrationIdCorrect = await getCorrectCaseRegistrationId(registrationId);
-
-      if (!registrationIdCorrect) {
-        if (typeof req.query.enroll === 'undefined') {
-          qs = 'enroll';
-        } else {
-          registrationIdCorrect = registrationId.lowerCase;
-          const registrationCreated = await createRegistration(user, courseId, registrationIdCorrect);
-
-          if (registrationCreated.err) {
-            return {
-              url: '#',
-              completion: 101,
-              err: registrationCreated.err
-            }
-          }
-        }
-      }
-
-      if (!qs) {
-        registrationData = await getRegistrationData(registrationIdCorrect);
-
-        if (registrationData.err) {
-          return {
-            url: '#',
-            completion: 102,
-            err: registrationData.err
-          }
-        }
-
-        progress = registrationData?.activityDetails?.activityCompletion;
-        url = getRegistrationLinkEndpoint(registrationIdCorrect, req);
-        certificate = getCertificate(registrationData, course);
-      }
-    } else {
-      progress = 'PREVIEW';
-      url = getRegistrationLinkEndpoint(courseId, req);
-    }
-
-    return {
-      url: url,
-      completion: getCompletion(progress, UIMessages[0]),
-      certificate: certificate,
-      qs: qs,
-      target: '_self'
-    }
   }
 }
 
