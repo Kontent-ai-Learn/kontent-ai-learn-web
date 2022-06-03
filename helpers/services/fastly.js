@@ -185,7 +185,12 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     }
   }
 
-  if (itemsByTypes.articles.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
+  if (itemsByTypes.articles.length ||
+      itemsByTypes.apiSpecifications.length ||
+      itemsByTypes.trainingCertificationTests.length ||
+      itemsByTypes.landingPages.length ||
+      itemsByTypes.trainingCourses.length ||
+      itemsByTypes.redirectRules.length) {
     await axiosPurge(axiosDomain, '/learn/redirect-urls');
   }
 
@@ -195,7 +200,7 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     }
   }
 
-  if (itemsByTypes.home.length && !allUrlsPurged) {
+  if ((itemsByTypes.home.length || itemsByTypes.UIMessages.length) && !allUrlsPurged) {
     await purgeAllUrls(res);
     allUrlsPurged = true;
   }
