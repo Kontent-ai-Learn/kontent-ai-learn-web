@@ -81,12 +81,12 @@ const getSurveyCodename = async (currentCourse, allCourses, email, res) => {
   const coursesInCurrentTopic = getCoursesInCurrentTopic(currentCourse, allCourses);
 
   const userRegistrations = await elearningRegistration.getUserRegistrations(email, res);
-  const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.activityDetails.activityCompletion === 'COMPLETED');
+  const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.status === 'COMPLETED');
 
   const completedCoursesInTopic = [];
   for (let i = 0; i < coursesInCurrentTopic.length; i++) {
     for (let j = 0; j < userRegistrationsCompleted.length; j++) {
-      const courseId = userRegistrationsCompleted[j].course.id.replace('dev_', '').replace('_preview', '');
+      const courseId = userRegistrationsCompleted[j].courseId.replace('dev_', '').replace('_preview', '');
       if (coursesInCurrentTopic[i].system.id === courseId) {
         completedCoursesInTopic.push(coursesInCurrentTopic[i]);
       }
