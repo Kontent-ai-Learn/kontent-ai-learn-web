@@ -125,7 +125,7 @@ const init = async (req, res) => {
   }
 
   const lastAccess = userRegistartions
-  .filter(item => item.lastAccessDate && item.activityDetails?.activityCompletion !== 'COMPLETED')
+  .filter(item => item.lastAccessDate && item.status !== 'COMPLETED')
   .sort((a, b) => {
     return new Date(b.lastAccessDate) - new Date(a.lastAccessDate);
   });

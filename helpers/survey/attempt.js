@@ -20,13 +20,13 @@ const getCoursesInCurrentTopic = (currentCourse, allCourses) => {
 };
 
 const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages, urlMap, res) => {
-  const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.activityDetails.activityCompletion === 'COMPLETED');
+  const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.status === 'COMPLETED');
 
   const allIncompletedCourses = [];
   for (let i = 0; i < allCourses.length; i++) {
     let completed = false;
     for (let j = 0; j < userRegistrationsCompleted.length; j++) {
-      const courseId = userRegistrationsCompleted[j].course.id.replace('dev_', '').replace('_preview', '');
+      const courseId = userRegistrationsCompleted[j].courseId.replace('dev_', '').replace('_preview', '');
       if (allCourses[i].system.id === courseId) {
           completed = true;
       }
