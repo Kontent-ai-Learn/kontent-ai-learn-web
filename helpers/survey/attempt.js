@@ -193,14 +193,7 @@ const after = async (attempt, res) => {
   if (UIMessages.length) {
     data.messages.thank_you = UIMessages[0].training___certificate___opening.value;
     data.messages.back_title = UIMessages[0].traning___button___overview.value;
-  }
-
-  const survey = await cacheHandle.evaluateSingle(res, attempt.codename, async () => {
-    return await getContent.survey(res, attempt.codename);
-  });
-
-  if (survey.items.length) {
-    data.messages.cta_message = survey.items[0].ui_message_and_cta.value;
+    data.messages.cta_message = UIMessages[0].training___carousel___opening.value;
   }
 
   const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
