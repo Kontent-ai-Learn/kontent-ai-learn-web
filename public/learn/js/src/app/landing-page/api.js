@@ -265,6 +265,9 @@ const landingPage = (() => {
     if (window.userProfile) {
       handleToc(window.userProfile, user.email, token);
     }
+    if (handleDefaultAnchorScrollOnPageLoad) {
+      handleDefaultAnchorScrollOnPageLoad();
+    }
   };
 
   const registration = async (id) => {

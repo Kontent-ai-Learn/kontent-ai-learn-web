@@ -1,3 +1,5 @@
+let handleDefaultAnchorScrollOnPageLoad;
+
 (() => {
   const scrollToQueryParam = () => {
     const val = window.helper.getParameterByName('scrollto');
@@ -9,7 +11,7 @@
     }
   };
 
-  const handleDefaultAnchorScrollOnPageLoad = () => {
+  handleDefaultAnchorScrollOnPageLoad = () => {
     if (window.location.hash.length > 0) {
       setTimeout(() => {
         const elem = document.querySelector(window.location.hash);

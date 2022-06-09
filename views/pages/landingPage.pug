@@ -30,7 +30,9 @@ block content
       each topic in content.topics
         if (topic.courses.length)
           .landing-page__courses-group
-            h2.landing-page__subheading !{topic.name}
+            h2.landing-page__subheading(id=topic.codename) 
+              a.anchor-copy(href=`#${topic.codename}`, aria-hidden='true')
+              | !{topic.name}
             .landing-page__courses.splide
               .splide__track
                 ul.splide__list
