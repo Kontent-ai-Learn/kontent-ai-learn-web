@@ -452,8 +452,8 @@ window.helper = (() => {
             if (--timer < 0) {
                 clearInterval(interval);
     
-                const submitButton = document.querySelector('.certification-test__button');
-                if (submitButton) submitButton.click();
+                const form = document.querySelector('.certification-test__form');
+                if (form) form.submit();
             }
         }, 1000);
       };

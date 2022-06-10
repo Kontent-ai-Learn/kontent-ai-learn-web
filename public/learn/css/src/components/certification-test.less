@@ -95,4 +95,36 @@
       display: inline-block;
     }
   }
+
+  &__button {
+    &[disabled] {
+      cursor: default !important;
+      background-color: #919091 !important;
+      box-shadow: 0 0 0 1px #919091 !important; 
+  
+      &:hover,
+      &:active {
+          background-color: #919091 !important;
+          span {
+              background-color: transparent !important;
+          }
+      }
+  
+      span:last-child {
+          display: none !important;
+      }
+    }
+  }
+
+  &__unanswered {
+    color: #f02222;
+    padding: 0 0 1em;
+    max-width: 568px;
+    line-height: 1.375em;
+    display: none;
+
+    &--visible {
+      display: block;
+    }
+  }
 }
