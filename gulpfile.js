@@ -158,24 +158,13 @@ gulp.task('js-landing-page', () => {
     .pipe(gulp.dest('public/learn/js'))
 });
 
-gulp.task('js-service-check', () => {
-  return gulp.src([
-      'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
-      'public/learn/js/src/service-check/service-check.js'
-    ])
-    .pipe(concat('service-check.js'))
-    .pipe(uglify())
-    .pipe(rename({
-      suffix: '.min'
-    }))
-    .pipe(gulp.dest('public/learn/js'))
-});
-
 gulp.task('js-service', () => {
   return gulp.src([
       'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
       'public/learn/js/src/app/helper.js',
       'public/learn/js/src/service/redirects.js',
+      'public/learn/js/src/service/cacheKeys.js',
+      'public/learn/js/src/service/check.js',
       'public/learn/js/src/service/service.js'
     ])
     .pipe(concat('service.js'))
@@ -322,11 +311,11 @@ gulp.task('css-reference', () => {
     .pipe(gulp.dest('./public/learn/css'));
 });
 
-gulp.task('css-service-check', () => {
+gulp.task('css-service', () => {
   return gulp.src([
       'public/learn/css/src/general/service-check.less',
     ])
-    .pipe(concat('service-check.less'))
+    .pipe(concat('service.less'))
     .pipe(less({
       plugins: [autoprefix]
     }))
@@ -359,12 +348,11 @@ gulp.task('reload', (done) => {
 
 gulp.task('build-js-app', gulp.parallel(['js-app', 'js-reference']));
 gulp.task('build-js-filter', gulp.parallel(['js-changelog', 'js-landing-page']));
-gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service-check']));
+gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service']));
 
 gulp.task('watch', (done) => {
   gulp.watch('public/learn/js/src/app/**/*.js', gulp.series(['build-js-app', 'reload']));
   gulp.watch('public/learn/js/src/filter/*.js', gulp.series(['build-js-filter', 'reload']));
-  gulp.watch('public/learn/js/src/service-check/*.js', gulp.series(['js-service-check', 'reload']));
   gulp.watch('public/learn/js/src/service/*.js', gulp.series(['js-service', 'reload']));
   gulp.watch('public/learn/css/src/**/*.less', gulp.series(['build-css', 'reload']));
   done();
@@ -397,7 +385,7 @@ gulp.task('observe', async () => {
   })
 });
 
-gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-landing-page', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'js-service-check', 'js-service', 'css-app', 'css-reference', 'css-kontentsmartlink', 'css-service-check']));
+gulp.task('build', gulp.parallel(['js-app', 'js-reference', 'js-changelog', 'js-landing-page', 'js-algolia', 'js-search-insights', 'js-kontentsmartlink', 'js-service', 'css-app', 'css-reference', 'css-kontentsmartlink', 'css-service']));
 
 gulp.task('develop', gulp.series(['build', 'observe']));
 

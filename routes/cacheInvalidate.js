@@ -5,9 +5,7 @@ const { signatureHelper } = require('@kentico/kontent-webhook-helper');
 const util = require('util');
 const asyncHandler = require('express-async-handler');
 const cacheInvalidate = require('../helpers/cache/invalidate');
-const isPreview = require('../helpers/kontent/isPreview');
 const helper = require('../helpers/general/helper');
-const fastly = require('../helpers/services/fastly');
 
 const isValidSignature = (req, secret) => {
     return signatureHelper.isValidSignatureFromString(req.body, secret, req.headers['x-kc-signature']);
@@ -65,29 +63,6 @@ router.post('/pool', asyncHandler(async (req, res) => {
     await cacheInvalidate(req, res);
     cache.del('webhook-payload-pool');
     return res.end();
-}));
-
-router.get('/keys', (req, res) => {
-    const keys = cache.keys();
-    keys.sort();
-    return res.render('pages/cacheKeys', { keys });
-});
-
-router.get('/keys/:key', (req, res) => {
-    const key = cache.get(req.params.key);
-    res.set('Content-Type', 'application/json');
-    return res.send(util.inspect(key, {
-        maxArrayLength: 200
-    }));
-});
-
-router.get('/keys/:key/invalidate', asyncHandler(async (req, res) => {
-    cache.del(req.params.key);
-    if (!isPreview(res.locals.previewapikey)) {
-        await fastly.purgeAllUrls(res);
-    }
-
-    return res.redirect(303, '/learn/cache-invalidate/keys/');
 }));
 
 module.exports = router;

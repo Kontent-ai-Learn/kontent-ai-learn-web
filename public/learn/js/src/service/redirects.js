@@ -2,7 +2,7 @@ const renderRedirects = (items) => {
   return `
     <h1>Active redirects</h1>
     <h2>Redirect rules</h2>
-    <table>
+    <table border="1">
       <tr>
         <th>Redirect to</th>
         <th>Redirect from</th>
@@ -32,7 +32,7 @@ const renderRedirects = (items) => {
     </table>
 
     <h2>Redirect URLs for articles</h2>
-    <table>
+    <table border="1">
       <tr>
         <th>Redirect to</th>
         <th>Redirect from</th>

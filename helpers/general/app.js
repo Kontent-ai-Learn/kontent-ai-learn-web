@@ -11,7 +11,6 @@ const urlWhitelist = [
   '/learn/favicon.ico',
   '/learn/rss/*',
   '/learn/cache-invalidate/',
-  '/learn/service-check/*',
   '/learn/link-to/',
   '/learn/sitemap.xml',
   '/learn/pdf/',

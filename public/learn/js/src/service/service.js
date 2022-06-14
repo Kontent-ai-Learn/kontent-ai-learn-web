@@ -9,7 +9,6 @@ const ensureAuth0Login = async () => {
   auth0.client = await createAuth0Client(auth0Settings);
 
   try {
-    await auth0.client.getTokenSilently();
     const user = await auth0.client.getIdTokenClaims();
     if (user.email.endsWith('@kentico.com') || user.email.endsWith('@milanlund.com')) return user;
   } catch (err) {}
@@ -18,8 +17,9 @@ const ensureAuth0Login = async () => {
   return await auth0.client.loginWithRedirect(auth0Settings);
 };
 
-const requestService = async (token) => {
+const requestService = async (token, url) => {
   if (!token) return null;
+  if (!url) url = location.pathname;  
   const fetchOptions = {
     method: 'POST',
     headers: { 
@@ -28,11 +28,28 @@ const requestService = async (token) => {
   };
 
   try {
-    const result = await fetch(location.pathname, fetchOptions);
+    const result = await fetch(url, fetchOptions);
     return await result.json();
   } catch (error) {
     return null;
   }
+};
+
+const requestLinks = (token) => {
+  const body = document.querySelector('body');
+  body.addEventListener('click', async (e) => {
+    const elem = e.target && e.target.closest('[data-request]');
+    if (!(elem && token)) return;
+    e.preventDefault();
+    const url = elem.getAttribute('href');
+    const originalInnerHTML = elem.innerHTML;
+    elem.innerHTML = 'In progress...';
+    await requestService(token, url);
+    elem.innerHTML = 'Done';
+    setTimeout(() => {
+      elem.innerHTML = originalInnerHTML;
+    }, 2000);
+  });
 };
 
 (async () => {
@@ -42,10 +59,21 @@ const requestService = async (token) => {
   const result = await requestService(token);
   if (!result) return;
   const body = document.querySelector('body');
-  
+
   switch (result.type) {
     case 'redirects' : 
       body.innerHTML = renderRedirects(result.body);
       break;
+    case 'keys' : 
+      body.innerHTML = renderCacheKeys(result.body);
+      break;
+    case 'keysdetail' : 
+      body.innerHTML = renderCacheKeyDetail(result.body);
+      break;
+    case 'check' :
+      check(token);
+      break;
   }
+
+  requestLinks(token);
 })();

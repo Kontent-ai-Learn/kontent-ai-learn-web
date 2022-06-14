@@ -14,12 +14,9 @@ const redirectRules = require('./redirectRules');
 const generatePDF = require('./generatePDF');
 const urlMap = require('./urlMap');
 const articles = require('./articles');
-const auth0Callback = require('./auth0Callback');
 const api = require('./api');
 const survey = require('./survey');
 const certificationTest = require('./certificationTest');
-const service = require('./service');
-
 const getContent = require('../helpers/kontent/getContent');
 const cacheHandle = require('../helpers/cache/handle');
 const { pageExists } = require('../helpers/general/app');
@@ -28,7 +25,6 @@ const { pageExists } = require('../helpers/general/app');
 router.use('/api', express.json({
   type: '*/*'
 }), api);
-router.use('/callback', auth0Callback);
 router.use('/link-to', linkUrls);
 router.use('/reference-updated', express.json({
   type: '*/*'
@@ -59,7 +55,6 @@ router.use('/', asyncHandler(async (req, res, next) => {
   return next();
 }));
 
-router.use('/service', service);
 router.use('/rss', rss);
 router.use('/pdf', generatePDF);
 router.get('/urlmap', urlMap);
