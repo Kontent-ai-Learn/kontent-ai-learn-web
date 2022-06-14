@@ -7,6 +7,12 @@ const getRedirectUrls = async (res) => {
   const articles = await cacheHandle.evaluateSingle(res, 'articles', async () => {
     return await getContent.articles(res);
   });
+  const landingPages = await cacheHandle.evaluateSingle(res, 'landingPages', async () => {
+    return await getContent.landingPage(res);
+  });
+  const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
+    return await getContent.certificationTest(res);
+  });
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
     return await getContent.trainingCourse(res);
   });
@@ -17,7 +23,7 @@ const getRedirectUrls = async (res) => {
     return await getUrlMap(res);
   });
 
-  const items = [...articles, ...references, ...trainingCourses];
+  const items = [...articles, ...landingPages, ...certificationTests.items, ...references, ...trainingCourses];
   const redirectMap = [];
 
   items.forEach(item => {

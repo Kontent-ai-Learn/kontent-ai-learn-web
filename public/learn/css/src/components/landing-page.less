@@ -144,7 +144,7 @@
     font-weight: 700;
     line-height: 1.125em;
     max-width: 700px;
-    padding: 0 0 1em;
+    margin-bottom: 1em;
     text-align: center;
 
     @media screen and (min-width: 480px) {
@@ -161,6 +161,26 @@
 
     @media screen and (min-width: 1280px) {
       font-size: 40px;
+    }
+
+    @media screen and (max-width: 1365px) {
+      h2& .anchor-copy {
+        display: none;
+      }
+    }
+
+    @media screen and (min-width: 1366px) {
+      padding-left: 32px;
+      margin-left: -32px;
+      position: relative;
+
+      h2& .anchor-copy {
+        text-decoration: none;
+
+        &:before {
+          top: .675em;
+        }
+      }
     }
 	}
 

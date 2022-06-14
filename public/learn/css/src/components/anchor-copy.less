@@ -3,16 +3,17 @@
     position: absolute;
     display: none;
     left: 0;
-    top: .25em;
+    top: 0;
+    bottom: 0;
 
     .article__content--language-selector & {
-        top: ~"calc(.25em + 41px)";
+        top: 41px;
     }
 
     &:before {
         font-size: 16px;
         content: '#';
-        display: inline-block;
+        display: block;
         width: 24px;
         padding: 3px 0;
         background-position: center center;
@@ -23,10 +24,27 @@
         text-align: center;
         color: #F05A22;
         position: relative;
-        top: -2px;
         line-height: 16px;
         opacity: 0;
         transition: opacity .25s;
+    }
+
+    h2 & {
+        &:before {
+            top: 1.125em;
+        }
+    }
+
+    h3 & {
+        &:before {
+            top: .5em;
+        }
+    }
+
+    h4 & {
+        &:before {
+            top: .25em;
+        }
     }
 
     @media screen and (min-width: 768px) {
@@ -39,6 +57,7 @@
         }
 
         &:hover {
+            text-decoration: none !important;
             &:before {
                 background-color: #e8e8e8;
             }

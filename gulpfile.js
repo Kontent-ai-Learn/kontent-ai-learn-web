@@ -86,6 +86,7 @@ gulp.task('js-app', () => {
       'public/learn/js/src/app/survey.js',
       'public/learn/js/src/app/certification-test.js',
       'public/learn/js/src/app/certification-test-results.js',
+      'public/learn/js/src/app/note-link.js',
     ])
     .pipe(concat('app.js'))
     .pipe(uglify())
@@ -255,6 +256,7 @@ gulp.task('css-app', () => {
       'public/learn/css/src/components/filter.less',
       'public/learn/css/src/components/icon.less',
       'public/learn/css/src/components/preview-warning.less',
+      'public/learn/css/src/components/info-line.less',
       'public/learn/css/src/components/display-mode.less',
       'public/learn/css/src/components/aside.less',
       'public/learn/css/src/components/mixitup.less',
@@ -304,6 +306,7 @@ gulp.task('css-reference', () => {
       'public/learn/css/src/components/icon.less',
       'public/learn/css/src/components/prism-reference.less',
       'public/learn/css/src/components/preview-warning.less',
+      'public/learn/css/src/components/info-line.less',
       'public/learn/css/src/components/autocomplete.less',
       'public/learn/css/src/components/video-controls.less',
       'public/learn/css/src/general/print.less'

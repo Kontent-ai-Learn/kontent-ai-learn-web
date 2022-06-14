@@ -1,41 +1,51 @@
-const axios = require('axios');
+const cosmos = require('../services/cosmos');
 const errorAppInsights = require('../error/appInsights');
+const isPreview = require('../kontent/isPreview');
 
-const settings = {
-  auth: {
-      username: process.env.SCORM_APP_ID || '',
-      password: process.env.SCORM_SECRET_KEY || ''
-  },
-  registrationsUrl: `https://${process.env.SCORM_HOST}/api/v2/registrations`,
-  coursesUrl: `https://${process.env.SCORM_HOST}/api/v2/courses`,
-};
+const filterRegistrationsEnv = (registrations, res) => {
+  const previewEnv = isPreview(res.locals.previewapikey);
+  const devEvn = process.env.isDevelopment === 'true';
+  let registrationsEnv = [];
 
-const getUserRegistrations = async (email) => {
-  try {
-    const registrations = [];
-    let more = 'first';
-
-    while (more) {
-      let qs = `learnerId=${encodeURIComponent(email)}`;
-      if (more && more !== 'first') {
-        qs = `more=${more}`;
-      }
-      const page = await axios({
-        method: 'get',
-        url: `${settings.registrationsUrl}?${qs}`,
-        auth: settings.auth
-      });
-
-      registrations.push(...page.data.registrations);
-      more = page.data.more;
-    };
-
-    return registrations;
-  } catch (error) {
-    errorAppInsights.log('SCORM_ERROR', error);
+  if (previewEnv && devEvn) {
+    registrationsEnv = registrations.filter(item => item.courseId.endsWith('_preview') && item.courseId.startsWith('dev_'));
   }
 
-  return null;
+  if (!previewEnv && devEvn) {
+    registrationsEnv = registrations.filter(item => !item.courseId.endsWith('_preview') && item.courseId.startsWith('dev_'));
+  }
+
+  if (!previewEnv && !devEvn) {
+    registrationsEnv = registrations.filter(item => !item.courseId.endsWith('_preview') && !item.courseId.startsWith('dev_'));
+  }
+
+  if (previewEnv && !devEvn) {
+    registrationsEnv = registrations.filter(item => item.courseId.endsWith('_preview') && !item.courseId.startsWith('dev_'));
+  }
+
+  return registrationsEnv;
+};
+
+const getUserRegistrations = async (email, res) => {
+  const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_PROGRESS);
+  const query = {
+    query: 'SELECT * FROM c WHERE c._partitionKey = @email',
+    parameters: [{
+      name: '@email',
+      value: email.toLowerCase()
+    }]
+  };
+
+  try {
+    const { resources } = await db.items.query(query).fetchAll();
+    if (resources && resources.length) {
+      return filterRegistrationsEnv(resources, res);
+    }
+  } catch (error) {
+    errorAppInsights.log('COSMOSDB_ERROR', error);
+  }
+
+  return [];
 };
 
 module.exports = {

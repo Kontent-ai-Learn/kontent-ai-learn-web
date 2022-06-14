@@ -229,7 +229,7 @@
       const url = path || pathRoot || '';
       window.history.pushState('', '', url);
 
-      if (ga) {
+      if (typeof ga !== 'undefined') {
         //ga('create', 'UA-134087903-1', 'auto');
         ga('send', 'pageview', url);
       }

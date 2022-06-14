@@ -9,10 +9,10 @@ const getUserCourseAttempt = async (body) => {
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_SURVEY);
     const query = {
-        query: 'SELECT * FROM c WHERE c["end"] < @end AND c.email = @email AND c.course_id = @courseId',
+        query: 'SELECT * FROM c WHERE c["end"] < @end AND LOWER(c.email) = @email AND c.course_id = @courseId',
         parameters: [{
           name: '@email',
-          value: email
+          value: email.toLowerCase()
         }, {
           name: '@courseId',
           value: courseid
@@ -86,7 +86,8 @@ const createAttempt = async (body, user, survey) => {
       username: user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : email,
       start: new Date().toISOString(),
       end: null,
-      questions: questions
+      questions: questions,
+      _partitionKey: email.toLowerCase()
     });
   } catch (error) {
     errorAppInsights.log('COSMOSDB_ERROR', error);

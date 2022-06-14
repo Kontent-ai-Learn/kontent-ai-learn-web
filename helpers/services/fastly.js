@@ -184,13 +184,22 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     }
   }
 
+  if (itemsByTypes.articles.length ||
+      itemsByTypes.apiSpecifications.length ||
+      itemsByTypes.trainingCertificationTests.length ||
+      itemsByTypes.landingPages.length ||
+      itemsByTypes.trainingCourses.length ||
+      itemsByTypes.redirectRules.length) {
+    await axiosPurge(axiosDomain, '/learn/redirect-urls');
+  }
+
   if (itemsByTypes.redirectRules.length) {
     for (let i = 0; i < itemsByTypes.redirectRules.length; i++) {
       await purgeRedirectRule(itemsByTypes.redirectRules[i].codename, res);
     }
   }
 
-  if (itemsByTypes.home.length && !allUrlsPurged) {
+  if ((itemsByTypes.home.length || itemsByTypes.UIMessages.length) && !allUrlsPurged) {
     await purgeAllUrls(res);
     allUrlsPurged = true;
   }

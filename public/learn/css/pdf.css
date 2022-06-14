@@ -116,7 +116,7 @@ div:not(.callout) a[data-term-definition] {
     color: #231F20;
 }
 
-.term-tooltip-container, .video-controls {
+.term-tooltip-container, .video-controls, .info-line {
     display: none !important;
 }
 

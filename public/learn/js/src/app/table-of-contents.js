@@ -139,7 +139,9 @@
 
         document.querySelector('body').addEventListener('click', (e) => {
             if (e.target && e.target.classList.contains('language-selector__link')) {
-                run();
+                setTimeout(() => {
+                    run();
+                }, 50);
             }
         });
     };

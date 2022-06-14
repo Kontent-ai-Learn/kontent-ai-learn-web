@@ -26,13 +26,23 @@ const landingPage = (() => {
   };
 
   const addButton = (type, container) => {
+    const label = document.createElement('span');
     const button = document.createElement('a');
     button.classList.add('button');
-    if (type === 'signup') button.classList.add('button--secondary');
-    button.setAttribute('href', '#');
-    button.setAttribute('id', type);
-    const label = document.createElement('span');
-    label.innerHTML = type === 'signup' ? window.UIMessages.signUp : window.UIMessages.signIn;
+    if (type === 'signup') {
+      const url = window.appUrl || 'https://app.kontent.ai';
+      button.setAttribute('href', `${url}/sign-up`);
+      button.setAttribute('target', '_blank');
+      label.innerHTML = window.UIMessages.signUp;
+      button.classList.add('button--secondary');
+    }
+
+    if (type === 'login') {
+      button.setAttribute('href', '#');
+      button.setAttribute('id', type);
+      label.innerHTML = window.UIMessages.signIn;
+    }
+    
     const span = document.createElement('span');
     button.appendChild(label);
     button.appendChild(span);
@@ -115,21 +125,23 @@ const landingPage = (() => {
     }
 
     return `
-      ${window.userProfile ? `<div class="card__toc"><label class="toc" for="toc"><input id="toc" type="checkbox" class="toc__checkbox" data-lp-toc${window.userProfile.toc ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.toc)}</div></label></div>`: ''}
+      ${window.userProfile && (courseItem || examItem) ? `<div class="card__toc"><label class="toc" for="toc"><input id="toc" type="checkbox" class="toc__checkbox" data-lp-toc${window.userProfile.toc ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.toc)}</div></label></div>`: ''}
       <div class="card__actions-container">
         <div class="card__actions">
           ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
-          ${!window.user && isFree ? `<span onclick="auth0.signup()" class="button"><span>${window.UIMessages.signUp}</span><span></span></span>` : ''}
+          ${!window.user && isFree ? `<a href="${window.appUrl || 'https://app.kontent.ai'}/sign-up" class="button" target="_blank"><span>${window.UIMessages.signUp}</span><span></span></a>` : ''}
           ${window.user && courseItem && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false"><span onclick="landingPage.registration('${courseItem.id}')" class="button"><span>${courseItem.label}</span><span></span></span></div>` : ''}
           ${window.user && examItem && examItem.url && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false"><a href="${examItem.url}" class="button"><span>${examItem.label}</span><span></span></a></div>` : ''}
           ${window.user && examItem && examItem.message ? `<strong class="card__message">${examItem.message}</strong>` : ''}
           ${window.userElearningData && window.userElearningData.code === 3 && !isFree ? `<span class="call-to-action" onclick="window.Intercom && window.Intercom('show')"><span>${window.userElearningData.message}</span><span></span></span>` : ''}
           ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2) ? window.userElearningData.message : ''}
         </div>
-        <div class="card__certificate" data-lp-disabled="${window.userProfile ? !window.userProfile.toc : 'true'}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false">
-          ${certificate ? `<a class="card__certificate-link" href="${certificate.url}" target="_blank"><span>${window.UIMessages.downloadCertificate}</span><span></span></a>` : ''}
-          ${certificate ? `<a class="card__a" href=${`https://www.linkedin.com/profile/add?startTask=${certificate.name}&name=${certificate.name}&organizationId=373060&issueYear=${certificate.issued[0]}&issueMonth=${certificate.issued[1]}&${certificate.expiration ? `expirationYear=${certificate.expiration[0]}&expirationMonth=${certificate.expiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>` : ''}
-        </div>
+        ${window.userProfile && (courseItem || examItem) ? `
+          <div class="card__certificate" data-lp-disabled="${window.userProfile ? !window.userProfile.toc : 'false'}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false">
+            ${certificate ? `<a class="card__certificate-link" href="${certificate.url}" target="_blank"><span>${window.UIMessages.downloadCertificate}</span><span></span></a>` : ''}
+            ${certificate ? `<a class="card__a" href=${`https://www.linkedin.com/profile/add?startTask=${certificate.name}&name=${certificate.name}&organizationId=373060&issueYear=${certificate.issued[0]}&issueMonth=${certificate.issued[1]}&${certificate.expiration ? `expirationYear=${certificate.expiration[0]}&expirationMonth=${certificate.expiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank'>${window.UIMessages.addToLinkedIn}</a>` : ''}
+          </div>
+        ` : ''}
       </div>`;
   };
 
@@ -239,8 +251,7 @@ const landingPage = (() => {
     const container = document.querySelector('[data-lp]');
     if (!container) return;
 
-    window.user = await auth0.ensureUserSignedIn();
-    const token = user ? user.__raw : null;
+    const token = window.user ? window.user.__raw : null;
     [window.userElearningData, window.userProfile] = await Promise.all([requestInfo(token), requestUserProfile(token)]);
     addLightboxActions();
     if (window.userElearningData) {
@@ -254,11 +265,14 @@ const landingPage = (() => {
     if (window.userProfile) {
       handleToc(window.userProfile, user.email, token);
     }
+    if (handleDefaultAnchorScrollOnPageLoad) {
+      handleDefaultAnchorScrollOnPageLoad();
+    }
   };
 
   const registration = async (id) => {
+    if (!window.user) return;
     if (!window.userProfile.toc) return;
-    if (!window.user) window.user = await auth0.ensureUserSignedIn();
     const token = window.user ? window.user.__raw : null;
     const fetchOptions = {
       method: 'POST',

@@ -75,7 +75,7 @@ const getSubscriptionServiceUser = async (email) => {
     errorEmail.send({
       recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
       subject: 'Unable to obtain user form Subscription Service',
-      content: error.response.data.message
+      content: error.response.data
     });
     errorAppInsights.log('SUBSCRIPTION_SERVICE_ERROR', error);
 

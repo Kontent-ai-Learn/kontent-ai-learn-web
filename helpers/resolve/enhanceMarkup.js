@@ -59,7 +59,7 @@ const processLinks = ($, config) => {
 };
 
 const createAnchors = ($) => {
-    const $headings = $('h2:not(.table-of-contents__heading):not(.feedback__heading), h3, h4');
+    const $headings = $('h2:not(.table-of-contents__heading):not(.feedback__heading):not(.presentation__heading), h3, h4');
     const anchorNameList = [];
 
     $headings.each(function () {

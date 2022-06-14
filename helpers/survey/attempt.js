@@ -20,13 +20,13 @@ const getCoursesInCurrentTopic = (currentCourse, allCourses) => {
 };
 
 const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages, urlMap, res) => {
-  const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.activityDetails.activityCompletion === 'COMPLETED');
+  const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.status === 'COMPLETED');
 
   const allIncompletedCourses = [];
   for (let i = 0; i < allCourses.length; i++) {
     let completed = false;
     for (let j = 0; j < userRegistrationsCompleted.length; j++) {
-      const courseId = userRegistrationsCompleted[j].course.id.replace('dev_', '').replace('_preview', '');
+      const courseId = userRegistrationsCompleted[j].courseId.replace('dev_', '').replace('_preview', '');
       if (allCourses[i].system.id === courseId) {
           completed = true;
       }
@@ -70,23 +70,29 @@ const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages
   return coursesRecommended;
 };
 
-const getSurveyCodename = async (currentCourse, allCourses, email) => {
-  const LONG_CODENAME = 'long_survey';
-  const SHORT_CODENAME = 'short_survey';
+const getSurveyCodename = async (currentCourse, allCourses, email, res) => {
+  const landingPages = await cacheHandle.evaluateSingle(res, 'landingPages', async () => {
+    return await getContent.landingPage(res);
+  });
+  if (!(landingPages && landingPages.length)) return null;
+
+  const LONG_CODENAME = landingPages[0].long_survey_for_micro_course.itemCodenames?.[0] || '';
+  const SHORT_CODENAME = landingPages[0].short_survey.itemCodenames?.[0] || '';
+  const LONG_BIG_CODENAME = landingPages[0].long_survey_for_big_course.itemCodenames?.[0] || '';
 
   if (currentCourse.pages.value.length > 1) {
-    return LONG_CODENAME;
+    return LONG_BIG_CODENAME;
   }
 
   const coursesInCurrentTopic = getCoursesInCurrentTopic(currentCourse, allCourses);
 
-  const userRegistrations = await elearningRegistration.getUserRegistrations(email);
-  const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.activityDetails.activityCompletion === 'COMPLETED');
+  const userRegistrations = await elearningRegistration.getUserRegistrations(email, res);
+  const userRegistrationsCompleted = userRegistrations.filter((registration) => registration.status === 'COMPLETED');
 
   const completedCoursesInTopic = [];
   for (let i = 0; i < coursesInCurrentTopic.length; i++) {
     for (let j = 0; j < userRegistrationsCompleted.length; j++) {
-      const courseId = userRegistrationsCompleted[j].course.id.replace('dev_', '').replace('_preview', '');
+      const courseId = userRegistrationsCompleted[j].courseId.replace('dev_', '').replace('_preview', '');
       if (coursesInCurrentTopic[i].system.id === courseId) {
         completedCoursesInTopic.push(coursesInCurrentTopic[i]);
       }
@@ -139,7 +145,7 @@ const init = async (req, res) => {
     }
   }
 
-  const codename = await getSurveyCodename(trainingCourse, trainingCourses, req.body.email);
+  const codename = await getSurveyCodename(trainingCourse, trainingCourses, req.body.email, res);
   const survey = await cacheHandle.evaluateSingle(res, codename, async () => {
     return await getContent.survey(res, codename);
   });
@@ -193,14 +199,7 @@ const after = async (attempt, res) => {
   if (UIMessages.length) {
     data.messages.thank_you = UIMessages[0].training___certificate___opening.value;
     data.messages.back_title = UIMessages[0].traning___button___overview.value;
-  }
-
-  const survey = await cacheHandle.evaluateSingle(res, attempt.codename, async () => {
-    return await getContent.survey(res, attempt.codename);
-  });
-
-  if (survey.items.length) {
-    data.messages.cta_message = survey.items[0].ui_message_and_cta.value;
+    data.messages.cta_message = UIMessages[0].training___carousel___opening.value;
   }
 
   const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
@@ -212,7 +211,7 @@ const after = async (attempt, res) => {
   });
   const courseId = attempt.course_id.replace('dev_', '').replace('_preview', '');
   const course = trainingCourses.find(item => item.system.id === courseId);
-  const userRegistrations = await elearningRegistration.getUserRegistrations(attempt.email);
+  const userRegistrations = await elearningRegistration.getUserRegistrations(attempt.email, res);
   const registration = getScormRegistration(courseId, userRegistrations);
   data.certificate = getCertificate(registration, course);
   data.courses = getNextCourses(course, trainingCourses, userRegistrations, UIMessages[0], urlMap, res);

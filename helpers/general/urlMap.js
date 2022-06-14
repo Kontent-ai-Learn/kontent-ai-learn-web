@@ -347,7 +347,6 @@ const getUrlMap = async (res, isSitemap) => {
     urlMap = await handleLandingPage(deliveryClient, urlMap, ['training_certification_test', 'training_course2']);
     urlMap = await handleUnusedItems('article', deliveryClient, urlMap);
     urlMap = await handleUnusedItems('training_course2', deliveryClient, urlMap);
-    urlMap = await handleContentType(deliveryClient, urlMap, 'training_survey', 'survey', true);
     urlMap = await handleContentType(deliveryClient, urlMap, 'training_certification_test', 'get-certified', true);
 
     return urlMap;
