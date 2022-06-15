@@ -21,7 +21,12 @@ const browserSyncPort = 3099;
 
 axiosRetry(axios, {
   retries: 20,
-  retryDelay: () => 500
+  retryDelay: () => 1500,
+  retryCondition: (error) => {
+    return axiosRetry.isNetworkOrIdempotentRequestError(error)
+      || error.code === 'ECONNABORTED'
+      || error.code === 'ECONNREFUSED';
+  }
 });
 
 const prismFiles = [
@@ -374,8 +379,8 @@ gulp.task('observe', async () => {
           .then(() => {
             return gulp.parallel(['browser-sync', 'watch'])();
           })
-          .catch(() => {
-            console.log(`Error:  Unable to request ${localUrl} to be able to attach browser-sync.`);
+          .catch((error) => {
+            console.log(`Error:  Unable to request ${localUrl} to be able to attach browser-sync. Code: ${error.code}`);
           });
       }
   })
