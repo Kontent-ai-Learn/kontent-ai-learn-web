@@ -67,3 +67,8 @@ public/learn/files
 public/learn/js/*.min.js
 public/learn/css/*.min.css
 helpers/delivery_api.html
+
+
+# source maps
+public/learn/js/sourcemaps/*.min.js.map
+public/learn/css/sourcemaps/*.min.css.map
