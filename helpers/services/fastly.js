@@ -155,6 +155,10 @@ const purgeFinal = async (itemsByTypes, req, res) => {
   let allUrlsPurged = false;
   const axiosDomain = getDomain();
 
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
+    return await getUrlMap(res);
+  });
+
   if (itemsByTypes.releaseNotes.length && req.app.locals.changelogPath) {
     await axiosPurge(axiosDomain, req.app.locals.changelogPath);
 
@@ -169,8 +173,13 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     allUrlsPurged = true;
   }
 
-  if (itemsByTypes.trainingCourses.length && req.app.locals.elearningPath) {
-    await axiosPurge(axiosDomain, req.app.locals.elearningPath);
+  if (itemsByTypes.trainingCourses.length ||
+      itemsByTypes.trainingCertificationTests.length ||
+      itemsByTypes.landingPages.length
+    ) {
+    urlMap.filter((item) => item.type === 'landing_page').forEach(async (item) => {
+      await axiosPurge(axiosDomain, item.url);
+    });
   }
 
   if (itemsByTypes.trainingSurveys.length) {
