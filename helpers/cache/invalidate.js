@@ -304,7 +304,7 @@ const invalidate = async (req, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'termDefinitions');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'navigationItems');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'landingPages');
-        await deleteSpecificKeys(KCDetails, itemsByTypes.landingPage, res);
+        await deleteSpecificKeys(KCDetails, itemsByTypes.landingPages, res);
         await invalidateSubNavigation(res, keys, KCDetails);
         await invalidateArticles(itemsByTypes, KCDetails, res);
         await invalidateElearning(itemsByTypes, KCDetails, res);
