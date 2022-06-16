@@ -92,7 +92,7 @@ const processLoginState = async () => {
     }
 };
 
-const handleNavigationUI = async () => {
+const handleNavigationUI = () => {
     const navAuth = document.querySelector('[data-nav-auth]');
     if (!navAuth) return;
     
@@ -129,24 +129,24 @@ const prefillEmailAddressInForms = () => {
     }
 };
 
-window.addEventListener('load', async () => {
+(async () => {
     auth0.client = await configureClient();
     await processLoginState();
     window.user = await auth0.ensureUserSignedIn();
-    await handleNavigationUI();
+    handleNavigationUI();
     prefillEmailAddressInForms();
 
+    if (typeof landingPage !== 'undefined') {
+        await landingPage.getInfo();
+    }
     if (typeof survey !== 'undefined') {
         await survey.getInfo();
     }
     if (typeof certificationTest !== 'undefined') {
         await certificationTest.getInfo();
     }
-    if (typeof landingPage !== 'undefined') {
-        await landingPage.getInfo();
-    }
     if (typeof certificationTestResults !== 'undefined') {
         await certificationTestResults.getInfo();
     }
     auth0.eventListeners();
-});
+})();
