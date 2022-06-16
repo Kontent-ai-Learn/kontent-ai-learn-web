@@ -280,7 +280,6 @@ const invalidateElearning = async (itemsByTypes, KCDetails, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'trainingCourses');
         await revalidateTaxonomyGroup(KCDetails, 'trainingPersonaTaxonomyGroup', res);
         await revalidateTaxonomyGroup(KCDetails, 'trainingTopicTaxonomyGroup', res);
-        await requestItemAndDeleteCacheKey('e_learning_overview', 'article', KCDetails, res);
     }
 };
 
@@ -305,6 +304,7 @@ const invalidate = async (req, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'termDefinitions');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'navigationItems');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'landingPages');
+        await deleteSpecificKeys(KCDetails, itemsByTypes.landingPage, res);
         await invalidateSubNavigation(res, keys, KCDetails);
         await invalidateArticles(itemsByTypes, KCDetails, res);
         await invalidateElearning(itemsByTypes, KCDetails, res);
