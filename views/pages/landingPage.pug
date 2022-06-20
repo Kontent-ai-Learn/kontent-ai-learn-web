@@ -1,9 +1,9 @@
 extends ../includes/layout.pug
 block content
-  script var pathRoot = '!{pathRoot}';
+  script var pathRoot='!{pathRoot}';
   .utilities-lp-bg
   main.landing-page(id='main', data-lp)
-    h1.landing-page__heading.utilities-dot !{pageHeading}
+    h1.landing-page__heading.utilities-dot(data-lp-title) !{pageHeading}
     .landing-page__auth(data-lp-auth)
     .landing-page__promoted(data-lp-promoted='loading')
       .tile&attributes(smartLink?.itemId(content.promoted.system.id))
@@ -51,7 +51,8 @@ block content
                               ul.card__tag-list(data-lp-lightbox-data='personas')
                                 each persona in course.personas___topics__training_persona.value
                                   li.card__tag(data-lp-persona=persona.codename) !{persona.name}
-                            h3.card__title(data-lp-lightbox-data='title')&attributes(smartLink?.elementCodename('title')) !{course.title.value}
+                            h3.card__title(data-lp-lightbox-data='title')&attributes(smartLink?.elementCodename('title')) 
+                              span.card__title-text !{course.title.value}
                               - const isFree = course.is_free ? helper.isCodenameInMultipleChoice(course.is_free.value, 'yes') : false;
                               if (isFree)
                                 span(data-lp-lightbox-data='free').card__tag.card__tag--green&attributes(smartLink?.elementCodename('is_free')) !{UIMessages.training___free_course_label.value}
