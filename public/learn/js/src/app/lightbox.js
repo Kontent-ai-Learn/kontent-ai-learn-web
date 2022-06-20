@@ -252,7 +252,6 @@
         titleSuffix = titleElemSegments[1];
       }
       if (titleLpElem) titleLp = titleLpElem.innerHTML;
-      console.log(titleLp, titleDetail, titleSuffix);
       return {
         titleOverview: titleLp,
         titleDetail: titleDetail,
