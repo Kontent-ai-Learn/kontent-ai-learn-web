@@ -71,11 +71,17 @@ const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages
 };
 
 const getSurveyCodename = async (currentCourse, allCourses, email, res) => {
-  const LONG_CODENAME = 'long_survey';
-  const SHORT_CODENAME = 'short_survey';
+  const landingPages = await cacheHandle.evaluateSingle(res, 'landingPages', async () => {
+    return await getContent.landingPage(res);
+  });
+  if (!(landingPages && landingPages.length)) return null;
+
+  const LONG_CODENAME = landingPages[0].long_survey_for_micro_course.itemCodenames?.[0] || '';
+  const SHORT_CODENAME = landingPages[0].short_survey.itemCodenames?.[0] || '';
+  const LONG_BIG_CODENAME = landingPages[0].long_survey_for_big_course.itemCodenames?.[0] || '';
 
   if (currentCourse.pages.value.length > 1) {
-    return LONG_CODENAME;
+    return LONG_BIG_CODENAME;
   }
 
   const coursesInCurrentTopic = getCoursesInCurrentTopic(currentCourse, allCourses);

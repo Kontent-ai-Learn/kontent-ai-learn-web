@@ -20,9 +20,9 @@ const getData = async (content, res) => {
     return {
       codename: topic.codename,
       name: topic.name,
-      courses: courses.filter((course) => {
-        return isCodenameInMultipleChoice(course.personas___topics__training_topic.value, topic.codename);
-      })
+      courses: courses
+                .filter((course) => isCodenameInMultipleChoice(course.personas___topics__training_topic.value, topic.codename))
+                .sort((a, b) => (a.title.value > b.title.value) ? 1 : ((b.title.value > a.title.value) ? -1 : 0))
     }
   });
 

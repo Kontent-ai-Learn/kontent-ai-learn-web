@@ -252,16 +252,17 @@ const landingPage = (() => {
     if (!container) return;
 
     const token = window.user ? window.user.__raw : null;
-    [window.userElearningData, window.userProfile] = await Promise.all([requestInfo(token), requestUserProfile(token)]);
-    addLightboxActions();
+    window.userElearningData = await requestInfo(token);
     if (window.userElearningData) {
       addCetificateLinks(window.userElearningData);
       addPromoted(window.userElearningData.courses.find(item => item.promoted));
     }
     removeLoadingFromPromoted();
-    removeLoadingFromLightboxActions();
     const event = new Event('userElearningDataEvent');
     document.querySelector('body').dispatchEvent(event);
+    window.userProfile = await requestUserProfile(token);
+    addLightboxActions();
+    removeLoadingFromLightboxActions();
     if (window.userProfile) {
       handleToc(window.userProfile, user.email, token);
     }

@@ -51,7 +51,7 @@ const survey = (() => {
                                 ${item.personas.map(persona => `<li class="card__tag" data-lp-persona="${persona.codename}">${persona.name}</li>`).join('')}        
                               </ul>
                               <h3 class="card__title" data-lp-lightbox-data="title">
-                                ${item.title}
+                                <span class="card__title-text">${item.title}</span>
                                 ${item.isFree ? `<span data-lp-lightbox-data="free" class="card__tag card__tag--green">${item.freeLabel}</span>` : ''}
                               </h3>
                               <div class="card__description" data-lp-lightbox-data="description">${item.description}</div>
