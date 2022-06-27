@@ -3,6 +3,22 @@ body {
   overflow-x: visible;
   font-weight: 400 !important;
 }
+h1, h2, h3, h4, h5, p, ul, ol, table, 
+[class*="MenuItemLabel"], 
+[class*="Tooltip__Wrapper"], 
+[class*="MimeLabel"],
+[class*="StyledResponse"],
+[class*="ServerUrl"],
+[class*="SampleControls"],
+[class*="SecurityRequirement"],
+[class*="Dropdown-option"],
+.infobar__lang {
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif !important;
+}
+
+.redoc-json ul {
+  font-family: Inconsolata,Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace !important;
+}
 
 @media screen and (min-width: 768px) {
   [class*="StyledScrollWrapper"] {
@@ -37,7 +53,7 @@ body {
       width: 1.375em;
       height: .25em;
       border-radius: .25em .25em .25em 0;
-      background-color: #41D9C5;
+      background-color: #3DCCA8;
       position: absolute;
       left: 0;
       top: .675em;
@@ -105,7 +121,7 @@ body {
 
       &:hover {
         &:after {
-          background-color: #F05A22;
+          background-color: #3DCCA8;
         }
       }
 
@@ -126,11 +142,11 @@ body {
       }
 
       &.tab-success {
-        color: #44B77A;
+        color: #3DCCA8;
 
         &.react-tabs__tab--selected {
           &:after {
-            background-color: #44B77A;
+            background-color: #3DCCA8;
           }
         }
       }
@@ -200,8 +216,8 @@ body {
     [class*="MimeLabel"] {
       padding: .375em 1em;
       margin: .5em 0;
-      color: #F05A22;
-      border: 2px solid #F05A22;
+      color: #3DCCA8;
+      border: 2px solid #3DCCA8;
       line-height: 1.375em;
       opacity: 1;
       display: inline-block;
@@ -329,7 +345,7 @@ body {
   .token.constant,
   .token.symbol,
   .token.deleted {
-    color: #F05A22;
+    color: #6552C4;
   }
 
   .token.selector,
@@ -353,7 +369,7 @@ body {
   .token.atrule,
   .token.attr-value,
   .token.keyword {
-    color: #F05A22;
+    color: #6552C4;
   }
 
   .token.function,
@@ -518,7 +534,7 @@ body {
   }
 
   [class*="StyledDropdown"].is-open .Dropdown-control {
-    border-color: #f05a22;
+    border-color: #6552C4;
   }
 
   [class*="tabs__Tabs"] .Dropdown-menu {
@@ -578,7 +594,7 @@ body {
 
     &.is-selected, &:hover {
       background-color: #fff;
-      color: #f05a22;
+      color: #6552C4;
     }
   }
 
@@ -641,10 +657,10 @@ body {
     transition: .25s border;
 
     &:hover {
-      border-color: #F05A22;
+      border-color: #6552C4;
 
       .see-full-url {
-        border-color: #F05A22;
+        border-color: #6552C4;
       }
     }
 
@@ -667,7 +683,7 @@ body {
     border-radius: 24px 24px 0 0;
 
     [class*="OneOfLabel"] {
-      font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif;
+      font-family: 'Work Sans', Helvetica, Arial, sans-serif;
       font-weight: 400;
     }
 
@@ -689,13 +705,27 @@ body {
     font-size: 11px;
     background-color: transparent;
     display: inline-block;
-    font-family: GT Walsheim Pro, Helvetica, Arial, sans-serif;
+    font-family: Work Sans, Helvetica, Arial, sans-serif;
     transition: .25s background-color;
     padding: 0 .5em;
   }
 
   [class*="ServersOverlay"] {
     cursor: default;
+  }
+
+  [class*="PrismDiv"] {
+    p, li {
+      a {
+        color: #6552C4;
+      }
+    }
+  }
+}
+
+[class*="StyledShareLink"] {
+  &:before {
+    color: #3DCCA8;
   }
 }
 
@@ -709,8 +739,8 @@ body {
 
   &__lang {
     padding: .25em .75em !important;
-    color: #F05A22;
-    border: 2px solid #F05A22;
+    color: #3DCCA8;
+    border: 2px solid #3DCCA8;
     line-height: 1.375em;
     opacity: 1;
     display: inline-block;
@@ -796,13 +826,13 @@ figure {
   justify-content: space-between;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif;
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
   display: flex;
 }
 
 [class*="fields-layout"],
 [class*="FieldLabel"] {
-  font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif !important;
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif !important;
 }
 
 .language-selector {
@@ -847,7 +877,7 @@ figure {
     }
 
     .language-selector--opened & {
-      border: 1px solid #F05A22;
+      border: 1px solid #3DCCA8;
 
       &:before {
         content: '\e667';
@@ -913,7 +943,7 @@ figure {
     &--active,
     &--active:hover,
     &:hover {
-      color: #F05A22 !important;
+      color: #6552C4 !important;
     }
   }
 
@@ -935,7 +965,7 @@ figure {
 
     &.react-tabs__tab--selected,
     &:hover {
-      color: #F05A22 !important;
+      color: #6552C4 !important;
     }
   }
 }
@@ -971,7 +1001,7 @@ figure {
   }
 
   a {
-    color: #F05A22;
+    color: #6552C4;
     font-weight: 400;
 
     &:hover {
@@ -1212,6 +1242,16 @@ h1, h2, h3, h4, strong {
   [class*="ShelfIcon"] {
     position: absolute;
     left: .25em;
+
+    polygon {
+      fill: #3DCCA8 !important;
+    }
+  }
+
+  &:hover {
+    [class*=MenuItemTitle] {
+      color: #6552C4 !important;
+    }
   }
 }
 
@@ -1245,7 +1285,7 @@ h1, h2, h3, h4, strong {
     }
 
     a code {
-      color: #F05A22 !important;
+      color: #6552C4 !important;
     }
 
     &.callout {
@@ -1302,7 +1342,7 @@ h1, h2, h3, h4, strong {
 }
 
 .token.url-link {
-  color: #F05A22;
+  color: #6552C4;
 
   &:hover,
   &:active {
