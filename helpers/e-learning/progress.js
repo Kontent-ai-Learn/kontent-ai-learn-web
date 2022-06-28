@@ -14,31 +14,44 @@ const registrationIdExistsInDb = async (db, id) => {
   return null;
 };
 
-const createProgress = (registration) => {
-  if (!registration) return null;
-  return {
-    _partitionKey: registration.learner?.id?.toLowerCase() || null,
-    registrationId: registration.id || null,
-    courseId: registration.course?.id || null,
-    courseTitle: registration.course?.title || null,
-    status: registration.activityDetails?.activityCompletion || null,
-    firstAccessDate: registration.firstAccessDate || null,
-    lastAccessDate: registration.lastAccessDate || null,
-    completedDate: registration.completedDate || null
+const createProgress = (payload, registration) => {
+  if (!payload) return null;
+
+  const progress = {
+    _partitionKey: payload.learner?.id?.toLowerCase() || null,
+    registrationId: payload.id || null,
+    courseId: payload.course?.id || null,
+    courseTitle: payload.course?.title || null,
+    status: payload.activityDetails?.activityCompletion || null,
+    firstAccessDate: payload.firstAccessDate || null,
+    lastAccessDate: payload.lastAccessDate || null,
+    completedDate: payload.completedDate || null
   };
+
+  if (registration) {
+    progress.firstAccessDate = registration.firstAccessDate;
+    progress.id = registration.id;
+
+    if (registration.status === 'COMPLETED') {
+      progress.status = registration.status;
+      progress.completedDate = registration.completedDate;
+    }
+  }
+
+  return progress;
 };
 
-const setRecord = async (body) => {
+const setRecord = async (payload) => {
   const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_PROGRESS);
-  const registration = await registrationIdExistsInDb(db, body.id);
-  const progress = createProgress(body);
+  const registration = await registrationIdExistsInDb(db, payload.id);
 
   try {
-    if (registration && progress) {
+    if (registration) {
       const itemToUpdate = await db.item(registration.id);
-      progress.id = registration.id;
+      const progress = createProgress(payload, registration);
       await itemToUpdate.replace(progress);
     } else {
+      const progress = createProgress(payload);
       await db.items.create(progress);
     }
     return true;
