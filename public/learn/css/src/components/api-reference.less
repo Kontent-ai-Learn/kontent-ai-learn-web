@@ -1,7 +1,23 @@
 html,
 body {
   overflow-x: visible;
-  font-weight: 400 !important;
+  font-weight: 500 !important;
+}
+h1, h2, h3, h4, h5, p, ul, ol, table, 
+[class*="MenuItemLabel"], 
+[class*="Tooltip__Wrapper"], 
+[class*="MimeLabel"],
+[class*="StyledResponse"],
+[class*="ServerUrl"],
+[class*="SampleControls"],
+[class*="SecurityRequirement"],
+[class*="Dropdown-option"],
+.infobar__lang {
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif !important;
+}
+
+.redoc-json ul {
+  font-family: Inconsolata,Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace !important;
 }
 
 @media screen and (min-width: 768px) {
@@ -19,7 +35,7 @@ body {
 [class*="MenuItemLabel"],
 [class*="MiddlePanel"] p,
 [class*="PropertiesTable"] * {
-  font-weight: 400 !important;
+  font-weight: 500 !important;
 }
 [class*="MenuItemLabel"].active {
   font-weight: 700 !important;
@@ -37,7 +53,7 @@ body {
       width: 1.375em;
       height: .25em;
       border-radius: .25em .25em .25em 0;
-      background-color: #41D9C5;
+      background-color: #3DCCA8;
       position: absolute;
       left: 0;
       top: .675em;
@@ -90,7 +106,7 @@ body {
       padding: 0.375em 1em;
       transition: background-color .25s, color .25s;
       position: relative;
-      font-weight: 400 !important;
+      font-weight: 500 !important;
       min-width: 0;
 
       &:after {
@@ -105,7 +121,7 @@ body {
 
       &:hover {
         &:after {
-          background-color: #F05A22;
+          background-color: #3DCCA8;
         }
       }
 
@@ -126,11 +142,11 @@ body {
       }
 
       &.tab-success {
-        color: #44B77A;
+        color: #3DCCA8;
 
         &.react-tabs__tab--selected {
           &:after {
-            background-color: #44B77A;
+            background-color: #3DCCA8;
           }
         }
       }
@@ -186,7 +202,7 @@ body {
     padding: 0.5em 0;
 
     span {
-      font-weight: 400;
+      font-weight: 500;
     }
   }
 
@@ -200,14 +216,14 @@ body {
     [class*="MimeLabel"] {
       padding: .375em 1em;
       margin: .5em 0;
-      color: #F05A22;
-      border: 2px solid #F05A22;
+      color: #3DCCA8;
+      border: 2px solid #3DCCA8;
       line-height: 1.375em;
       opacity: 1;
       display: inline-block;
       border-radius: 16px 16px 4px 16px;
       font-size: .75em;
-      font-weight: 400;
+      font-weight: 500;
 
       &>span {
         line-height: 1.675em;
@@ -329,7 +345,7 @@ body {
   .token.constant,
   .token.symbol,
   .token.deleted {
-    color: #F05A22;
+    color: #6552C4;
   }
 
   .token.selector,
@@ -353,7 +369,7 @@ body {
   .token.atrule,
   .token.attr-value,
   .token.keyword {
-    color: #F05A22;
+    color: #6552C4;
   }
 
   .token.function,
@@ -369,7 +385,7 @@ body {
 
   .token.important,
   .token.bold {
-    font-weight: 400;
+    font-weight: 500;
   }
 
   .token.italic {
@@ -384,7 +400,7 @@ body {
     [data-section-id] {
       /*h3 {
         font-size: 1.375em;
-        font-weight: 400;
+        font-weight: 500;
         padding: .75em 0;
       }*/
 
@@ -415,7 +431,7 @@ body {
 
   [class*="SecurityRequirementAndWrap"] {
     &>a {
-      font-weight: 400;
+      font-weight: 500;
       text-decoration: none;
     }
   }
@@ -498,7 +514,7 @@ body {
     padding: 2em 0 1em;
     font-size: 1.3125em;
     margin: 0;
-    font-weight: 400;
+    font-weight: 500;
   }
 
   [class*="StyledDropdown"] .Dropdown-control,
@@ -518,7 +534,7 @@ body {
   }
 
   [class*="StyledDropdown"].is-open .Dropdown-control {
-    border-color: #f05a22;
+    border-color: #6552C4;
   }
 
   [class*="tabs__Tabs"] .Dropdown-menu {
@@ -578,7 +594,7 @@ body {
 
     &.is-selected, &:hover {
       background-color: #fff;
-      color: #f05a22;
+      color: #6552C4;
     }
   }
 
@@ -607,7 +623,7 @@ body {
         padding: 0;
         background: transparent;
         border-bottom: 1px dashed #343131;
-        font-weight: 400;
+        font-weight: 500;
         display: inline-block;
         margin: 0 1em .5em 0;
         padding: 0 0 2px;
@@ -641,10 +657,10 @@ body {
     transition: .25s border;
 
     &:hover {
-      border-color: #F05A22;
+      border-color: #6552C4;
 
       .see-full-url {
-        border-color: #F05A22;
+        border-color: #6552C4;
       }
     }
 
@@ -667,8 +683,8 @@ body {
     border-radius: 24px 24px 0 0;
 
     [class*="OneOfLabel"] {
-      font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif;
-      font-weight: 400;
+      font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+      font-weight: 500;
     }
 
     & + [class*="PropertiesTable"] {
@@ -678,7 +694,7 @@ body {
 
   [class*="SecurityRequirementAndWrap"] {
     a {
-      font-weight: 400;
+      font-weight: 500;
       text-decoration: underline;
     }
   }
@@ -689,13 +705,27 @@ body {
     font-size: 11px;
     background-color: transparent;
     display: inline-block;
-    font-family: GT Walsheim Pro, Helvetica, Arial, sans-serif;
+    font-family: Work Sans, Helvetica, Arial, sans-serif;
     transition: .25s background-color;
     padding: 0 .5em;
   }
 
   [class*="ServersOverlay"] {
     cursor: default;
+  }
+
+  [class*="PrismDiv"] {
+    p, li {
+      a {
+        color: #6552C4;
+      }
+    }
+  }
+}
+
+[class*="StyledShareLink"] {
+  &:before {
+    color: #3DCCA8;
   }
 }
 
@@ -709,8 +739,8 @@ body {
 
   &__lang {
     padding: .25em .75em !important;
-    color: #F05A22;
-    border: 2px solid #F05A22;
+    color: #3DCCA8;
+    border: 2px solid #3DCCA8;
     line-height: 1.375em;
     opacity: 1;
     display: inline-block;
@@ -796,13 +826,13 @@ figure {
   justify-content: space-between;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif;
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
   display: flex;
 }
 
 [class*="fields-layout"],
 [class*="FieldLabel"] {
-  font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif !important;
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif !important;
 }
 
 .language-selector {
@@ -847,7 +877,7 @@ figure {
     }
 
     .language-selector--opened & {
-      border: 1px solid #F05A22;
+      border: 1px solid #3DCCA8;
 
       &:before {
         content: '\e667';
@@ -899,7 +929,7 @@ figure {
   }
 
   a&__link {
-    font-weight: 400;
+    font-weight: 500;
     font-size: .875em;
     display: block;
     padding: 0.375em 1.75em;
@@ -913,12 +943,12 @@ figure {
     &--active,
     &--active:hover,
     &:hover {
-      color: #F05A22 !important;
+      color: #6552C4 !important;
     }
   }
 
   [class*="tab-click_"][role="tab"] {
-    font-weight: 400;
+    font-weight: 500;
     font-size: .875em;
     display: block !important;
     padding: 0.375em 1.75em !important;
@@ -935,7 +965,7 @@ figure {
 
     &.react-tabs__tab--selected,
     &:hover {
-      color: #F05A22 !important;
+      color: #6552C4 !important;
     }
   }
 }
@@ -971,8 +1001,8 @@ figure {
   }
 
   a {
-    color: #F05A22;
-    font-weight: 400;
+    color: #6552C4;
+    font-weight: 500;
 
     &:hover {
       text-decoration: none;
@@ -981,7 +1011,7 @@ figure {
 
   span {
     color: #908E8F;
-    font-weight: 400;
+    font-weight: 500;
   }
 }
 
@@ -1014,7 +1044,7 @@ span.api-status {
   line-height: 1.675em;
   font-size: 10px;
   text-transform: uppercase;
-  font-weight: 400;
+  font-weight: 500;
   background-color: #5160c0;
   color: #fff;
   margin: 0 .5em;
@@ -1032,7 +1062,7 @@ span.api-status {
 [class*="RightPanelHeader"],
 h3[class*="RightPanelHeader"] {
   font-size: 1.125em;
-  font-weight: 400;
+  font-weight: 500;
   margin: .75em 0;
 }
 
@@ -1085,7 +1115,7 @@ h3[class*="RightPanelHeader"] {
   h3,
   h4 {
     font-size: 1.125em;
-    font-weight: 400;
+    font-weight: 500;
     padding: 1em 0 .5em;
   }
 
@@ -1212,6 +1242,16 @@ h1, h2, h3, h4, strong {
   [class*="ShelfIcon"] {
     position: absolute;
     left: .25em;
+
+    polygon {
+      fill: #3DCCA8 !important;
+    }
+  }
+
+  &:hover {
+    [class*=MenuItemTitle] {
+      color: #6552C4 !important;
+    }
   }
 }
 
@@ -1245,7 +1285,7 @@ h1, h2, h3, h4, strong {
     }
 
     a code {
-      color: #F05A22 !important;
+      color: #6552C4 !important;
     }
 
     &.callout {
@@ -1302,7 +1342,7 @@ h1, h2, h3, h4, strong {
 }
 
 .token.url-link {
-  color: #F05A22;
+  color: #6552C4;
 
   &:hover,
   &:active {
