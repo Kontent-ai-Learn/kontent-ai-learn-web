@@ -31,7 +31,7 @@
 
   const config = [{
     codename: 'kkproject',
-    title: 'Kentico Kontent project',
+    title: 'Kontent.ai project',
     endpoint: '/learn/service-check/kk-project/'
   }, {
     codename: 'algolia',

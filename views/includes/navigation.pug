@@ -1,12 +1,12 @@
 - var isNotHome = req.originalUrl.replace(/\?.*$/, '') !== '/learn/'
 .print-only
-    img.logo(src='/learn/img/ui/logo.png', alt='Kontent by Kentico Learning Center')
+    img.logo(src='/learn/img/ui/logo.png?v=1', alt='Kontent.ai Learn')
 nav.navigation
     .navigation__wrapper
         .navigation__left
             .navigation__logo-wrapper
                 a.navigation__logo(href='/learn/', rel='noreferrer')
-                    img(src='/learn/img/ui/logo.svg', alt='Kontent by Kentico Learning Center', width='128', height='42')
+                    img(src='/learn/img/ui/logo.svg?v=1', alt='Kontent.ai Learn', width='128', height='42')
             ul(class=`navigation__list`)
                 each item in navigation
                     if (item.system.type !== 'navigation_link')

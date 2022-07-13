@@ -3,12 +3,12 @@
 
 # Kontent Learn - Website
 
-Kontent Learn is an educational portal that uses [Kontent by Kentico](https://app.kontent.ai/) as a source of its content.
+Kontent Learn is an educational portal that uses [Kontent.ai](https://app.kontent.ai/) as a source of its content.
 
 ## Overview
 
 1. The website is written in JavaScript.
-1. It uses [express.js](https://expressjs.com/) framework for server-side rendering and [Kentico Kontent Delivery SDK](https://github.com/Kentico/kontent-delivery-sdk-js) for content retrieval from Kentico Kontent project.
+1. It uses [express.js](https://expressjs.com/) framework for server-side rendering and [Kontent.ai Delivery SDK](https://github.com/Kentico/kontent-delivery-sdk-js) for content retrieval from Kontent.ai project.
 
 ## Setup
 
@@ -34,10 +34,10 @@ To start the application correctly, the following environment variables must be 
 * `AUTH0_LOGOUT_URL` - Relative URL the user is redirected to after logging out
 * `AUTH0_DOMAIN` - Auth0 authentication domain
 * `baseURL` - URL of the current environment (for example, http://localhost:3000) (used for webhooks pooling)
-* `KC.ProjectId` - Kentico Kontent project ID
+* `KC.ProjectId` - Kontent.ai project ID
 * One of the following:
-  * `KC.PreviewApiKey` - Kentico Kontent preview API key (set this key to retrieve preview content from Kentico Kontent)
-  * `KC.SecuredApiKey` - Kentico Kontent secured API key (set this key to retrieve published content from Kentico Kontent)
+  * `KC.PreviewApiKey` - Kontent.ai preview API key (set this key to retrieve preview content from Kontent.ai)
+  * `KC.SecuredApiKey` - Kontent.ai secured API key (set this key to retrieve published content from Kontent.ai)
 
 #### Optional environment variables
 
@@ -62,11 +62,9 @@ Without the following variables, certain features will not work on the website.
 * `Jira.Project` - Jira Project codename (used for feedback form)
 * `Jira.Token` - Jira API key (used for feedback form)
 * `Jira.User` - User email for a Jira account (used for feedback form)
-* `LMS.host` - Kentico e-learning URL of the LMS
-* `LMS.id` - Kentico e-learning API key (used for e-learning integration)
 * `SCORM_APP_ID` - Scorm Cloud Application ID
 * `SCORM_SECRET_KEY`- Scorm Cloud Secret key
-* `SCORM_HOST`- Kentico e-learning Scorm Cloud host URL
+* `SCORM_HOST`- E-learning Scorm Cloud host URL
 * `SCORM_USERNAME`- Scorm Cloud postback endpoint auth user name
 * `SCORM_USERPWD`- Scorm Cloud postback endpoint auth user password
 * `ngrok` - ngrok tunnel URL (i.e. https://91a2c81a7f1f.ngrok.io) (useful for api2PDF service local development/testing)
@@ -79,10 +77,10 @@ Without the following variables, certain features will not work on the website.
 * `SENDGRID_API_KEY` - SendGrid API key (used for sending priority alerts via email)
 * `SENDGRID_EMAIL_ADDRESS_FROM` - SendGrid sender email address (used for sending priority alerts via email)
 * `SENDGRID_EMAIL_ADDRESS_TO` - SendGrid 
-* `SubscriptionService.Bearer` - Subscription service access token for Kentico Kontent (used for verifying users' access to e-learning)
+* `SubscriptionService.Bearer` - Subscription service access token for Kontent.ai (used for verifying users' access to e-learning)
 * `SubscriptionService.Url` - Subscription service URL (used for verifying users' access to e-learning)
 * `SubscriptionService.ServiceCheckerEmail` - Email address that has an existing record in the Subscription service
-* `Webhook.Cache.Invalidate.CommonContent` - Kentico Kontent Webhook token (used for common content cache invalidation)
+* `Webhook.Cache.Invalidate.CommonContent` - Kontent.ai Webhook token (used for common content cache invalidation)
 
 ## How To Contribute
 
