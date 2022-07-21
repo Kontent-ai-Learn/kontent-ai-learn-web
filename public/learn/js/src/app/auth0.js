@@ -96,11 +96,13 @@ const handleNavigationUI = () => {
     const navAuth = document.querySelector('[data-nav-auth]');
     if (!navAuth) return;
     
-    let action = 'login';
     if (window.user) {
         action = 'logout';
+        navAuth.innerHTML = `<a href="#" class="navigation__link navigation__link--auth" id="logout">${window.UIMessages.signOut}</a>`
+    } else {
+        const url = window.appUrl || 'https://app.kontent.ai';
+        navAuth.innerHTML = `<a href="${url}/sign-in" class="navigation__link navigation__link--auth" target="_blank">${window.UIMessages.signIn}</a>`
     }
-    navAuth.innerHTML = `<a href="#" class="navigation__link navigation__link--auth" id="${action}">${action === 'login' ? window.UIMessages.signIn : window.UIMessages.signOut}</a>`
 };
 
 const removeOptionalFromLabel = (input) => {
