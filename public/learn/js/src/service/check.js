@@ -62,6 +62,10 @@ const check = (token) => {
     codename: 'cosmosDb',
     title: 'CosmosDB',
     endpoint: '/learn/service/check/cosmosdb/',
+  }, {
+    codename: 'missingObjectProperties',
+    title: 'Missing object propeties',
+    endpoint: '/learn/service/check/missing-object-property/'
   }];
 
   const buidlUI = () => {

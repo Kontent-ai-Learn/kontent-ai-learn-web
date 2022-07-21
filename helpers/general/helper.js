@@ -355,13 +355,31 @@ const isAbsoluteUrl = (url) => {
     return /^(?:[a-z]+:)?\/\//.test(url);
 };
 
-const logInCacheKey = (key, log, limit = 200) => {
+const isUniqueObjectSimple = (arrayOfObject, objectToCompare) => {
+    let isUnique = true;
+    arrayOfObject.forEach((arrayObject) => {
+        if (JSON.stringify(arrayObject) === JSON.stringify(objectToCompare)) {
+            isUnique = false;
+        }
+    });
+    return isUnique;
+}
+
+const logInCacheKey = (key, log, limit = 200, unique = false) => {
     const logs = cache.get(key) || [];
-    logs.unshift(log);
-    if (logs.length > limit) {
-        logs.length = limit;
+    let objectIsUnique = true;
+
+    if (unique) {
+        objectIsUnique = isUniqueObjectSimple(logs, log);
     }
-    cache.put(key, logs);
+
+    if (objectIsUnique) {
+        logs.unshift(log);
+        if (logs.length > limit) {
+            logs.length = limit;
+        }
+        cache.put(key, logs);
+    }
 };
 
 const getLogItemCacheKey = (key, property, value) => {
@@ -509,6 +527,18 @@ const makeLinksAbsolute = (domain, content) => {
     return output.replace('<html><head></head><body>', '').replace('</body></html>', '');
 };
 
+const getValue = (object, property) => {
+    let value = '';
+    if (!(object && property)) return value;
+
+    if (typeof object[property] === 'undefined') {
+        logInCacheKey('missing-object-property', { property: property, object: { codename: object?.system.codename || '' } }, 200, true);
+        return value;
+    }
+    value = object[property].value;
+    return value;
+};
+
 module.exports = {
     addTitlesToLinks,
     addTrailingSlashTo,
@@ -532,6 +562,7 @@ module.exports = {
     getReferenceFiles,
     getUniqueUrls,
     getValidationMessages,
+    getValue,
     hasLinkedItemOfType,
     injectHTMLAttr,
     isAbsoluteUrl,

@@ -55,9 +55,9 @@ const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages
       personas: courses[i].personas___topics__training_persona.value,
       comingSoon: isCodenameInMultipleChoice(courses[i].display_options ? courses[i].display_options.value : [], 'hide_cta_button'),
       isFree: isCodenameInMultipleChoice(courses[i].is_free.value, 'yes'),
-      freeLabel: UIMessages.training___free_course_label.value,
+      freeLabel: helper.getValue(UIMessages, 'training___free_course_label'),
       description: isNotEmptyRichText(courses[i].description.value) ? courses[i].description.value : '',
-      detailsLabel: UIMessages.training___view_details.value,
+      detailsLabel: helper.getValue(UIMessages, 'training___view_details'),
       duration: courses[i].duration.value,
       url: getCourseUrl(currentRegistration, courses[i], urlMap),
       certificate: null,
@@ -197,9 +197,9 @@ const after = async (attempt, res) => {
   });
 
   if (UIMessages.length) {
-    data.messages.thank_you = UIMessages[0].training___certificate___opening.value;
-    data.messages.back_title = UIMessages[0].traning___button___overview.value;
-    data.messages.cta_message = UIMessages[0].training___carousel___opening.value;
+    data.messages.thank_you = helper.getValue(UIMessages[0], 'training___certificate___opening');
+    data.messages.back_title = helper.getValue(UIMessages[0], 'traning___button___overview');
+    data.messages.cta_message = helper.getValue(UIMessages[0], 'training___carousel___opening');
   }
 
   const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {

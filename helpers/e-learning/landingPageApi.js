@@ -6,6 +6,7 @@ const getUrlMap = require('../general/urlMap');
 const isPreview = require('../kontent/isPreview');
 const { isCodenameInMultipleChoice } = require('../general/helper');
 const certificationDetail = require('../certification/detail');
+const helper = require('../general/helper');
 
 const getScormRegistration = (id, registrations) => {
   for (let i = 0; i < registrations.length; i++) {
@@ -43,16 +44,16 @@ const getCourseUrl = (registration, course, urlMap) => {
 
 const getLabel = (registration, UIMessages, res) => {
   if (isPreview(res.locals.previewapikey)) {
-    return UIMessages.training___cta_preview_course.value;
+    return helper.getValue(UIMessages, 'training___cta_preview_course');
   }
 
-  if (!registration) return UIMessages.training___cta_start_course.value;
+  if (!registration) return helper.getValue(UIMessages, 'training___cta_start_course');
   const codename = registration.status;
 
   switch (codename) {
-    case 'COMPLETED': return UIMessages.training___cta_revisit_course.value;
-    case 'INCOMPLETE': return UIMessages.training___cta_resume_course.value;
-    default: return UIMessages.training___cta_start_course.value;
+    case 'COMPLETED': return helper.getValue(UIMessages, 'training___cta_revisit_course');
+    case 'INCOMPLETE': return helper.getValue(UIMessages, 'training___cta_resume_course');
+    default: return helper.getValue(UIMessages, 'training___cta_start_course');
   }
 };
 
@@ -101,17 +102,17 @@ const init = async (req, res) => {
   if (user.code) {
     if (user.code === 'CR404') {
       state.code = 1; // User is not available in Subscription service
-      state.message = UIMessages.sign_in_error_subscription_missing_text.value;
+      state.message = helper.getValue(UIMessages, 'sign_in_error_subscription_missing_text');
     } else {
       state.code = 2; // Unknown error
-      state.message = UIMessages.sign_in_error_text.value;
+      state.message = helper.getValue(UIMessages, 'sign_in_error_text');
     }
     return state;
   }
 
   if (!await elearningUser.userHasElearningAccess(user, res)) {
     state.code = 3; // User has not e-learning access
-    state.message = UIMessages.training___cta_buy_course.value;
+    state.message = helper.getValue(UIMessages, 'training___cta_buy_course');
   }
 
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {

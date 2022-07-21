@@ -108,7 +108,7 @@ const getPrivate = async (UIMessages, certificationTest, req, res) => {
 
 const getPublic = (UIMessages) => {
   const data = {};
-  data.text = UIMessages.sign_in_button.value;
+  data.text = helper.getValue(UIMessages, 'sign_in_button');
   data.textUIMessageCodename = 'sign_in_button';
   data.id = 'login';
   data.renderAs = 'button';

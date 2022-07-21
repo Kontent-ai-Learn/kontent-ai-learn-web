@@ -15,6 +15,7 @@ const checkScorm = require('../helpers/serviceCheck/scorm');
 const checkAuth0 = require('../helpers/serviceCheck/auth0');
 const checkSendgrid = require('../helpers/serviceCheck/sendgrid');
 const checkCosmosDb = require('../helpers/serviceCheck/cosmosDb');
+const checkMissingObjectProperties = require('../helpers/serviceCheck/missingObjectProperties');
 
 router.get('*', (req, res) => {
   return res.render('pages/service');
@@ -71,6 +72,9 @@ router.post('*', jwtCheck, async (req, res) => {
           break;
         case 'cosmosdb':
           response = await checkCosmosDb();
+          break;
+        case 'missing-object-property':
+          response = await checkMissingObjectProperties();
           break;
         default:
           response = {
