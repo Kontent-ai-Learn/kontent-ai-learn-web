@@ -29,8 +29,8 @@ const landingPage = (() => {
     const label = document.createElement('span');
     const button = document.createElement('a');
     button.classList.add('button');
+    const url = window.appUrl || 'https://app.kontent.ai';
     if (type === 'signup') {
-      const url = window.appUrl || 'https://app.kontent.ai';
       button.setAttribute('href', `${url}/sign-up`);
       button.setAttribute('target', '_blank');
       label.innerHTML = window.UIMessages.signUp;
@@ -38,8 +38,8 @@ const landingPage = (() => {
     }
 
     if (type === 'login') {
-      button.setAttribute('href', '#');
-      button.setAttribute('id', type);
+      button.setAttribute('href', `${url}/sign-in`);
+      button.setAttribute('target', '_blank');
       label.innerHTML = window.UIMessages.signIn;
     }
     
