@@ -32,7 +32,7 @@ const check = (token) => {
   const config = [{
     codename: 'kkproject',
     title: 'Kontent.ai project',
-    endpoint: '/learn/service-check/kk-project/'
+    endpoint: '/learn/service/check/kk-project/'
   }, {
     codename: 'algolia',
     title: 'Algolia search',

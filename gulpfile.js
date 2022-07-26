@@ -333,12 +333,12 @@ const cssTasks = [{
     fileName: 'apireference.less'
   }
 }, {
-  name: 'css-service-check',
+  name: 'css-service',
   config: {
     src: [
       'public/learn/css/src/general/service-check.less',
     ],
-    fileName: 'service-check.less'
+    fileName: 'service.less'
   }
 }, {
   name: 'css-kontentsmartlink',

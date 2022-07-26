@@ -22,7 +22,7 @@ router.get('*', (req, res) => {
 
 router.post('*', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
-  if (!(req.user.email.endsWith('@kentico.com') || req.user.email.endsWith('@milanlund.com'))) return res.status(403).end();
+  if (!(req.user.email.endsWith('@kentico.com') || req.user.email.endsWith('@kontent.ai') || req.user.email.endsWith('@milanlund.com'))) return res.status(403).end();
 
   const urlSegments = getPathWithoutTrailingSlash(req.originalUrl).replace('/learn/service/', '').split('/');
   let response = null;
