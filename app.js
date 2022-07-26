@@ -21,10 +21,11 @@ const serviceCheckAll = require('./helpers/serviceCheck/all');
 const certificationEmail = require('./helpers/certification/email');
 
 const siteRouter = require('./routes/siteRouter');
-const serviceCheck = require('./routes/serviceCheck');
 const error = require('./routes/error');
 const opensearch = require('./routes/opensearch');
 const sitemap = require('./routes/sitemap');
+const service = require('./routes/service');
+const auth0Callback = require('./routes/auth0Callback');
 
 const app = express();
 
@@ -89,7 +90,8 @@ app.use('/learn/sitemap.xml', sitemap);
 app.use('/learn/opensearch.xml', opensearch);
 app.use(slashes(true));
 
-app.use('/learn/service-check', serviceCheck);
+app.use('/learn/callback', auth0Callback);
+app.use('/learn/service', service);
 
 if (process.env.isProduction === 'false') {
   app.use('/learn', asyncHandler(async (req, res, next) => {
@@ -110,7 +112,7 @@ if (process.env.isProduction === 'false') {
         if (appInsights && appInsights.defaultClient) {
           appInsights.defaultClient.trackTrace({ message: `SERVICE_CHECK_ERROR: ${JSON.stringify(serviceCheckResults)}` });
         }
-        return res.redirect(303, `${process.env.baseURL}/learn/service-check/`);
+        return res.redirect(303, `${process.env.baseURL}/learn/service/check/`);
       }
     }
     next();

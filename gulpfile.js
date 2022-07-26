@@ -173,13 +173,17 @@ const jsTasks = [{
     fileName: 'landing-page.js'
   }
 }, {
-  name: 'js-service-check',
+  name: 'js-service',
   config: {
     src: [
       'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
-      'public/learn/js/src/service-check/service-check.js'
+      'public/learn/js/src/app/helper.js',
+      'public/learn/js/src/service/redirects.js',
+      'public/learn/js/src/service/cacheKeys.js',
+      'public/learn/js/src/service/check.js',
+      'public/learn/js/src/service/service.js'
     ],
-    fileName: 'service-check.js'
+    fileName: 'service.js'
   }
 }, {
   name: 'js-algolia',
@@ -358,12 +362,12 @@ gulp.task('reload', (done) => {
 
 gulp.task('build-js-app', gulp.parallel(['js-app', 'js-reference']));
 gulp.task('build-js-filter', gulp.parallel(['js-changelog', 'js-landing-page']));
-gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service-check']));
+gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service']));
 
 gulp.task('watch', (done) => {
   gulp.watch('public/learn/js/src/app/**/*.js', gulp.series(['build-js-app', 'reload']));
   gulp.watch('public/learn/js/src/filter/*.js', gulp.series(['build-js-filter', 'reload']));
-  gulp.watch('public/learn/js/src/service-check/*.js', gulp.series(['js-service-check', 'reload']));
+  gulp.watch('public/learn/js/src/service/*.js', gulp.series(['js-service', 'reload']));
   gulp.watch('public/learn/css/src/**/*.less', gulp.series(['build-css', 'reload']));
   done();
 });

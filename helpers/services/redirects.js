@@ -1,12 +1,7 @@
-const express = require('express');
-const router = express.Router();
-
-const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
-const isPreview = require('../helpers/kontent/isPreview');
-const getContent = require('../helpers/kontent/getContent');
-const helper = require('../helpers/general/helper');
-const cacheHandle = require('../helpers/cache/handle');
-const getUrlMap = require('../helpers/general/urlMap');
+const getContent = require('../kontent/getContent');
+const helper = require('../general/helper');
+const cacheHandle = require('../cache/handle');
+const getUrlMap = require('../general/urlMap');
 
 const getRedirectUrls = async (res) => {
   const articles = await cacheHandle.evaluateSingle(res, 'articles', async () => {
@@ -38,8 +33,8 @@ const getRedirectUrls = async (res) => {
       if (originalUrl.length) {
         redirectMap.push({
           id: item.system.id,
-          originalUrl: originalUrl[0].url,
-          redirectUrls: helper.getRedirectUrls(item.redirect_urls)
+          originalUrl: helper.addTrailingSlashTo(originalUrl[0].url),
+          redirectUrls: helper.getRedirectUrls(item.redirect_urls).map(item => helper.addTrailingSlashTo(item))
         });
       }
     }
@@ -66,14 +61,14 @@ const getRedirectRules = async (res) => {
         if (to === redirectRules[j].redirect_to.value) {
           redirectTo.push({
             id: redirectRules[j].system.id,
-            url: redirectRules[j].redirect_from.value
+            url: helper.addTrailingSlashTo(redirectRules[j].redirect_from.value)
           });
           redirectRules[j].processed = true;
         }
       }
 
       redirectMap.push({
-        originalUrl: to,
+        originalUrl: helper.addTrailingSlashTo(to),
         redirectUrls: redirectTo
       });
     }
@@ -86,35 +81,12 @@ const getRedirectRules = async (res) => {
   return redirectMap;
 };
 
-router.get('/', async (req, res) => {
-  const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
-    return getContent.footer(res);
-  });
-  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
-    return getContent.UIMessages(res);
-  });
-  const home = await cacheHandle.ensureSingle(res, 'home', async () => {
-    return getContent.home(res);
-  });
-  const redirectRules = await getRedirectRules(res);
-  const redirectMap = await getRedirectUrls(res);
-  const platformsConfigPairings = await getContent.platformsConfigPairings(res);
+const redirects = async (res) => {
+  const rules = await getRedirectRules(res);
+  const urls = await getRedirectUrls(res);
+  const projectId = res.locals.projectid;
+  const language = res.locals.language || 'default';
+  return { rules, urls, projectId, language };
+};
 
-  return res.render('pages/redirectUrls', {
-    req: req,
-    postprocessMarkup: postprocessMarkup,
-    isPreview: isPreview(res.locals.previewapikey),
-    projectId: res.locals.projectid,
-    language: res.locals.language,
-    title: 'Redirect URLs',
-    navigation: home[0].subpages.value,
-    redirectRules: redirectRules,
-    redirectMap: redirectMap,
-    footer: footer[0] ? footer[0] : null,
-    UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
-    platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
-    helper: helper
-  });
-});
-
-module.exports = router;
+module.exports = redirects;

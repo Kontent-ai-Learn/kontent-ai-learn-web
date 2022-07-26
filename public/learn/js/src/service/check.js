@@ -1,4 +1,4 @@
-(() => {
+const check = (token) => {
   const initAuth0 = async () => {
     const auth0 = {};
     const auth0Settings = {
@@ -36,36 +36,32 @@
   }, {
     codename: 'algolia',
     title: 'Algolia search',
-    endpoint: '/learn/service-check/algolia/',
+    endpoint: '/learn/service/check/algolia/',
   }, {
     codename: 'subscriptionService',
     title: 'Subscription service',
-    endpoint: '/learn/service-check/subscription-service/',
+    endpoint: '/learn/service/check/subscription-service/',
   }, {
     codename: 'apiReferences',
     title: 'API References',
-    endpoint: '/learn/service-check/api-references/',
-  }, {
-    codename: 'tlms',
-    title: 'TLMS',
-    endpoint: '/learn/service-check/tlms/',
+    endpoint: '/learn/service/check/api-references/',
   }, {
     codename: 'scorm',
     title: 'Scorm',
-    endpoint: '/learn/service-check/scorm/',
+    endpoint: '/learn/service/check/scorm/',
   }, {
     codename: 'auth0',
     title: 'Auth0',
-    endpoint: '/learn/service-check/auth0/',
+    endpoint: '/learn/service/check/auth0/',
     callback: initAuth0
   }, {
     codename: 'sendgrid',
     title: 'Sendgrid',
-    endpoint: '/learn/service-check/sendgrid/',
+    endpoint: '/learn/service/check/sendgrid/',
   }, {
     codename: 'cosmosDb',
     title: 'CosmosDB',
-    endpoint: '/learn/service-check/cosmosdb/',
+    endpoint: '/learn/service/check/cosmosdb/',
   }];
 
   const buidlUI = () => {
@@ -85,16 +81,23 @@
     body.innerHTML = markup;
   };
 
-  const runChecks = async () => {
+  const runChecks = async (token) => {
     for (let i = 0; i < config.length; i++) {
       const liElem = document.querySelector(`[data-codename="${config[i].codename}"]`);
       const statusElem = liElem.querySelector('[data-status]');
       const messageElem = liElem.querySelector('[data-message]');
 
-      try {
-        const response = await fetch(config[i].endpoint);
-        const data = await response.json();
+      const fetchOptions = {
+        method: 'POST',
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        }
+      };
 
+      try {
+        const response = await fetch(config[i].endpoint, fetchOptions);
+        const data = await response.json();
+        
         if (data.message) {
           messageElem.innerHTML = data.message;
         } else {
@@ -125,5 +128,5 @@
   };
 
   buidlUI();
-  runChecks();
-})();
+  runChecks(token);
+};
