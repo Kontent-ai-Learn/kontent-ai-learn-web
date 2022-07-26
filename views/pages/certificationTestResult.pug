@@ -16,7 +16,7 @@ block content
               each item in incorrect
                 .certification-test__question !{item.question}
                 .certification-test__answer.certification-test__answer--incorrect 
-                  span.certification-test__answer-label !{UIMessages.traning___test___your_answer.value} 
+                  span.certification-test__answer-label !{helper.getValue(UIMessages, 'traning___test___your_answer')} 
                   | !{item.answer}
             script var trainingCertificationTestCodename='!{content.system.codename}';var attemptId='!{attempt.id}';
             .article__training-action.article__training-action--result#trainingAction&attributes(smartLink?.itemId(UIMessages.system.id))

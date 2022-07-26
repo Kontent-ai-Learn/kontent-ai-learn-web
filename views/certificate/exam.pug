@@ -4,7 +4,7 @@ html(lang='en')
       include style.pug
     body
       - let title = attempt.test.title;
-      - const productName = UIMessages.product_name.value;
+      - const productName = helper.getValue(UIMessages, 'product_name');
       - if (attempt.test.title.startsWith(productName)) title = title.replace(productName, '').trim()
       .certificate
         .certificate__top

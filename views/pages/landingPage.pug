@@ -13,12 +13,12 @@ block content
           h2.tile__title(data-lp-lightbox-data='title')&attributes(smartLink?.elementCodename('title')) !{content.promoted.title.value}
             - const isFree = content.promoted.is_free ? helper.isCodenameInMultipleChoice(content.promoted.is_free.value, 'yes') : false;
             if (isFree)
-              span.tile__tag.tile__tag--green&attributes(smartLink?.elementCodename('is_free')) !{UIMessages.training___free_course_label.value}
+              span.tile__tag.tile__tag--green&attributes(smartLink?.elementCodename('is_free')) !{helper.getValue(UIMessages, 'training___free_course_label')}
           .tile__description(data-lp-lightbox-data='description')&attributes(smartLink?.elementCodename('description'))
             if helper.isNotEmptyRichText(content.promoted.description.value)
               | !{postprocessMarkup(content.promoted.description.value, res)}
           a(href=`${pathRoot}${content.promoted.url.value}/`, data-lp-link, data-lp-lightbox-invoke=content.promoted.system.id, data-lp-lightbox-data='link').tile__cta 
-            span !{UIMessages.training___view_details.value}
+            span !{helper.getValue(UIMessages, 'training___view_details')}
             span
     .landing-page__filter(data-lp-filter-group)
       .landing-page__filter-group
@@ -55,7 +55,7 @@ block content
                               span.card__title-text !{course.title.value}
                               - const isFree = course.is_free ? helper.isCodenameInMultipleChoice(course.is_free.value, 'yes') : false;
                               if (isFree)
-                                span(data-lp-lightbox-data='free').card__tag.card__tag--green&attributes(smartLink?.elementCodename('is_free')) !{UIMessages.training___free_course_label.value}
+                                span(data-lp-lightbox-data='free').card__tag.card__tag--green&attributes(smartLink?.elementCodename('is_free')) !{helper.getValue(UIMessages, 'training___free_course_label')}
                             .card__description(data-lp-lightbox-data='description')
                               if (course.description && helper.isNotEmptyRichText(course.description.value))
                                 | !{postprocessMarkup(course.description.value, res)}
@@ -63,7 +63,7 @@ block content
                                 |!{postprocessMarkup(course.introduction.value, res)}
                           .card__bottom
                             .card__row.card__row--space-between
-                              .card__cta !{UIMessages.training___view_details.value}
+                              .card__cta !{helper.getValue(UIMessages, 'training___view_details')}
                               .card__certificate(data-lp-certificate)
                             .card__row.card__row--end
                               - const durationProperty = course.duration ? 'duration' : 'test_duration';
