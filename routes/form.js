@@ -4,6 +4,7 @@ const getContent = require('../helpers/kontent/getContent');
 const recaptcha = require('../helpers/services/recaptcha');
 const jira = require('../helpers/services/jira');
 const cacheHandle = require('../helpers/cache/handle');
+const helper = require('../helpers/general/helper')
 
 const setFalseValidation = (validation, property, UIMessages) => {
     validation.isValid = false;

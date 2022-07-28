@@ -6,6 +6,7 @@ const getUrlMap = require('../general/urlMap');
 const elearningRegistration = require('../e-learning/registration');
 const { isCodenameInMultipleChoice, isNotEmptyRichText } = require('../general/helper');
 const { getCertificate, getScormRegistration, getProgress, getLabel, getCourseUrl } = require('../e-learning/landingPageApi');
+const helper = require('../general/helper')
 
 const getCoursesInCurrentTopic = (currentCourse, allCourses) => {
   const data = []

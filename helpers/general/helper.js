@@ -530,11 +530,26 @@ const makeLinksAbsolute = (domain, content) => {
 const getValue = (object, property) => {
     let value = '';
     if (!(object && property)) return value;
+    const codename = object?.system.codename || '';
+    const key = 'missing-object-property';
 
+    // Log missing property
     if (typeof object[property] === 'undefined') {
-        logInCacheKey('missing-object-property', { property: property, object: { codename: object?.system.codename || '' } }, 200, true);
+        logInCacheKey(key, { property: property, object: { codename: codename } }, 200, true);
         return value;
     }
+
+    // Remove property from log once is available
+    const logs = cache.get(key);
+    if (logs) {
+        for (let i = 0; i < logs.length; i++) {
+            if (logs[i].property === property && logs[i]?.object.codename === codename) {
+                logs.splice(i, 1);
+            }
+        }
+        cache.put(key, logs);
+    }
+
     value = object[property].value;
     return value;
 };

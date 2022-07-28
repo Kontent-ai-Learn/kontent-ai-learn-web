@@ -2,6 +2,7 @@ const moment = require('moment');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const certificationDatabase = require('./database');
+const helper = require('../general/helper')
 
 const getCertificateData = (attempt, certificationTest) => {
   return {
