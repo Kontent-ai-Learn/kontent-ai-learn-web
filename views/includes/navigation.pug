@@ -1,12 +1,12 @@
 - var isNotHome = req.originalUrl.replace(/\?.*$/, '') !== '/learn/'
 .print-only
-    img.logo(src='/learn/img/ui/logo.png', alt='Kontent by Kentico Learning Center')
+    img.logo(src='/learn/img/ui/logo.png?v=1', alt='Kontent.ai Learn')
 nav.navigation
     .navigation__wrapper
         .navigation__left
             .navigation__logo-wrapper
                 a.navigation__logo(href='/learn/', rel='noreferrer')
-                    img(src='/learn/img/ui/logo.svg', alt='Kontent by Kentico Learning Center', width='128', height='42')
+                    img(src='/learn/img/ui/logo.svg?v=1', alt='Kontent.ai Learn', width='128', height='42')
             ul(class=`navigation__list`)
                 each item in navigation
                     if (item.system.type !== 'navigation_link')
@@ -17,8 +17,8 @@ nav.navigation
                 .navigation__search-wrapper
                     form.navigation__search(data-search-container='')
                         .navigation__search-icon(aria-hidden='true')
-                        label.sr-only(for='nav-search') !{UIMessages ? UIMessages.search___placeholder.value : ''}
-                        input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages ? UIMessages.search___placeholder.value : '')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
+                        label.sr-only(for='nav-search') !{UIMessages ? helper.getValue(UIMessages, 'search___placeholder') : ''}
+                        input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages ? helper.getValue(UIMessages, 'search___placeholder') : '')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
                         .autocomplete(data-search-autocomplete='')
             .navigation__auth(data-nav-auth)
         .navigation__trigger(data-search-trigger='', aria-hidden='true')

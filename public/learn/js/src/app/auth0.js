@@ -92,34 +92,63 @@ const processLoginState = async () => {
     }
 };
 
-const handleNavigationUI = async () => {
+const handleNavigationUI = () => {
     const navAuth = document.querySelector('[data-nav-auth]');
     if (!navAuth) return;
-    const user = await auth0.ensureUserSignedIn();
     
-    let action = 'login';
-    if (user) {
+    if (window.user) {
         action = 'logout';
+        navAuth.innerHTML = `<a href="#" class="navigation__link navigation__link--auth" id="logout">${window.UIMessages.signOut}</a>`
+    } else {
+        const url = window.appUrl || 'https://app.kontent.ai';
+        navAuth.innerHTML = `<a href="${url}/sign-in" class="navigation__link navigation__link--auth" target="_blank">${window.UIMessages.signIn}</a>`
     }
-    navAuth.innerHTML = `<a href="#" class="navigation__link navigation__link--auth" id="${action}">${action === 'login' ? window.UIMessages.signIn : window.UIMessages.signOut}</a>`
 };
 
-window.addEventListener('load', async () => {
+const removeOptionalFromLabel = (input) => {
+    const id = input.getAttribute('id');
+    const label = input.parentNode.querySelector(`label[for="${id}"]`);
+    if (!label) return;
+    let labelText = label.innerHTML;
+    if (!labelText.includes('(optional)')) return;
+    labelText = labelText.replace('(optional)', '').trim();
+    label.innerHTML = labelText;
+};
+
+const prefillEmailAddressInForms = () => {
+    if (!window.user) return;
+    const emailInputs = document.querySelectorAll('input[type="email"]');
+
+    for (let i = 0; i < emailInputs.length; i++) {
+        emailInputs[i].value = window.user.email;
+        if (emailInputs[i].classList.contains('form__input')) {
+            emailInputs[i].classList.add('form__input--value');
+            emailInputs[i].parentNode.classList.add('hidden');
+            emailInputs[i].setAttribute('disabled', 'disabled');
+            emailInputs[i].setAttribute('data-disabled', '');
+            removeOptionalFromLabel(emailInputs[i]);
+        }
+    }
+};
+
+(async () => {
     auth0.client = await configureClient();
     await processLoginState();
-    await handleNavigationUI();
+    window.user = await auth0.ensureUserSignedIn();
+    handleNavigationUI();
+    prefillEmailAddressInForms();
 
+    if (typeof landingPage !== 'undefined') {
+        await landingPage.getInfo();
+    }
     if (typeof survey !== 'undefined') {
         await survey.getInfo();
     }
     if (typeof certificationTest !== 'undefined') {
         await certificationTest.getInfo();
     }
-    if (typeof landingPage !== 'undefined') {
-        await landingPage.getInfo();
-    }
     if (typeof certificationTestResults !== 'undefined') {
         await certificationTestResults.getInfo();
     }
     auth0.eventListeners();
-});
+})();

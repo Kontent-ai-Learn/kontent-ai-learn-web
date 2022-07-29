@@ -1,13 +1,13 @@
 if UIMessages
     div(class=`feedback${req.formPosted ? ' feedback--posted' : ''}`)#feedback-form
         .feedback__wrapper&attributes(smartLink?.itemId(UIMessages.system.id))
-            h2.feedback__heading&attributes(smartLink?.elementCodename('feedback_form___heading')) !{UIMessages.feedback_form___heading.value}
+            h2.feedback__heading&attributes(smartLink?.elementCodename('feedback_form___heading')) !{helper.getValue(UIMessages, 'feedback_form___heading')}
             .feedback__answer
                 a.feedback__button.feedback__button--yes(href='#yesMsg')&attributes(smartLink?.elementCodename('feedback_form___yes_button')) 
-                    span !{UIMessages.feedback_form___yes_button.value}
+                    span !{helper.getValue(UIMessages, 'feedback_form___yes_button')}
                     span
                 a.feedback__button.feedback__button--no(href='#noMsg')&attributes(smartLink?.elementCodename('feedback_form___no_button')) 
-                    span !{UIMessages.feedback_form___no_button.value}
+                    span !{helper.getValue(UIMessages, 'feedback_form___no_button')}
                     span
             .lightbox-form__response
                 .feedback__message#yesMsg.feedback__message--yes&attributes(smartLink?.elementCodename('feedback_form___yes_message'))  !{helper.getValue(UIMessages, 'feedback_form___yes_message')}

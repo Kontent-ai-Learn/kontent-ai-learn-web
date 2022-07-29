@@ -25,7 +25,7 @@ window.helperForm = (() => {
     };
 
     const enableInputs = (form, recaptchaCover) => {
-        form.querySelectorAll('.form__input').forEach((item) => {
+        form.querySelectorAll('.form__input:not([data-disabled])').forEach((item) => {
             item.removeAttribute('disabled');
         });
 

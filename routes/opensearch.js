@@ -17,6 +17,7 @@ router.get('/', asyncHandler(async (req, res) => {
     req: req,
     domain: helper.getDomain(),
     UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
+    helper: helper
   });
 }));
 

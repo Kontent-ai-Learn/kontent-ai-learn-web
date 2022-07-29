@@ -355,13 +355,31 @@ const isAbsoluteUrl = (url) => {
     return /^(?:[a-z]+:)?\/\//.test(url);
 };
 
-const logInCacheKey = (key, log, limit = 200) => {
+const isUniqueObjectSimple = (arrayOfObject, objectToCompare) => {
+    let isUnique = true;
+    arrayOfObject.forEach((arrayObject) => {
+        if (JSON.stringify(arrayObject) === JSON.stringify(objectToCompare)) {
+            isUnique = false;
+        }
+    });
+    return isUnique;
+}
+
+const logInCacheKey = (key, log, limit = 200, unique = false) => {
     const logs = cache.get(key) || [];
-    logs.unshift(log);
-    if (logs.length > limit) {
-        logs.length = limit;
+    let objectIsUnique = true;
+
+    if (unique) {
+        objectIsUnique = isUniqueObjectSimple(logs, log);
     }
-    cache.put(key, logs);
+
+    if (objectIsUnique) {
+        logs.unshift(log);
+        if (logs.length > limit) {
+            logs.length = limit;
+        }
+        cache.put(key, logs);
+    }
 };
 
 const getLogItemCacheKey = (key, property, value) => {
@@ -469,7 +487,7 @@ const removeLinkedItemsSelfReferences = (items, codenames = []) => {
     return items;
 };
 
-const addTrailingSlash = (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? '/' : '';
+const addTrailingSlashTo = (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? `${url}/` : url;
 
 const injectHTMLAttr = (options) => {
     if (!options.markup || !options.selector || !options.attr || !options.attrValue) return `Invalid HTML attribute injection: ${options}`;
@@ -509,9 +527,36 @@ const makeLinksAbsolute = (domain, content) => {
     return output.replace('<html><head></head><body>', '').replace('</body></html>', '');
 };
 
+const getValue = (object, property) => {
+    let value = '';
+    if (!(object && property)) return value;
+    const codename = object?.system.codename || '';
+    const key = 'missing-object-property';
+
+    // Log missing property
+    if (typeof object[property] === 'undefined') {
+        logInCacheKey(key, { property: property, object: { codename: codename } }, 200, true);
+        return value;
+    }
+
+    // Remove property from log once is available
+    const logs = cache.get(key);
+    if (logs) {
+        for (let i = 0; i < logs.length; i++) {
+            if (logs[i].property === property && logs[i]?.object.codename === codename) {
+                logs.splice(i, 1);
+            }
+        }
+        cache.put(key, logs);
+    }
+
+    value = object[property].value;
+    return value;
+};
+
 module.exports = {
     addTitlesToLinks,
-    addTrailingSlash,
+    addTrailingSlashTo,
     appendQueryParam,
     capitalizeFirstLetter,
     ensureProtocol,
@@ -532,6 +577,7 @@ module.exports = {
     getReferenceFiles,
     getUniqueUrls,
     getValidationMessages,
+    getValue,
     hasLinkedItemOfType,
     injectHTMLAttr,
     isAbsoluteUrl,

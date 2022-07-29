@@ -1,3 +1,5 @@
+let unasweredQuestions = [];
+
 const certificationTest = (() => {
   const requestFormData = async (itemCodename, user, token) => {
     const fetchOptions = {
@@ -73,6 +75,7 @@ const certificationTest = (() => {
     `;
     markup += renderTopics(data);
     markup += `<input type="hidden" name="attempt" value="${formData.data.id}">`;
+    markup += `<div class="certification-test__unanswered">${window.UIMessages.unanswered}</div>`;
     markup += `<button class="button certification-test__button"><span>Submit</span><span></span></button></form>`;
 
     container.innerHTML = markup;
@@ -129,6 +132,69 @@ const certificationTest = (() => {
     });
   };
 
+  const getUnanswered = (form) => {
+    const questions = form.querySelectorAll('.question');
+    const unaswered = [];
+
+    for(let i = 0; i < questions.length; i++) {
+      const answered = questions[i].querySelector('.answer__radio:checked');
+      if (!answered) unaswered.push(questions[i]);
+    }
+
+    return unaswered;
+  };
+
+  const observeQuestions = (elem) => {
+    const form = elem.querySelector('.certification-test__form');
+    const button = elem.querySelector('.certification-test__button');
+    const unansweredMessage = elem.querySelector('.certification-test__unanswered');
+
+    if (!(form && button && unansweredMessage)) return;
+    unasweredQuestions = getUnanswered(form);
+    elem.delegateEventListener('click', '[data-form-answer]', function (e) {
+      e.preventDefault();
+      
+      const unasweredQuestionElem = this.closest('.question--unanswered');
+      if (unasweredQuestionElem) unasweredQuestionElem.classList.remove('question--unanswered');
+
+      unasweredQuestions = getUnanswered(form);
+      if (!unasweredQuestions.length) {
+        button.removeAttribute('disabled');
+        unansweredMessage.classList.remove('certification-test__unanswered--visible');
+      }
+      e.stopPropagation();
+    });
+  };
+
+  const checkFormUnanswered = (form, button, questions, unansweredMessage) => {
+    for(let i = 0; i < questions.length; i++) {
+      questions[i].classList.remove('question--unanswered');
+    }
+
+    if (unasweredQuestions.length) {
+      button.setAttribute('disabled', 'disabled');
+      unansweredMessage.classList.add('certification-test__unanswered--visible');
+      for(let i = 0; i < unasweredQuestions.length; i++) {
+        unasweredQuestions[i].classList.add('question--unanswered');
+      }
+    } else {
+      form.submit();
+    }
+  };
+
+  const validateForm = (elem) => {
+    const form = elem.querySelector('.certification-test__form');
+    const button = elem.querySelector('.certification-test__button');
+    const questions = form.querySelectorAll('.question');
+    const unansweredMessage = elem.querySelector('.certification-test__unanswered');
+    if (!(form && button && unansweredMessage && questions)) return;
+
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      checkFormUnanswered(form, button, questions, unansweredMessage);
+    });
+  };
+
   const getCertificationTest = async (user) => {
     if (!user) return;
     const token = user ? user.__raw : null;
@@ -141,6 +207,8 @@ const certificationTest = (() => {
       renderForm(formData, elem);
       makeAnswersInteractive(elem);
       persistFormState(elem);
+      observeQuestions(elem);
+      validateForm(elem);
     } else if (formData.code === 401) {
       elem.innerHTML = `Access in now allowed.`;
     } else {
@@ -164,8 +232,7 @@ const certificationTest = (() => {
   const getInfo = async () => {
     const container = document.querySelector('[data-certification-test]');
     if (container) {
-      const user = await auth0.ensureUserSignedIn();
-      if (user) {
+      if (window.user) {
         await getCertificationTest(user);
         window.helper.startTimer('[data-timer]');
       } else {

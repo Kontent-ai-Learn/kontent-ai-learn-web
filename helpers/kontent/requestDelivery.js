@@ -151,6 +151,9 @@ const componentsResolvers = [{
 }, {
     type: 'training_answer_for_survey_and_test',
     resolver: resolveRichText.answer
+}, {
+    type: 'training_course2',
+    resolver: resolveRichText.trainingCourse
 }];
 
 const richTextResolver = (item, config) => {

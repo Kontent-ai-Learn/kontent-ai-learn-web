@@ -4,7 +4,7 @@ block content
         .article
             .article__content&attributes(smartLink?.itemId(itemId))
                 h1&attributes(smartLink?.elementCodename('title')) !{title}
-                p(data-error-search-title)&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___404_page_results')) !{UIMessages.search___404_page_results.value}
+                p(data-error-search-title)&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___404_page_results')) !{helper.getValue(UIMessages, 'search___404_page_results')}
                 .article__search(data-error-search) 
                 div&attributes(smartLink?.elementCodename('content')) !{postprocessMarkup(content, res)} 
     script console.log(`#{req.err.stack.replace(/\\/g, '/')}`);

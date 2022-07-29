@@ -5,13 +5,13 @@
   max-width: 900px;
   background-color: #fff;
 
-  @media screen and (min-width: 480px) {
+  @media screen and (min-width: 568px) {
     display: flex;
     align-items: stretch;
   }
 
 	&__img {
-    @media screen and (min-width: 480px) {
+    @media screen and (min-width: 568px) {
       width: 33.3333%;
     }
 
@@ -19,13 +19,14 @@
       object-fit: cover;
       width: 100%;
       height: 100%;
+      margin: 0;
     }
 	}
 
 	&__content {
     padding: 24px 36px 32px;
 
-    @media screen and (min-width: 480px) {
+    @media screen and (min-width: 568px) {
       width: 66.6666%;
       padding: 48px 48px 32px;
     }
@@ -33,26 +34,33 @@
     @media screen and (min-width: 1024px) {
       padding: 64px 64px 36px;
     }
+
+    p {
+      padding: 0;
+    }
 	}
 
 	&__title {
     font-size: 24px;
     font-weight: 700;
     margin: 0 0 .375em;
+    display: block;
+    line-height: 1.125em;
 
-    @media screen and (min-width: 480px) {
-      font-size: 32px;
+    @media screen and (min-width: 568px) {
+      font-size: 28px;
       margin: 0 0 .375em;
     }
 
     @media screen and (min-width: 1024px) {
       margin: 0 0 .5em;
+      font-size: 32px;
     }
 	}
 
 	&__tag, 
   & .card__tag {
-    background-color: #F05A22;
+    background-color: #6552C4;
     color: #fff;
     font-size: 12px;
     padding: .375em .875em;
@@ -62,7 +70,7 @@
     position: relative;
     top: -.375em; 
 
-    @media screen and (min-width: 480px) {
+    @media screen and (min-width: 568px) {
       font-size: 14px;
       padding: .5em 1em;
       margin: 0 0 0 1.25em;
@@ -70,7 +78,7 @@
     }
 
 		&--green {
-      background-color: #44B77A;
+      background-color: #3DCCA8;
 		}
 
 	}
@@ -78,26 +86,27 @@
 	&__description {
     margin: 0 0 1.25em;
 
-    @media screen and (min-width: 480px) {
+    @media screen and (min-width: 568px) {
       margin: 0 0 1.5em;
     }
 
     @media screen and (min-width: 1024px) {
-      pmargin: 0 0 1.75em;
+      margin: 0 0 1.75em;
     }
 	}
 
   &__cta {
     font-weight: 700;
-    border: 2px solid #41D9C5;
+    border: 2px solid #3DCCA8;
     border-radius: 24px;
     padding: .5em 1.75em;
-    color: #231F20;
+    color: #231F20 !important;
     text-decoration: none;
     display: inline-block;
     position: relative;
     overflow: hidden;
     transition: color .4s ease-in-out;
+    text-decoration: none !important;
 
     &:after {
       content: ' →';
@@ -125,10 +134,10 @@
     }
 
     &:hover {
-      color: #fff;
+      color: #fff !important;
 
       &:after {
-        color: #41D9C5;
+        color: #3DCCA8;
       }
 
       span {
@@ -136,6 +145,112 @@
           width: 1000px;
           height: 1000px;
         }
+      }
+    }
+  }
+
+  &--article {
+    margin: .5em 0 1.5em;
+    display: block;
+
+    @media screen and (min-width: 568px) {
+      display: flex;
+    }
+
+    @media screen and (min-width: 768px) {
+      display: block;
+    }
+
+    @media screen and (min-width: 992px) {
+      display: flex;
+    }
+
+    .tile__description {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+
+      p {
+        display: none;
+        
+        &:first-child {
+          display: block;
+        }
+      }
+    }
+
+    .tile__img {
+      width: 100%;
+
+      img {
+        max-height: 200px;
+      }
+
+      @media screen and (min-width: 568px) {
+        width: 33.3333%;
+
+        img {
+          max-height: none;
+        }
+      }
+
+      @media screen and (min-width: 768px) {
+        width: 100%;
+
+        img {
+          max-height: 200px;
+        }
+      }
+
+      @media screen and (min-width: 992px) {
+        width: 33.3333%;
+        
+        img {
+          max-height: none;
+        }
+      }
+    }
+
+    .tile__tag {
+      padding: 0.375em 1em;
+      top: -.25em;
+      margin: 0 0 0 .875em;
+    }
+
+    .tile__content {
+      padding: 32px 24px;
+      width: 100%;
+      box-sizing: border-box;
+
+      @media screen and (min-width: 568px) {
+        width: 66.6666%;
+        padding: 32px 36px;
+      }
+
+      @media screen and (min-width: 768px) {
+        width: 100%;
+      }
+
+      @media screen and (min-width: 992px) {
+        width: 66.6666%;
+      }
+    }
+
+    .tile__title {
+      font-size: 1.375em;
+      line-height: 1.25em;
+
+      @media screen and (min-width: 568px) {
+        font-size: 1.5em;
+      }
+
+      @media screen and (min-width: 768px) {
+        font-size: 1.675em;
+      }
+
+      @media screen and (min-width: 992px) {
+        font-size: 1.75em;
       }
     }
   }

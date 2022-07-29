@@ -18,17 +18,19 @@
         padding: 0 1em;
         max-width: 1260px;
         text-align: center;
+        position: relative;
     }
 
     &__heading {
         font-size: 2.25em;
-        margin: 0 0 .675em;
+        padding:  .25em 0 .675em;
         font-weight: 700;
         color: #231F20;
 
         &:after {
             content: '.';
-            color: #F05A22;
+            color: #3DCCA8;
+            text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
         }
 
         @media screen and (min-width: 768px) {
@@ -67,7 +69,7 @@
             font-size: 1.25em;
             -webkit-appearance: none;
             color: #231F20;
-            font-family: 'GT Walsheim Pro', Helvetica, Arial, sans-serif;
+            font-family: 'Work Sans', Helvetica, Arial, sans-serif;
             padding: 1em 1em 1em 3.5em;
             line-height: 1.25em;
             width: 100%;
@@ -95,45 +97,90 @@
             }
 
             &:focus {
-                border-color: #41D9C5;
+                border-color: #3DCCA8;
             }
         }
     }
 
     &__note-link {
-        @media screen and (min-width: 568px) {
-            text-align: left;
+        border-radius: 8px 20px 20px 20px;
+        border: 3px solid #E8E8E8;
+        box-shadow: 0 0 24px 0 rgba(35, 31, 32, .1);
+        padding: 1.25em 1.5em;
+        background-color: #fff;
+        color: #231F20;
+        text-align: left;
+        width: 100%;
+        max-width: 335px;
+        box-sizing: border-box;
+        font-size: .875em;
+        
+        strong {
+            display: block;
         }
 
         a {
-            color: #908E8F;
-            margin: 0 0 2em;
+            color: #231F20;
+            line-height: 1.5em;
             display: inline-block;
-            font-size: 1em;
-            text-decoration: underline;
-            line-height: 1.375em;
 
-            @media screen and (min-width: 568px) {
+            &:hover {
                 text-decoration: none;
-                border-bottom: 1px solid #908E8F;
-                margin: 0 0 4em;
-            }
-    
-            &:hover,
-            &:active {
-                text-decoration: none;
-                border-bottom: 1px solid transparent;
             }
         }
 
-        strong {
-            font-weight: 400;
-            font-size: 1em;
-
-            @media screen and (min-width: 568px) {
-                font-size: 1.125em;
-            }
+        &[data-note-link] {
+            opacity: 0;
+            transform: scale(.5);
+            transform-origin: top left;
+            transition: .5s transform, .5s opacity;
         }
+
+        &[data-note-link="active"] {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        [data-note-link-close] {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            transform: rotate(45deg);
+            position: absolute;
+            top: .5em;
+            right: .5em; 
+
+            &::before,
+            &::after {
+                content: '';
+                background-color: #a7a5a5;
+                position: absolute;
+                transition: .25s background-color;
+            }
+
+            &::before {
+                left: 5px;
+                right: 5px;
+                top: 50%;
+                height: 2px;
+                transform: translateY(-1px);
+            }
+
+            &::after {
+                top: 5px;
+                bottom: 5px;
+                left: 50%;
+                width: 2px;
+                transform: translateX(-1px);
+            }
+
+            &:hover {
+                &::before,
+                &::after {
+                    background-color: #231F20;
+                }
+            }
+        }   
     }
 
     &__search-icon {
@@ -163,7 +210,7 @@
             background-position: center center;
             background-repeat: no-repeat;
             background-size: contain;
-            background-image: url('../img/ui/magnifier-orange.svg');
+            background-image: url('../img/ui/magnifier.svg');
         }
     }
 }

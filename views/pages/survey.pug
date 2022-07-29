@@ -1,6 +1,7 @@
 extends ../includes/layout.pug
 block content
     main(id='main', data-form-survey).survey
+      script var pathRoot=null;
       h1.survey__heading(data-survey='title')
       .survey__introduction(data-survey='introduction')
       .survey__questions(data-survey='questions')

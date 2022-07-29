@@ -4,10 +4,11 @@ const getContent = require('../helpers/kontent/getContent');
 const recaptcha = require('../helpers/services/recaptcha');
 const jira = require('../helpers/services/jira');
 const cacheHandle = require('../helpers/cache/handle');
+const helper = require('../helpers/general/helper')
 
 const setFalseValidation = (validation, property, UIMessages) => {
     validation.isValid = false;
-    validation[property] = UIMessages[0].form_field_validation___empty_field.value;
+    validation[property] = helper.getValue(UIMessages[0], 'form_field_validation___empty_field');
     return validation;
 };
 
@@ -15,7 +16,7 @@ const validateReCaptcha = async (validation, data, UIMessages) => {
     const isRealUser = await recaptcha.checkv2(data);
     if (!isRealUser) {
         validation.isValid = false;
-        validation['g-recaptcha-response'] = UIMessages[0].form_field_validation___recaptcha_message.value;
+        validation['g-recaptcha-response'] = helper.getValue(UIMessages[0], 'form_field_validation___recaptcha_message');
     }
     return validation;
 };
@@ -36,7 +37,7 @@ const validateDataFeedback = async (data, res) => {
     validation = await validateReCaptcha(validation, data, UIMessages);
 
     if (validation.isValid) {
-        validation.success = UIMessages[0].feedback_form___yes_message.value;
+        validation.success = helper.getValue(UIMessages[0], 'feedback_form___yes_message');
         await jira.createIssue(data);
     }
 

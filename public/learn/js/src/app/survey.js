@@ -22,13 +22,19 @@ const survey = (() => {
       [window.userElearningData, window.userProfile] = await Promise.all([submitData(data, token), landingPage.requestUserProfile(token)]);
       const response = window.userElearningData || {};
 
+      if (response.certificate) {
+        if (response.certificate.issued) {
+          response.certificate.issued = response.certificate.issued.split('/').map(x => parseInt(x));
+        }
+        if (response.certificate.expiration) {
+          response.certificate.expiration = response.certificate.expiration.split('/').map(x => parseInt(x));
+        }
+      }
+
       if (afterElem) {
         afterElem.innerHTML = `
           <div class="survey__thanks">${response.messages.thank_you}</div>
-          <div class="survey__certificate">
-            <a href="${response.certificate.url}" target="_blank">${UIMessages.downloadCertificate}</a>
-            <a href="${`https://www.linkedin.com/profile/add?startTask=${response.certificate.name}&name=${response.certificate.name}&organizationId=373060&issueYear=${response.certificate.issued[0]}&issueMonth=${response.certificate.issued[1]}&${response.certificate.expiration ? `expirationYear=${response.certificate.expiration[0]}&expirationMonth=${response.certificate.expiration[1]}` : ''}&certUrl=${!response.certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${response.certificate.url}`}" target="_blank">${window.UIMessages.addToLinkedIn}</a>
-          </div>
+          ${response.certificate ? `<div class="survey__certificate"><a href="${response.certificate.url}" target="_blank">${UIMessages.downloadCertificate}</a><a href="${`https://www.linkedin.com/profile/add?startTask=${response.certificate.name}&name=${response.certificate.name}&organizationId=373060&issueYear=${response.certificate.issued[0]}&issueMonth=${response.certificate.issued[1]}&${response.certificate.expiration ? `expirationYear=${response.certificate.expiration[0]}&expirationMonth=${response.certificate.expiration[1]}` : ''}&certUrl=${!response.certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${response.certificate.url}`}" target="_blank">${window.UIMessages.addToLinkedIn}</a></div>` : ''}
           <div class="survey__message">${response.messages.cta_message}</div>
           <div class="survey__courses${response.courses.length < 3 ? ' survey__courses--no-arrows' : ''}">
             <div class="splide">
@@ -45,7 +51,7 @@ const survey = (() => {
                                 ${item.personas.map(persona => `<li class="card__tag" data-lp-persona="${persona.codename}">${persona.name}</li>`).join('')}        
                               </ul>
                               <h3 class="card__title" data-lp-lightbox-data="title">
-                                ${item.title}
+                                <span class="card__title-text">${item.title}</span>
                                 ${item.isFree ? `<span data-lp-lightbox-data="free" class="card__tag card__tag--green">${item.freeLabel}</span>` : ''}
                               </h3>
                               <div class="card__description" data-lp-lightbox-data="description">${item.description}</div>
@@ -241,7 +247,6 @@ const survey = (() => {
   const getInfo = async () => {
     const container = document.querySelector('[data-form-survey]');
     if (container) {
-      window.user = await auth0.ensureUserSignedIn();
       if (window.user) {
         await getSurvey(container);
       } else {

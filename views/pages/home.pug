@@ -3,12 +3,12 @@ block content
     .utilities-hero-bg&attributes(smartLink?.itemId(itemId))
         .hero
             .hero__wrapper
-                div.hero__note-link&attributes(smartLink?.elementCodename('intro_note')) !{postprocessMarkup(introNote, res)}
+                .hero__note-link(data-note-link)&attributes(smartLink?.elementCodename('intro_note')) !{postprocessMarkup(introNote, res)}
                 h1.hero__heading&attributes(smartLink?.elementCodename('title')) !{title}
                 form.hero__search(data-search-container='')
                     .hero__search-icon(aria-hidden='true')
-                    label.sr-only(for='nav-search') !{UIMessages && UIMessages.search___placeholder.value}
-                    input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages && UIMessages.search___placeholder.value)&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
+                    label.sr-only(for='nav-search') !{UIMessages && helper.getValue(UIMessages, 'search___placeholder')}
+                    input(type='search', id='nav-search', name='nav-search', autocomplete="off", placeholder= UIMessages && helper.getValue(UIMessages, 'search___placeholder'))&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('search___placeholder'))
                     .autocomplete(data-search-autocomplete='')
         main(id='main')&attributes(smartLink?.elementCodename('signposts')).presentation
             | !{postprocessMarkup(signposts, res)}

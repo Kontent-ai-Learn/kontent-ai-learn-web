@@ -10,7 +10,7 @@ const recaptcha = {
 
             const response = await axios({
                 method: 'post',
-                url: `https://www.google.com/recaptcha/api/siteverify?secret=${settings.secret}response=${settings.response}`
+                url: `https://www.google.com/recaptcha/api/siteverify?secret=${settings.secret}&response=${settings.response}`
             });
 
             if (response.data.success === true) {

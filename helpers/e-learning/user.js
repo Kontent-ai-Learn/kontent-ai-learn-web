@@ -14,7 +14,7 @@ const getTrainingUser = async (email, res) => {
 };
 
 const userHasElearningAccess = async (user, res) => {
-  if (user.email.endsWith('@kentico.com') || user.isTrainigUser) {
+  if (user.email.endsWith('@kentico.com') || user.email.endsWith('@kontent.ai') || user.isTrainigUser) {
     return true;
   }
 
@@ -60,7 +60,7 @@ const getSubscriptionServiceUser = async (email) => {
       }
     });
   } catch (error) {
-    if (email.endsWith('@kentico.com')) return null;
+    if (email.endsWith('@kentico.com') || email.endsWith('@kontent.ai')) return null;
     if (!error.response) {
       error.response = {
         data: {
@@ -75,7 +75,7 @@ const getSubscriptionServiceUser = async (email) => {
     errorEmail.send({
       recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
       subject: 'Unable to obtain user form Subscription Service',
-      content: error.response.data.message
+      content: error.response.data
     });
     errorAppInsights.log('SUBSCRIPTION_SERVICE_ERROR', error);
 

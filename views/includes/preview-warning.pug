@@ -2,6 +2,6 @@ if (process.env.isProduction === 'false')
     .preview-warning&attributes(smartLink?.itemId(UIMessages.system.id))
         .preview-warning__container
             if (!isPreview)
-                div&attributes(smartLink?.elementCodename('banner_for_dev_environment')) !{UIMessages.banner_for_dev_environment.value}
+                div&attributes(smartLink?.elementCodename('banner_for_dev_environment')) !{helper.getValue(UIMessages, 'banner_for_dev_environment')}
             else
-                div&attributes(smartLink?.elementCodename('banner_for_preview_environment')) !{UIMessages.banner_for_preview_environment.value}
+                div&attributes(smartLink?.elementCodename('banner_for_preview_environment')) !{helper.getValue(UIMessages, 'banner_for_preview_environment')}

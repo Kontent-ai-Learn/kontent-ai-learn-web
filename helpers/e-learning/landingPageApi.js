@@ -6,10 +6,11 @@ const getUrlMap = require('../general/urlMap');
 const isPreview = require('../kontent/isPreview');
 const { isCodenameInMultipleChoice } = require('../general/helper');
 const certificationDetail = require('../certification/detail');
+const helper = require('../general/helper');
 
 const getScormRegistration = (id, registrations) => {
   for (let i = 0; i < registrations.length; i++) {
-    const courseId = registrations[i].course.id.replace('dev_', '').replace('_preview', '');
+    const courseId = registrations[i].courseId.replace('dev_', '').replace('_preview', '');
     if (courseId === id) {
       return registrations[i];
     }
@@ -19,9 +20,9 @@ const getScormRegistration = (id, registrations) => {
 
 const getCertificate = (registration, course) => {
   if (!registration) return null;
-  if (registration.activityDetails?.activityCompletion === 'COMPLETED') {
+  if (registration.status === 'COMPLETED') {
     return {
-      url: `/learn/get-certified/course/${registration.id}/certificate/`,
+      url: `/learn/get-certified/course/${registration.registrationId}/certificate/`,
       name: course.title.value,
       issued: moment(registration.completedDate).format('YYYY/MM/DD'),
       expiration: null,
@@ -35,25 +36,24 @@ const getCourseUrl = (registration, course, urlMap) => {
   if (!mapItem) return null;
 
   if (registration) {
-    return `${mapItem.url}?id=${registration.id}`;
+    return `${mapItem.url}?id=${registration.registrationId}`;
   } else {
     return `${mapItem.url}?enroll`;
   }
 };
 
 const getLabel = (registration, UIMessages, res) => {
-  if (!registration) return UIMessages.training___cta_start_course.value;
-  let codename = registration.activityDetails?.activityCompletion;
-
   if (isPreview(res.locals.previewapikey)) {
-    codename = 'PREVIEW';
+    return helper.getValue(UIMessages, 'training___cta_preview_course');
   }
 
+  if (!registration) return helper.getValue(UIMessages, 'training___cta_start_course');
+  const codename = registration.status;
+
   switch (codename) {
-    case 'PREVIEW': return UIMessages.training___cta_preview_course.value
-    case 'COMPLETED': return UIMessages.training___cta_revisit_course.value;
-    case 'INCOMPLETE': return UIMessages.training___cta_resume_course.value;
-    default: return UIMessages.training___cta_start_course.value;
+    case 'COMPLETED': return helper.getValue(UIMessages, 'training___cta_revisit_course');
+    case 'INCOMPLETE': return helper.getValue(UIMessages, 'training___cta_resume_course');
+    default: return helper.getValue(UIMessages, 'training___cta_start_course');
   }
 };
 
@@ -62,7 +62,7 @@ const getProgress = (registration, UIMessages, res) => {
   if (!registration) {
     messageCodename = 'training___course_status_unknown';
   } else {
-    let codename = registration.activityDetails?.activityCompletion;
+    let codename = registration.status;
 
     if (isPreview(res.locals.previewapikey)) {
       codename = 'PREVIEW';
@@ -91,43 +91,46 @@ const init = async (req, res) => {
   });
   const UIMessages = UIMessagesObj && UIMessagesObj.length ? UIMessagesObj[0] : null;
 
-  const state = {};
+  const state = {
+    courses: [],
+    exams: []
+  };
+
   if (!req?.user?.email) return { message: 'User is not authenticated.' };
   const user = await elearningUser.getUser(req.user.email, res);
 
   if (user.code) {
     if (user.code === 'CR404') {
       state.code = 1; // User is not available in Subscription service
-      state.message = UIMessages.sign_in_error_subscription_missing_text.value;
+      state.message = helper.getValue(UIMessages, 'sign_in_error_subscription_missing_text');
     } else {
       state.code = 2; // Unknown error
-      state.message = UIMessages.sign_in_error_text.value;
+      state.message = helper.getValue(UIMessages, 'sign_in_error_text');
     }
     return state;
   }
 
   if (!await elearningUser.userHasElearningAccess(user, res)) {
     state.code = 3; // User has not e-learning access
-    state.message = UIMessages.training___cta_buy_course.value;
+    state.message = helper.getValue(UIMessages, 'training___cta_buy_course');
   }
 
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
     return await getContent.trainingCourse(res);
   });
-  const userRegistartions = await elearningRegistration.getUserRegistrations(user.email);
+  const userRegistartions = await elearningRegistration.getUserRegistrations(user.email, res);
 
   if (!state.code) {
     state.code = 4; // User has e-learning access;
     state.message = '';
   }
-  state.courses = [];
 
   const lastAccess = userRegistartions
-  .filter(item => item.lastAccessDate && item.activityDetails?.activityCompletion !== 'COMPLETED')
+  .filter(item => item.lastAccessDate && item.status !== 'COMPLETED')
   .sort((a, b) => {
     return new Date(b.lastAccessDate) - new Date(a.lastAccessDate);
   });
-  const lastAccessId = lastAccess?.[0]?.course.id.replace('dev_', '').replace('_preview', '');
+  const lastAccessId = lastAccess?.[0]?.courseId.replace('dev_', '').replace('_preview', '');
 
   for (let i = 0; i < trainingCourses.length; i++) {
     const isFree = isCodenameInMultipleChoice(trainingCourses[i].is_free.value, 'yes');
@@ -147,14 +150,15 @@ const init = async (req, res) => {
     })
   }
 
-  const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
-    return await getContent.certificationTest(res);
-  });
+  if (state.code === 4) {
+    const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
+      return await getContent.certificationTest(res);
+    });
 
-  state.exams = [];
-  for await (const test of certificationTests.items) {
-    const exam = await certificationDetail.getCertificationInfo(user, test);
-    state.exams.push(exam);
+    for await (const test of certificationTests.items) {
+      const exam = await certificationDetail.getCertificationInfo(user, test);
+      state.exams.push(exam);
+    }
   }
 
   return state;

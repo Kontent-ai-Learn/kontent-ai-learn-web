@@ -5,10 +5,10 @@ const get = async (email) => {
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_PROFILE);
     const query = {
-        query: 'SELECT * FROM c WHERE c.email = @email',
+        query: 'SELECT * FROM c WHERE LOWER(c.email) = @email',
         parameters: [{
           name: '@email',
-          value: email
+          value: email.toLowerCase()
         }]
     };
 
@@ -29,8 +29,10 @@ const createUpdate = async (email, body) => {
     if (user && user.email) {
       const itemToUpdate = await db.item(user.id);
       body.id = user.id;
+      body._partitionKey = email.toLowerCase();
       data = await itemToUpdate.replace(body);
     } else {
+      body._partitionKey = email.toLowerCase();
       data = await db.items.create(body);
     }
 

@@ -114,7 +114,6 @@ const purgeAllUrls = async (res) => {
   for (let i = 0; i < uniqueUrls.length; i++) {
     await axiosPurge(validDomain, uniqueUrls[i]);
   }
-  await axiosPurge(validDomain, '/learn/redirect-urls');
 };
 
 const purgeAllTechUrls = async (res) => {
@@ -155,6 +154,10 @@ const purgeFinal = async (itemsByTypes, req, res) => {
   let allUrlsPurged = false;
   const axiosDomain = getDomain();
 
+  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
+    return await getUrlMap(res);
+  });
+
   if (itemsByTypes.releaseNotes.length && req.app.locals.changelogPath) {
     await axiosPurge(axiosDomain, req.app.locals.changelogPath);
 
@@ -169,8 +172,13 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     allUrlsPurged = true;
   }
 
-  if (itemsByTypes.trainingCourses.length && req.app.locals.elearningPath) {
-    await axiosPurge(axiosDomain, req.app.locals.elearningPath);
+  if (itemsByTypes.trainingCourses.length ||
+      itemsByTypes.trainingCertificationTests.length ||
+      itemsByTypes.landingPages.length
+    ) {
+    urlMap.filter((item) => item.type === 'landing_page').forEach(async (item) => {
+      await axiosPurge(axiosDomain, item.url);
+    });
   }
 
   if (itemsByTypes.trainingSurveys.length) {
@@ -185,7 +193,12 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     }
   }
 
-  if (itemsByTypes.articles.length || itemsByTypes.apiSpecifications.length || itemsByTypes.redirectRules.length) {
+  if (itemsByTypes.articles.length ||
+      itemsByTypes.apiSpecifications.length ||
+      itemsByTypes.trainingCertificationTests.length ||
+      itemsByTypes.landingPages.length ||
+      itemsByTypes.trainingCourses.length ||
+      itemsByTypes.redirectRules.length) {
     await axiosPurge(axiosDomain, '/learn/redirect-urls');
   }
 
@@ -195,7 +208,7 @@ const purgeFinal = async (itemsByTypes, req, res) => {
     }
   }
 
-  if (itemsByTypes.home.length && !allUrlsPurged) {
+  if ((itemsByTypes.home.length || itemsByTypes.UIMessages.length) && !allUrlsPurged) {
     await purgeAllUrls(res);
     allUrlsPurged = true;
   }
@@ -219,7 +232,7 @@ const preventCaching = (res) => {
 const handleGlobalCaching = (req, res) => {
   res.setHeader('Arr-Disable-Session-Affinity', 'True');
 
-  if (req.originalUrl.startsWith('/learn/cache-invalidate') || req.originalUrl.startsWith('/learn/redirect-urls') || req.originalUrl.startsWith('/learn/service-check')) {
+  if (req.originalUrl.startsWith('/learn/cache-invalidate') || req.originalUrl.startsWith('/learn/service')) {
     res.setHeader('Cache-Control', 'no-store, max-age=0');
   } else {
     res.setHeader('Cache-Control', 'max-age=60');

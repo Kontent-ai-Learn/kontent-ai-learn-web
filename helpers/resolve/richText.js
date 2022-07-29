@@ -6,6 +6,7 @@ const {
     generateAnchor,
     getPrismClassName,
     injectHTMLAttr,
+    isCodenameInMultipleChoice,
     isNotEmptyRichText,
     removeNewLines,
     removeQuotes,
@@ -378,7 +379,6 @@ const richText = {
             const imageHeight = item.image.value[0] ? item.image.value[0]?.contract?.renditions?.default?.height || item.image.value[0].height || 0 : 0;
             const openLinkTag = url ? `<a href="${url}" target="_blank" class="no-icon"${getSmartLinkAttr(config, 'url', 'element')}>` : '';
             const closeLinkTag = url ? '</a>' : '';
-            const placeholderSrc = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="${item.image.value[0].width}" height="${item.image.value[0].height}"></svg>`;
             const attributes = getImageAttributes(item, cssClass);
 
             if (item.image.value[0].url.endsWith('.gif')) {
@@ -399,7 +399,7 @@ const richText = {
             return `
                 <figure${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
                     ${openLinkTag}
-                        <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src='${placeholderSrc}' data-src="${item.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-image' : ''}>
+                    <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src="${item.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-image' : ''}>
                     ${closeLinkTag}
                     <noscript>
                         ${openLinkTag}
@@ -631,7 +631,34 @@ const richText = {
                         </div>
                     </div>
                 </div>`;
-    }
+    },
+    trainingCourse: (item, config) => {
+        const urlMapItem = config.urlMap.find(elem => elem.codename === item.system.codename);
+        let url = '#';
+        if (urlMapItem) url = urlMapItem.url;
+        const isFree = item.is_free ? isCodenameInMultipleChoice(item.is_free.value, 'yes') : false;
+        return `<div class="tile tile--article"${getSmartLinkAttr(config, item.system.id, 'item')}>
+                    ${item.thumbnail && item.thumbnail.value.length
+                        ? `
+                        <div class="tile__img"${getSmartLinkAttr(config, 'thumbnail', 'element')}>
+                            <img src="${item.thumbnail.value[0].url}">
+                        </div>
+                        `
+                    : ''}
+                    <div class="tile__content">
+                        <span role="heading" class="tile__title"${getSmartLinkAttr(config, 'title', 'element')}>
+                            ${item.title.value}${isFree ? '<span class="tile__tag tile__tag--green">Free</span>' : ''}
+                        </span>
+                        <div class="tile__description"${getSmartLinkAttr(config, 'description', 'element')}>
+                            ${isNotEmptyRichText(item.description.value) ? item.description.value : ''}
+                        </div>
+                        <a class="tile__cta" href="${url}"> 
+                            <span>View details</span>
+                            <span></span>
+                        </a>
+                    </div>
+                </div>`;
+    },
 };
 
 module.exports = richText;

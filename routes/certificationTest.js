@@ -182,7 +182,8 @@ router.get('/exam/:attemptid/certificate/pdf', asyncHandler(async (req, res, nex
   return res.render('certificate/exam', {
     UIMessages: UIMessages?.[0],
     attempt: attempt,
-    moment: moment
+    moment: moment,
+    helper: helper
   });
 }));
 
@@ -238,7 +239,8 @@ router.get('/course/:registrationId/certificate/pdf', asyncHandler(async (req, r
 
   return res.render('certificate/course', {
     registrationData: registrationData,
-    moment: moment
+    moment: moment,
+    helper: helper
   });
 }));
 

@@ -4,12 +4,12 @@ html(lang='en')
       include style.pug
     body
       - let title = attempt.test.title;
-      - const productName = UIMessages.product_name.value;
+      - const productName = helper.getValue(UIMessages, 'product_name');
       - if (attempt.test.title.startsWith(productName)) title = title.replace(productName, '').trim()
       .certificate
         .certificate__top
           .certificate__logo
-            img(src='/learn/img/ui/logo-kontent.svg')
+            img(src='/learn/img/ui/logo-kontent.svg?v=1')
           .certificate__text.certificate__text--bold Certificate
           .certificate__name !{productName} !{title}
             span .
@@ -17,8 +17,8 @@ html(lang='en')
           - const name = attempt.username || attempt.email;
           .certificate__username !{name}
           - let text = 'has successfully completed the examination and is qualified to receive all benefits and recognition.';
-          - if (attempt.test.codename === 'developer_certification') text = 'has successfully completed the Certified Developer examination and is qualified to receive all benefits and recognition of a Kontent Certified Developer.';
-          - if (attempt.test.codename === 'business_qualification') text = 'has successfully completed the Business Qualification examination and has demonstrated an understanding of Kontent features and capabilities.';
+          - if (attempt.test.codename === 'developer_certification') text = 'has successfully completed the Certified Developer examination and is qualified to receive all benefits and recognition of a Kontent.ai Certified Developer.';
+          - if (attempt.test.codename === 'business_qualification') text = 'has successfully completed the Business Qualification examination and has demonstrated an understanding of Kontent.ai features and capabilities.';
           .certificate__text !{text}
         .certificate__bottom
           .certificate__column
@@ -29,10 +29,10 @@ html(lang='en')
             .certificate__label Valid to
           .certificate__column.certificate__column--wide
             .certificate__value
-              img(src='/learn/img/ui/signature-petr-palas.png')
+              img(src='/learn/img/ui/signature-bart-omlo.png')
             .certificate__label 
-              | Petr Palas, CEO
+              | Bart Omlo, CEO
               br
-              | Kentico Software
+              | Kontent.ai
           .certificate__id Certificate ID: !{attempt.id}
        
