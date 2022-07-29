@@ -123,6 +123,12 @@ const getRegistrationLink = async (registrationId, courseId) => {
   const data = {
     expiry: 300,
     redirectOnExitUrl: `${getDomain()}${redirectUrl}?courseid=${courseId}`,
+    launchAuth: {
+      options: {
+        ipAddress: false,
+        fingerprint: true
+      }
+    }
   };
   let linkData = {};
 
