@@ -234,7 +234,7 @@ gulp.task('css-app', () => {
       'public/learn/css/src/components/cta.less',
       'public/learn/css/src/components/button.less',
       'public/learn/css/src/components/feedback.less',
-      'public/learn/css/src/components/feedback-form.less',
+      'public/learn/css/src/components/lightbox-form.less',
       'public/learn/css/src/components/form.less',
       'public/learn/css/src/components/infobar.less',
       'public/learn/css/src/components/filter.less',

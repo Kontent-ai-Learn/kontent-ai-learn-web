@@ -4,9 +4,9 @@
     const yesMsg = document.querySelector('.feedback__message--yes');
     const noMsg = document.querySelector('.feedback__message--no');
     const btnArea = document.querySelector('.feedback__answer');
-    const form = document.querySelector('.feedback-form__form');
-    const wrapper = document.querySelector('.feedback-form');
-    const close = document.querySelector('.feedback-form__close');
+    const form = document.querySelector('.lightbox-form__form');
+    const wrapper = document.querySelector('.lightbox-form');
+    const close = document.querySelector('.lightbox-form__close');
     const posted = document.querySelector('.feedback--posted');
 
     const sendFeedback = (value) => {
@@ -50,8 +50,8 @@
         }
 
         if (form && value === 0) {
-            wrapper.classList.remove('feedback-form--hidden');
-            form.classList.remove('feedback-form__form--hidden');
+            wrapper.classList.remove('lightbox-form--hidden');
+            form.classList.remove('lightbox-form__form--hidden');
             window.helper.loadRecaptcha();
         }
     };
@@ -59,16 +59,16 @@
     const closeFeedback = () => {
         if (close) {
             close.addEventListener('click', () => {
-                wrapper.classList.add('feedback-form--hidden');
-                noBtn.classList.add('feedback-form__button--closed');
-                yesBtn.classList.add('feedback-form__button--closed');
+                wrapper.classList.add('lightbox-form--hidden');
+                noBtn.classList.add('lightbox-form__button--closed');
+                yesBtn.classList.add('lightbox-form__button--closed');
             });
         }
     };
 
     if (wrapper) {
         wrapper.addEventListener('click', (event) => {
-            if (event.target && !event.target.matches('.feedback-form__response-wrapper') && !event.target.matches('.feedback-form__response-wrapper *')) {
+            if (event.target && !event.target.matches('.lightbox-form__response-wrapper') && !event.target.matches('.lightbox-form__response-wrapper *')) {
                 close.click();
             }
         });
@@ -84,14 +84,14 @@
     }
 
     if (form && !posted) {
-        form.classList.add('feedback-form__form--hidden');
+        form.classList.add('lightbox-form__form--hidden');
     }
 
     if (posted) {
         onBtnClick(noBtn, noMsg, 0);
 
         if (form) {
-            form.classList.remove('feedback-form__form--hidden');
+            form.classList.remove('lightbox-form__form--hidden');
         }
     }
 

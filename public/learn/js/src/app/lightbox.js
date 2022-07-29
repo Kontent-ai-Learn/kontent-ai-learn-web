@@ -171,13 +171,16 @@
           item.addEventListener('click', (e) => {
             e.preventDefault();
             if (!window.kontentSmartLinkEnabled) {
-              const itemToZoom = '<div class="iframe-box"><div class="iframe-box__close"></div><iframe width="240" height="145" src="https://tracker.kontent.ai/l/849473/2020-04-21/4qsx" /></div>';
+              const itemToZoom = `<div class="form-box">
+                  <div class="form-box__close"></div>
+                  Content goes here
+                </div>`;
 
               if (itemToZoom) {
                 instance = window.basicLightbox.create(itemToZoom);
                 instance.show();
                 registerCloseOnEsc(instance);
-                registerCloseOnElemClick(instance, '.iframe-box__close');
+                registerCloseOnElemClick(instance, '.form-box__close');
               }
             }
           });

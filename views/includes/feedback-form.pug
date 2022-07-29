@@ -12,13 +12,13 @@ mixin textarea(id, label)
         if label
             label.form__label(for=id)&attributes(smartLink?.elementCodename('feedback_form___feedback_label')) #{label}
         +error(id)
-.feedback-form.feedback-form--hidden
-    .feedback-form__response-wrapper
-        .feedback-form__close
-        form.feedback-form__form.form&attributes(smartLink?.itemId(UIMessages.system.id))
-            .feedback__message#noMsg.feedback__message--no&attributes(smartLink?.elementCodename('feedback_form___no_message')) !{UIMessages.feedback_form___no_message.value}
-            +textarea('feedback', UIMessages.feedback_form___feedback_label.value)
-            +input('email', 'email', UIMessages.feedback_form___email_label.value)
+.lightbox-form.lightbox-form--hidden
+    .lightbox-form__response-wrapper
+        .lightbox-form__close
+        form.lightbox-form__form.form&attributes(smartLink?.itemId(UIMessages.system.id))
+            .feedback__message#noMsg.feedback__message--no&attributes(smartLink?.elementCodename('feedback_form___no_message')) !{helper.getValue(UIMessages, 'feedback_form___no_message')}
+            +textarea('feedback', helper.getValue(UIMessages, 'feedback_form___feedback_label'))
+            +input('email', 'email', helper.getValue(UIMessages, 'feedback_form___email_label'))
             .form__row
                 .form__recaptcha-disabled
                 #g-recaptcha-placeholder
