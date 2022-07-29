@@ -41,7 +41,7 @@ const getEmailInfo = async (attempt, codename, res) => {
 
   return {
     recipient: attempt.email,
-    sender_name: template.sender_name.value || 'Kontent Learn',
+    sender_name: template.sender_name.value || 'Kontent.ai Learn',
     subject: resolveMacros(template.subject.value, macros),
     text: makeLinksAbsolute(getDomain(), resolveMacros(template.content.value, macros)),
   };

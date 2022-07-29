@@ -17,8 +17,8 @@ html(lang='en')
           - const name = attempt.username || attempt.email;
           .certificate__username !{name}
           - let text = 'has successfully completed the examination and is qualified to receive all benefits and recognition.';
-          - if (attempt.test.codename === 'developer_certification') text = 'has successfully completed the Certified Developer examination and is qualified to receive all benefits and recognition of a Kontent Certified Developer.';
-          - if (attempt.test.codename === 'business_qualification') text = 'has successfully completed the Business Qualification examination and has demonstrated an understanding of Kontent features and capabilities.';
+          - if (attempt.test.codename === 'developer_certification') text = 'has successfully completed the Certified Developer examination and is qualified to receive all benefits and recognition of a Kontent.ai Certified Developer.';
+          - if (attempt.test.codename === 'business_qualification') text = 'has successfully completed the Business Qualification examination and has demonstrated an understanding of Kontent.ai features and capabilities.';
           .certificate__text !{text}
         .certificate__bottom
           .certificate__column
@@ -33,6 +33,6 @@ html(lang='en')
             .certificate__label 
               | Bart Omlo, CEO
               br
-              | Kontent.ia
+              | Kontent.ai
           .certificate__id Certificate ID: !{attempt.id}
        
