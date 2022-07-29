@@ -68,7 +68,7 @@ const getAttempt = async (id) => {
   return attempt;
 };
 
-const createAttempt = async (body, user, survey) => {
+const createAttempt = async (body, user, survey, trainingCourse) => {
   const { email, courseid } = body;
   let attempt = null;
 
@@ -83,7 +83,8 @@ const createAttempt = async (body, user, survey) => {
       codename: survey.items[0].system.codename,
       email: email,
       course_id: courseid,
-      username: user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : email,
+      course_title: trainingCourse?.title.value || '',
+      username: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : email,
       start: new Date().toISOString(),
       end: null,
       questions: questions,

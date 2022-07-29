@@ -1,5 +1,6 @@
 const surveyData = require('./data');
 const surveyDatabase = require('./database');
+const surveyEmail = require('./email');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const getUrlMap = require('../general/urlMap');
@@ -158,7 +159,7 @@ const init = async (req, res) => {
       }
     }
   }
-  const attempt = await surveyDatabase.createAttempt(req.body, user, survey);
+  const attempt = await surveyDatabase.createAttempt(req.body, user, survey, trainingCourse);
   let code, data;
 
   const content = {
@@ -186,6 +187,7 @@ const handle = async (body) => {
   if (!attempt) return null;
   attempt = surveyData.evaluateAttempt(body, attempt);
   surveyDatabase.updateAttempt(attempt);
+  surveyEmail.sendNotification(attempt);
 
   return attempt;
 };
