@@ -123,7 +123,9 @@ const prefillEmailAddressInForms = () => {
         emailInputs[i].value = window.user.email;
         if (emailInputs[i].classList.contains('form__input')) {
             emailInputs[i].classList.add('form__input--value');
-            emailInputs[i].parentNode.classList.add('hidden');
+            if (!emailInputs[i].hasAttribute('data-prevent-hiding-auth')) {
+                emailInputs[i].parentNode.classList.add('hidden');
+            }
             emailInputs[i].setAttribute('disabled', 'disabled');
             emailInputs[i].setAttribute('data-disabled', '');
             removeOptionalFromLabel(emailInputs[i]);

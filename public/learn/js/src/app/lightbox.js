@@ -20,14 +20,6 @@
     }, 250);
   };
 
-  const registerCloseOnElemClick = (instance, elemSelector) => {
-    document.querySelector(elemSelector).addEventListener('click', () => {
-      if (instance && instance.close) {
-        instance.close();
-      }
-    });
-  };
-
   const registerCloseOnEsc = (instance) => {
     document.onkeydown = function(e) {
       e = e || window.event;
@@ -159,35 +151,6 @@
       }
 
       initLightboxOnElemsAvailable('[data-lightbox-embed]', initLightbox);
-    }, 0);
-  };
-
-  const initLightboxOnChangelog = () => {
-    setTimeout(() => {
-      const initLightbox = () => {
-        document.querySelectorAll('[href="#subscribe-breaking-changes-email"]').forEach((item) => {
-          // Init lighbox with caption
-          let instance;
-          item.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (!window.kontentSmartLinkEnabled) {
-              const itemToZoom = `<div class="form-box">
-                  <div class="form-box__close"></div>
-                  Content goes here
-                </div>`;
-
-              if (itemToZoom) {
-                instance = window.basicLightbox.create(itemToZoom);
-                instance.show();
-                registerCloseOnEsc(instance);
-                registerCloseOnElemClick(instance, '.form-box__close');
-              }
-            }
-          });
-        });
-      }
-
-      initLightboxOnElemsAvailable('[href="#subscribe-breaking-changes-email"]', initLightbox);
     }, 0);
   };
 
@@ -366,7 +329,6 @@
 
   initLightboxOnImages();
   initLightboxOnEmbeds();
-  initLightboxOnChangelog();
   initLightboxOnVideos();
   initLightboxOnLandingPage();
 })();

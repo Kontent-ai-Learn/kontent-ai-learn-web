@@ -1,5 +1,5 @@
 (() => {
-    const formFeedback = document.querySelector('.lightbox-form__form');
+    const formFeedback = document.querySelector('[data-feedback-form] .lightbox-form__form');
     if (formFeedback) {
         const submitButtonFeedback = formFeedback.querySelector('.form__button');
         const recaptchaCoverFeedback = formFeedback.querySelector('.form__recaptcha-disabled');

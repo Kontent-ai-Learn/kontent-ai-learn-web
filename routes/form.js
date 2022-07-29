@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios');
 const getContent = require('../helpers/kontent/getContent');
 const recaptcha = require('../helpers/services/recaptcha');
 const jira = require('../helpers/services/jira');
 const cacheHandle = require('../helpers/cache/handle');
-const helper = require('../helpers/general/helper')
+const helper = require('../helpers/general/helper');
+const errorAppInsights = require('../helpers/error/appInsights');
 
 const setFalseValidation = (validation, property, UIMessages) => {
     validation.isValid = false;
@@ -44,6 +46,36 @@ const validateDataFeedback = async (data, res) => {
     return validation;
 };
 
+const validateDataChangelog = async (data, res) => {
+    const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+        return getContent.UIMessages(res);
+    });
+
+    let validation = {
+        isValid: true
+    };
+
+    if (!data.email) {
+        validation = setFalseValidation(validation, 'email', UIMessages);
+    }
+
+    validation = await validateReCaptcha(validation, data, UIMessages);
+
+    if (validation.isValid) {
+        validation.success = 'You have been successfully subscribed.';
+        try {
+            await axios({
+                method: 'get',
+                url: `${process.env.PARDOT_CHANGELOG_SUBSCRIBE_URL}?email=${data.email}`,
+            });
+        } catch (error) {
+            errorAppInsights.log('PARDOT_ERROR', error);
+        }
+    }
+
+    return validation;
+};
+
 const manageRequest = async (req, res, validate) => {
     const data = JSON.parse(req.body);
 
@@ -53,6 +85,10 @@ const manageRequest = async (req, res, validate) => {
 
 router.post('/feedback', async (req, res) => {
     return await manageRequest(req, res, validateDataFeedback);
+});
+
+router.post('/changelog', async (req, res) => {
+    return await manageRequest(req, res, validateDataChangelog);
 });
 
 module.exports = router;

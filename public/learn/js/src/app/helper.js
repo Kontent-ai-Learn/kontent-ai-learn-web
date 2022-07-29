@@ -307,6 +307,8 @@ window.helper = (() => {
     };
 
     const loadRecaptcha = () => {
+        if (window.grecaptcha) return;
+        
         const recaptchaElem = document.querySelector('#recaptcha-script');
         recaptchaKey = recaptchaElem.getAttribute('data-site');
 
