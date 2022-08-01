@@ -12,21 +12,20 @@ mixin textarea(id, label)
         if label
             label.form__label(for=id)&attributes(smartLink?.elementCodename('feedback_form___feedback_label')) #{label}
         +error(id)
-div(data-feedback-form)
-    .lightbox-form.lightbox-form--hidden
-        .lightbox-form__response-wrapper
-            .lightbox-form__close
-            form.lightbox-form__form.form&attributes(smartLink?.itemId(UIMessages.system.id))
-                .feedback__message#noMsg.feedback__message--no&attributes(smartLink?.elementCodename('feedback_form___no_message')) !{helper.getValue(UIMessages, 'feedback_form___no_message')}
-                +textarea('feedback', helper.getValue(UIMessages, 'feedback_form___feedback_label'))
-                +input('email', 'email', helper.getValue(UIMessages, 'feedback_form___email_label'))
-                .form__row
-                    .form__recaptcha-disabled
-                    #g-recaptcha-placeholder
-                    +error('g-recaptcha-response')
-                .form__row.form__row--btn
-                    button.form__button&attributes(smartLink?.elementCodename('feedback_form___submit_button'))
-                        span !{helper.getValue(UIMessages, 'feedback_form___submit_button')}
-                        span
-        if process.env['Recaptcha.v2.site']
-            #recaptcha-script(data-site=process.env['Recaptcha.v2.site'])
+.lightbox-form.lightbox-form--hidden(data-lightbox-form='feedback')
+    .lightbox-form__response-wrapper
+        .lightbox-form__close
+        form.lightbox-form__form.form&attributes(smartLink?.itemId(UIMessages.system.id))
+            .feedback__message#noMsg.feedback__message--no&attributes(smartLink?.elementCodename('feedback_form___no_message')) !{helper.getValue(UIMessages, 'feedback_form___no_message')}
+            +textarea('feedback', helper.getValue(UIMessages, 'feedback_form___feedback_label'))
+            +input('email', 'email', helper.getValue(UIMessages, 'feedback_form___email_label'))
+            .form__row
+                .form__recaptcha-disabled
+                #g-recaptcha-placeholder
+                +error('g-recaptcha-response')
+            .form__row.form__row--btn
+                button.form__button&attributes(smartLink?.elementCodename('feedback_form___submit_button'))
+                    span !{helper.getValue(UIMessages, 'feedback_form___submit_button')}
+                    span
+    if process.env['Recaptcha.v2.site']
+        #recaptcha-script(data-site=process.env['Recaptcha.v2.site'])

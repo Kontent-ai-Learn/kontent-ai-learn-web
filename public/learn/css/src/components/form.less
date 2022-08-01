@@ -24,14 +24,8 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(255, 255, 255, .5);
+        background-color: rgba(232, 232, 232, .5);
         display: none;
-
-        .lightbox-form__response-wrapper & {
-            @media (min-width: 1150px) {
-                background-color: rgba(232, 232, 232, .5);
-            }
-        }
 
         &--visible {
             display: block;
@@ -193,12 +187,14 @@
 		}
 
         &--loading {
-            background-color: #db531f;
-            background-image: url('../img/loader-form.gif');
+            background-color: #fff;
+            border-color: #fff;
+            background-image: url('../img/loader.gif');
             background-repeat: no-repeat;
-            background-position: center top 7px;
+            background-position: center top 3px;
             color: transparent;
-            background-size: 24px auto;
+            background-size: 32px auto;
+            box-shadow: none;
         }
     }
     

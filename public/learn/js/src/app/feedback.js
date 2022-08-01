@@ -1,16 +1,15 @@
 (() => {
-    const container = document.querySelector('[data-feedback-form]');
-    if (!container) return
+    const wrapper = document.querySelector('[data-lightbox-form="feedback"]');
+    if (!wrapper) return
 
     const yesBtn = document.querySelector('.feedback__button--yes');
     const noBtn = document.querySelector('.feedback__button--no');
     const yesMsg = document.querySelector('.feedback__message--yes');
     const noMsg = document.querySelector('.feedback__message--no');
     const btnArea = document.querySelector('.feedback__answer');
-    const form = container.querySelector('.lightbox-form__form');
-    const wrapper = container.querySelector('.lightbox-form');
-    const close = container.querySelector('.lightbox-form__close');
-    const posted = container.querySelector('.feedback--posted');
+    const form =  wrapper.querySelector('.lightbox-form__form');
+    const close =  wrapper.querySelector('.lightbox-form__close');
+    const posted = wrapper.querySelector('.feedback--posted');
 
     const sendFeedback = (value) => {
         if (!window.dataLayer) {

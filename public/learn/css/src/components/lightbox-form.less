@@ -1,41 +1,28 @@
 .lightbox-form {
-    padding: 0 1em;
+    position: fixed;
+    background-color: rgba(35,31,32,0.5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
 
-    @media (min-width: 768px) {
-        padding: 0 1em 0 290px;
-    }
-
-    @media (min-width: 1024px) {
-        padding: 0 1em 0 320px;
-    }
-    
-    @media (min-width: 1280px) {
-        position: fixed;
-        background-color: rgba(35,31,32,0.5);
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 9999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-
-        &--hidden {
-            display: none;
-        }
+    &--hidden {
+        display: none;
     }
 
     &__response-wrapper {
-        @media (min-width: 1280px) {
-            position: relative;
-            background-color: #e8e8e8;
-            color: #908e8f;
-            padding: 1em 2em 1.75em;
-            box-sizing: border-box;
-            border-radius: 1.4285em 1.4285em 1.4285em 0.5714em;
-        }
+        max-width: 100%;
+        position: relative;
+        background-color: #e8e8e8;
+        color: #908e8f;
+        padding: 1em 2em 1.75em;
+        box-sizing: border-box;
+        border-radius: 1.4285em 1.4285em 1.4285em 0.5714em;
     }
 
     &__form {
@@ -46,35 +33,42 @@
 
 
     &__close {
-        display: none;
+        display: block;
+        width: 1.5em;
+        height: 1.5em;
+        position: absolute;
+        right: .875em;
+        top: 1.5em;
+        cursor: pointer;
+        color: #908e8f;
+        transition: .25s color;
 
-        @media (min-width: 1280px) {
-            display: block;
-            width: 1.5em;
-            height: 1.5em;
-            position: absolute;
-            right: .875em;
-            top: 1.5em;
-            cursor: pointer;
-            color: #908e8f;
-            transition: .25s color;
+        &:hover {
+            color: #6552C4;
+        }
 
-            &:hover {
-                color: #6552C4;
-            }
-
-            &:before {
-                content: '×';
-                font-size: 2em;
-                position: relative;
-                top: -.5em;
-                left: .25em;
-            }
+        &:before {
+            content: '×';
+            font-size: 2em;
+            position: relative;
+            top: -.5em;
+            left: .25em;
         }
     }
 
 
     &__response {
         padding: .25em 0 0;
+    }
+
+    &__success {
+        padding: 1.25em 0 0;
+    }
+
+    @media (max-width: 400px) {
+        #g-recaptcha-placeholder {
+            transform:scale(.77);
+            transform-origin:0 0;
+        }
     }
 }

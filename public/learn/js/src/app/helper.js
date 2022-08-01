@@ -157,17 +157,6 @@ window.helper = (() => {
         return xmlhttp.send();
     };
 
-    // Ajax POST call
-    const ajaxPost = (url, requestData, callback, type) => {
-        const xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('POST', url, true);
-        xmlhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-        xmlhttp.onload = () => {
-            return evaluateAjaxResponse(xmlhttp, callback, type);
-        };
-        return xmlhttp.send(JSON.stringify(requestData));
-    };
-
     // Get url parameter by its name
     const getParameterByName = (name, url) => {
         if (!url) url = window.location.href;
@@ -499,7 +488,6 @@ window.helper = (() => {
         createElementFromHTML: createElementFromHTML,
         copyToClipboard: copyToClipboard,
         ajaxGet: ajaxGet,
-        ajaxPost: ajaxPost,
         getParameterByName: getParameterByName,
         removeParametersByNames: removeParametersByNames,
         replaceUrlParam: replaceUrlParam,

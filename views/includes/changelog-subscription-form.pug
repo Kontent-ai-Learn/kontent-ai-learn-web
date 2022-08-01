@@ -6,19 +6,18 @@ mixin input(type, id, label, className)
         if label
             label.form__label(for=id) #{label}
         +error(id)
-div(data-changelog-subscription-form)
-    .lightbox-form.lightbox-form--hidden
-        .lightbox-form__response-wrapper
-            .lightbox-form__close
-            form.lightbox-form__form.form&attributes(smartLink?.itemId(UIMessages.system.id))
-                +input('email', 'email', 'Email')
-                .form__row
-                    .form__recaptcha-disabled
-                    #g-recaptcha-placeholder
-                    +error('g-recaptcha-response')
-                .form__row.form__row--btn
-                    button.form__button
-                        span Subscribe
-                        span
-        if process.env['Recaptcha.v2.site']
-            #recaptcha-script(data-site=process.env['Recaptcha.v2.site'])
+.lightbox-form.lightbox-form--hidden(data-lightbox-form='changelog')
+    .lightbox-form__response-wrapper
+        .lightbox-form__close
+        form.lightbox-form__form.form&attributes(smartLink?.itemId(UIMessages.system.id))
+            +input('email', 'email', 'Email')
+            .form__row
+                .form__recaptcha-disabled
+                #g-recaptcha-placeholder
+                +error('g-recaptcha-response')
+            .form__row.form__row--btn
+                button.form__button
+                    span Subscribe
+                    span
+    if process.env['Recaptcha.v2.site']
+        #recaptcha-script(data-site=process.env['Recaptcha.v2.site'])
