@@ -167,6 +167,7 @@ const jsTasks = [{
     src: [
       'node_modules/mixitup/dist/mixitup.min.js',
       'public/learn/js/src/filter/mixitup/mixitup-multifilter.js',
+      'public/learn/js/src/filter/helper-filter.js',
       'public/learn/js/src/filter/filter-landing-page.js',
       'public/learn/js/src/filter/common.js'
     ],
@@ -303,6 +304,7 @@ const cssTasks = [{
       'public/learn/css/src/components/dropdown.less',
       'public/learn/css/src/components/filter-search.less',
       'public/learn/css/src/components/toc.less',
+      'public/learn/css/src/components/release-note.less',
       'public/learn/css/src/general/print.less',
     ],
     fileName: 'app.less'

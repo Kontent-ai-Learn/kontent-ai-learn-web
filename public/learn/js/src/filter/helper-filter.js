@@ -35,9 +35,55 @@ window.helperFilter = (() => {
     return codenames.join(',');
   };
 
+  const hideDropDowns = () => {
+    const body = document.querySelector('body');
+    const dropdowns = body.querySelectorAll('.dropdown');
+    for (let i = 0; i < dropdowns.length; i++) {
+      dropdowns[i].classList.remove('dropdown--active');
+    }
+  };
+
+  const hideDropDownsOnClick = () => {
+    const body = document.querySelector('body');
+
+    body.addEventListener('click', (e) => {
+      if (!e.target.matches('[class*="dropdown"]')) {
+        hideDropDowns();
+      }
+    });
+  };
+
+const createDropDownInteractions = (dropdown) => {
+    if (!dropdown) return;
+    const label = dropdown.querySelector('.dropdown__label');
+    const list = dropdown.querySelector('.dropdown__list');
+    
+    if (!(label && list)) return;
+    
+    label.addEventListener('click', () => {
+      const isActive = dropdown.classList.contains('dropdown--active');
+      if (isActive) {
+        dropdown.classList.remove('dropdown--active');
+      } else {
+        hideDropDowns();
+        dropdown.classList.add('dropdown--active');
+      }
+    });
+
+    list.addEventListener('click', (e) => {
+        dropdown.classList.remove('dropdown--active');
+        if (e.target.matches('.dropdown__item')) {
+          label.innerHTML = e.target.innerHTML;
+        }
+    });
+  };
+
   return {
     getUrl: getUrl,
     setFilterOnLoad: setFilterOnLoad,
-    getActiveItems: getActiveItems
+    getActiveItems: getActiveItems,
+    hideDropDowns: hideDropDowns,
+    createDropDownInteractions: createDropDownInteractions,
+    hideDropDownsOnClick: hideDropDownsOnClick
   }
 })();
