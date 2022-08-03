@@ -47,13 +47,13 @@ window.helperFilter = (() => {
     const body = document.querySelector('body');
 
     body.addEventListener('click', (e) => {
-      if (!e.target.matches('[class*="dropdown"]')) {
+      if (!e.target.matches('.dropdown *') && !e.target.matches('.air-datepicker-cell')) {
         hideDropDowns();
       }
     });
   };
 
-const createDropDownInteractions = (dropdown) => {
+  const createDropDownInteractions = (dropdown) => {
     if (!dropdown) return;
     const label = dropdown.querySelector('.dropdown__label');
     const list = dropdown.querySelector('.dropdown__list');
@@ -71,10 +71,10 @@ const createDropDownInteractions = (dropdown) => {
     });
 
     list.addEventListener('click', (e) => {
+      if (e.target.matches('.dropdown__item')) {
         dropdown.classList.remove('dropdown--active');
-        if (e.target.matches('.dropdown__item')) {
-          label.innerHTML = e.target.innerHTML;
-        }
+        label.innerHTML = e.target.innerHTML;
+      }
     });
   };
 

@@ -92,7 +92,7 @@ const getImageAttributes = (item, cssClass) => {
 const getCalendarClassNames = (releaseDate) => {
     const date = moment(releaseDate);
     if (date.isAfter()) return 'future';
-    return `date-${date.format('M-YY')}`;
+    return `date-${date.format('M-YYYY')}`;
 };
 
 const getYoutubeTemplate = (cssClass, item, config) => {

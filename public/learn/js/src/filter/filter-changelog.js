@@ -138,4 +138,6 @@
 
     initDropdowns();
     window.helperFilter.hideDropDownsOnClick();
+
+    window.calendar.init();
 })();

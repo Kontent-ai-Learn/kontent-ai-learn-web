@@ -60,7 +60,8 @@ block content
                                                 li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
                             .dropdown
                                 .dropdown__label&attributes(smartLink?.elementCodename('released_selector_title')) !{helper.getValue(UIMessages, 'released_selector_title')}
-                                .dropdown__list
+                                .dropdown__list.dropdown__list--calendar
+                                    .calendar(data-filter-group='calendar')
                             .filter
                                 ul.filter__list.filter__list--inline(data-filter-group='changes')
                                     li.filter__item(data-toggle='.breaking_change')&attributes(smartLink?.elementCodename('toggle_breaking_changes_only')) !{helper.getValue(UIMessages, 'toggle_breaking_changes_only')}

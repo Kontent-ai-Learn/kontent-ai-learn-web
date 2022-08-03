@@ -152,6 +152,8 @@ const jsTasks = [{
   name: 'js-changelog',
   config: {
     src: [
+      'node_modules/air-datepicker/air-datepicker.js',
+      'public/learn/js/src/filter/calendar.js',
       'node_modules/mixitup/dist/mixitup.min.js',
       'public/learn/js/src/filter/mixitup/mixitup-multifilter.js',
       'public/learn/js/src/filter/mixitup/mixitup-pagination.js',
@@ -305,6 +307,7 @@ const cssTasks = [{
       'public/learn/css/src/components/filter-search.less',
       'public/learn/css/src/components/toc.less',
       'public/learn/css/src/components/release-note.less',
+      'public/learn/css/src/components/calendar.less',
       'public/learn/css/src/general/print.less',
     ],
     fileName: 'app.less'
@@ -357,6 +360,11 @@ cssTasks.forEach((item) => {
   gulp.task(`${item.name}-production`, () => processCss(item.config, true));
 });
 
+gulp.task('air-datepicker-css', () => {
+  return gulp.src('node_modules/air-datepicker/air-datepicker.css')
+    .pipe(gulp.dest('public/learn/css'));
+});
+
 gulp.task('reload', (done) => {
   browserSync.reload();
   done();
@@ -401,8 +409,8 @@ gulp.task('observe', async () => {
   })
 });
 
-gulp.task('build', gulp.parallel([...jsTasks.map((item) => `${item.name}-production`), ...cssTasks.map((item) => `${item.name}-production`)]));
+gulp.task('build', gulp.parallel([...jsTasks.map((item) => `${item.name}-production`), ...cssTasks.map((item) => `${item.name}-production`), 'air-datepicker-css']));
 
-gulp.task('develop', gulp.series([...jsTasks.map((item) => item.name), ...cssTasks.map((item) => item.name), 'observe']));
+gulp.task('develop', gulp.series([...jsTasks.map((item) => item.name), ...cssTasks.map((item) => item.name), 'air-datepicker-css', 'observe']));
 
 gulp.task('default', gulp.series(['develop']));

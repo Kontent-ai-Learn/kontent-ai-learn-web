@@ -44,6 +44,7 @@
         "@splidejs/splide": "^4.0.0",
         "@types/node": "^15.0.1",
         "acorn": "^8.2.2",
+        "air-datepicker": "^3.2.0",
         "algoliasearch": "^4.9.1",
         "api2pdf": "^1.1.1",
         "applicationinsights": "^1.8.10",
