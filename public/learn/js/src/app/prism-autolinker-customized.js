@@ -1,7 +1,7 @@
 (function () {
   Prism.plugins.autolinker.processGrammar = function (grammar) {
     // Customized regex - added negative lookbehind to stop on ,.) characters
-    var url = /\b([a-z]{3,7}:\/\/|tel:)[\w\-+%~/.:=&@]+(?:\?[\w\-+%~/.:=?&!$'()*,;@]*)?(?:#[\w\-+%~/.:#=?&!$'()*,;@]*)?(?<![,.)])/;
+    var url = /\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[a-zA-Z0-9+&@#/%=~_|]/;
     
     // The rest is the same as the original function
 
