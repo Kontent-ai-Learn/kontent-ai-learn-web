@@ -122,10 +122,12 @@ if (process.env.isProduction === 'false') {
 app.use('/learn', siteRouter);
 app.use('/', (req, res) => res.redirect(301, '/learn/'));
 
-setIntervalAsync(async () => {
-  await cacheHandle.pool();
-  await certificationEmail.handleExpirationNotifications();
-}, 300000);
+if (!isPreview(process.env['KC.PreviewApiKey'])) {
+  setIntervalAsync(async () => {
+    await cacheHandle.pool();
+    await certificationEmail.handleExpirationNotifications();
+  }, 300000);
+}
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
