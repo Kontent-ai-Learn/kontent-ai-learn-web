@@ -1,7 +1,6 @@
 .filter {
     position: relative;
     display: block;
-    max-width: 290px;
     margin: 0 0 2em;
 
     .aside:not(.aside--top) & {
@@ -17,8 +16,8 @@
             padding: .675em 0;
         }
 
-        &--toggle,
-        ul&--toggle {
+        &--inline,
+        ul&--inline {
             padding: 0;
         }
 	}
@@ -45,7 +44,7 @@
                 position: absolute;
                 left: 0;
                 top: .5em;
-                border: 2px solid rgba(35,31,32,0.5);
+                border: 2px solid rgba(35,31,32,0.3);
             }
     
             &:hover {
@@ -78,54 +77,50 @@
             }
         }
     }
-}
 
-ul.filter__list--toggle,
-.filter__list--toggle {
-    display: flex;
+    .article__filter & {
+        margin: 0;
+    }
 
-    li.filter__item,
-    .filter__item {
-        border: 2px solid #d9d8d8;
-        padding: .5em .875em;
-        white-space: nowrap;
-        text-align: center;
-        font-size: .75em;
-        font-weight: 700;
+    .dropdown__list & {
+        &__list {
+            padding: 0 1.25em;
 
-        &:first-child {
-            border-radius: 26px 0 0 26px;
-            padding-left: 1.25em;
-            border-right: none;
-        }
+            li.filter__item {
+                /*padding: .375em 1em .375em 2em;
 
-        &:last-child {
-            border-radius: 0 26px 26px 0;
-            padding-right: 1.25em;
-            border-left: none;
-        }
+                &:before {
+                    width: 1em;
+                    height: 1em;
+                    top: .675em;
+                }
 
-        &:before,
-        &:after {
-            display: none;
-        }
-
-        &:hover {
-            color: #6552C4;
-            border-color: #d9d8d8;
-        }
-
-        &--active {
-            border-color: #6552C4;
-            background-color: #6552C4;
-            color: #fff;
-
-            &:hover {
-                color: #fff;
-                background-color: #6552C4;
-                border-color: #6552C4;
+                &--active {
+                    &:after {
+                        position: absolute;
+                        content: '';
+                        top: .85em;
+                        left: .4em;
+                        width: .25em;
+                        height: .6em;
+                        transform: rotate(45deg);
+                        border: 2px solid #fff;
+                        border-width: 0 2px 2px 0;
+                        border-radius: 2px;
+                    }
+                }*/
             }
         }
+    }
+}
+
+ul.filter__list--inline,
+.filter__list--inline {
+    li.filter__item,
+    .filter__item {
+        display: inline-block;
+        width: auto;
+        padding-right: 2em;
     }
 }
 

@@ -2,8 +2,9 @@ extends ../includes/layout.pug
 block content
     main(id='main')
         .article(data-display-mode=`${content.display_mode.value.length ? content.display_mode.value[0].name.toLowerCase() : 'one-page'}`)
-            .article__left
-                include ../includes/sub-navigation.pug
+            if (!containsChangelog)
+                .article__left
+                    include ../includes/sub-navigation.pug
             .article__right
                 div(class=`article__content${containsChangelog ? ' article__content--anchors-only' : ''}`)&attributes(smartLink?.itemId(itemId))
                     if termDefinitions
@@ -30,27 +31,6 @@ block content
                             .article__tech(data-platform-note)
                         if (isPreview && !req.query.pdf)
                             a(href=`https://app.kontent.ai/goto/edit-item/project/${projectId}/variant-codename/${language}/item/${content.system.id}`, target='_blank', rel='noopener') Edit
-                    if (containsChangelog && releaseNoteContentType)
-                        div(data-aside-container='filter')
-                            .article__filter(data-aside='filter')&attributes(smartLink?.itemId(UIMessages.system.id))
-                                .filter
-                                    ul.filter__list.filter__list--toggle(data-filter-group='changes')
-                                        li.filter__item(data-filter='.all_changes')&attributes(smartLink?.elementCodename('toggle_all_changes')) !{UIMessages && helper.getValue(UIMessages, 'toggle_all_changes')}
-                                        li.filter__item(data-filter='.breaking_change')&attributes(smartLink?.elementCodename('toggle_breaking_changes_only')) !{UIMessages && helper.getValue(UIMessages, 'toggle_breaking_changes_only')}
-
-                                .filter
-                                    .filter-label&attributes(smartLink?.elementCodename('affected_services_selector_title')) !{UIMessages && helper.getValue(UIMessages, 'affected_services_selector_title')}
-                                    ul.filter__list(data-filter-group='services')
-                                        each item, index in releaseNoteContentType.elements.filter(elem => elem.codename === 'affected_services')[0].options
-                                            li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
-                    if (containsTrainingCourse && trainingPersonaTaxonomyGroup)
-                        div(data-aside-container='filter')
-                            .article__filter(data-aside='filter')&attributes(smartLink?.itemId(UIMessages.system.id))
-                                .filter
-                                    .filter-label&attributes(smartLink?.elementCodename('training___personas_selector_title')) !{UIMessages && helper.getValue(UIMessages, 'training___personas_selector_title')}
-                                    ul.filter__list(data-filter-group='personas')
-                                        each item, index in trainingPersonaTaxonomyGroup.taxonomy.terms
-                                            li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
                     if (platform && !availablePlatforms.length)
                         .language-selector.language-selector--unprocessed
                             ul.language-selector__list
@@ -67,8 +47,25 @@ block content
                     if (introduction !== '<p><br></p>')
                         .article__introduction
                             if (content.display_mode.value.length && content.display_mode.value[0].name.toLowerCase() === 'step-by-step')
-                                h2.article__heading-introduction(id='a-introduction')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___introduction')) !{UIMessages && helper.getValue(UIMessages, 'article___introduction')}
+                                h2.article__heading-introduction(id='a-introduction')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___introduction')) !{helper.getValue(UIMessages, 'article___introduction')}
                             div&attributes(smartLink?.elementCodename('introduction')) !{postprocessMarkup(introduction, res)}
+                    if (containsChangelog && releaseNoteContentType)
+                        .article__filter&attributes(smartLink?.itemId(UIMessages.system.id))
+                            .dropdown
+                                .dropdown__label&attributes(smartLink?.elementCodename('affected_services_selector_title')) !{helper.getValue(UIMessages, 'affected_services_selector_title')}
+                                .dropdown__list
+                                    .filter
+                                        ul.filter__list(data-filter-group='services')
+                                            each item, index in releaseNoteContentType.elements.filter(elem => elem.codename === 'affected_services')[0].options
+                                                li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
+                            .dropdown
+                                .dropdown__label&attributes(smartLink?.elementCodename('released_selector_title')) !{helper.getValue(UIMessages, 'released_selector_title')}
+                                .dropdown__list.dropdown__list--calendar
+                                    .calendar(data-filter-group='calendar')
+                            .filter
+                                ul.filter__list.filter__list--inline(data-filter-group='changes')
+                                    li.filter__item(data-toggle='.breaking_change')&attributes(smartLink?.elementCodename('toggle_breaking_changes_only')) !{helper.getValue(UIMessages, 'toggle_breaking_changes_only')}
+                                    li.filter__item(data-toggle='.released')&attributes(smartLink?.elementCodename('toggle_released')) !{helper.getValue(UIMessages, 'toggle_released')}
                     if (!containsChangelog)
                         div(data-aside-container='table-of-contents')
                             div(data-aside='table-of-contents')
@@ -80,14 +77,15 @@ block content
                             .mixitup-page-list
                     if (nextSteps !== '<p><br></p>')
                         .article__next-steps
-                            h2.table-of-contents__whatsnext(id='a-whats-next')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___next_steps')) !{UIMessages && helper.getValue(UIMessages, 'article___next_steps')}
+                            h2.table-of-contents__whatsnext(id='a-whats-next')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___next_steps')) !{helper.getValue(UIMessages, 'article___next_steps')}
                             div&attributes(smartLink?.elementCodename('next_steps')) !{postprocessMarkup(nextSteps, res)}
                     if (!hideFeedback)
                         div(data-aside-container='feedback')
                             div(data-aside='feedback')
                                 include ../includes/feedback.pug
-            aside.article__aside
-                .aside
+            if (!containsChangelog)
+                aside.article__aside
+                    .aside
     if (!hideFeedback)
         include ../includes/feedback-form.pug
     if (containsChangelog)

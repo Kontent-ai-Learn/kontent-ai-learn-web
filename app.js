@@ -112,7 +112,7 @@ if (process.env.isProduction === 'false') {
         if (appInsights && appInsights.defaultClient) {
           appInsights.defaultClient.trackTrace({ message: `SERVICE_CHECK_ERROR: ${JSON.stringify(serviceCheckResults)}` });
         }
-        return res.redirect(303, `${process.env.baseURL}/learn/service/check/`);
+        // return res.redirect(303, `${process.env.baseURL}/learn/service/check/`);
       }
     }
     next();

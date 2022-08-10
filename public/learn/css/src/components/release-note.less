@@ -1,0 +1,103 @@
+.release-note {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 2em;
+  padding: 0;
+  background-image: url('/learn/img/ui/check.svg');
+  background-repeat: no-repeat;
+  background-position: top 2px left 3px;
+  position: relative;
+
+  @media screen and (min-width: 480px) {
+    padding: 0 0 0 3em;
+  }
+
+  @media screen and (min-width: 768px) {
+    justify-content: space-between;
+    flex-direction: row;
+    margin: 0 0 4em;
+    background-position: top 10px left 3px;
+  }
+
+  &__info {
+    width: 100%;
+
+    @media screen and (min-width: 768px) {
+      width: 41%;
+    }
+
+    h2 {
+      padding-top: 0;
+      margin-left: 0;
+      font-size: 1.25em;
+
+      @media screen and (min-width: 480px) {
+        font-size: 1.375em;
+        margin-left: -90px;
+        padding-left: 90px;
+      }
+
+      .anchor-copy {
+        &:before {
+          top: .375em;
+        }
+      }
+    }
+  }
+
+  &__description {
+    width: 100%;
+    border-bottom: 2px solid #E8E8E8;
+    padding: 0 0 2em;
+
+    @media screen and (min-width: 768px) {
+      width: 55%;
+      padding: 0 0 4em;
+    }
+    
+    p, li:not(.infobar__lang) {
+      font-size: 1em;
+      line-height: 1.5em;
+
+      @media screen and (min-width: 1024px) {
+        font-size: 1.125em;
+      }
+    }
+  }
+
+  &__bar {
+    padding: 0 0 .875em;
+
+    @media screen and (min-width: 768px) {
+      padding: 0;
+    }
+  }
+
+  &__date {
+    color: #908e8f;
+    display: block;
+    padding: .375em 0 .675em;
+    font-size: 1em;
+
+    @media screen and (min-width: 768px) {
+      padding: .5em 0 1.25em;
+    }
+  }
+
+  .future & {
+    background-image: url('/learn/img/ui/calendar.svg');
+    background-position: top 4px left;
+  }
+
+  @media screen and (min-width: 768px) {
+    &::before {
+      content: '';
+      left: 11px;
+      top: 3em;
+      bottom: -3em;
+      width: 2px;
+      background-color: #E8E8E8;
+      position: absolute;
+    }
+  }
+}

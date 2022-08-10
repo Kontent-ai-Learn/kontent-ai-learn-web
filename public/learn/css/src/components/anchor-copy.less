@@ -11,15 +11,16 @@
     }
 
     &:before {
-        font-size: 16px;
-        content: '#';
+        content: '';
+        background-image: url('/learn/img/ui/link.svg');
+        background-size: 20px auto;
         display: block;
-        width: 24px;
+        width: 26px;
+        height: 12px;
         padding: 3px 0;
         background-position: center center;
-        background-size: 16px 16px;
         background-repeat: no-repeat;
-        margin: 0 0 0 6px;
+        margin: 0;
         border-radius: 8px;
         text-align: center;
         color: #6552C4;
@@ -31,13 +32,13 @@
 
     h2 & {
         &:before {
-            top: 1.25em;
+            top: .75em;
         }
     }
 
     h3 & {
         &:before {
-            top: .675em;
+            top: .5em;
         }
     }
 

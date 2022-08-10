@@ -10,6 +10,7 @@
     &__next-steps {
         position: relative;
         z-index: 2;
+        max-width: 1150px;
         
         & > *:not(kontent-smart-link-overlay) {
             position: relative;
@@ -71,6 +72,12 @@
         @media screen and (min-width: 1280px) {
             width: ~"calc(100% - 560px)";
             position: relative;
+        }
+
+        &:only-child {
+            width: 100%;
+            max-width: none !important;
+            padding: 0;
         }
     }
 
@@ -487,21 +494,22 @@
 
         &-item {
             ul.article__tags li& {
-                font-size: .875em;
+                font-size: .75em;
                 padding: 0;
                 display:  inline-block;
-                padding: .125em .75em;
+                padding: .25em 1.25em;
                 color: #fff;
                 border-radius: .125em;
-                margin: 0 .5em .5em 0;
-                border-radius: .75em 0 .75em .75em;
+                margin: 0 .75em .875em 0;
+                border-radius: 1.5em 1.5em .25em 1.5em;
+                font-weight: 700;
 
                 &:before {
                     display: none;
                 }
     
                 &--red {
-                    background-color: #C42D61;
+                    background-color: #CE577B;
                 }
     
                 &--green {
@@ -511,11 +519,6 @@
 
         }
     }
-
-    /*&__info-bar {
-        position: relative;
-        top: -.5em;
-    }*/
     
     &__heading-introduction {
         display: none;
@@ -623,6 +626,23 @@
                 display: none;
             }
         }
+    }
+
+    &__filter {
+        display: flex;
+        padding: 1em 0 4.5em;
+        flex-wrap: wrap;
+        flex-direction: column;
+
+        @media screen and (min-width: 650px) {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        @media screen and (min-width: 950px) {
+            flex-wrap: nowrap;
+            padding: 2em 0 4.5em;
+        } 
     }
 
     .splide__slide {

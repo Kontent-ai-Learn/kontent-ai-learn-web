@@ -20,6 +20,8 @@ link(rel='preload' as='font' href='/learn/fonts/WorkSans-Regular.woff2' type='fo
 link(rel='preload' as='font' href='/learn/fonts/WorkSans-Regular.woff' type='font/woff' crossorigin='anonymous')
 link(rel='preload' as='font' href='/learn/fonts/WorkSans-Bold.woff2' type='font/woff2' crossorigin='anonymous')
 link(rel='preload' as='font' href='/learn/fonts/WorkSans-Bold.woff' type='font/woff' crossorigin='anonymous')
+if (containsChangelog)
+    link(rel='stylesheet', href=`/learn/css/air-datepicker.css?v=${deployVersion}`)
 if (isReference)
     link(rel='stylesheet', href=`/learn/css/apireference.min.css?v=${deployVersion}`)
 else 

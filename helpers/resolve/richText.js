@@ -87,7 +87,13 @@ const getImageAttributes = (item, cssClass) => {
         cssClass: cssClass,
         transformationQueryString: transformationQueryString
     }
-}
+};
+
+const getCalendarClassNames = (releaseDate) => {
+    const date = moment(releaseDate);
+    if (date.isAfter()) return 'future';
+    return `date-${date.format('M-YYYY')}`;
+};
 
 const getYoutubeTemplate = (cssClass, item, config) => {
     return `
@@ -503,8 +509,10 @@ const richText = {
         const isPlanned = (new Date(item.release_date.value)).getTime() > (new Date()).getTime();
         const severityCodename = item.severity.value.length ? item.severity.value[0].codename : '';
         const severityName = item.severity.value.length ? item.severity.value[0].name : '';
+        const released = moment(item.release_date.value).isBefore() ? 'released' : '';
         const displaySeverity = severityCodename === 'breaking_change';
         const id = `a-${generateAnchor(item.title.value)}`;
+        const calendar = getCalendarClassNames(item.release_date.value);
 
         let services = '';
         const servicesCodenames = [];
@@ -514,24 +522,28 @@ const richText = {
         });
 
         return `
-            <div class="mix ${servicesCodenames.join(' ')} ${severityCodename} all_changes"${getSmartLinkAttr(config, item.system.id, 'item')}>
-                <h2 id="${id}"${getSmartLinkAttr(config, 'title', 'element')}>
-                    <a href="#${id}" class="anchor-copy" aria-hidden="true"></a>
-                    ${item.title.value}
-                </h2>
-                ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
-                <div class="article__info-bar">
-                    <time class="article__date article__date--body" datetime="${moment(item.release_date.value).format('YYYY-MM-DD')}"${getSmartLinkAttr(config, 'release_date', 'element')}>${isPlanned ? 'Planned for ' : ''}${moment(item.release_date.value).format('MMMM D, YYYY')}</time>
-                    ${displaySeverity || services
-? `
-                        <ul class="article__tags">
-                            ${displaySeverity ? `<li class="article__tags-item article__tags-item--red"${getSmartLinkAttr(config, 'severity', 'element')}>${severityName}</li>` : ''}
-                            ${services}
-                        </ul>`
-: ''}
-                </div>
-                <div${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(item.content.value, config)}>
-                    ${item.content.value}
+            <div class="mix ${servicesCodenames.join(' ')} ${severityCodename} ${released} ${calendar}"${getSmartLinkAttr(config, item.system.id, 'item')}>
+                <div class="release-note"> 
+                    <div class="release-note__info">   
+                        <h2 id="${id}"${getSmartLinkAttr(config, 'title', 'element')}>
+                            <a href="#${id}" class="anchor-copy" aria-hidden="true"></a>
+                            ${item.title.value}
+                        </h2>
+                        ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
+                        <div class="release-note__bar">
+                            <time class="release-note__date" datetime="${moment(item.release_date.value).format('YYYY-MM-DD')}"${getSmartLinkAttr(config, 'release_date', 'element')}>${isPlanned ? 'Planned for ' : ''}${moment(item.release_date.value).format('MMMM D, YYYY')}</time>
+                            ${displaySeverity || services
+        ? `
+                                <ul class="article__tags">
+                                    ${displaySeverity ? `<li class="article__tags-item article__tags-item--red"${getSmartLinkAttr(config, 'severity', 'element')}>${severityName}</li>` : ''}
+                                    ${services}
+                                </ul>`
+        : ''}
+                        </div>
+                    </div>
+                    <div class="release-note__description" ${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(item.content.value, config)}>
+                        ${item.content.value}
+                    </div>
                 </div>
             </div>
         `;

@@ -132,11 +132,11 @@ h1, h2, h3, h4, h5, p, ul, ol, table,
       }
 
       &.tab-error {
-        color: #C42D61;
+        color: #CE577B;
 
         &.react-tabs__tab--selected {
           &:after {
-            background-color: #C42D61;
+            background-color: #CE577B;
           }
         }
       }
@@ -207,7 +207,7 @@ h1, h2, h3, h4, h5, p, ul, ol, table,
   }
 
   [class*="fields__RequiredLabel"] {
-    color: #C42D61 !important;
+    color: #CE577B !important;
   }
 
   .react-tabs__tab-panel,
@@ -729,8 +729,19 @@ h1, h2, h3, h4, h5, p, ul, ol, table,
 }
 
 [class*="StyledShareLink"] {
+  margin-top: -10px !important;
+
   &:before {
-    color: #3DCCA8;
+    content: '' !important;
+    background-image: url('/learn/img/ui/link.svg') !important;
+    background-size: 20px auto !important;
+    display: block !important;
+    width: 26px !important;
+    height: 12px !important;
+    padding: 3px 0 !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    border-radius: 8px !important;
   }
 }
 
@@ -1219,8 +1230,8 @@ h1, h2, h3, h4, strong {
 }
 
 [class*="headers__H1"] [class*="StyledShareLink"]:before {
-  position: relative;
-  top: -6px;
+  //position: relative;
+  //top: -6px;
 }
 
 [class*="StyledMarkdownBlock"] h3 [class*="StyledShareLink"]:before  {
@@ -1262,7 +1273,7 @@ h1, h2, h3, h4, strong {
 
 [class*="linkify__StyledShareLink"] {
   right: auto !important;
-  left: -28px !important;
+  left: -30px !important;
 }
 
 [class*="BackgroundStub"],
