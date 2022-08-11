@@ -1,7 +1,7 @@
 extends ../includes/layout.pug
 block content
     main(id='main')
-        .article(data-display-mode=`${content.display_mode.value.length ? content.display_mode.value[0].name.toLowerCase() : 'one-page'}`)
+        .article
             if (!containsChangelog)
                 .article__left
                     include ../includes/sub-navigation.pug
@@ -46,8 +46,6 @@ block content
                                         a(href=`${req.originalUrl.split('?')[0]}?tech=${item.slug}`, data-dpr, data-icon=item.icon, data-tech-tooltip=item.title, data-tech-tooltip-active='false', data-tech-tooltip-clicked=helper.getValue(UIMessages, 'technology_picker_tooltip').replace('{TechnologyName}', item.title), class=`language-selector__link${index === highlighIndex ? ' language-selector__link--active' : ''}`)
                     if (introduction !== '<p><br></p>')
                         .article__introduction
-                            if (content.display_mode.value.length && content.display_mode.value[0].name.toLowerCase() === 'step-by-step')
-                                h2.article__heading-introduction(id='a-introduction')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___introduction')) !{helper.getValue(UIMessages, 'article___introduction')}
                             div&attributes(smartLink?.elementCodename('introduction')) !{postprocessMarkup(introduction, res)}
                     if (containsChangelog && releaseNoteContentType)
                         .article__filter&attributes(smartLink?.itemId(UIMessages.system.id))

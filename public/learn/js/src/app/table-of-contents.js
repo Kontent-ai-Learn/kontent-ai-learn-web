@@ -42,10 +42,6 @@
     const createTableOfContents = () => {
         let headingsSelector = 'h2:not(.table-of-contents__heading):not(.table-of-contents__whatsnext):not(.feedback__heading)';
 
-        if (document.querySelector('[data-display-mode="step-by-step"]')) {
-            headingsSelector = 'h2:not(.table-of-contents__heading):not(.feedback__heading)';
-        }
-
         const headings = articleContent.querySelectorAll(headingsSelector);
         let tableOfContents = '';
         let prevHeadingLevel = 2;
@@ -243,12 +239,10 @@
             toggleItemsFromWithinContentChunks();
             scrollToLinkInSubNavigation();
             handleHeadingsOverlay();
-            if (!document.querySelector('[data-display-mode="step-by-step"]')) {
-                affix();
-                window.addEventListener('scroll', affix, window.supportsPassive ? {
-                    passive: true
-                } : false);
-            }
+            affix();
+            window.addEventListener('scroll', affix, window.supportsPassive ? {
+                passive: true
+            } : false);
         }, 0);
     } else if (anchorsOnly) {
         scrollToLinkInSubNavigation();
