@@ -1,12 +1,13 @@
-(function () {
-    var pageSize = 10;
-    var searchParam = helper.getParameterByName('search');
+(() => {
+    const pageSize = 10;
+    const searchParam = helper.getParameterByName('search');
+    const calendar = window.calendar.init();
 
-    var updateRoomUrl = function (services, changes, released, page) {
-        var loc = window.location;
-        var urlParams = new URLSearchParams(loc.search);
-        var url = helperFilter.getUrl(loc);
-        var qs = [];
+    const updateRoomUrl = (services, changes, released, page) => {
+        const loc = window.location;
+        const urlParams = new URLSearchParams(loc.search);
+        const url = helperFilter.getUrl(loc);
+        const qs = [];
         page = parseInt(page);
 
         if (services) {
@@ -31,15 +32,15 @@
         return `${url}${qs.length ? `?${qs.join('&')}` : ''}${loc.hash}`;
     };
 
-    var updateUrl = function (services, changes, released, page) {
-        var url = updateRoomUrl(services, changes, released, page);
+    const updateUrl = (services, changes, released, page) => {
+        const url = updateRoomUrl(services, changes, released, page);
         if (history && history.replaceState) {
             history.replaceState({}, null, url);
         }
     };
 
-    var getFilterProp = function (prop) {
-        var item = document.querySelector(`[data-filter-group="changes"] [data-toggle="${prop}"].filter__item--active`);
+    const getFilterProp = (prop) => {
+        const item = document.querySelector(`[data-filter-group="changes"] [data-toggle="${prop}"].filter__item--active`);
 
         if (item) {
             return 'true';
@@ -48,11 +49,11 @@
         }
     };
 
-    var getPageByHash = function (hash) {
-        var headings = document.querySelectorAll('.article__content h2[id]');
-        var hashPosition = 0;
-        var page = 1;
-        var id = hash.replace('#', '');
+    const getPageByHash = (hash) => {
+        const headings = document.querySelectorAll('.article__content h2[id]');
+        let hashPosition = 0;
+        let page = 1;
+        const id = hash.replace('#', '');
 
         for (var i = 0; i < headings.length; i++) {
             if (headings[i].getAttribute('id') === id) {
@@ -64,14 +65,14 @@
         return page;
     };
 
-    var refreshSplideCarousel = function () {
+    const refreshSplideCarousel = () => {
         if (!window.splideCarousels) return;
-        for(let i = 0; i < window.splideCarousels.length; i++) {
+        for (let i = 0; i < window.splideCarousels.length; i++) {
             window.splideCarousels[i].refresh();
         }
     };
 
-    var mixer = window.mixitup('.article__body', {
+    const mixer = window.mixitup('.article__body', {
         animation: {
             enable: false
         },
@@ -94,16 +95,18 @@
                 var state = mixer.getState();
                 updateUrl(helperFilter.getActiveItems('services'), getFilterProp('.breaking_change'), getFilterProp('.released'), state.activePagination.page);
                 refreshSplideCarousel();
+                helperFilter.handleDropDownLabel('calendar', calendar);
+                helperFilter.handleDropDownLabel('services');
             }
         }
     });
 
-    var setFilterOnLoad = function (url) {
-        var show = helper.getParameterByName('show', url);
-        var breaking = helper.getParameterByName('breaking', url);
-        var released = helper.getParameterByName('released', url);
-        var page = parseInt(helper.getParameterByName('page', url)) || 1;
-        var hash = window.location.hash;
+    const setFilterOnLoad = (url) => {
+        const show = helper.getParameterByName('show', url);
+        const breaking = helper.getParameterByName('breaking', url);
+        const released = helper.getParameterByName('released', url);
+        const page = parseInt(helper.getParameterByName('page', url)) || 1;
+        const hash = window.location.hash;
 
         if (hash && page <= 1) {
             page = getPageByHash(hash);
@@ -111,18 +114,19 @@
 
         helperFilter.setFilterOnLoad(show, 'services');
 
-        var item;
+        var itemB;
         if (breaking === 'true') {
-            item = document.querySelector('[data-filter-group="changes"] [data-toggle=".breaking_change"]');
+            itemB = document.querySelector('[data-filter-group="changes"] [data-toggle=".breaking_change"]');
         }
-        if (item) {
-            item.click();
+        if (itemB) {
+            itemB.click();
         }
+        var itemR;
         if (released === 'true') {
-            item = document.querySelector('[data-filter-group="changes"] [data-toggle=".released"]');
+            itemR = document.querySelector('[data-filter-group="changes"] [data-toggle=".released"]');
         }
-        if (item) {
-            item.click();
+        if (itemR) {
+            itemR.click();
         }
 
         if (mixer) {
@@ -133,11 +137,9 @@
     setFilterOnLoad();
 
     const initDropdowns = () => {
-        document.querySelectorAll('.dropdown').forEach((dropdown) => window.helperFilter.createDropDownInteractions(dropdown))
+        document.querySelectorAll('.dropdown').forEach((dropdown) => window.helperFilter.createDropDownInteractions(dropdown, mixer, calendar))
     };
 
     initDropdowns();
     window.helperFilter.hideDropDownsOnClick();
-
-    window.calendar.init();
 })();

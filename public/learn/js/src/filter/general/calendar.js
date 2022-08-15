@@ -8,12 +8,12 @@ window.calendar = (() => {
   const dateTimesElements = Array.from(document.querySelectorAll('[datetime]'));
   const dateTimes = dateTimesElements.map((item) => normalizeDateTime(new Date(item.getAttribute('datetime'))));
 
-  const monthHasReleaseNote = (date) => {
+  const monthInDateTimes = (date) => {
     const normalizedDate = normalizeDateTime(date);
-    const releaseNotes = dateTimes.filter((item) => {
+    const matching = dateTimes.filter((item) => {
       return item.getTime() === normalizedDate.getTime();
     });
-    return releaseNotes.length > 0;
+    return matching.length > 0;
   };
 
   const getMinDate = () => {
@@ -59,7 +59,7 @@ window.calendar = (() => {
     const minDate = getMinDate();
     const maxDate = getMaxDate();
 
-    new AirDatepicker('.calendar', {
+    const calendar = new AirDatepicker('.calendar', {
       view: 'months',
       minView: 'months',
       dateFormat: 'M-yy',
@@ -92,7 +92,7 @@ window.calendar = (() => {
           }
         }
 
-        if (!monthHasReleaseNote(date) && cellType === 'month') {
+        if (!monthInDateTimes(date) && cellType === 'month') {
           return {
             disabled: true
           }
@@ -107,6 +107,8 @@ window.calendar = (() => {
     })
 
     addDataToggle();
+
+    return calendar;
   };
 
 

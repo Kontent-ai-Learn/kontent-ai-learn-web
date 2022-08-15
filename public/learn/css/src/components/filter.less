@@ -2,6 +2,7 @@
     position: relative;
     display: block;
     margin: 0 0 2em;
+    width: 100%;
 
     .aside:not(.aside--top) & {
         margin: 1.5em 0 2em;
@@ -19,6 +20,8 @@
         &--inline,
         ul&--inline {
             padding: 0;
+            display: flex;
+            flex-wrap: wrap;
         }
 	}
 
@@ -118,9 +121,9 @@ ul.filter__list--inline,
 .filter__list--inline {
     li.filter__item,
     .filter__item {
-        display: inline-block;
         width: auto;
         padding-right: 2em;
+        white-space: nowrap;
     }
 }
 

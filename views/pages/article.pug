@@ -49,19 +49,21 @@ block content
                             div&attributes(smartLink?.elementCodename('introduction')) !{postprocessMarkup(introduction, res)}
                     if (containsChangelog && releaseNoteContentType)
                         .article__filter&attributes(smartLink?.itemId(UIMessages.system.id))
-                            .dropdown
-                                .dropdown__label&attributes(smartLink?.elementCodename('affected_services_selector_title')) !{helper.getValue(UIMessages, 'affected_services_selector_title')}
+                            .dropdown(data-filter-group='services')
+                                - const labelServices = helper.getValue(UIMessages, 'affected_services_selector_title');
+                                .dropdown__label(data-dropdown-label=labelServices)&attributes(smartLink?.elementCodename('affected_services_selector_title')) !{labelServices}
                                 .dropdown__list
                                     .filter
-                                        ul.filter__list(data-filter-group='services')
+                                        ul.filter__list
                                             each item, index in releaseNoteContentType.elements.filter(elem => elem.codename === 'affected_services')[0].options
                                                 li.filter__item(data-toggle=`.${item.codename}`) !{item.name}
-                            .dropdown
-                                .dropdown__label&attributes(smartLink?.elementCodename('released_selector_title')) !{helper.getValue(UIMessages, 'released_selector_title')}
+                            .dropdown(data-filter-group='calendar')
+                                - const labelReleased = helper.getValue(UIMessages, 'released_selector_title');
+                                .dropdown__label(data-dropdown-label=labelReleased)&attributes(smartLink?.elementCodename('released_selector_title')) !{labelReleased}
                                 .dropdown__list.dropdown__list--calendar
-                                    .calendar(data-filter-group='calendar')
+                                    .calendar
                             .filter
-                                ul.filter__list.filter__list--inline(data-filter-group='changes')
+                                ul.filter__list.filter__list--inline(data-filter-group='changes', data-logic='and')
                                     li.filter__item(data-toggle='.breaking_change')&attributes(smartLink?.elementCodename('toggle_breaking_changes_only')) !{helper.getValue(UIMessages, 'toggle_breaking_changes_only')}
                                     li.filter__item(data-toggle='.released')&attributes(smartLink?.elementCodename('toggle_released')) !{helper.getValue(UIMessages, 'toggle_released')}
                     if (!containsChangelog)

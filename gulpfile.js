@@ -152,13 +152,13 @@ const jsTasks = [{
   config: {
     src: [
       'node_modules/air-datepicker/air-datepicker.js',
-      'public/learn/js/src/filter/calendar.js',
+      'public/learn/js/src/filter/general/calendar.js',
       'node_modules/mixitup/dist/mixitup.min.js',
       'public/learn/js/src/filter/mixitup/mixitup-multifilter.js',
       'public/learn/js/src/filter/mixitup/mixitup-pagination.js',
-      'public/learn/js/src/filter/helper-filter.js',
-      'public/learn/js/src/filter/filter-changelog.js',
-      'public/learn/js/src/filter/common.js'
+      'public/learn/js/src/filter/general/helper.js',
+      'public/learn/js/src/filter/changelog.js',
+      'public/learn/js/src/filter/mixitup/mixitup-no-items-found.js'
     ],
     fileName: 'changelog.js'
   }
@@ -168,9 +168,9 @@ const jsTasks = [{
     src: [
       'node_modules/mixitup/dist/mixitup.min.js',
       'public/learn/js/src/filter/mixitup/mixitup-multifilter.js',
-      'public/learn/js/src/filter/helper-filter.js',
-      'public/learn/js/src/filter/filter-landing-page.js',
-      'public/learn/js/src/filter/common.js'
+      'public/learn/js/src/filter/general/helper.js',
+      'public/learn/js/src/filter/landing-page.js',
+      'public/learn/js/src/filter/mixitup/mixitup-no-items-found.js'
     ],
     fileName: 'landing-page.js'
   }
@@ -374,8 +374,8 @@ gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service']
 
 gulp.task('watch', (done) => {
   gulp.watch('public/learn/js/src/app/**/*.js', gulp.series(['build-js-app', 'reload']));
-  gulp.watch('public/learn/js/src/filter/*.js', gulp.series(['build-js-filter', 'reload']));
-  gulp.watch('public/learn/js/src/service/*.js', gulp.series(['js-service', 'reload']));
+  gulp.watch('public/learn/js/src/filter/**/*.js', gulp.series(['build-js-filter', 'reload']));
+  gulp.watch('public/learn/js/src/service/**/*.js', gulp.series(['js-service', 'reload']));
   gulp.watch('public/learn/css/src/**/*.less', gulp.series(['build-css', 'reload']));
   done();
 });
