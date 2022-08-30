@@ -237,6 +237,14 @@ const invalidateArticles = async (itemsByTypes, KCDetails, res) => {
     return false;
 };
 
+const invalidateReleaseNotes = async (itemsByTypes, KCDetails, res) => {
+    await invalidateGeneral(itemsByTypes, KCDetails, res, 'releaseNotes');
+
+    if (itemsByTypes.releaseNotes.length) {
+        await revalidateReleaseNoteType(KCDetails, res);
+    }
+};
+
 const invalidateAPISpecifications = async (itemsByTypes, KCDetails, res) => {
     if (itemsByTypes.apiSpecifications.length) {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'apiSpecifications');
@@ -300,7 +308,7 @@ const invalidate = async (req, res) => {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'emailNotifications');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'notFound');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'redirectRules');
-        await invalidateGeneral(itemsByTypes, KCDetails, res, 'releaseNotes');
+        await invalidateReleaseNotes(itemsByTypes, KCDetails, res);
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'termDefinitions');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'navigationItems');
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'landingPages');
