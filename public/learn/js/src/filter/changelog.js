@@ -105,7 +105,7 @@
         const show = helper.getParameterByName('show', url);
         const breaking = helper.getParameterByName('breaking', url);
         const released = helper.getParameterByName('released', url);
-        const page = parseInt(helper.getParameterByName('page', url)) || 1;
+        let page = parseInt(helper.getParameterByName('page', url)) || 1;
         const hash = window.location.hash;
 
         if (hash && page <= 1) {

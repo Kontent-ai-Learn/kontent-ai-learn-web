@@ -104,7 +104,7 @@ window.calendar = (() => {
       onChangeView: () => {
         addDataToggle();
       }
-    })
+    });
 
     addDataToggle();
 
