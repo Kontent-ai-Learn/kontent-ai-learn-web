@@ -2,7 +2,7 @@ mixin error(name)
     .form__error(data-form-error=name)
 mixin input(type, id, label, className)
     div(class=`form__row${className ? ' ' + className : '' }`)
-        input.form__input(id=id, name=id, type=type, data-prevent-hiding-auth, required)
+        input.form__input(id=id, name=id, type=type, data-prevent-hiding-auth, data-prevent-disabled, required)
         if label
             label.form__label(for=id) #{label}
         +error(id)

@@ -126,8 +126,10 @@ const prefillEmailAddressInForms = () => {
             if (!emailInputs[i].hasAttribute('data-prevent-hiding-auth')) {
                 emailInputs[i].parentNode.classList.add('hidden');
             }
-            emailInputs[i].setAttribute('disabled', 'disabled');
-            emailInputs[i].setAttribute('data-disabled', '');
+            if (!emailInputs[i].hasAttribute('data-prevent-disabled')) {
+                emailInputs[i].setAttribute('disabled', 'disabled');
+                emailInputs[i].setAttribute('data-disabled', '');
+            }
             removeOptionalFromLabel(emailInputs[i]);
         }
     }
