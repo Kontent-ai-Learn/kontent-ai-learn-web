@@ -108,20 +108,20 @@
         let page = parseInt(helper.getParameterByName('page', url)) || 1;
         const hash = window.location.hash;
 
-        if (hash && page <= 1) {
+        if (hash) {
             page = getPageByHash(hash);
         }
 
         helperFilter.setFilterOnLoad(show, 'services');
 
-        var itemB;
+        let itemB;
         if (breaking === 'true') {
             itemB = document.querySelector('[data-filter-group="changes"] [data-toggle=".breaking_change"]');
         }
         if (itemB) {
             itemB.click();
         }
-        var itemR;
+        let itemR;
         if (released === 'true') {
             itemR = document.querySelector('[data-filter-group="changes"] [data-toggle=".released"]');
         }
