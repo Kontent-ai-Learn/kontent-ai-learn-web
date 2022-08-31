@@ -84,7 +84,7 @@ const handleExpirations = async (res) => {
   const attempts = await certificationDatabase.getExpirationAttempts();
   if (!attempts) return;
   for (const attempt of attempts) {
-    if ((process.env.isProduction === 'false' && (attempt.email.endsWith('@milanlund.com') || attempt.email.endsWith('@kentico.com') || attempt.email.endsWith('@kontent.ai'))) || process.env.isProduction !== 'false') {
+    if ((process.env.IS_PRODUCTION === 'false' && (attempt.email.endsWith('@milanlund.com') || attempt.email.endsWith('@kentico.com') || attempt.email.endsWith('@kontent.ai'))) || process.env.IS_PRODUCTION !== 'false') {
       await sendExpirationAhead(attempt, res);
       await sendExpired(attempt, res);
     }
@@ -92,7 +92,7 @@ const handleExpirations = async (res) => {
 };
 
 const handleExpirationNotifications = async () => {
-  await axios.post(`${process.env.baseURL}/learn/api/e-learning/expiration-notifications`, {});
+  await axios.post(`${process.env.BASE_URL}/learn/api/e-learning/expiration-notifications`, {});
 };
 
 module.exports = {

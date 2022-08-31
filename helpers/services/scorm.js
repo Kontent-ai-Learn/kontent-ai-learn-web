@@ -56,8 +56,8 @@ const getCorrectCaseRegistrationId = async (registrationId) => {
 const createRegistration = async (user, courseId, registrationId) => {
   const registration = {};
   const url = `${settings.registrationsUrl}`;
-  let baseURL = process.env.baseURL;
-  if (process.env.ngrok) baseURL = process.env.ngrok;
+  let baseUrl = process.env.BASE_URL;
+  if (process.env.NGROK) baseUrl = process.env.NGROK;
   const data = {
     courseId: courseId,
     registrationId: registrationId,
@@ -68,7 +68,7 @@ const createRegistration = async (user, courseId, registrationId) => {
       email: user.email
     },
     postback: {
-      url: `${baseURL}/learn/api/scorm/postback/`,
+      url: `${baseUrl}/learn/api/scorm/postback/`,
       resultsFormat: 'course',
       legacy: false,
       authType: 'httpbasic',
@@ -185,7 +185,7 @@ const getCourseId = (course, res) => {
     courseId = `${courseId}_preview`;
   }
 
-  if (process.env.isDevelopment === 'true') {
+  if (process.env.IS_DEVELOPMENT === 'true') {
     courseId = `dev_${courseId}`;
   }
 

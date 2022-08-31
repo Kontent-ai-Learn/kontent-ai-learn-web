@@ -1,30 +1,30 @@
 const axios = require('axios');
 
 const checkKKProject = async () => {
-  const projectId = process.env['KC.ProjectId'];
-  const securedApiKey = process.env['KC.SecuredApiKey'];
-  const previewApiKey = process.env['KC.PreviewApiKey'];
+  const projectId = process.env.KONTENT_PROJECT_ID;
+  const securedApiKey = process.env.KONTENT_SECURE_API_KEY;
+  const previewApiKey = process.env.KONTENT_PREVIEW_API_KEY;
   let host = '';
   let apiKey = '';
 
   if (!projectId) {
     return {
       isSuccess: false,
-      message: 'Missing KC.ProjectId env'
+      message: 'Missing KONTENT_PROJECT_ID env'
     };
   }
 
   if (!(securedApiKey || previewApiKey)) {
     return {
       isSuccess: false,
-      message: 'Missing one of the envs KC.SecuredApiKey or KC.PreviewApiKey'
+      message: 'Missing one of the envs KONTENT_SECURE_API_KEY or KONTENT_PREVIEW_API_KEY'
     };
   }
 
   if (securedApiKey && previewApiKey) {
     return {
       isSuccess: false,
-      message: 'There are both envs KC.SecuredApiKey and KC.PreviewApiKey specified, there must be only one of them.'
+      message: 'There are both envs KONTENT_SECURE_API_KEY and KONTENT_PREVIEW_API_KEY specified, there must be only one of them.'
     };
   }
 

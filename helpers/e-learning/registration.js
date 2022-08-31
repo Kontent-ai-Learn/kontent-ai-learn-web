@@ -4,7 +4,7 @@ const isPreview = require('../kontent/isPreview');
 
 const filterRegistrationsEnv = (registrations, res) => {
   const previewEnv = isPreview(res.locals.previewapikey);
-  const devEvn = process.env.isDevelopment === 'true';
+  const devEvn = process.env.IS_DEVELOPMENT === 'true';
   let registrationsEnv = [];
 
   if (previewEnv && devEvn) {

@@ -33,19 +33,19 @@ To start the application correctly, the following environment variables must be 
 * `AUTH0_CLIENT_ID` - Auth0 Client ID
 * `AUTH0_LOGOUT_URL` - Relative URL the user is redirected to after logging out
 * `AUTH0_DOMAIN` - Auth0 authentication domain
-* `baseURL` - URL of the current environment (for example, <http://localhost:3000>) (used for webhooks pooling)
-* `KC.ProjectId` - Kontent.ai project ID
+* `BASE_URL` - URL of the current environment (for example, <http://localhost:3000>) (used for webhooks pooling)
+* `KONTENT_PROJECT_ID` - Kontent.ai project ID
 * One of the following:
-  * `KC.PreviewApiKey` - Kontent.ai preview API key (set this key to retrieve preview content from Kontent.ai)
-  * `KC.SecuredApiKey` - Kontent.ai secured API key (set this key to retrieve published content from Kontent.ai)
+  * `KONTENT_PREVIEW_API_KEY` - Kontent.ai preview API key (set this key to retrieve preview content from Kontent.ai)
+  * `KONTENT_SECURE_API_KEY` - Kontent.ai secured API key (set this key to retrieve published content from Kontent.ai)
 
 #### Optional environment variables
 
 Without the following variables, certain features will not work on the website.
 
-* `aliasUrl` - URL specifying there the app is available, can be different from `baseUrl`
-* `appUrl` - URL specifying a Kontent.ai application related to the current environment
-* `Api2Pdf.ApiKey` - API key for the [api2PDF](https://www.api2pdf.com/) service
+* `ALIAS_URL` - URL specifying there the app is available, can be different from `baseUrl`
+* `APP_URL` - URL specifying a Kontent.ai application related to the current environment
+* `API2PDF_API_KEY` - API key for the [api2PDF](https://www.api2pdf.com/) service
 * `APPINSIGHTS_INSTRUMENTATIONKEY` - Azure Application Insights key (used for application monitoring)
 * `COSMOSDB_ENDPOINT` - CosmosDB database endpoint URL
 * `COSMOSDB_KEY` - CosmosDB database authorization key
@@ -54,33 +54,32 @@ Without the following variables, certain features will not work on the website.
 * `COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT` - CosmosDB database - Certifications container name
 * `COSMOSDB_CONTAINER_PROFILE` - CosmosDB database - Profile container name
 * `COSMOSDB_CONTAINER_REPORTING` - CosmosDB database - Reporting (Scorm postback payloads) container name
-* `GTM.id` - Google Tag Manager ID (used for analytics)
-* `Hotjar.id` - Hotjar application ID (used for analytics)
-* `Intercom.id` - Intercom account ID (used for support chat)
-* `isProduction` - Flag that determines whether to show a red warning banner
-* `Jira.IssueType` - Jira Issue index (used for feedback form)
-* `Jira.Project` - Jira Project codename (used for feedback form)
-* `Jira.Token` - Jira API key (used for feedback form)
-* `Jira.User` - User email for a Jira account (used for feedback form)
+* `GTM_ID` - Google Tag Manager ID (used for analytics)
+* `INTERCOM_ID` - Intercom account ID (used for support chat)
+* `IS_PRODUCTION` - Flag that determines whether to show a red warning banner
+* `JIRA_ISSUE_TYPE` - Jira Issue index (used for feedback form)
+* `JIRA_PROJECT` - Jira Project codename (used for feedback form)
+* `JIRA_TOKEN` - Jira API key (used for feedback form)
+* `JIRA_USER` - User email for a Jira account (used for feedback form)
+* `KONTENT_WEBHOOK_SECRET` - Kontent.ai webhook token (used for common content cache invalidation)
 * `SCORM_APP_ID` - Scorm Cloud Application ID
 * `SCORM_SECRET_KEY`- Scorm Cloud Secret key
 * `SCORM_HOST`- E-learning Scorm Cloud host URL
 * `SCORM_USERNAME`- Scorm Cloud postback endpoint auth user name
 * `SCORM_USERPWD`- Scorm Cloud postback endpoint auth user password
-* `ngrok` - ngrok tunnel URL (i.e. <https://91a2c81a7f1f.ngrok.io>) (useful for api2PDF service local development/testing)
-* `Recaptcha.v2.secret` - Google Recaptcha v2 secret API key (used for forms robot protection)
-* `Recaptcha.v2.site` - Google Recaptcha v2 site API key (used for forms robot protection)
-* `referenceRenderUrl` - Required for the REST API references based on ReDoc
-* `Search.ApiKey` - Algolia search-only API key (used for site search)
-* `Search.AppId` - Algolia application ID (used for site search)
-* `Search.IndexName` - Index name in Algolia application (used for site search)
+* `NGROK` - NGROK tunnel URL (i.e. <https://91a2c81a7f1f.NGROK.io>) (useful for api2PDF service local development/testing)
+* `RECAPTCHA_V2_SECRET` - Google Recaptcha v2 secret API key (used for forms robot protection)
+* `RECAPTCHA_V2_SITE` - Google Recaptcha v2 site API key (used for forms robot protection)
+* `API_REFERENCES_HOST` - Required for the REST API references based on ReDoc
+* `SEARCH_API_KEY` - Algolia search-only API key (used for site search)
+* `SEARCH_APP_ID` - Algolia application ID (used for site search)
+* `SEARCH_INDEX_NAME` - Index name in Algolia application (used for site search)
 * `SENDGRID_API_KEY` - SendGrid API key (used for sending priority alerts via email)
 * `SENDGRID_EMAIL_ADDRESS_FROM` - SendGrid sender email address (used for sending priority alerts via email)
 * `SENDGRID_EMAIL_ADDRESS_TO` - SendGrid
-* `SubscriptionService.Bearer` - Subscription service access token for Kontent.ai (used for verifying users' access to e-learning)
-* `SubscriptionService.Url` - Subscription service URL (used for verifying users' access to e-learning)
-* `SubscriptionService.ServiceCheckerEmail` - Email address that has an existing record in the Subscription service
-* `Webhook.Cache.Invalidate.CommonContent` - Kontent.ai webhook token (used for common content cache invalidation)
+* `SUBSCRIPTION_SERVICE_BEARER` - Subscription service access token for Kontent.ai (used for verifying users' access to e-learning)
+* `SUBSCRIPTION_SERVICE_URL` - Subscription service URL (used for verifying users' access to e-learning)
+* `SUBSCRIPTION_SERVICE_SERVICE_CHECK_EMAIL` - Email address that has an existing record in the Subscription service
 
 ## How To Contribute
 

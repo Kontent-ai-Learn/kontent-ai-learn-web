@@ -2,14 +2,14 @@ const axios = require('axios');
 
 const checkAlgolia = async () => {
   const envs = [{
-    name: 'Search.AppId',
-    errMessage: 'Missing Search.AppId env'
+    name: 'SEARCH_APP_ID',
+    errMessage: 'Missing SEARCH_APP_ID env'
   }, {
-    name: 'Search.ApiKey',
-    errMessage: 'Missing Search.ApiKey env',
+    name: 'SEARCH_API_KEY',
+    errMessage: 'Missing SEARCH_API_KEY env',
   }, {
-    name: 'Search.IndexName',
-    errMessage: 'Missing Search.IndexName env',
+    name: 'SEARCH_INDEX_NAME',
+    errMessage: 'Missing SEARCH_INDEX_NAME env',
   }];
 
   for (let i = 0; i < envs.length; i++) {
@@ -27,11 +27,11 @@ const checkAlgolia = async () => {
   };
 
   try {
-    const response = await axios(`https://${process.env['Search.AppId']}-dsn.algolia.net/1/indexes/${process.env['Search.IndexName']}`, {
+    const response = await axios(`https://${process.env.SEARCH_APP_ID}-dsn.algolia.net/1/indexes/${process.env.SEARCH_INDEX_NAME}`, {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
-        'X-Algolia-Application-Id': process.env['Search.AppId'],
-        'X-Algolia-API-Key': process.env['Search.ApiKey']
+        'X-Algolia-Application-Id': process.env.SEARCH_APP_ID,
+        'X-Algolia-API-Key': process.env.SEARCH_API_KEY
       }
     });
 
@@ -41,9 +41,9 @@ const checkAlgolia = async () => {
     }
   } catch (error) {
     if (!error.response) {
-      data.message = 'Invalid Search.AppId env';
+      data.message = 'Invalid SEARCH_APP_ID env';
     } else if (error.response.data.status === 403) {
-      data.message = 'Invalid Search.ApiKey env';
+      data.message = 'Invalid SEARCH_API_KEY env';
     } else if (error.response.data.status === 404) {
       data.message = 'Invalid earch.IndexName env';
     } else {

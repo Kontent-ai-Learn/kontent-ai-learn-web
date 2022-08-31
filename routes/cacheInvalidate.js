@@ -43,9 +43,9 @@ router.post('/', asyncHandler(async (req, res) => {
         valid: false
     };
 
-    if (process.env['Webhook.Cache.Invalidate.CommonContent']) {
+    if (process.env.KONTENT_WEBHOOK_SECRET) {
         log.env = true;
-        if (isValidSignature(req, process.env['Webhook.Cache.Invalidate.CommonContent'])) {
+        if (isValidSignature(req, process.env.KONTENT_WEBHOOK_SECRET)) {
             log.valid = true;
             poolPayload(req, res);
         }

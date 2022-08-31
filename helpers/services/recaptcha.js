@@ -2,9 +2,9 @@ const axios = require('axios');
 
 const recaptcha = {
     checkv2: async (data) => {
-        if (process.env['Recaptcha.v2.secret']) {
+        if (process.env.RECAPTCHA_V2_SECRET) {
             const settings = {
-                secret: process.env['Recaptcha.v2.secret'],
+                secret: process.env.RECAPTCHA_V2_SECRET,
                 response: data['g-recaptcha-response']
             };
 

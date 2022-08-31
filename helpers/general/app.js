@@ -61,19 +61,19 @@ const handleKCKeys = (req, res) => {
   if (typeof req.query.projectid !== 'undefined') {
     res.locals.projectid = req.query.projectid;
   } else {
-    res.locals.projectid = process.env['KC.ProjectId'];
+    res.locals.projectid = process.env.KONTENT_PROJECT_ID;
   }
 
   if (typeof req.query.previewapikey !== 'undefined') {
     res.locals.previewapikey = req.query.previewapikey;
   } else {
-    res.locals.previewapikey = process.env['KC.PreviewApiKey'];
+    res.locals.previewapikey = process.env.KONTENT_PREVIEW_API_KEY;
   }
 
   if (typeof req.query.securedapikey !== 'undefined') {
     res.locals.securedapikey = req.query.securedapikey;
   } else {
-    res.locals.securedapikey = process.env['KC.SecuredApiKey'];
+    res.locals.securedapikey = process.env.KONTENT_SECURE_API_KEY;
   }
 };
 

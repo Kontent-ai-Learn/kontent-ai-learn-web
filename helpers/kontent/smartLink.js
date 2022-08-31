@@ -1,6 +1,6 @@
 const smartLink = {
   projectId: () => {
-    return { 'data-kontent-project-id': process.env['KC.ProjectId'] }
+    return { 'data-kontent-project-id': process.env.KONTENT_PROJECT_ID }
   },
   projectLanguage: (codename) => {
     return { 'data-kontent-language-codename': codename }

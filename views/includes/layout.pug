@@ -2,10 +2,10 @@ doctype html
 html(lang='en')
     head
         include ./head.pug
-    body(ontouchstart, class=`${process.env.isProduction === 'false' ? 'non-production' : ''}${isPreview ? ' preview-key' : ''}`)&attributes(smartLink?.projectId())&attributes(smartLink?.projectLanguage(language))
-        if (process.env['GTM.id'])
+    body(ontouchstart, class=`${process.env.IS_PRODUCTION === 'false' ? 'non-production' : ''}${isPreview ? ' preview-key' : ''}`)&attributes(smartLink?.projectId())&attributes(smartLink?.projectLanguage(language))
+        if (process.env['GTM_ID'])
             noscript
-                iframe(src=`https://www.googletagmanager.com/ns.html?id=${process.env['GTM.id']}`, height='0', width='0', style='display:none;visibility:hidden')
+                iframe(src=`https://www.googletagmanager.com/ns.html?id=${process.env['GTM_ID']}`, height='0', width='0', style='display:none;visibility:hidden')
         a(href='#main') Skip navigation
         include ./preview-warning.pug
         include ./navigation.pug
@@ -13,5 +13,5 @@ html(lang='en')
         .search-overlay
         block content
         include ./footer.pug
-        if (process.env['Intercom.id'])
-            script window.intercomSettings={app_id:'#{process.env['Intercom.id']}'};(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/e42kus8l';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+        if (process.env['INTERCOM_ID'])
+            script window.intercomSettings={app_id:'#{process.env['INTERCOM_ID']}'};(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/e42kus8l';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();

@@ -41,7 +41,7 @@ if (process.env.COSMOSDB_ENDPOINT && process.env.COSMOSDB_KEY) {
   exports.cosmosClient = cosmosClient;
 }
 
-if (!process.env.baseURL.includes('localhost')) {
+if (!process.env.BASE_URL.includes('localhost')) {
   app.set('trust proxy', 1);
 }
 
@@ -93,7 +93,7 @@ app.use(slashes(true));
 app.use('/learn/callback', auth0Callback);
 app.use('/learn/service', service);
 
-if (process.env.isProduction === 'false') {
+if (process.env.IS_PRODUCTION === 'false') {
   app.use('/learn', asyncHandler(async (req, res, next) => {
     if (app.get('serviceCheckError') || !app.get('serviceCheckInitialialDone')) {
       const serviceCheckResults = await serviceCheckAll();
@@ -112,7 +112,7 @@ if (process.env.isProduction === 'false') {
         if (appInsights && appInsights.defaultClient) {
           appInsights.defaultClient.trackTrace({ message: `SERVICE_CHECK_ERROR: ${JSON.stringify(serviceCheckResults)}` });
         }
-        // return res.redirect(303, `${process.env.baseURL}/learn/service/check/`);
+        // return res.redirect(303, `${process.env.BASE_URL}/learn/service/check/`);
       }
     }
     next();
@@ -122,7 +122,7 @@ if (process.env.isProduction === 'false') {
 app.use('/learn', siteRouter);
 app.use('/', (req, res) => res.redirect(301, '/learn/'));
 
-if (!isPreview(process.env['KC.PreviewApiKey'])) {
+if (!isPreview(process.env.KONTENT_PREVIEW_API_KEY)) {
   setIntervalAsync(async () => {
     await cacheHandle.pool();
     await certificationEmail.handleExpirationNotifications();

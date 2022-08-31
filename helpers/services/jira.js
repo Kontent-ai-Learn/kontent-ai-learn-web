@@ -3,8 +3,8 @@ const errorAppInsights = require('../error/appInsights');
 
 const settings = {
     auth: {
-        username: process.env['Jira.User'] || '',
-        password: process.env['Jira.Token'] || ''
+        username: process.env.JIRA_USER || '',
+        password: process.env.JIRA_TOKEN || ''
     },
     headers: {
         Accept: 'application/json'
@@ -18,12 +18,12 @@ const jira = {
             fields: {
                project:
                {
-                  key: process.env['Jira.Project'] || ''
+                  key: process.env.JIRA_PROJECT || ''
                },
                summary: 'KCD Feedback submission',
                description: `h2. Feedback\n\n${data.feedback}\n\nh2. Context\n\nUser: ${data.email}\nDocs: ${data.url}\n`,
                issuetype: {
-                  id: parseInt(process.env['Jira.IssueType']) || 11600
+                  id: parseInt(process.env.JIRA_ISSUE_TYPE) || 11600
                }
            }
         };

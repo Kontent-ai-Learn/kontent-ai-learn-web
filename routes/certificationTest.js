@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const Api2Pdf = require('api2pdf');
-const a2pClient = new Api2Pdf(process.env['Api2Pdf.ApiKey']);
+const a2pClient = new Api2Pdf(process.env.API2PDF_API_KEY);
 const moment = require('moment');
 const download = require('download');
 const fs = require('fs');
@@ -131,14 +131,14 @@ router.get('/exam/:attemptid/certificate', asyncHandler(async (req, res, next) =
   const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
-  let baseURL;
+  let baseUrl;
 
-  if (process.env.ngrok) {
-      baseURL = process.env.ngrok;
-  } else if (process.env.aliasURL) {
-      baseURL = process.env.aliasURL;
+  if (process.env.NGROK) {
+      baseUrl = process.env.NGROK;
+  } else if (process.env.ALIAS_URL) {
+      baseUrl = process.env.ALIAS_URL;
   } else {
-      baseURL = process.env.baseURL;
+      baseUrl = process.env.BASE_URL;
   }
 
   const url = `${req.originalUrl.split('?')[0]}pdf`;
@@ -155,7 +155,7 @@ router.get('/exam/:attemptid/certificate', asyncHandler(async (req, res, next) =
   let pdfResult;
   let error;
 
-a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
+a2pClient.headlessChromeFromUrl(`${baseUrl}${url}`, true, fileName, options)
   .then((result) => {
       pdfResult = result;
   }, (rejected) => {
@@ -167,7 +167,7 @@ a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
       setTimeout(() => {
         fs.unlink(`public/learn/files/${fileName}`, () => null)
       }, 60000);
-      return res.redirect(303, `${baseURL}/learn/files/${fileName}`);
+      return res.redirect(303, `${baseUrl}/learn/files/${fileName}`);
   })
 }));
 
@@ -192,14 +192,14 @@ router.get('/course/:registrationId/certificate', asyncHandler(async (req, res, 
   const registrationData = await scorm.getRegistrationIdData(req.params.registrationId);
   if (!registrationData) return next();
 
-  let baseURL;
+  let baseUrl;
 
-  if (process.env.ngrok) {
-      baseURL = process.env.ngrok;
-  } else if (process.env.aliasURL) {
-      baseURL = process.env.aliasURL;
+  if (process.env.NGROK) {
+      baseUrl = process.env.NGROK;
+  } else if (process.env.ALIAS_URL) {
+      baseUrl = process.env.ALIAS_URL;
   } else {
-      baseURL = process.env.baseURL;
+      baseUrl = process.env.BASE_URL;
   }
 
   const url = `${req.originalUrl.split('?')[0]}pdf`;
@@ -216,7 +216,7 @@ router.get('/course/:registrationId/certificate', asyncHandler(async (req, res, 
   let pdfResult;
   let error;
 
-a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
+a2pClient.headlessChromeFromUrl(`${baseUrl}${url}`, true, fileName, options)
   .then((result) => {
       pdfResult = result;
   }, (rejected) => {
@@ -228,7 +228,7 @@ a2pClient.headlessChromeFromUrl(`${baseURL}${url}`, true, fileName, options)
       setTimeout(() => {
         fs.unlink(`public/learn/files/${fileName}`, () => null)
       }, 60000);
-      return res.redirect(303, `${baseURL}/learn/files/${fileName}`);
+      return res.redirect(303, `${baseUrl}/learn/files/${fileName}`);
   })
 }));
 

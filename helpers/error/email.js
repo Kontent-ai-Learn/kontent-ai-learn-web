@@ -1,7 +1,7 @@
 const servicesSendgrid = require('../services/sendgrid');
 
 const composeText = (info) => {
-  const text = `Environment: ${process.env.baseURL}`;
+  const text = `Environment: ${process.env.BASE_URL}`;
 
   if (typeof info === 'object') {
       return `${text}<br>${Object.keys(info).map((key) => {

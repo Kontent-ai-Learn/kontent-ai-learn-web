@@ -19,5 +19,5 @@ mixin input(type, id, label, className)
                 button.form__button
                     span Subscribe
                     span
-    if process.env['Recaptcha.v2.site']
-        #recaptcha-script(data-site=process.env['Recaptcha.v2.site'])
+    if process.env['RECAPTCHA_V2_SITE']
+        #recaptcha-script(data-site=process.env['RECAPTCHA_V2_SITE'])

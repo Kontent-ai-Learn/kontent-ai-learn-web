@@ -25,7 +25,7 @@ block content
                                     span&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___no_author')) !{helper.getValue(UIMessages, 'article___no_author')}
                             if (readingTime)
                                 .article__reading-time !{readingTime} min read
-                        if (!req.query.pdf && !containsChangelog && process.env['Api2Pdf.ApiKey'])
+                        if (!req.query.pdf && !containsChangelog && process.env['API2PDF_API_KEY'])
                             a(data-pdf-link, href=`/learn/pdf/?url=${req.originalUrl}`, target='_blank')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___download_pdf')) #{helper.getValue(UIMessages, 'article___download_pdf')}
                         if (req.query.pdf)
                             .article__tech(data-platform-note)

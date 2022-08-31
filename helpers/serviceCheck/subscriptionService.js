@@ -2,14 +2,14 @@ const axios = require('axios');
 
 const checkSubscriptionService = async () => {
   const envs = [{
-    name: 'SubscriptionService.Url',
-    errMessage: 'Missing SubscriptionService.Url env'
+    name: 'SUBSCRIPTION_SERVICE_URL',
+    errMessage: 'Missing SUBSCRIPTION_SERVICE_URL env'
   }, {
-    name: 'SubscriptionService.Bearer',
-    errMessage: 'Missing SubscriptionService.Bearer env',
+    name: 'SUBSCRIPTION_SERVICE_BEARER',
+    errMessage: 'Missing SUBSCRIPTION_SERVICE_BEARER env',
   }, {
-    name: 'SubscriptionService.ServiceCheckerEmail',
-    errMessage: 'Missing SubscriptionService.ServiceCheckerEmail env',
+    name: 'SUBSCRIPTION_SERVICE_SERVICE_CHECK_EMAIL',
+    errMessage: 'Missing SUBSCRIPTION_SERVICE_SERVICE_CHECK_EMAIL env',
   }];
 
   for (let i = 0; i < envs.length; i++) {
@@ -27,9 +27,9 @@ const checkSubscriptionService = async () => {
   };
 
   try {
-    const response = await axios(`${process.env['SubscriptionService.Url']}${process.env['SubscriptionService.ServiceCheckerEmail']}/`, {
+    const response = await axios(`${process.env.SUBSCRIPTION_SERVICE_URL}${process.env.SUBSCRIPTION_SERVICE_SERVICE_CHECK_EMAIL}/`, {
       headers: {
-        Authorization: `Bearer ${process.env['SubscriptionService.Bearer']}`
+        Authorization: `Bearer ${process.env.SUBSCRIPTION_SERVICE_BEARER}`
       }
     });
 

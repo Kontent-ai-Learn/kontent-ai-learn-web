@@ -162,7 +162,7 @@ const pool = async () => {
     };
 
     try {
-        const response = await axios.post(`${process.env.baseURL}/learn/cache-invalidate/pool/`, {});
+        const response = await axios.post(`${process.env.BASE_URL}/learn/cache-invalidate/pool/`, {});
         log.url = response && response.config ? response.config.url : '';
     } catch (error) {
         log.error = error && error.response ? error.response.data : '';

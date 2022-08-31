@@ -49,14 +49,14 @@ const isCourseAvailable = async (user, content, res) => {
 };
 
 const getSubscriptionServiceUser = async (email) => {
-  const url = `${process.env['SubscriptionService.Url']}${email}/`;
+  const url = `${process.env.SUBSCRIPTION_SERVICE_URL}${email}/`;
 
   try {
     return await axios({
       method: 'get',
       url: url,
       headers: {
-        Authorization: `Bearer ${process.env['SubscriptionService.Bearer']}`
+        Authorization: `Bearer ${process.env.SUBSCRIPTION_SERVICE_BEARER}`
       }
     });
   } catch (error) {

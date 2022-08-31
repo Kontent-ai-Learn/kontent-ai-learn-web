@@ -1,9 +1,9 @@
 const axios = require('axios');
 
 const getCodenames = async () => {
-  const projectId = process.env['KC.ProjectId'];
-  const securedApiKey = process.env['KC.SecuredApiKey'];
-  const previewApiKey = process.env['KC.PreviewApiKey'];
+  const projectId = process.env.KONTENT_PROJECT_ID;
+  const securedApiKey = process.env.KONTENT_SECURE_API_KEY;
+  const previewApiKey = process.env.KONTENT_PREVIEW_API_KEY;
   let host = '';
   let apiKey = '';
 
@@ -47,8 +47,8 @@ const getCodenames = async () => {
 
 const checkApiReferences = async () => {
   const envs = [{
-    name: 'referenceRenderUrl',
-    errMessage: 'Missing referenceRenderUrl env'
+    name: 'API_REFERENCES_HOST',
+    errMessage: 'Missing API_REFERENCES_HOST env'
   }];
 
   for (let i = 0; i < envs.length; i++) {
@@ -66,7 +66,7 @@ const checkApiReferences = async () => {
   for await (const reference of data.data.items) {
     const codename = reference.system.codename;
     try {
-      await axios.get(`${process.env.referenceRenderUrl}/api/ProviderStarter?api=${codename}`, {
+      await axios.get(`${process.env.API_REFERENCES_HOST}/api/ProviderStarter?api=${codename}`, {
         timeout: 10000
       });
     } catch (err) {

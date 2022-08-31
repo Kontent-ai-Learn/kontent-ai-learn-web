@@ -147,17 +147,17 @@ const hasLinkedItemOfType = (field, type) => {
 
 const getReferenceFiles = async (codename, saveToCache, KCDetails, methodName) => {
     let data;
-    const baseURL = process.env.referenceRenderUrl;
+    const baseUrl = process.env.API_REFERENCES_HOST;
     const time = (new Date()).toISOString();
 
     try {
-        data = await axios.get(`${baseURL}/api/ProviderStarter?api=${codename}&isPreview=${KCDetails.isPreview ? 'true' : 'false'}&source=${KCDetails.host}&method=${methodName}&t=${time}`);
+        data = await axios.get(`${baseUrl}/api/ProviderStarter?api=${codename}&isPreview=${KCDetails.isPreview ? 'true' : 'false'}&source=${KCDetails.host}&method=${methodName}&t=${time}`);
         /* data = {};
         data.data = await readFileAsync('./helpers/delivery_api.html', 'utf8'); */
     } catch (err) {
         console.error(err)
         try {
-            if (baseURL) {
+            if (baseUrl) {
                 data = await axios.get(`https://${KCDetails.isPreview ? 'kcddev' : 'kcdmaster'}.blob.core.windows.net/api-reference-pages/${codename}${KCDetails.isPreview ? '-preview' : ''}.html`);
             }
         } catch (err) {
@@ -175,10 +175,10 @@ const getReferenceFiles = async (codename, saveToCache, KCDetails, methodName) =
 const getDomain = () => {
     let domain;
 
-    if (process.env.aliasURL) {
-        domain = process.env.aliasURL;
+    if (process.env.ALIAS_URL) {
+        domain = process.env.ALIAS_URL;
     } else {
-        domain = process.env.baseURL;
+        domain = process.env.BASE_URL;
     }
 
     return domain;
