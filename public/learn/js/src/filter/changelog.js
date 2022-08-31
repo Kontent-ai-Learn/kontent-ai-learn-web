@@ -49,15 +49,17 @@
         }
     };
 
-    const getPageByHash = (hash) => {
-        const headings = document.querySelectorAll('.article__content h2[id]');
+    const getPageByHash = (hash, mixerState) => {
+        const matchingItems = mixerState.matching;
         let hashPosition = 0;
         let page = 1;
         const id = hash.replace('#', '');
 
-        for (var i = 0; i < headings.length; i++) {
-            if (headings[i].getAttribute('id') === id) {
+        for (var i = 0; i < matchingItems.length; i++) {
+            const heading = matchingItems[i].querySelector('h2[id]')
+            if (heading.getAttribute('id') === id) {
                 hashPosition = i;
+                break;
             }
         }
 
@@ -108,10 +110,6 @@
         let page = parseInt(helper.getParameterByName('page', url)) || 1;
         const hash = window.location.hash;
 
-        if (hash) {
-            page = getPageByHash(hash);
-        }
-
         helperFilter.setFilterOnLoad(show, 'services');
 
         let itemB;
@@ -130,6 +128,9 @@
         }
 
         if (mixer) {
+            if (hash) {
+                page = getPageByHash(hash, mixer.getState());
+            }
             mixer.paginate(page);
         }
     };

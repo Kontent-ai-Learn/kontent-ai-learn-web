@@ -22,8 +22,8 @@ window.calendar = (() => {
   };
 
   const getMaxDate = () => {
-    const date = new Date();
-    return normalizeDateTime(new Date(date.setMonth( date.getMonth() + 1)));
+    const date = normalizeDateTime(new Date());
+    return new Date(date.setMonth(date.getMonth() + 1));
   };
 
   const addDataToggle = () => {
@@ -69,7 +69,7 @@ window.calendar = (() => {
       multipleDates: true,
       toggleSelected: true,
       minDate: minDate,
-      maxDate: getMaxDate(),
+      maxDate: maxDate,
       onRenderCell: ({ date, cellType }) => {
         date = normalizeDateTime(date);
 

@@ -67,7 +67,7 @@ window.helperFilter = (() => {
         text = `${items[0].innerHTML}`;
       }
     } else {
-      text = `${items.length} ${calendar ? 'months' : 'categories'} selected`;
+      text = `${items.length} ${calendar ? window.UIMessages.selectedReleasedMonths : window.UIMessages.selectedAffectedServices}`;
     }
     label.innerHTML = `<div class="dropdown__tag"><div class="dropdown__tag-label">${text}</div><button type="reset" class="dropdown__tag-reset">×</button></div>`;
   };
