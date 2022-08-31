@@ -387,7 +387,7 @@ window.initSearch = (() => {
           if (suggestionUrl.length) {
               hits[i].resolvedUrl = suggestionUrl[0].url;
           }
-          suggestionsHTML += `<li><a href="${hits[i].resolvedUrl}">${hits[i].title}</a></li>`;
+          suggestionsHTML += `<li><a href="${hits[i].resolvedUrl}">${hits[i].title}${hits[i].section === 'API' && hits[i].heading ? ` – ${hits[i].heading}` : ''}</a></li>`;
         }
 
         suggestionsHTML += '</ul>';
