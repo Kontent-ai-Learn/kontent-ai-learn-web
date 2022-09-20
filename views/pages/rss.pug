@@ -2,7 +2,7 @@
 rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
     channel
         | <atom:link href="!{req.protocol + '://' + req.get('Host')}/learn/rss/articles/" rel="self" type="application/rss+xml"></atom:link>
-        title !{home.title.value}
+        title <![CDATA[!{decode(helper.stripTags(home.title.value).trim())}]]>
         language en-us
         | <link>!{req.protocol + '://' + req.get('host')}</link>
         | <description><![CDATA[!{entities.decode(helper.stripTags(home.description.value).trim())}]]></description>
@@ -10,7 +10,7 @@ rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
             - var path = urlMap.filter((item) => { return item.codename === article.system.codename });
             if path.length
                 item
-                    title !{article.title.value}
+                    title <![CDATA[!{decode(helper.stripTags(article.title.value).trim())}]]>
                     pubDate !{moment(article.system.lastModified).format('ddd, DD MMM YYYY HH:mm:ss ZZ')}
                     atom:updated !{moment(article.system.lastModified).format('YYYY-MM-DDTHH:mm:ssZ')}
                     | <description><![CDATA[!{entities.decode(helper.stripTags(article.introduction.value).trim())}]]></description>
