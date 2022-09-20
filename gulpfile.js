@@ -118,6 +118,7 @@ const jsTasks = [{
       'public/learn/js/src/app/landing-page/sliders.js',
       'public/learn/js/src/app/carousel.js',
       'public/learn/js/src/app/note-link.js',
+      'public/learn/js/src/app/anchor-copy.js'
     ],
     fileName: 'app.js'
   }
