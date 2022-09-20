@@ -93,14 +93,20 @@ const processLoginState = async () => {
 };
 
 const handleNavigationUI = () => {
-    const navAuth = document.querySelector('[data-nav-auth]');
+    const navigation = document.querySelector('.navigation');
+    if (!navigation) return;
+    const navAuth = navigation.querySelector('[data-nav-auth]');
     if (!navAuth) return;
+
+    const url = window.appUrl || 'https://app.kontent.ai';
     
     if (window.user) {
-        action = 'logout';
-        navAuth.innerHTML = `<a href="#" class="navigation__link navigation__link--auth" id="logout">${window.UIMessages.signOut}</a>`
+        navigation.classList.add('navigation--auth');
+        navAuth.innerHTML = `
+            <a href="${url}" class="navigation__link navigation__link--auth" target="_vlank">${window.UIMessages.goToProductButton}</a>
+            <a href="#" class="navigation__link navigation__link--auth" id="logout">${window.UIMessages.signOut}</a>
+        `
     } else {
-        const url = window.appUrl || 'https://app.kontent.ai';
         navAuth.innerHTML = `<a href="${url}/sign-in" class="navigation__link navigation__link--auth" target="_blank">${window.UIMessages.signIn}</a>`
     }
 };
