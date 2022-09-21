@@ -15,30 +15,41 @@
         background-color: #3b3638;
         color: #fff;
         font-weight: 400;
-        font-size: 14px;
+        font-size: 12px;
         text-shadow: none;
         white-space: nowrap;
         border-radius: .5em;
         padding: .25em .75em;
-        left: -4px;
+        left: 0;
         top: ~"calc(50% + 36px)";
         transform: translateY(-50%);
         line-height: 1.375em;
 
+        @media screen and (min-width: 768px) {
+            font-size: 14px;
+            left: -4px;
+        }
+
         &:after {
             content: '';
             position: absolute;
-            left: 10px;
-            top: -9px;
+            left: 8px;
+            top: -7px;
             width: 0;
             height: 0;
             border-style: solid;
-            border-width: 0 7px 10px 7px;
+            border-width: 0 5px 8px 5px;
             border-color: transparent transparent #3b3638 transparent;
+
+            @media screen and (min-width: 768px) {
+                border-width: 0 7px 10px 7px;
+                left: 10px;
+                op: -9px;
+            }
         }
     }
 
-    @media (pointer: coarse) and (min-width: 768px) {
+    @media (pointer: coarse) {
         display: inline-block;
     }
 
@@ -67,32 +78,30 @@
         top: 50%;
         transform: translateY(-50%);
 
-        @media (pointer: coarse) and (min-width: 768px) {
+        @media (pointer: coarse) {
             opacity: 1;
         }
     }
 
-    @media screen and (min-width: 768px) {
-        &--active, &:hover, h2:hover &, h3:hover &, h4:hover & {
-            display: inline-block;
+    &--active, &:hover, h2:hover &, h3:hover &, h4:hover & {
+        display: inline-block;
 
-            &:before {
-                opacity: 1;
-            }
+        &:before {
+            opacity: 1;
+        }
+    }
+
+    &--active, &:hover {
+        text-decoration: none !important;
+
+        &:before {
+            background-color: #e8e8e8;
         }
 
-        &--active, &:hover {
-            text-decoration: none !important;
-
-            &:before {
-                background-color: #e8e8e8;
-            }
-
-            .anchor-copy__tooltip {
-                visibility: visible;
-                z-index: 1000;
-                opacity: 1;
-            }
+        .anchor-copy__tooltip {
+            visibility: visible;
+            z-index: 1000;
+            opacity: 1;
         }
     }
 

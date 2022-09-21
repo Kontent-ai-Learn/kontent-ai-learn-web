@@ -145,14 +145,12 @@
     line-height: 1.125em;
     max-width: 700px;
     margin-bottom: 1em;
-    text-align: center;
+    padding-left: 32px;
+    margin-left: -32px;
+    position: relative;
 
     @media screen and (min-width: 480px) {
       font-size: 32px;
-    }
-
-    @media screen and (min-width: 640px) {
-      text-align: left;
     }
 
     @media screen and (min-width: 1024px) {
@@ -163,20 +161,8 @@
       font-size: 40px;
     }
 
-    @media screen and (max-width: 1365px) {
-      h2& .anchor-copy {
-        display: none;
-      }
-    }
-
-    @media screen and (min-width: 1366px) {
-      padding-left: 32px;
-      margin-left: -32px;
-      position: relative;
-
-      h2& .anchor-copy {
-        text-decoration: none;
-      }
+    h2& .anchor-copy {
+      text-decoration: none;
     }
 	}
 
@@ -189,6 +175,20 @@
 	}
 
   & &__courses-group {
+    padding: 0 0 0 1.5em;
+
+    @media screen and (min-width: 480px) {
+      padding: 0 0 0 1.25em;
+    }
+
+    @media screen and (min-width: 768px) {
+      padding: 0 0 0 1.5em;
+    }
+
+    @media screen and (min-width: 1400px) {
+      padding: 0;
+    }
+
     &--hide {
       display: none;
     }
