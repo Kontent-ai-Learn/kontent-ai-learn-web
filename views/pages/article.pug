@@ -74,7 +74,10 @@ block content
                         .article__body&attributes(smartLink?.elementCodename('content'))
                             | !{postprocessMarkup(body, res)}
                         if (containsChangelog)
-                            .mixitup-page-list
+                            .article__load-more
+                                button.button(data-filter-load-more)
+                                    span !{helper.getValue(UIMessages, 'home___show_more')}
+                                    span
                     if (nextSteps !== '<p><br></p>')
                         .article__next-steps
                             h2.table-of-contents__whatsnext(id='a-whats-next')&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___next_steps')) !{helper.getValue(UIMessages, 'article___next_steps')}

@@ -140,3 +140,15 @@ ul.filter__list--inline,
     padding: 0 .5em 0 0;
     font-weight: 700;
 }
+
+[data-filter-load-more] {
+    margin-top: 1em;
+
+    @media screen and (min-width: 768px) {
+        margin-top: 2em;
+    }
+
+    &[disabled] {
+        display: none;
+    }
+}

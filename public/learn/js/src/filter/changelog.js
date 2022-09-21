@@ -1,14 +1,15 @@
 (() => {
     const pageSize = 10;
+    let currentLimit = 10;
     const searchParam = helper.getParameterByName('search');
     const calendar = window.calendar.init();
+    const loadMoreEl = document.querySelector('[data-filter-load-more]');
 
-    const updateRoomUrl = (services, changes, released, page) => {
+    const updateRoomUrl = (services, changes, released) => {
         const loc = window.location;
         const urlParams = new URLSearchParams(loc.search);
         const url = helperFilter.getUrl(loc);
         const qs = [];
-        page = parseInt(page);
 
         if (services) {
             qs.push(`show=${services}`);
@@ -18,9 +19,6 @@
         }
         if (released === 'true') {
             qs.push(`released=${released}`);
-        }
-        if (page > 1) {
-            qs.push(`page=${page}`);
         }
         if (searchParam) {
             qs.push(`search=${searchParam}`);
@@ -32,8 +30,8 @@
         return `${url}${qs.length ? `?${qs.join('&')}` : ''}${loc.hash}`;
     };
 
-    const updateUrl = (services, changes, released, page) => {
-        const url = updateRoomUrl(services, changes, released, page);
+    const updateUrl = (services, changes, released) => {
+        const url = updateRoomUrl(services, changes, released);
         if (history && history.replaceState) {
             history.replaceState({}, null, url);
         }
@@ -49,10 +47,9 @@
         }
     };
 
-    const getPageByHash = (hash, mixerState) => {
+    const getLimitByHash = (hash, mixerState) => {
         const matchingItems = mixerState.matching;
         let hashPosition = 0;
-        let page = 1;
         const id = hash.replace('#', '');
 
         for (var i = 0; i < matchingItems.length; i++) {
@@ -63,8 +60,7 @@
             }
         }
 
-        page = parseInt(hashPosition / pageSize + 1);
-        return page;
+        return parseInt(hashPosition) + pageSize;
     };
 
     const refreshSplideCarousel = () => {
@@ -85,20 +81,23 @@
             enable: true
         },
         pagination: {
-            limit: pageSize,
-            hidePageListIfSinglePage: true,
-        },
-        templates: {
-            pagerPrev: '<button type="button" class="filter__prev" data-page="prev"></button>',
-            pagerNext: '<button type="button" class="filter__next" data-page="next"></button>'
+            limit: currentLimit
         },
         callbacks: {
             onMixEnd: function () {
-                var state = mixer.getState();
-                updateUrl(helperFilter.getActiveItems('services'), getFilterProp('.breaking_change'), getFilterProp('.released'), state.activePagination.page);
+                const state = mixer.getState();
+                updateUrl(helperFilter.getActiveItems('services'), getFilterProp('.breaking_change'), getFilterProp('.released'));
                 refreshSplideCarousel();
                 helperFilter.handleDropDownLabel('calendar', calendar);
                 helperFilter.handleDropDownLabel('services');
+
+                if (!loadMoreEl) return;
+
+                if (state.activePagination.limit >= state.totalMatching) {
+                    loadMoreEl.setAttribute('disabled', 'disabled');
+                } else if (loadMoreEl.disabled) {
+                    loadMoreEl.removeAttribute('disabled');
+                }
             }
         }
     });
@@ -107,7 +106,6 @@
         const show = helper.getParameterByName('show', url);
         const breaking = helper.getParameterByName('breaking', url);
         const released = helper.getParameterByName('released', url);
-        let page = parseInt(helper.getParameterByName('page', url)) || 1;
         const hash = window.location.hash;
 
         helperFilter.setFilterOnLoad(show, 'services');
@@ -129,10 +127,16 @@
 
         if (mixer) {
             if (hash) {
-                page = getPageByHash(hash, mixer.getState());
+                currentLimit = getLimitByHash(hash, mixer.getState());
             }
-            mixer.paginate(page);
+            mixer.paginate({ limit: currentLimit });
         }
+    };
+
+    const handleLoadMoreClick = () => {
+        const state = mixer.getState();
+        currentLimit += pageSize;
+        mixer.paginate({ limit: currentLimit });
     };
 
     setFilterOnLoad();
@@ -143,4 +147,5 @@
 
     initDropdowns();
     window.helperFilter.hideDropDownsOnClick();
+    loadMoreEl && loadMoreEl.addEventListener('click', handleLoadMoreClick);
 })();
