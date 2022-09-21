@@ -17,6 +17,7 @@ const smartLink = require('../helpers/kontent/smartLink');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationEmail = require('../helpers/certification/email');
 const certificationData = require('../helpers/certification/data');
+const fastly = require('../helpers/services/fastly');
 
 router.get('/:slug', asyncHandler(async (req, res, next) => {
   const home = await cacheHandle.ensureSingle(res, 'home', async () => {
@@ -128,6 +129,7 @@ router.get('/:slug/:attemptid', asyncHandler(async (req, res, next) => {
 }));
 
 router.get('/exam/:attemptid/certificate', asyncHandler(async (req, res, next) => {
+  res = fastly.preventCaching(res);
   const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
@@ -172,6 +174,7 @@ a2pClient.headlessChromeFromUrl(`${baseUrl}${url}`, true, fileName, options)
 }));
 
 router.get('/exam/:attemptid/certificate/pdf', asyncHandler(async (req, res, next) => {
+  res = fastly.preventCaching(res);
   const attempt = await certificationAttempt.get(req.params.attemptid);
   if (!attempt) return next();
 
@@ -188,6 +191,7 @@ router.get('/exam/:attemptid/certificate/pdf', asyncHandler(async (req, res, nex
 }));
 
 router.get('/course/:registrationId/certificate', asyncHandler(async (req, res, next) => {
+  res = fastly.preventCaching(res);
   const scorm = require('../helpers/services/scorm');
   const registrationData = await scorm.getRegistrationIdData(req.params.registrationId);
   if (!registrationData) return next();
@@ -233,6 +237,7 @@ a2pClient.headlessChromeFromUrl(`${baseUrl}${url}`, true, fileName, options)
 }));
 
 router.get('/course/:registrationId/certificate/pdf', asyncHandler(async (req, res, next) => {
+  res = fastly.preventCaching(res);
   const scorm = require('../helpers/services/scorm');
   const registrationData = await scorm.getRegistrationIdData(req.params.registrationId);
   if (!registrationData) return next();
