@@ -56,7 +56,12 @@
                 tableOfContents += '<ul>';
             }
 
-            tableOfContents += `<li><a href="#${item.getAttribute('id')}">${window.helper.encodeHTMLEntities(item.textContent)}</a></li>`;
+            let text = '';
+            item.childNodes.forEach(child => {
+                if (child.nodeType === Node.TEXT_NODE) text = child.textContent;
+            });
+
+            tableOfContents += `<li><a href="#${item.getAttribute('id')}">${window.helper.encodeHTMLEntities(text)}</a></li>`;
 
             prevHeadingLevel = headingLevel;
         });
