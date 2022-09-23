@@ -3,6 +3,13 @@ const router = express.Router();
 const moment = require('moment');
 const { decode } = require('html-entities');
 const asyncHandler = require('express-async-handler');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Europe/Prague');
 
 const cacheHandle = require('../helpers/cache/handle');
 const getContent = require('../helpers/kontent/getContent');
@@ -33,6 +40,7 @@ router.get('/changelog', asyncHandler(async (req, res) => {
         home: home[0],
         decode: decode,
         moment: moment,
+        dayjs: dayjs,
         title: changelog[0].title.value,
         releaseNotes: releaseNotes,
         domain: helper.getDomain(),

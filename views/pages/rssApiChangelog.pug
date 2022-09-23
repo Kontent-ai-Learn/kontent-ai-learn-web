@@ -11,8 +11,8 @@ rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
             - const url = `${domain}${path}#a-${anchorName}`;
             item
                 title <![CDATA[!{decode(helper.stripTags(item.title.value).trim())}]]>
-                pubDate !{moment.parseZone(item.release_date.value).format('ddd, DD MMM YYYY HH:mm:ss ZZ')}
-                atom:updated !{moment.parseZone(item.release_date.value).format('YYYY-MM-DDTHH:mm:ssZ')}
+                pubDate !{dayjs.tz(item.release_date.value).format('ddd, DD MMM YYYY HH:mm:ss ZZ')}
+                atom:updated !{dayjs.tz(item.release_date.value).format('YYYY-MM-DDTHH:mm:ssZ')}
                 | <description><![CDATA[!{decode(helper.stripTags(item.content.value).trim().replace(/(\r\n|\n|\r)/gm, ''))}]]></description>
                 | <link>!{url}</link>
                 | <guid isPermaLink="false">!{url}</guid>
