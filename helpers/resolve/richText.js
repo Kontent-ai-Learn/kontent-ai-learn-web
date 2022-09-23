@@ -531,7 +531,7 @@ const richText = {
                         </h2>
                         ${config.isPreview ? `<a href="${`https://app.kontent.ai/goto/edit-item/project/${config.projectid}/variant-codename/${config.language}/item/${item.system.id}`}" target="_blank" rel="noopener" class="edit-link edit-link--move-up">Edit</a>` : ''}
                         <div class="release-note__bar">
-                            <time class="release-note__date" datetime="${moment(item.release_date.value).format('YYYY-MM-DD')}"${getSmartLinkAttr(config, 'release_date', 'element')}>${isPlanned ? 'Planned for ' : ''}${moment(item.release_date.value).format('MMMM D, YYYY')}</time>
+                            <time class="release-note__date" datetime="${moment.parseZone(item.release_date.value).format('YYYY-MM-DD')}"${getSmartLinkAttr(config, 'release_date', 'element')}>${isPlanned ? 'Planned for ' : ''}${moment.parseZone(item.release_date.value).format('MMMM D, YYYY')}</time>
                             ${displaySeverity || services
         ? `
                                 <ul class="article__tags">
