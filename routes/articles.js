@@ -1,9 +1,16 @@
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
-const moment = require('moment');
 const htmlparser2 = require('htmlparser2');
 const cheerio = require('cheerio');
+
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Europe/Prague');
 
 const requestDelivery = require('../helpers/kontent/requestDelivery');
 const postprocessMarkup = require('../helpers/resolve/postprocessMarkup');
@@ -329,7 +336,7 @@ const getData = async (req, res) => {
         view: view,
         req: req,
         res: res,
-        moment: moment,
+        dayjs: dayjs,
         postprocessMarkup: postprocessMarkup,
         urlMap: urlMap,
         slug: content && content.length ? content[0].url.value : '',

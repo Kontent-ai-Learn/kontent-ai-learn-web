@@ -1,4 +1,3 @@
-const moment = require('moment');
 const cheerio = require('cheerio');
 const {
     escapeHtml,
@@ -98,7 +97,7 @@ const getImageAttributes = (item, cssClass) => {
 };
 
 const getCalendarClassNames = (releaseDate) => {
-    const date = moment(releaseDate);
+    const date = dayjs.tz(releaseDate);
     if (date.isAfter()) return 'future';
     return `date-${date.format('M-YYYY')}`;
 };
@@ -517,7 +516,7 @@ const richText = {
         const isPlanned = (new Date(item.release_date.value)).getTime() > (new Date()).getTime();
         const severityCodename = item.severity.value.length ? item.severity.value[0].codename : '';
         const severityName = item.severity.value.length ? item.severity.value[0].name : '';
-        const released = moment(item.release_date.value).isBefore() ? 'released' : '';
+        const released = dayjs.tz(item.release_date.value).isBefore() ? 'released' : '';
         const displaySeverity = severityCodename === 'breaking_change';
         const id = `a-${generateAnchor(item.title.value)}`;
         const calendar = getCalendarClassNames(item.release_date.value);

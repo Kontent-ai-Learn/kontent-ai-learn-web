@@ -9,4 +9,4 @@ urlset(xmlns='http://www.sitemaps.org/schemas/sitemap/0.9', xmlns:xhtml='http://
                     loc
                         | !{domain + item.url}
                     lastmod
-                        | !{moment(item.date).format("YYYY-MM-DD")}
+                        | !{dayjs.tz(item.date).format("YYYY-MM-DD")}

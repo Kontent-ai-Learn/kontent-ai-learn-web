@@ -15,7 +15,7 @@ block content
                     h1&attributes(smartLink?.elementCodename('title')) !{content.title.value}
                     .article__notes
                         if (!hideAuthorLastModified)
-                            time.article__date(datetime= moment(content.system.lastModified).format('YYYY-MM-DD')) !{moment(content.system.lastModified).format('MMMM D, YYYY')}
+                            time.article__date(datetime= dayjs.tz(content.system.lastModified).format('YYYY-MM-DD')) !{dayjs.tz(content.system.lastModified).format('MMMM D, YYYY')}
                             .article__author
                                 if (content.author.value && content.author.value.length)
                                     each author, index in content.author.value

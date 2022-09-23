@@ -17,7 +17,7 @@ html(lang='en')
           .certificate__course !{registrationData.course.title}
         .certificate__bottom
           .certificate__column
-            .certificate__value !{moment(registrationData.completedDate).format('MMMM D, YYYY')}
+            .certificate__value !{dayjs.tz(registrationData.completedDate).format('MMMM D, YYYY')}
             .certificate__label Date
           .certificate__column.certificate__column--wide
             .certificate__value

@@ -22,10 +22,10 @@ html(lang='en')
           .certificate__text !{text}
         .certificate__bottom
           .certificate__column
-            .certificate__value !{moment(attempt.end).format('MMMM D, YYYY')}
+            .certificate__value !{dayjs.tz(attempt.end).format('MMMM D, YYYY')}
             .certificate__label Valid from
           .certificate__column
-            .certificate__value !{moment(attempt.certificate_expiration).format('MMMM D, YYYY')}
+            .certificate__value !{dayjs.tz(attempt.certificate_expiration).format('MMMM D, YYYY')}
             .certificate__label Valid to
           .certificate__column.certificate__column--wide
             .certificate__value

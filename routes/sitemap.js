@@ -1,7 +1,14 @@
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
-const moment = require('moment');
+
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Europe/Prague');
 
 const helper = require('../helpers/general/helper');
 const getUrlMap = require('../helpers/general/urlMap');
@@ -17,7 +24,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
 
   return res.render('pages/sitemap', {
     req: req,
-    moment: moment,
+    dayjs: dayjs,
     urlMap: urlMap,
     domain: helper.getDomain()
   });

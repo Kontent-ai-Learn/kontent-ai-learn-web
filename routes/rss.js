@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const moment = require('moment');
 const { decode } = require('html-entities');
 const asyncHandler = require('express-async-handler');
+
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
@@ -39,7 +39,6 @@ router.get('/changelog', asyncHandler(async (req, res) => {
         helper: helper,
         home: home[0],
         decode: decode,
-        moment: moment,
         dayjs: dayjs,
         title: changelog[0].title.value,
         releaseNotes: releaseNotes,

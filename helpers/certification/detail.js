@@ -1,14 +1,21 @@
-const moment = require('moment');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const certificationDatabase = require('./database');
-const helper = require('../general/helper')
+const helper = require('../general/helper');
+
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Europe/Prague');
 
 const getCertificateData = (attempt, certificationTest) => {
   return {
     url: `/learn/get-certified/exam/${attempt.id}/certificate/`,
-    issued: moment(attempt.end).format('YYYY/MM/DD'),
-    expiration: moment(attempt.certificate_expiration).format('YYYY/MM/DD'),
+    issued: dayjs.tz(attempt.end).format('YYYY/MM/DD'),
+    expiration: dayjs.tz(attempt.certificate_expiration).format('YYYY/MM/DD'),
     name: certificationTest.title.value
   }
 };
@@ -19,8 +26,8 @@ const getCertificationInfoByAttemptId = async (attemptId, certificationTest) => 
   const result = {
     signedIn: true
   };
-  const now = moment();
-  const expiration = moment(attempt.certificate_expiration);
+  const now = dayjs.tz();
+  const expiration = dayjs.tz(attempt.certificate_expiration);
   const dateDiff = expiration.diff(now, 'days');
 
   if (dateDiff >= 0) {
@@ -40,8 +47,8 @@ const getCertificationInfo = async (user, certificationTest) => {
       id: certificationTest.system.id
     };
 
-    const now = moment();
-    const expiration = moment(successfullAttempt.certificate_expiration);
+    const now = dayjs.tz();
+    const expiration = dayjs.tz(successfullAttempt.certificate_expiration);
     const dateDiff = expiration.diff(now, 'days');
     if (dateDiff < 7) {
       result.label = 'Start exam';

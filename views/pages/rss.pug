@@ -11,8 +11,8 @@ rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
             if path.length
                 item
                     title <![CDATA[!{decode(helper.stripTags(article.title.value).trim())}]]>
-                    pubDate !{moment(article.system.lastModified).format('ddd, DD MMM YYYY HH:mm:ss ZZ')}
-                    atom:updated !{moment(article.system.lastModified).format('YYYY-MM-DDTHH:mm:ssZ')}
+                    pubDate !{dayjs.tz(article.system.lastModified).format('ddd, DD MMM YYYY HH:mm:ss ZZ')}
+                    atom:updated !{dayjs.tz(article.system.lastModified).format('YYYY-MM-DDTHH:mm:ssZ')}
                     | <description><![CDATA[!{entities.decode(helper.stripTags(article.introduction.value).trim())}]]></description>
                     | <link>!{domain + path[0].url}</link>
                     | <guid isPermaLink="false">!{domain + path[0].url}</guid>

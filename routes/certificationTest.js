@@ -3,9 +3,16 @@ const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const Api2Pdf = require('api2pdf');
 const a2pClient = new Api2Pdf(process.env.API2PDF_API_KEY);
-const moment = require('moment');
 const download = require('download');
 const fs = require('fs');
+
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Europe/Prague');
 
 const cacheHandle = require('../helpers/cache/handle');
 const getContent = require('../helpers/kontent/getContent');
@@ -185,7 +192,7 @@ router.get('/exam/:attemptid/certificate/pdf', asyncHandler(async (req, res, nex
   return res.render('certificate/exam', {
     UIMessages: UIMessages?.[0],
     attempt: attempt,
-    moment: moment,
+    dayjs: dayjs,
     helper: helper
   });
 }));
@@ -244,7 +251,7 @@ router.get('/course/:registrationId/certificate/pdf', asyncHandler(async (req, r
 
   return res.render('certificate/course', {
     registrationData: registrationData,
-    moment: moment,
+    dayjs: dayjs,
     helper: helper
   });
 }));

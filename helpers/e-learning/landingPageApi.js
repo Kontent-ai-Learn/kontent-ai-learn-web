@@ -1,4 +1,3 @@
-const moment = require('moment');
 const elearningRegistration = require('./registration');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
@@ -7,6 +6,14 @@ const isPreview = require('../kontent/isPreview');
 const { isCodenameInMultipleChoice } = require('../general/helper');
 const certificationDetail = require('../certification/detail');
 const helper = require('../general/helper');
+
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Europe/Prague');
 
 const getScormRegistration = (id, registrations) => {
   for (let i = 0; i < registrations.length; i++) {
@@ -24,7 +31,7 @@ const getCertificate = (registration, course) => {
     return {
       url: `/learn/get-certified/course/${registration.registrationId}/certificate/`,
       name: course.title.value,
-      issued: moment(registration.completedDate).format('YYYY/MM/DD'),
+      issued: dayjs.tz(registration.completedDate).format('YYYY/MM/DD'),
       expiration: null,
     };
   }
