@@ -30,4 +30,29 @@ router.get('/:codenames', asyncHandler(async (req, res, next) => {
     }
 }));
 
+router.get('/id/:id', asyncHandler(async (req, res, next) => {
+    const id = req.params.id;
+
+    if (!id) {
+        return next();
+    } else {
+        await cacheHandle.evaluateCommon(res, ['urlMap']);
+
+        const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
+            return await getUrlMap(res);
+        });
+
+        const urlWithId = urlMap && urlMap.find(elem => elem.id === id);
+        let resolvedUrl = urlWithId.url || '';
+
+        resolvedUrl = helper.preserveQueryString(resolvedUrl, req.query);
+
+        if (resolvedUrl) {
+            return res.redirect(303, resolvedUrl);
+        } else {
+            return next();
+        }
+    }
+}));
+
 module.exports = router;

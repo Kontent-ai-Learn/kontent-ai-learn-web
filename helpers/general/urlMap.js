@@ -10,6 +10,9 @@ const getMapItem = (data) => {
     const item = {};
     fields.forEach(field => {
         switch (field) {
+            case 'id':
+                item.id = data.id;
+                break;
             case 'codename':
                 item.codename = data.codename;
                 break;
@@ -61,6 +64,7 @@ const handleMultihandlePlatformArticles = (set) => {
     }
 
     settings.urlMap.push(getMapItem({
+        id: settings.item.system.id,
         codename: settings.item.system.codename,
         url: `/learn/${settings.url.join('/')}/${queryString}`,
         type: settings.item.system.type,
@@ -83,6 +87,7 @@ const handleReferenceHash = (settings) => {
     }
 
     settings.urlMap.push(getMapItem({
+        id: settings.item.system.id,
         codename: settings.item.system.codename,
         url: `/learn/${settings.url.join('/')}/${hash}`,
         type: settings.item.system.type,
@@ -114,6 +119,7 @@ const handlePlatformArticle = (settings) => {
         }
 
         settings.urlMap.push(getMapItem({
+            id: settings.item.system.id,
             codename: `${settings.item.system.codename}|${platform}`,
             url: `/learn/${settings.url.join('/')}/${queryString}`,
             type: settings.item.system.type,
@@ -137,6 +143,7 @@ const handleNodes = (settings) => {
 
     if (!(item.children && settings.isSitemap)) {
         settings.urlMap.push(getMapItem({
+            id: item.system.id,
             codename: item.system.codename,
             url: `/learn/${settings.url.join('/')}${settings.url.length ? '/' : ''}`,
             type: item.system.type,
@@ -228,6 +235,7 @@ const handleUnusedItems = async (type, deliveryClient, urlMap) => {
 
             if (!isInUrlMap && item._raw.system.workflow_step !== 'archived') {
                 urlMap.push(getMapItem({
+                    id: item.system.id,
                     codename: item.system.codename,
                     url: `/learn/other/${item.url.value}/`,
                     date: item.system.lastModified,
@@ -252,6 +260,7 @@ const handleContentType = async (deliveryClient, urlMap, codename, pathSegment, 
         items.items.forEach((item) => {
             if (!item._raw.system.workflow_step !== 'archived') {
                 urlMap.push(getMapItem({
+                    id: item.system.id,
                     codename: item.system.codename,
                     url: `/learn/${pathSegment}/${item.url.value}/`,
                     date: item.system.lastModified,
@@ -293,6 +302,7 @@ const handleLandingPage = async (deliveryClient, urlMap, codenames) => {
         for (let j = 0; j < trainingItems.length; j++) {
             if (!trainingItems[j]._raw.system.workflow_step !== 'archived') {
                 urlMap.push(getMapItem({
+                    id: trainingItems[j].system.id,
                     codename: trainingItems[j].system.codename,
                     url: `${lpItems[i].url}${trainingItems[j].url.value}/`,
                     date: trainingItems[j].system.lastModified,
@@ -330,7 +340,7 @@ const getUrlMap = async (res, isSitemap) => {
         fields = ['codename', 'url', 'date', 'visibility', 'type'];
     } else {
         isSitemap = false;
-        fields = ['codename', 'url', 'type'];
+        fields = ['id', 'codename', 'url', 'type'];
     }
 
     if (error) {
