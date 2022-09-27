@@ -71,7 +71,7 @@ window.initSearch = (() => {
     const suggestionUrl = window.urlMap.filter(item => item.codename === suggestion.codename);
 
     // Add an anchor to the url if available
-    let anchor = suggestion._highlightResult.title.value ? `#a-${suggestion._highlightResult.title.value.replace(/<\/?[^>]+(>|$)/g, '').toLowerCase().replace(/\W/g, '-').replace(/[-]+/g, '-')}` : '';
+    let anchor = suggestion.title ? `#a-${helper.generateAnchor(suggestion.title)}` : '';
     // Keep anchors only for references, changelog, and terminology
     if (suggestion.codename !== 'terminology' && suggestion.codename !== 'product_changelog') {
         anchor = '';

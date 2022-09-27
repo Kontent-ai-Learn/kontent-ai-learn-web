@@ -50,7 +50,7 @@ window.helper = (() => {
 
         return function () {
             var context = this;
-                var args = arguments;
+            var args = arguments;
 
             var later = function () {
                 timeout = null;
@@ -180,7 +180,9 @@ window.helper = (() => {
             }
             const params = searchParams.toString();
             const newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + (params ? '?' + params : '') + (hash ? '#' + hash : '');
-            window.history.replaceState({ path: newurl }, '', newurl);
+            window.history.replaceState({
+                path: newurl
+            }, '', newurl);
         }
     }
 
@@ -209,12 +211,12 @@ window.helper = (() => {
         if (paramValue == null) {
             paramValue = '';
         }
-        var pattern = new RegExp('\\b('+paramName+'=).*?(&|#|$)');
-        if (url.search(pattern)>=0) {
+        var pattern = new RegExp('\\b(' + paramName + '=).*?(&|#|$)');
+        if (url.search(pattern) >= 0) {
             return url.replace(pattern, '$1' + paramValue + '$2');
         }
         url = url.replace(/[?#]$/, '');
-        return url + (url.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue;
+        return url + (url.indexOf('?') > 0 ? '&' : '?') + paramName + '=' + paramValue;
     };
 
     // Add link tag to page head and make it load and behave as stylesheet
@@ -297,7 +299,7 @@ window.helper = (() => {
 
     const loadRecaptcha = () => {
         if (window.grecaptcha) return;
-        
+
         const recaptchaElem = document.querySelector('#recaptcha-script');
         recaptchaKey = recaptchaElem.getAttribute('data-site');
 
@@ -424,45 +426,46 @@ window.helper = (() => {
     };
 
     const startTimer = (selector) => {
-        const display =  document.querySelector(selector);
-        if(!display) return;
+        const display = document.querySelector(selector);
+        if (!display) return;
         const duration = parseInt(display.getAttribute('data-timer'));
         display.removeAttribute('data-timer')
-        let timer = duration, hours, minutes, seconds;
-    
+        let timer = duration,
+            hours, minutes, seconds;
+
         const interval = setInterval(() => {
             hours = parseInt(timer / 3600, 10);
             minutes = parseInt((timer % 3600) / 60, 10);
             seconds = parseInt((timer % 3600) % 60, 10);
-    
+
             minutes = minutes < 10 ? `0${minutes}` : minutes;
             seconds = seconds < 10 ? `0${seconds}` : seconds;
-    
+
             display.textContent = `${hours ? `${hours}:` : ''}${minutes}:${seconds}`;
-    
+
             if (--timer < 0) {
                 clearInterval(interval);
-    
+
                 const form = document.querySelector('.certification-test__form');
                 if (form) form.submit();
             }
         }, 1000);
-      };
+    };
 
-      const startTimerDate = () => {
+    const startTimerDate = () => {
         const timer = document.querySelector('[data-timer-date]');
         if (!timer) return;
         const date = new Date(timer.getAttribute('data-timer-date'));
-        if(isNaN(date)) return;
+        if (isNaN(date)) return;
         const nowSec = (new Date()).getTime() / 1000;
         const dateSec = date.getTime() / 1000;
         timer.setAttribute('data-timer', Math.round(dateSec - nowSec));
         startTimer('[data-timer-date][data-timer]');
-      };
+    };
 
-      const removeHrefOnClick = () => {
+    const removeHrefOnClick = () => {
         const items = document.querySelectorAll('[data-once]');
-        const remove = (elem) => { 
+        const remove = (elem) => {
             setTimeout(() => {
                 elem.removeAttribute('href');
             }, 0);
@@ -477,7 +480,11 @@ window.helper = (() => {
                 remove(items[i]);
             });
         }
-      };
+    };
+
+    const generateAnchor = (text) => {
+        return text.toLowerCase().replace(/(<([^>]+)>)/g, '').replace(/(&nbsp;)|(&#xa0;)|(&#160;)/g, '-').replace(/&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});/g, '').replace(/\W/g, '-').replace(/[-]+/g, '-');
+    };
 
     return {
         getParents: getParents,
@@ -508,7 +515,8 @@ window.helper = (() => {
         updateParameter: updateParameter,
         startTimer: startTimer,
         startTimerDate: startTimerDate,
-        removeHrefOnClick: removeHrefOnClick
+        removeHrefOnClick: removeHrefOnClick,
+        generateAnchor: generateAnchor
     }
 })();
 
