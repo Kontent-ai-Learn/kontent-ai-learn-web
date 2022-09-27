@@ -9,7 +9,7 @@ const settings = {
     headers: {
         Accept: 'application/json'
     },
-    issueUrl: 'https://kentico.atlassian.net/rest/api/2/issue'
+    issueUrl: 'https://kontent-ai.atlassian.net/rest/api/2/issue'
 };
 
 const jira = {
