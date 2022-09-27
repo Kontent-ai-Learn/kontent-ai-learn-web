@@ -7,7 +7,7 @@ const certificationTestResults = (() => {
     const certExpiration = certificate.expiration ? certificate.expiration.split('/').map(x => parseInt(x)) : null;
     const certName = encodeURIComponent(`${window.UIMessages.productName} ${certificate.name}`);
 
-    return `<a href=${`https://www.linkedin.com/profile/add?startTask=${certName}&name=${certName}&organizationId=373060&issueYear=${certIssue[0]}&issueMonth=${certIssue[1]}&${certExpiration ? `expirationYear=${certExpiration[0]}&expirationMonth=${certExpiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank' ${isPreview ? window.resolveSmartLink.elementCodename('training___add_to_linkedin') : ''}>${UIMessages.addToLinkedIn}</a>`;
+    return `<a href=${`https://www.linkedin.com/profile/add?startTask=${certName}&name=${certName}&organizationId=17932237&issueYear=${certIssue[0]}&issueMonth=${certIssue[1]}&${certExpiration ? `expirationYear=${certExpiration[0]}&expirationMonth=${certExpiration[1]}` : ''}&certUrl=${!certificate.url.startsWith('http') ? `${window.location.protocol}//${window.location.host}` : ''}${certificate.url}`} target='_blank' ${isPreview ? window.resolveSmartLink.elementCodename('training___add_to_linkedin') : ''}>${UIMessages.addToLinkedIn}</a>`;
   };
 
   const renderData = (data) => {
