@@ -119,7 +119,7 @@ const init = async (req, res) => {
 
   if (!await elearningUser.userHasElearningAccess(user, res)) {
     state.code = 3; // User has not e-learning access
-    state.message = helper.getValue(UIMessages, 'training___cta_buy_course');
+    state.message = helper.getValue(UIMessages, 'training___no_subscription_info');
   }
 
   const trainingCourses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {

@@ -18,6 +18,7 @@ const certificationTestResults = (() => {
       <div class="article__row-links">
         ${data.renderAs === 'button' && data.id ? `<span class="call-to-action" ${data.id ? `id="${data.id}"` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${data.text}</span><span></span></span>` : ''}
         ${data.renderAs === 'button' && data.url ? `<a class="call-to-action" href="${data.url}" ${data.attr ? data.attr : ''} ${data.target ? `target=${data.target}` : ''} ${isPreview ? window.resolveSmartLink.elementCodename(data.textUIMessageCodename) : ''}><span>${data.text}</span><span></span></a>` : ''}
+        ${data.renderAs === 'plaintext' && (data.id || data.url) ? data.text : ''}
         ${data.certificate ? `<a class="link" href="${data.certificate.url}" target="_blank" ${isPreview ? window.resolveSmartLink.elementCodename('training___download_certificate') : ''}>${UIMessages.downloadCertificate}</a>${getLinkedInLink(data.certificate)}` : ''}
       </div>
     `;

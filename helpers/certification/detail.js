@@ -97,9 +97,8 @@ const getPrivate = async (UIMessages, certificationTest, req, res) => {
     data.renderAs = 'plaintext';
   } else if (!(await elearningUser.isCourseAvailable(user, certificationTest, res))) {
     data.renderGeneralMessage = true;
-    data.textUIMessageCodename = 'training___cta_buy_course';
-    data.action = 'intercom';
-    data.renderAs = 'button';
+    data.textUIMessageCodename = 'training___no_subscription_info';
+    data.renderAs = 'plaintext';
     data.certificate = null // TBD
     data.signedIn = true;
   }

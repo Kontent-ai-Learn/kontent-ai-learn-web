@@ -239,7 +239,7 @@ const survey = (() => {
       if (formData.data && formData.data.redirect_url) {
         window.location.replace(formData.data.redirect_url);
       } else {
-        elemQuestions.innerHTML = `Access in now allowed.`;
+        elemQuestions.innerHTML = `Access in not allowed.`;
       }
     }
   };

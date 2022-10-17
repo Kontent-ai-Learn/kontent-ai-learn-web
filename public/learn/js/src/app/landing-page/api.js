@@ -133,8 +133,7 @@ const landingPage = (() => {
           ${window.user && courseItem && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false"><span onclick="landingPage.registration('${courseItem.id}')" class="button"><span>${courseItem.label}</span><span></span></span></div>` : ''}
           ${window.user && examItem && examItem.url && window.userProfile ? `<div data-lp-disabled="${!window.userProfile.toc}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false"><a href="${examItem.url}" class="button"><span>${examItem.label}</span><span></span></a></div>` : ''}
           ${window.user && examItem && examItem.message ? `<strong class="card__message">${examItem.message}</strong>` : ''}
-          ${window.userElearningData && window.userElearningData.code === 3 && !isFree ? `<span class="call-to-action" onclick="window.Intercom && window.Intercom('show')"><span>${window.userElearningData.message}</span><span></span></span>` : ''}
-          ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2) ? window.userElearningData.message : ''}
+          ${window.userElearningData && (window.userElearningData.code === 1 || window.userElearningData.code === 2 || (window.userElearningData.code === 3 && !isFree)) ? window.userElearningData.message : ''}
         </div>
         ${window.userProfile && (courseItem || examItem) ? `
           <div class="card__certificate" data-lp-disabled="${window.userProfile ? !window.userProfile.toc : 'false'}" lp-disabled-tooltip="${window.UIMessages.agreeFairPolicy}" lp-disabled-tooltip-active="false">

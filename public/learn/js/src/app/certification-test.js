@@ -210,7 +210,7 @@ const certificationTest = (() => {
       observeQuestions(elem);
       validateForm(elem);
     } else if (formData.code === 401) {
-      elem.innerHTML = `Access in now allowed.`;
+      elem.innerHTML = `Access in not allowed.`;
     } else {
       window.location.href = `${window.location.protocol}//${window.location.host}${window.location.pathname}${formData.data.id}/`;
     }
