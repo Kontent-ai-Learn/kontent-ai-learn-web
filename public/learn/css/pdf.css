@@ -60,7 +60,8 @@ main {
 }
 
 .feedback,
-.infobar__copy {
+.infobar__copy,
+.language-selector--code-block {
     display: none !important;
 }
 

@@ -138,7 +138,7 @@
                 item.classList.remove('hidden');
             }
         });
-    }
+    };
 
     const selectCode = (e) => {
         toggleBlock(e, 'data-platform-code', false, '=');
@@ -171,16 +171,6 @@
         return window.pageYOffset || doc.scrollTop;
     };
 
-    const getFirstElemInViewport = (selector) => {
-        const elements = document.querySelectorAll(selector);
-        for (var i = 0; i < elements.length; i++) {
-            if ((elements[i].getBoundingClientRect().top >= 0) && (elements[i].offsetWidth > 0 && elements[i].offsetHeight > 0)) {
-                return elements[i];
-            }
-        }
-        return null;
-    };
-
     const actionLanguageOnClick = (e, articleContent) => {
         highlightSelector(articleContent, e);
         selectCode(e);
@@ -199,10 +189,6 @@
             let prevElemOffset;
             let scrollPosition;
             let newElemOffset;
-
-            if (window.helper.findAncestor(offsetTarget, '.language-selector--fixed')) {
-                offsetTarget = getFirstElemInViewport('.language-selector--code-block');
-            }
 
             if (offsetTarget) {
                 prevElemOffset = offsetTarget.getBoundingClientRect().top;
@@ -224,6 +210,22 @@
                 handleLanguageSelection(e, articleContent);
             }, 20);
         });
+    };
+
+    const cloneLanguageSelectorToCodeBlocks = () => {
+        let languageSelector = document.querySelector('.language-selector');
+
+        if (languageSelector && languageSelector.querySelector('.language-selector__list:not(.language-selector__list--static)') && languageSelector.querySelector('.language-selector__list').childNodes.length > 1) {
+            languageSelector = languageSelector.cloneNode(true);
+            const codeBlocks = document.querySelectorAll('*:not([data-platform-code]) + [data-platform-code]:not([data-platform-code=""]), [data-platform-code]:first-child:not([data-platform-code=""])');
+
+            languageSelector.classList.add('language-selector--code-block');
+
+            codeBlocks.forEach(item => {
+                const clonedSelector = item.parentNode.insertBefore(languageSelector, item);
+                languageSelector = clonedSelector.cloneNode(true);
+            });
+        }
     };
 
     const copyCode = () => {
@@ -343,51 +345,59 @@
 
     const handleSizing = () => {
         const container = document.querySelector('.article__content');
-        const selector = document.querySelector('.language-selector');
+        const selectors = document.querySelectorAll('.language-selector');
 
-        if (!(container && selector)) return;
+        if (!(container && selectors.length)) return;
 
         const containerWidth = container.offsetWidth || 2000;
-        const items = selector.querySelectorAll('.language-selector__item');
-        const links = selector.querySelectorAll('.language-selector__link');
 
-        selector.classList.add('language-selector--unprocessed');
-        selector.classList.remove('language-selector--tooltips');
-        for (let i = 0; i < links.length; i++) {
-            links[i].setAttribute('data-tech-tooltip-active', 'false');
-        }
+        selectors.forEach((selector) => {
+            let containerWidthOffset = 0;
+            if (selector.classList.contains('language-selector--code-block')) containerWidthOffset = 56;
+            const items = selector.querySelectorAll('.language-selector__item');
+            const links = selector.querySelectorAll('.language-selector__link');
 
-        let itemsWidth = 0;
-
-        for (let i = 0; i < items.length; i++) {
-            itemsWidth += items[i].offsetWidth || 0;
-        }
-
-        if (itemsWidth > containerWidth) {
-            selector.classList.add('language-selector--tooltips');
-            for (let i = 0; i < links.length; i++) {
-                links[i].setAttribute('data-tech-tooltip-active', 'true');
-            }
-        } else {
+            selector.classList.add('language-selector--unprocessed');
             selector.classList.remove('language-selector--tooltips');
             for (let i = 0; i < links.length; i++) {
                 links[i].setAttribute('data-tech-tooltip-active', 'false');
             }
-        }
 
-        selector.classList.remove('language-selector--unprocessed');
+            let itemsWidth = 0;
+
+            for (let i = 0; i < items.length; i++) {
+                itemsWidth += items[i].offsetWidth || 0;
+            }
+
+            if (itemsWidth > (containerWidth - containerWidthOffset)) {
+                selector.classList.add('language-selector--tooltips');
+                for (let i = 0; i < links.length; i++) {
+                    links[i].setAttribute('data-tech-tooltip-active', 'true');
+                }
+            } else {
+                selector.classList.remove('language-selector--tooltips');
+                for (let i = 0; i < links.length; i++) {
+                    links[i].setAttribute('data-tech-tooltip-active', 'false');
+                }
+            }
+
+            selector.classList.remove('language-selector--unprocessed');
+        });
     };
 
     const observeStickyState = () => {
-        const stickyElm = document.querySelector('.language-selector');
-        if (stickyElm) {
-            const article = document.querySelector('.article__content');
-            if (article) {
-                article.classList.add('article__content--language-selector');
-            }
-            const observer = new IntersectionObserver(([e]) => e.target.classList.toggle('language-selector--sticky', e.intersectionRatio < 1), { threshold: [1] });
-            observer.observe(stickyElm);
-        }
+        const languageSelector = document.querySelector('.language-selector');
+        if (!languageSelector) return;
+        const listStatic = languageSelector.querySelector('.language-selector__list--static');
+        if (!listStatic) return;
+
+        const article = document.querySelector('.article__content');
+        if (!article) returnl
+
+        article.classList.add('article__content--language-selector');
+        const observer = new IntersectionObserver(([e]) => e.target.classList.toggle('language-selector--sticky', e.intersectionRatio < 1), { threshold: [1] });
+        observer.observe(languageSelector);
+
     };
 
     const scrollToLink = () => {
@@ -450,7 +460,8 @@
     };
 
     const keepScrollPositionOnChange = () => {
-        const languageSelector = document.querySelector('.language-selector__list:not(.language-selector__list--static)');
+        const languageSelectorSelector = '.language-selector__list:not(.language-selector__list--static)';
+        const languageSelector = document.querySelector(languageSelectorSelector);
         if (!languageSelector) return;
 
         const codeSamples = document.querySelectorAll('.code-sample-standalone, .code-samples');
@@ -464,7 +475,8 @@
             codeSampleInViewport = getCodeSampleInViewport(codeSamples);
         }, {passive: true});
 
-        languageSelector.addEventListener('click', (e) => {
+        document.querySelector('body').addEventListener('click', (e) => {
+            if (!(e.target && e.target.closest(languageSelectorSelector))) return;
             e.preventDefault();
             if (codeSampleInViewport !== null) {
                 keepScrollPositionOnClick(e, codeSampleInViewport);
@@ -478,6 +490,7 @@
 
     };
 
+    cloneLanguageSelectorToCodeBlocks();
     handleEmptyPlatforms();
     selectLanguage();
     addIcons();
