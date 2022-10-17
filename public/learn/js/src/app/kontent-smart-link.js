@@ -6,22 +6,11 @@ window.initSmartLink = (() => {
   };
 
   const initSDK = () => {
-    if (typeof KontentSmartLink !== 'undefined') {
+   if (typeof KontentSmartLink !== 'undefined') {
       KontentSmartLink.initialize();
-
-      let intervalCount = 0;
-      const interval = setInterval(() => {
-        intervalCount++;
-        const elem = document.querySelector('kontent-smart-link-element');
-        if (elem) {
-          clearInterval(interval);
-          window.kontentSmartLinkEnabled = true;
-          disableLinks();
-          document.body.classList.add('kontent-smart-link-enabled');
-        } else if (intervalCount > 20) {
-          clearInterval(interval);
-        }
-      }, 200);
+      window.kontentSmartLinkEnabled = true;
+      disableLinks();
+      document.body.classList.add('kontent-smart-link-enabled');
     }
   };
 

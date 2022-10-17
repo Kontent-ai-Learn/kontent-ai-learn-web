@@ -209,7 +209,7 @@ const jsTasks = [{
   name: 'js-kontentsmartlink',
   config: {
     src: [
-      'node_modules/@kentico/kontent-smart-link/dist/kontent-smart-link.umd.js'
+      'node_modules/@kontent-ai/smart-link/dist/kontent-smart-link.umd.js'
     ],
     fileName: 'kontentsmartlink.js'
   }
@@ -343,14 +343,6 @@ const cssTasks = [{
       'public/learn/css/src/general/service-check.less',
     ],
     fileName: 'service.less'
-  }
-}, {
-  name: 'css-kontentsmartlink',
-  config: {
-    src: [
-      'node_modules/@kentico/kontent-smart-link/dist/kontent-smart-link.styles.css'
-    ],
-    fileName: 'kontentsmartlink.less'
   }
 }];
 

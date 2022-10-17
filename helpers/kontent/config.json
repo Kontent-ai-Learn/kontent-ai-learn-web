@@ -2,10 +2,6 @@
   "deliveryConfig": {
     "isDeveloperMode": false,
     "typeResolvers": [],
-    "retryAttempts": 3,
-    "customHeaders": [{
-      "header": "X-KC-SOURCE",
-      "value": "kentico-cloud-docs-web;1.0.0-beta"
-    }]
+    "retryAttempts": 3
   }
 }

@@ -19,6 +19,7 @@ const defineDeliveryConfig = (config) => {
     if (previewApiKey) {
         deliveryConfig.previewApiKey = previewApiKey;
         deliveryConfig.globalQueryConfig.usePreviewMode = true;
+        deliveryConfig.globalQueryConfig.waitForLoadingNewContent = true;
     }
 
     if (securedApiKey) {
