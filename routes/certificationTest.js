@@ -155,6 +155,7 @@ router.get('/exam/:attemptid/certificate', asyncHandler(async (req, res, next) =
   const fileName = `${attempt.test.codename}_${attempt.id}.pdf`;
 
   const options = {
+    delay: 1000,
     marginBottom: 0,
     marginLeft: 0,
     marginRight: 0,
@@ -218,6 +219,7 @@ router.get('/course/:registrationId/certificate', asyncHandler(async (req, res, 
   const fileName = `${registrationData.course.id}_${req.params.registrationId}.pdf`;
 
   const options = {
+    delay: 1000,
     marginBottom: 0,
     marginLeft: 0,
     marginRight: 0,

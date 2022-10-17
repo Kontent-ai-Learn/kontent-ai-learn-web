@@ -94,6 +94,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
     const domain = helper.getDomain();
     const pageUrl = `${domain}${req.query.url}`;
     const options = {
+        delay: 1000,
         marginBottom: 0.7,
         marginLeft: 0.8,
         marginRight: 0.8,
