@@ -1,0 +1,137 @@
+.user-panel {
+  background-color: #fff;
+  box-shadow: 0 0 2.25em rgba(0, 0, 0, .25);
+  border-radius: 40px 4px 40px 40px;
+  box-sizing: border-box;
+  width: 275px;
+  padding: 1.75em;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  
+  @media screen and (min-width: 480px) {
+    width: 430px;
+    padding: 1.75em 2.25em;
+  }
+
+  @media screen and (min-width: 768px) {
+    width: 590px;
+    padding: 2em 2.75em;
+  }
+
+  position: absolute;
+  top: ~"calc(100% + .5em)";
+  right: 0;
+
+  visibility: hidden;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity .25s, visibility 0s linear .25s;
+
+  &--active {
+    visibility: visible;
+    opacity: 1;
+    z-index: 1;
+    transition: opacity .25s, visibility 0s linear 0s;
+  }
+
+  &:not([data-user-profile-content]) {
+    &::after {
+      content: '';
+      position: absolute;
+      border-radius: 8px 20px 20px 20px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      width: 150px;
+      height: 24px;
+      background-color: #e8e8e9;
+      background: linear-gradient(45deg, #bbb, #eee, #bbb, #eee);
+      background-size: 400% 400%;
+      animation: gradientLoading 6s ease infinite;
+    }
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    @media screen and (min-width: 480px) {
+      flex-direction: row;
+    }
+  }
+
+  &__column {
+
+  }
+
+  &__name {
+    font-size: 1.125em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    padding: 0 0 .25em;
+
+    @media screen and (min-width: 768px) {
+      font-size: 1.375em;
+    }
+
+    &::before {
+        content: "\e605";
+        font-family: kentico-icons;
+        color: #6552c4;
+        font-size: 24px;
+        display: block;
+        height: auto;
+        position: static;
+        background-color: transparent;
+        transition: .25s color;
+        padding: 0 .25em 0 0;
+    }
+  }
+
+  &__info {
+    font-size: 1em;
+
+    @media screen and (min-width: 768px) {
+      font-size: 1.125em;
+    }
+  }
+
+  &__email {
+    padding-right: 1.25em;
+  }
+
+
+  &__link {
+    white-space: nowrap;
+    color: #6552c4;
+    
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  &__link--signout {
+    font-size: 1em;
+
+    @media screen and (min-width: 768px) {
+      font-size: 1.125em;
+    }
+  }
+}
+
+@keyframes gradientLoading {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}

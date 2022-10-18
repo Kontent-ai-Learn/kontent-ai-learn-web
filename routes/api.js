@@ -73,13 +73,13 @@ router.post('/e-learning/expiration-notifications', async (req, res) => {
 
 router.get('/user/profile', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
-  const data = await userProfile.get(req?.user.email);
+  const data = await userProfile.get(req?.user.email, res);
   return res.send(data);
 });
 
 router.post('/user/profile', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
-  const data = await userProfile.createUpdate(req?.user.email, req.body);
+  const data = await userProfile.createUpdate(req?.user.email, req.body, res);
   return res.send(data);
 });
 

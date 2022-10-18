@@ -244,7 +244,7 @@ window.initSearch = (() => {
       const parent = window.helper.findAncestor(e.target, '[data-search-container]');
       const parentTrigger = e.target.matches('[data-search-trigger]');
 
-      if (!parent && !parentTrigger && !e.target.matches('[role*="tab"]') && !e.target.matches('[data-platform]')) {
+      if (!parent && !parentTrigger && !e.target.matches('[role*="tab"]') && !e.target.matches('[data-platform]') && !e.target.closest('[data-nav-auth]')) {
         onAutocompleteClosed();
 
         if (searchTrigger && searchOverlay) {

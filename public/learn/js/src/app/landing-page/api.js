@@ -174,7 +174,6 @@ const landingPage = (() => {
         }
 
         window.userProfile = await updateUserProfile(token, {
-          email: email,
           toc: !!item.checked
         });
       }
@@ -239,8 +238,12 @@ const landingPage = (() => {
 
     if (token) {
       fetchOptions.headers = { Authorization: `Bearer ${token}` };
-      const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
-      return await result.json();
+      try {
+        const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
+        return await result.json();
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     return null;

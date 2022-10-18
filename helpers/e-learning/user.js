@@ -4,6 +4,7 @@ const errorAppInsights = require('../error/appInsights');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const { isCodenameInMultipleChoice } = require('../general/helper');
+const userProfile = require('../user/profile');
 
 const getTrainingUser = async (email, res) => {
   const trainingUsers = await cacheHandle.evaluateSingle(res, 'trainingUsers', async () => {
@@ -84,29 +85,30 @@ const getSubscriptionServiceUser = async (email) => {
 };
 
 const getUser = async (email, res) => {
-  if (email) {
-    const trainingUser = await getTrainingUser(email, res);
-    const user = {};
+  if (!email) return null;
+  const trainingUser = await getTrainingUser(email, res);
+  let user = {};
 
-    if (trainingUser) {
-      user.email = email;
-
-      if (trainingUser) {
-        user.firstName = trainingUser.first_name.value;
-        user.lastName = trainingUser.last_name.value;
-        user.isTrainigUser = true;
-      }
-      return user;
-    } else {
-      const user = await getSubscriptionServiceUser(email);
-      if (user?.error_id) return user;
-      if (user?.data) return user.data;
-      return {
-        email: email
-      }
-    }
+  if (trainingUser) {
+    user.email = email;
+    user.firstName = trainingUser.first_name.value;
+    user.lastName = trainingUser.last_name.value;
+    user.isTrainigUser = true;
+  } else {
+    user = await getSubscriptionServiceUser(email);
+    if (user?.data) user = user.data;
   }
-  return null;
+
+  await userProfile.createUpdate(email, {
+    firstName: user.firstName,
+    lastName: user.lastName,
+  }, res);
+
+  if (user.email) return user;
+
+  return {
+    email: email
+  };
 };
 
 module.exports = {

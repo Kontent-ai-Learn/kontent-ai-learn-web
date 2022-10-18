@@ -28,42 +28,17 @@ auth0.signup = async () => {
 };
 
 auth0.eventListeners = () => {
-    const logins = document.querySelectorAll('#login:not([data-listener])');
-    const logouts = document.querySelectorAll('#logout:not([data-listener])');
-    const signups = document.querySelectorAll('#signup:not([data-listener])');
-    const intercoms = document.querySelectorAll('[data-click="support-async"]:not([data-listener])');
+    document.querySelector('body').addEventListener('click', (e) => {
+        if (!e.target) return;
+        let method;
+        
+        if (e.target.closest('#login')) method = auth0.login;
+        if (e.target.closest('#logout')) method = auth0.logout;
+        if (e.target.closest('#signup')) method = auth0.signup;
 
-    logins.forEach((login) => {
-        login.addEventListener('click', (e) => {
-            e.preventDefault();
-            auth0.login();
-        });
-        login.setAttribute('data-listener', '');
-    });
-
-    logouts.forEach((logout) => {
-        logout.addEventListener('click', (e) => {
-            e.preventDefault();
-            auth0.logout();
-        });
-        logout.setAttribute('data-listener', '');
-    });
-
-    signups.forEach((signup) => {
-        signup.addEventListener('click', (e) => {
-            e.preventDefault();
-            auth0.signup();
-        });
-        signup.setAttribute('data-listener', '');
-    });
-
-    intercoms.forEach((intercom) => {
-        intercom.addEventListener('click', () => {
-            if (window.Intercom && !window.kontentSmartLinkEnabled) {
-                window.Intercom('show');
-            }
-        });
-        intercom.setAttribute('data-listener', '');
+        if (!method) return;
+        e.preventDefault();
+        method(); 
     });
 };
 
@@ -104,8 +79,10 @@ const handleNavigationUI = () => {
         navigation.classList.add('navigation--auth');
         navAuth.innerHTML = `
             <a href="${url}" class="navigation__link navigation__link--auth" target="_vlank">${window.UIMessages.goToProductButton}</a>
-            <a href="#" class="navigation__link navigation__link--auth" id="logout">${window.UIMessages.signOut}</a>
-        `
+            <a href="#" class="navigation__link navigation__link--auth navigation__link--user" data-user-profile-toggle><span class="sr-only">User profile</span></a>
+        `;
+        window.initUserProfile(navAuth);
+
     } else {
         navAuth.innerHTML = `<a href="${url}/sign-in" class="navigation__link navigation__link--auth" target="_blank">${window.UIMessages.signIn}</a>`
     }

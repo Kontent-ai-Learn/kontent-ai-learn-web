@@ -228,11 +228,37 @@
                 }
             }
         }
+
+        &--user {
+            padding: .75em .5em;
+
+            &::before,
+            &:hover::before,
+            &:focus::before {
+                content: "\e605";
+                font-family: kentico-icons;
+                color: #6552c4;
+                font-size: 24px;
+                display: block;
+                height: auto;
+                position: static;
+                background-color: transparent;
+                transition: .25s color;
+            }
+
+            &:hover::before,
+            &:focus::before {
+                color: #231f20;
+            }
+        }
     }
 
     &__auth {
         display: flex;
         flex-wrap: wrap;
+        align-items: center;
+        position: relative;
+        justify-content: flex-end;
 
         @media screen and (min-width: 640px) {
             flex-wrap: nowrap;
