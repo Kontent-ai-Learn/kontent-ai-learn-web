@@ -303,6 +303,7 @@ const landingPage = (() => {
     registration,
     renderLigthboxActions,
     requestUserProfile,
+    updateUserProfile,
     handleToc,
   }
 })();

@@ -3,6 +3,28 @@ window.initUserProfile = (container) => {
   const DATA_ATTR_PANEL = `${DATA_ATTR_PREFIX}panel`;
   const DATA_ATTR_TOGGLE = `${DATA_ATTR_PREFIX}toggle`;
   const DATA_ATTR_CONTENT = `${DATA_ATTR_PREFIX}content`;
+  const DATA_ATTR_TERMS = `${DATA_ATTR_PREFIX}terms`;
+  const DATA_ATTR_UX = `${DATA_ATTR_PREFIX}ux`;
+
+  const registerPanelEvents = (panel, token) => {
+    panel.addEventListener('click', async (e) => {
+      if (!e.target) return;
+
+      const terms = e.target.closest(`[${DATA_ATTR_TERMS}]`);
+      if (terms) {
+        window.userProfile = await landingPage.updateUserProfile(token, {
+          toc: !!terms.checked
+        });
+      }
+
+      const ux = e.target.closest(`[${DATA_ATTR_UX}]`);
+      if (ux) {
+        window.userProfile = await landingPage.updateUserProfile(token, {
+          ux: !!ux.checked
+        });
+      }
+    });
+  };
 
   const getPanelContent = async (panel) => {
     if (panel.hasAttribute(DATA_ATTR_CONTENT)) return;
@@ -35,7 +57,15 @@ window.initUserProfile = (container) => {
           <a href="#" id="logout" class="user-panel__link user-panel__link--signout">${window.UIMessages.signOut}</a>
         </div>
       </div>
+      <div class="user-panel__row">
+        <div class="user-panel__column">
+          <label class="toc" for="toc"><input id="toc" type="checkbox" class="toc__checkbox" ${DATA_ATTR_TERMS}${window.userProfile.toc ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.toc)}</div></label>
+          <label class="toc" for="ux"><input id="ux" type="checkbox" class="toc__checkbox" ${DATA_ATTR_UX}${window.userProfile.ux ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.contactByUx)}</div></label>
+        </div>
+      </div>
     `;
+
+    registerPanelEvents(panel, token);
 
     panel.setAttribute(DATA_ATTR_CONTENT, '')
   };

@@ -58,9 +58,18 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 0 0 1em;
 
     @media screen and (min-width: 480px) {
       flex-direction: row;
+    }
+
+    @media screen and (min-width: 768px) {
+      padding: 0 0 1.25em;
+    }
+
+    &:last-child {
+      padding: 0;
     }
   }
 
@@ -73,10 +82,10 @@
     font-weight: 700;
     display: flex;
     align-items: center;
-    padding: 0 0 .25em;
+    padding: 0 0 .375em;
 
     @media screen and (min-width: 768px) {
-      font-size: 1.375em;
+      font-size: 1.25em;
     }
 
     &::before {
@@ -94,11 +103,7 @@
   }
 
   &__info {
-    font-size: 1em;
 
-    @media screen and (min-width: 768px) {
-      font-size: 1.125em;
-    }
   }
 
   &__email {
@@ -116,11 +121,7 @@
   }
 
   &__link--signout {
-    font-size: 1em;
 
-    @media screen and (min-width: 768px) {
-      font-size: 1.125em;
-    }
   }
 }
 
