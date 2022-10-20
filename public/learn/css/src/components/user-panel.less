@@ -36,7 +36,8 @@
     transition: opacity .25s, visibility 0s linear 0s;
   }
 
-  &:not([data-user-profile-content]) {
+  &:not([data-user-profile-content]),
+  .user-panel__e-learning:not([data-user-profile-content]) {
     &::after {
       content: '';
       position: absolute;
@@ -74,10 +75,15 @@
   }
 
   &__column {
+    width: 100%;
 
+    &--flex {
+      display: flex;
+      flex-wrap: wrap;
+    }
   }
 
-  &__name {
+  &__heading {
     font-size: 1.125em;
     font-weight: 700;
     display: flex;
@@ -88,7 +94,9 @@
       font-size: 1.25em;
     }
 
-    &::before {
+    &--e-learning,
+    &--user {
+      &::before {
         content: "\e605";
         font-family: kentico-icons;
         color: #6552c4;
@@ -98,7 +106,14 @@
         position: static;
         background-color: transparent;
         transition: .25s color;
-        padding: 0 .25em 0 0;
+        padding: 0 .375em 0 0;
+      }
+    }
+
+    &--e-learning {
+      &::before {
+        content: "\e713";
+      }
     }
   }
 
@@ -122,6 +137,76 @@
 
   &__link--signout {
 
+  }
+
+  &__dropdown-label {
+    display: flex;
+    align-items: center;
+    padding: .25em 1em .25em 0;
+  }
+
+  &__e-learning {
+    min-height: 60px;
+    position: relative;
+  }
+
+  &__topic-progress-container {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+
+    @media screen and (min-width: 768px) {
+      width: ~"calc(100% - 150px - 1em)";
+    }
+  }
+
+  &__progress-item {
+    display: flex;
+    flex-wrap: wrap;
+    padding: .25em 0;
+    align-items: center;
+
+    @media screen and (min-width: 768px) {
+      padding: .375em 0;
+    }
+  }
+
+  &__topic-name {
+    width: 100%;
+    padding: 0 1em .125em 0;
+
+    @media screen and (min-width: 768px) {
+      width: 150px;
+      padding: 0 1em 0 0;
+    }
+  }
+
+  &__topic-progress-num {
+    width: 2em;
+    padding: 0 0 0 1em;
+  }
+
+  &__topic-progress {
+    width: ~"calc(100% - 3em)";
+    border-radius: 10px;
+    height: 12px;
+    background-color: #f3f3f3;
+    display: flex;
+
+    @media screen and (min-width: 768px) {
+      height: 20px;
+    }
+  }
+
+  &__topic-progress-bar {
+    border-radius: 10px;
+    height: 12px;
+    background-color: #3DCCA8;
+
+    @media screen and (min-width: 768px) {
+      height: 20px;
+    }
   }
 }
 

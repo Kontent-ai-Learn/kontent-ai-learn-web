@@ -36,7 +36,7 @@ if UIMessages
 if platformsConfig
     script var platformsConfig=[
         each item, index in platformsConfig
-            | {url:"#{item.url}",platform:"#{item.platform}"}
+            | {url:"#{item.url}",platform:"#{item.platform}",title:"#{item.title}",icon:"#{item.icon}"}
             if index < platformsConfig.length - 1
                 | ,
         | ]

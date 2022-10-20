@@ -82,6 +82,7 @@ const jsTasks = [{
       'public/learn/js/src/app/survey.js',
       'public/learn/js/src/app/certification-test.js',
       'public/learn/js/src/app/certification-test-results.js',
+      'public/learn/js/src/app/dropdown.js',
       'public/learn/js/src/app/user-panel.js',
       'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
       'public/learn/js/src/app/auth0.js',
@@ -129,6 +130,8 @@ const jsTasks = [{
     src: [
       'public/learn/js/src/app/polyfills.js',
       'public/learn/js/src/app/helper.js',
+      'public/learn/js/src/app/landing-page/api.js',
+      'public/learn/js/src/app/dropdown.js',
       'public/learn/js/src/app/dpr.js',
       'public/learn/js/src/app/data-toggle.js',
       'public/learn/js/src/app/intercom.js',
@@ -171,6 +174,7 @@ const jsTasks = [{
     src: [
       'node_modules/mixitup/dist/mixitup.min.js',
       'public/learn/js/src/filter/mixitup/mixitup-multifilter.js',
+      'public/learn/js/src/app/dropdown.js',
       'public/learn/js/src/filter/general/helper.js',
       'public/learn/js/src/filter/landing-page.js',
       'public/learn/js/src/filter/mixitup/mixitup-no-items-found.js'
@@ -335,6 +339,8 @@ const cssTasks = [{
       'public/learn/css/src/components/info-line.less',
       'public/learn/css/src/components/autocomplete.less',
       'public/learn/css/src/components/video-controls.less',
+      'public/learn/css/src/components/dropdown.less',
+      'public/learn/css/src/components/toc.less',
       'public/learn/css/src/components/user-panel.less',
       'public/learn/css/src/general/print.less'
     ],

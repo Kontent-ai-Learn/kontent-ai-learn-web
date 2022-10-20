@@ -88,8 +88,8 @@
                 const state = mixer.getState();
                 updateUrl(helperFilter.getActiveItems('services'), getFilterProp('.breaking_change'), getFilterProp('.released'));
                 refreshSplideCarousel();
-                helperFilter.handleDropDownLabel('calendar', calendar);
-                helperFilter.handleDropDownLabel('services');
+                window.dropdownHelper.handleDropDownLabel('calendar', calendar);
+                window.dropdownHelper.handleDropDownLabel('services');
 
                 if (!loadMoreEl) return;
 
@@ -142,10 +142,10 @@
     setFilterOnLoad();
 
     const initDropdowns = () => {
-        document.querySelectorAll('.dropdown').forEach((dropdown) => window.helperFilter.createDropDownInteractions(dropdown, mixer, calendar))
+        document.querySelectorAll('.dropdown').forEach((dropdown) => window.dropdownHelper.createDropDownInteractions(dropdown, mixer, calendar))
     };
 
     initDropdowns();
-    window.helperFilter.hideDropDownsOnClick();
+    window.dropdownHelper.hideDropDownsOnClick(document.querySelector('.article__filter'));
     loadMoreEl && loadMoreEl.addEventListener('click', handleLoadMoreClick);
 })();

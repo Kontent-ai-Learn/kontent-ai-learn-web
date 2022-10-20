@@ -1,5 +1,9 @@
 const cosmos = require('../services/cosmos');
 const errorAppInsights = require('../error/appInsights');
+const cacheHandle = require('../cache/handle');
+const getContent = require('../kontent/getContent');
+const elearningRegistration = require('../e-learning/registration');
+const { isCodenameInMultipleChoice } = require('../general/helper');
 
 const registrationIdExistsInDb = async (db, id) => {
   const query = {
@@ -61,6 +65,52 @@ const setRecord = async (payload) => {
   }
 };
 
+const mergeCoursesWithProgress = (courses, registrations) => {
+  courses.forEach((course) => {
+    registrations.forEach((registration) => {
+      if (course.system.id === registration.courseId.replace('dev_', '').replace('_preview', '')) {
+        course.progress = registration.status
+      }
+    });
+  });
+
+  return courses;
+};
+
+const getUserProgress = async (req, res) => {
+  if (!(req.user && req.user.email)) return { error: 'User not sign in.' };
+
+  const courses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+    return await getContent.trainingCourse(res);
+  });
+
+  const trainingTopicTaxonomyGroup = await cacheHandle.evaluateSingle(res, 'trainingTopicTaxonomyGroup', async () => {
+    return await getContent.trainingTopicTaxonomyGroup(res);
+  });
+
+  const userRegistrations = await elearningRegistration.getUserRegistrations(req.user.email, res);
+
+  const coursesWithProgress = mergeCoursesWithProgress(courses, userRegistrations);
+
+  const topics = trainingTopicTaxonomyGroup.taxonomy.terms.map((topic) => {
+    const coursesTotal = coursesWithProgress
+      .filter((course) => isCodenameInMultipleChoice(course.personas___topics__training_topic.value, topic.codename));
+
+    if (!coursesTotal.length) return null;
+    return {
+      codename: topic.codename,
+      name: topic.name,
+      coursesTotal: coursesTotal.length,
+      coursesCompleted: coursesTotal
+        .filter((course) => course.progress === 'COMPLETED')
+        .length
+    };
+  });
+
+  return topics.filter((course) => course !== null);
+};
+
 module.exports = {
+  getUserProgress,
   setRecord
 };

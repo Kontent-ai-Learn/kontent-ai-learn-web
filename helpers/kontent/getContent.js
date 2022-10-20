@@ -256,7 +256,9 @@ const getUrlMap = require('../general/urlMap');
             cachedPlatforms[0].options.value.forEach((item) => {
                 pairings.push({
                     url: item.url.value,
-                    platform: item.platform.value[0].codename
+                    platform: item.platform.value[0].codename,
+                    title: item.title.value,
+                    icon: item.icon.value[0].url
                 });
             });
         }

@@ -208,6 +208,7 @@ const getData = async (req, res) => {
                 navigation: home && home.length ? home[0].subpages.value : null,
                 footer: footer && footer.length ? footer[0] : null,
                 UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
+                platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
                 helper: helper,
                 view: view
             };

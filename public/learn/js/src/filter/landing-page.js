@@ -64,7 +64,7 @@
     dropdown.appendChild(list);
     container.appendChild(dropdown);
 
-    window.helperFilter.createDropDownInteractions(dropdown);
+    window.dropdownHelper.createDropDownInteractions(dropdown);
   };
 
   const createSearchMarkup = (container) => {
@@ -199,7 +199,7 @@
 
   createDropDownMarkup(personas, 'All roles', 'roles', rolesContainer);
   createSearchMarkup(searchContainer);
-  window.helperFilter.hideDropDownsOnClick();
+  window.dropdownHelper.hideDropDownsOnClick(document.querySelector('[data-lp]'));
   createFilterAttributes();
   updateGroups();
   const mixer = initFilter();

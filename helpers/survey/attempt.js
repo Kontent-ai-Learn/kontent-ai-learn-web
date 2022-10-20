@@ -10,7 +10,7 @@ const { getCertificate, getScormRegistration, getProgress, getLabel, getCourseUr
 const helper = require('../general/helper')
 
 const getCoursesInCurrentTopic = (currentCourse, allCourses) => {
-  const data = []
+  const data = [];
   const currentCourseTopics = currentCourse.personas___topics__training_topic.value;
   for (let i = 0; i < currentCourseTopics.length; i++) {
     const topicCourses = allCourses.filter((course) => {
