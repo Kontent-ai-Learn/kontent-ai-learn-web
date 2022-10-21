@@ -39,7 +39,7 @@ window.initMultitechQS = (() => {
 
         if (!techLinks.length) return;
 
-        const preselectedPlatform = window.helper.getCookie('KCDOCS.preselectedLanguage');
+        const preselectedPlatform = window.helper.getPreselectedPlatform();
 
         const tech = window.helper.getTech(preselectedPlatform) || '';
 
@@ -67,7 +67,7 @@ window.updateMultitechQS = () => {
 
     if (!techLinks.length) return;
 
-    const preselectedPlatform = window.helper.getCookie('KCDOCS.preselectedLanguage');
+    const preselectedPlatform = window.helper.getPreselectedPlatform();
 
     const tech = window.helper.getTech(preselectedPlatform) || '';
 

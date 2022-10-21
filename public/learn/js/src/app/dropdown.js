@@ -1,4 +1,6 @@
 window.dropdownHelper = (() => {
+  const monthsShort =  ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
   const handleDropDownLabel = (filterGroup, calendar) => {
     const group = document.querySelector(`[data-filter-group="${filterGroup}"]`);
     if (!group) return;
@@ -90,12 +92,16 @@ window.dropdownHelper = (() => {
 
         if (e.target.hasAttribute('data-user-profile-platform')) {
           const platform = e.target.getAttribute('data-user-profile-platform');
+          const slug = e.target.getAttribute('data-user-profile-platform-slug');
+          await window.helper.setPreselectedPlatform(platform);
 
           if (token) {
-            window.userProfile = await landingPage.updateUserProfile(token, {
-              platform: platform
+            window.userProfile = await window.helper.updateUserProfile(token, {
+              platform: platform || null
             });
           }
+
+          window.helper.updatePlatformInUrls(slug);
         }
       }
     });

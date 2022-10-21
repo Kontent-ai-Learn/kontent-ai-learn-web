@@ -88,6 +88,11 @@ const handleNavigationUI = () => {
     }
 };
 
+const handlePreselectedPlatform = async () => {
+    const platform = window.helper.getPreselectedPlatform();
+    await window.helper.setPreselectedPlatform(platform);
+};
+
 const removeOptionalFromLabel = (input) => {
     const id = input.getAttribute('id');
     const label = input.parentNode.querySelector(`label[for="${id}"]`);
@@ -122,6 +127,7 @@ const prefillEmailAddressInForms = () => {
     auth0.client = await configureClient();
     await processLoginState();
     window.user = await auth0.ensureUserSignedIn();
+    handlePreselectedPlatform();
     handleNavigationUI();
     prefillEmailAddressInForms();
 

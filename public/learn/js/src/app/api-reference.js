@@ -102,7 +102,7 @@
       var linkRedoc = document.querySelector('.tab-click_' + platform);
       var blocks = document.querySelectorAll('[data-platform-code]');
 
-      window.helper.setCookie('KCDOCS.preselectedLanguage', platform);
+      window.helper.setPreselectedPlatform(platform);
 
       for (var i = 0; i < links.length; i++) {
         if (links[i].getAttribute('data-platform') === platform) {
@@ -131,10 +131,10 @@
   });
 
   /* Code blocks for requests and responses */
-  var initPlatfromFromCookie = function () {
+  var initPlatfromFromCookie = () => {
     var clicked = false;
 
-    var cookie = window.helper.getCookie('KCDOCS.preselectedLanguage');
+    var cookie = window.helper.getPreselectedPlatform();
 
     if (cookie && !clicked) {
       var tabs = document.querySelectorAll('[class="tab-click_' + cookie + '"], [data-platform="' + cookie + '"]');
@@ -168,12 +168,12 @@
     return platform;
   };
 
-  var clickTab = function () {
+  var clickTab = () => {
     var tabs = document.querySelectorAll('[class*="tab-click_"], [data-platform]');
     var body = document.querySelector('body');
     var clicked = false;
 
-    var interval = setInterval(function () {
+    var interval = setInterval(() => {
       tabs = document.querySelectorAll('[class*="tab-click_"], [data-platform]');
       if (tabs.length) {
         initPlatfromFromCookie();
@@ -181,14 +181,14 @@
       }
     }, 100);
 
-    body.addEventListener('click', function (e) {
+    body.addEventListener('click', (e) => {
       if (e.target && e.target.className && e.target.className.indexOf && e.target.className.indexOf('tab-click_') > -1 && !clicked) {
         var platform = getPlatformFromClassName(e.target.className);
         var className = 'tab-click_' + platform;
 
         updateLabel(e.target);
 
-        window.helper.setCookie('KCDOCS.preselectedLanguage', platform);
+        window.helper.setPreselectedPlatform(platform);
 
         if (!tabs.length) {
           tabs = document.querySelectorAll('[class*="tab-click_"], [data-platform]');
@@ -274,7 +274,7 @@
 
   var offset = function (el) {
     var rect = el.getBoundingClientRect();
-      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     return rect.top + scrollTop;
   }
 
@@ -324,15 +324,15 @@
       var lists = document.querySelectorAll(sel);
 
       for (var i = 0; i < lists.length; i++) {
-          var wrap = document.createElement('div');
-          wrap.classList.add('language-selector');
+        var wrap = document.createElement('div');
+        wrap.classList.add('language-selector');
 
-          var label = document.createElement('label');
-          label.classList.add('language-selector__label');
+        var label = document.createElement('label');
+        label.classList.add('language-selector__label');
 
-          lists[i].parentNode.insertBefore(wrap, lists[i]);
-          wrap.appendChild(label);
-          wrap.appendChild(lists[i]);
+        lists[i].parentNode.insertBefore(wrap, lists[i]);
+        wrap.appendChild(label);
+        wrap.appendChild(lists[i]);
       }
     }, 0);
   };
@@ -342,9 +342,9 @@
       if (e.target && e.target.matches('.language-selector__label')) {
         var languageSelector = helper.findAncestor(e.target, '.language-selector');
         if (languageSelector.classList.contains('language-selector--opened')) {
-            languageSelector.classList.remove('language-selector--opened');
+          languageSelector.classList.remove('language-selector--opened');
         } else {
-            languageSelector.classList.add('language-selector--opened');
+          languageSelector.classList.add('language-selector--opened');
         }
       } else {
         var allLanguageSelectors = document.querySelectorAll('.language-selector');

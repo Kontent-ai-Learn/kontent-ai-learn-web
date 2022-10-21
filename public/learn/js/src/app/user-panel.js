@@ -7,7 +7,9 @@ window.initUserProfile = (container) => {
   const DATA_ATTR_UX = `${DATA_ATTR_PREFIX}ux`;
   const DATA_ATTR_PLATFORMS = `${DATA_ATTR_PREFIX}platforms`;
   const DATA_ATTR_PLATFORM = `${DATA_ATTR_PREFIX}platform`;
+  const DATA_ATTR_PLATFORM_SLUG = `${DATA_ATTR_PREFIX}platform-slug`;
   const DATA_ATTR_PROGRESS = `${DATA_ATTR_PREFIX}progress`;
+  const DROPDOWN_NONE_LABEL = 'None';
 
   const requestElearningProgress = async (token) => {
     if (!token) return null;
@@ -33,14 +35,14 @@ window.initUserProfile = (container) => {
 
       const terms = e.target.closest(`[${DATA_ATTR_TERMS}]`);
       if (terms) {
-        window.userProfile = await landingPage.updateUserProfile(token, {
+        window.userProfile = await window.helper.updateUserProfile(token, {
           toc: !!terms.checked
         });
       }
 
       const ux = e.target.closest(`[${DATA_ATTR_UX}]`);
       if (ux) {
-        window.userProfile = await landingPage.updateUserProfile(token, {
+        window.userProfile = await window.helper.updateUserProfile(token, {
           ux: !!ux.checked
         });
       }
@@ -54,7 +56,7 @@ window.initUserProfile = (container) => {
     if (panel.hasAttribute(DATA_ATTR_CONTENT)) return;
 
     const token = window.user ? window.user.__raw : null;
-    window.userProfile = !window.userProfile || window.userProfile.error ? await landingPage.requestUserProfile(token) : window.userProfile;
+    window.userProfile = !window.userProfile || window.userProfile.error ? await window.helper.requestUserProfile(token) : window.userProfile;
 
     if (!(window.userProfile && window.UIMessages)) return;
 
@@ -97,10 +99,10 @@ window.initUserProfile = (container) => {
           <div class="user-panel__column user-panel__column--flex">
             <div class="user-panel__dropdown-label">My preferred technology is</div>
             <div class="dropdown dropdown--icons" ${DATA_ATTR_PLATFORMS}>
-              <div class="dropdown__label"${preselectedPlatform ? `style="background-image:url('${preselectedPlatform.icon}')"` : ''}>${preselectedPlatform ? preselectedPlatform.title : 'None'}</div>
+              <div class="dropdown__label"${preselectedPlatform ? `style="background-image:url('${preselectedPlatform.icon}')"` : ''}>${preselectedPlatform ? preselectedPlatform.title : DROPDOWN_NONE_LABEL}</div>
               <ul class="dropdown__list">
                 ${window.platformsConfig.map((item) => {
-                  return `<li class="dropdown__item" style="background-image:url('${item.icon}')" ${DATA_ATTR_PLATFORM}="${item.platform}">${item.title}</li>`
+                  return `<li class="dropdown__item" style="background-image:url('${item.icon}')" ${DATA_ATTR_PLATFORM}="${item.platform}" ${DATA_ATTR_PLATFORM_SLUG}="${item.url}">${item.title}</li>`
                 }).join('')}
               </ul>
             </div>

@@ -168,6 +168,7 @@ const getData = async (req, res) => {
     const platformsConfig = await platforms.getPlatformsConfig(res);
     let preselectedPlatform;
     let canonicalUrl;
+
     cookiesPlatform = req.cookies['KCDOCS.preselectedLanguage'];
 
     if (content && content.length) {

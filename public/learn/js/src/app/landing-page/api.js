@@ -173,7 +173,7 @@ const landingPage = (() => {
           disabled[i].setAttribute('data-lp-disabled', !item.checked);
         }
 
-        window.userProfile = await updateUserProfile(token, {
+        window.userProfile = await window.helper.updateUserProfile(token, {
           toc: !!item.checked
         });
       }
@@ -212,43 +212,6 @@ const landingPage = (() => {
     return null;
   };
 
-  const requestUserProfile = async (token) => {
-    if (!token) return null;
-
-    const fetchOptions =  { 
-      method: 'GET',
-      headers : { 
-        Authorization: `Bearer ${token}` 
-      }
-    };
-    
-    try {
-      const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
-      return await result.json();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const updateUserProfile = async (token, body) => {
-    const fetchOptions = {
-      method: 'POST',
-      body: JSON.stringify(body)
-    };
-
-    if (token) {
-      fetchOptions.headers = { Authorization: `Bearer ${token}` };
-      try {
-        const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
-        return await result.json();
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    return null;
-  };
-
   const getInfo = async () => {
     const container = document.querySelector('[data-lp]');
     if (!container) return;
@@ -262,7 +225,7 @@ const landingPage = (() => {
     removeLoadingFromPromoted();
     const event = new Event('userElearningDataEvent');
     document.querySelector('body').dispatchEvent(event);
-    window.userProfile = await requestUserProfile(token);
+    window.userProfile = await window.helper.requestUserProfile(token);
     addLightboxActions();
     removeLoadingFromLightboxActions();
     if (window.userProfile) {
@@ -302,8 +265,6 @@ const landingPage = (() => {
     getInfo,
     registration,
     renderLigthboxActions,
-    requestUserProfile,
-    updateUserProfile,
     handleToc,
   }
 })();

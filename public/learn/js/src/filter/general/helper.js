@@ -1,6 +1,4 @@
 window.helperFilter = (() => {
-  const monthsShort =  ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
   const getUrl = (loc) => {
     if (!loc) loc = window.location;
     return loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '') + loc.pathname;

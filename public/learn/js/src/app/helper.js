@@ -486,6 +486,86 @@ window.helper = (() => {
         return text.toLowerCase().replace(/(<([^>]+)>)/g, '').replace(/(&nbsp;)|(&#xa0;)|(&#160;)/g, '-').replace(/&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});/g, '').replace(/\W/g, '-').replace(/[-]+/g, '-');
     };
 
+    const setPreselectedPlatform = async (platform) => {
+        setCookie('KCDOCS.preselectedLanguage', platform, 7);
+
+        const token = window.user ? window.user.__raw : null;
+        if (!token) return;
+
+        window.userProfile = await window.helper.updateUserProfile(token, {
+            platform: platform || null
+        });
+    };
+
+    const getPreselectedPlatform = () => {
+        return getCookie('KCDOCS.preselectedLanguage');
+    };
+
+    const requestUserProfile = async (token) => {
+        if (!token) return null;
+
+        const fetchOptions = {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        try {
+            const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
+            return await result.json();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const updateUserProfile = async (token, body) => {
+        const fetchOptions = {
+            method: 'POST',
+            body: JSON.stringify(body)
+        };
+
+        if (token) {
+            fetchOptions.headers = {
+                Authorization: `Bearer ${token}`
+            };
+            try {
+                const result = await fetch(`/learn/api/user/profile/`, fetchOptions);
+                return await result.json();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        return null;
+    };
+
+    const updatePlatformInUrls = (platform) => {
+        const links = document.querySelectorAll('[data-lang]');
+
+        links.forEach(item => {
+            const href = item.getAttribute('href').split('?');
+            const path = href[0];
+            let qs = href[1] ? href[1].split('#')[0] : null;
+            const hash = href[1] ? href[1].split('#')[1] : null;
+
+            if (qs) {
+                qs = qs.split('&');
+                qs = qs.map(item => {
+                    if (item.indexOf('tech') === 0) {
+                        item = 'tech=' + platform;
+                    }
+                    return item;
+                });
+                qs = qs.join('&');
+            } else {
+                qs = 'tech=' + platform;
+            }
+
+            item.setAttribute('href', `${path}${qs ? '?' + qs : ''}${hash ? '#' + hash : ''}`);
+        });
+    };
+
     return {
         getParents: getParents,
         findAncestor: findAncestor,
@@ -516,7 +596,12 @@ window.helper = (() => {
         startTimer: startTimer,
         startTimerDate: startTimerDate,
         removeHrefOnClick: removeHrefOnClick,
-        generateAnchor: generateAnchor
+        generateAnchor: generateAnchor,
+        setPreselectedPlatform: setPreselectedPlatform,
+        getPreselectedPlatform: getPreselectedPlatform,
+        requestUserProfile: requestUserProfile,
+        updateUserProfile: updateUserProfile,
+        updatePlatformInUrls: updatePlatformInUrls
     }
 })();
 

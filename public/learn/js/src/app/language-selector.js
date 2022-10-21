@@ -1,29 +1,5 @@
 (() => {
-    const updatePlatformInUrls = (platform) => {
-        const links = document.querySelectorAll('[data-lang]');
-
-        links.forEach(item => {
-            const href = item.getAttribute('href').split('?');
-            const path = href[0];
-            let qs = href[1] ? href[1].split('#')[0] : null;
-            const hash = href[1] ? href[1].split('#')[1] : null;
-
-            if (qs) {
-                qs = qs.split('&');
-                qs = qs.map(item => {
-                    if (item.indexOf('tech') === 0) {
-                        item = 'tech=' + platform;
-                    }
-                    return item;
-                });
-                qs = qs.join('&');
-            } else {
-                qs = 'tech=' + platform;
-            }
-
-            item.setAttribute('href', `${path}${qs ? '?' + qs : ''}${hash ? '#' + hash : ''}`);
-        });
-    };
+    
 
     const updatePlatformInPDFLink = (platform) => {
         const links = document.querySelectorAll('[data-pdf-link]');
@@ -59,22 +35,22 @@
         }, 2000);
     };
 
-    const highlightSelector = (articleContent, e) => {
+    const highlightSelector = async (articleContent, e) => {
         const fixedLabel = document.querySelector('.language-selector__label');
         let textTofixedLabel;
         let bgTofixedLabel;
 
         if (e) {
-            window.helper.setCookie('KCDOCS.preselectedLanguage', e.target.getAttribute('data-platform'));
+            await window.helper.setPreselectedPlatform(e.target.getAttribute('data-platform'));
             articleContent.querySelectorAll('.language-selector__link--active').forEach(item => item.classList.remove('language-selector__link--active'));
             articleContent.querySelectorAll(`[data-platform=${e.target.getAttribute('data-platform')}]`).forEach(item => item.classList.add('language-selector__link--active'));
-            updatePlatformInUrls(e.target.getAttribute('data-slug'));
+            window.helper.updatePlatformInUrls(e.target.getAttribute('data-slug'));
             textTofixedLabel = e.target.innerHTML;
             bgTofixedLabel = e.target.getAttribute('data-icon');
             handleClickedTooltip(e.target);
             window.updateMultitechQS();
         } else {
-            const preselectedPlatform = window.helper.getCookie('KCDOCS.preselectedLanguage');
+            const preselectedPlatform = window.helper.getPreselectedPlatform();
             const preselectedElem = document.querySelectorAll(`[data-platform="${preselectedPlatform}"]`);
 
             if (preselectedPlatform && preselectedElem.length) {
@@ -171,8 +147,8 @@
         return window.pageYOffset || doc.scrollTop;
     };
 
-    const actionLanguageOnClick = (e, articleContent) => {
-        highlightSelector(articleContent, e);
+    const actionLanguageOnClick = async (e, articleContent) => {
+        await highlightSelector(articleContent, e);
         selectCode(e);
         switchContentChunk(e);
         replaceLanguageInUrl(e);
@@ -181,7 +157,7 @@
         });
     };
 
-    const handleLanguageSelection = (e, articleContent) => {
+    const handleLanguageSelection = async (e, articleContent) => {
         if (e.target && e.target.matches('.language-selector__link')) {
             e.preventDefault();
 
@@ -194,7 +170,7 @@
                 prevElemOffset = offsetTarget.getBoundingClientRect().top;
             }
 
-            actionLanguageOnClick(e, articleContent);
+            await actionLanguageOnClick(e, articleContent);
 
             if (offsetTarget) {
                 scrollPosition = getScrollPosition();
@@ -206,8 +182,8 @@
 
     const selectLanguageOnClick = (articleContent) => {
         articleContent.addEventListener('click', (e) => {
-            setTimeout(() => {
-                handleLanguageSelection(e, articleContent);
+            setTimeout(async () => {
+                await handleLanguageSelection(e, articleContent);
             }, 20);
         });
     };

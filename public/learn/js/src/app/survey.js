@@ -19,7 +19,7 @@ const survey = (() => {
       }
 
       const data = readData();
-      [window.userElearningData, window.userProfile] = await Promise.all([submitData(data, token), landingPage.requestUserProfile(token)]);
+      [window.userElearningData, window.userProfile] = await Promise.all([submitData(data, token), window.helper.requestUserProfile(token)]);
       const response = window.userElearningData || {};
 
       if (response.certificate) {
