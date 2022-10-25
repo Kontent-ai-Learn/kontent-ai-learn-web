@@ -11,8 +11,8 @@ block content
             else 
               | !{content.failure_message.value}
             .certification-test.certification-test--results
-              if (incorrect.length && helper.isNotEmptyRichText(content.heading_for_incorrect_answers.value))
-                | !{content.heading_for_incorrect_answers.value}
+              if (incorrect.length)
+                | !{helper.getValue(UIMessages, 'heading_for_incorrect_answers')}
               each item in incorrect
                 .certification-test__question !{item.question}
                 .certification-test__answer.certification-test__answer--incorrect 
