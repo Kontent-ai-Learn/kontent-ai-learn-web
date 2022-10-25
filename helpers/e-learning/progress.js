@@ -66,15 +66,21 @@ const setRecord = async (payload) => {
 };
 
 const mergeCoursesWithProgress = (courses, registrations) => {
+  const coursesWithProgress = [];
   courses.forEach((course) => {
+    const courseWithProgress = {
+      topic: course.personas___topics__training_topic.value,
+      progress: null
+    };
     registrations.forEach((registration) => {
       if (course.system.id === registration.courseId.replace('dev_', '').replace('_preview', '')) {
-        course.progress = registration.status
+        courseWithProgress.progress = registration.status
       }
     });
+    coursesWithProgress.push(courseWithProgress);
   });
 
-  return courses;
+  return coursesWithProgress;
 };
 
 const getUserProgress = async (req, res) => {
@@ -94,7 +100,7 @@ const getUserProgress = async (req, res) => {
 
   const topics = trainingTopicTaxonomyGroup.taxonomy.terms.map((topic) => {
     const coursesTotal = coursesWithProgress
-      .filter((course) => isCodenameInMultipleChoice(course.personas___topics__training_topic.value, topic.codename));
+      .filter((course) => isCodenameInMultipleChoice(course.topic, topic.codename));
 
     if (!coursesTotal.length) return null;
     return {
