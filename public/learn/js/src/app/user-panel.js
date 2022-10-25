@@ -76,16 +76,20 @@ window.initUserProfile = (container) => {
     }
 
     panel.innerHTML = `
-      <div class="user-panel__row">
+      <div class="user-panel__row user-panel__row--no-spacing">
         <div class="user-panel__column">
           <div class="user-panel__heading user-panel__heading--user">${name}</div>
-          <div class="user-panel__info">
-            <span class="user-panel__email">${email}</span>
-            <a href="${appUrl || 'https://app.kontent.ai'}/user-profile" target="_blank" class="user-panel__link">${window.UIMessages.edit}</a>
-          </div>
         </div>
         <div class="user-panel__column">
           <a href="#" id="logout" class="user-panel__link user-panel__link--signout">${window.UIMessages.signOut}</a>
+        </div>
+      </div>
+      <div class="user-panel__row">
+        <div class="user-panel__column">
+          <span class="user-panel__email">${email}</span>
+        </div>
+        <div class="user-panel__column">
+          <a href="${appUrl || 'https://app.kontent.ai'}/user-profile" target="_blank" class="user-panel__link">${window.UIMessages.edit}</a>
         </div>
       </div>
       <div class="user-panel__row">
@@ -111,7 +115,7 @@ window.initUserProfile = (container) => {
       ` : ''}
       <div class="user-panel__row">
         <div class="user-panel__column">
-          <div class="user-panel__heading user-panel__heading--e-learning">E-learning progress</div>
+          <div class="user-panel__heading user-panel__heading--e-learning">${window.UIMessages.learningProgress}</div>
           <div class="user-panel__e-learning" ${DATA_ATTR_PROGRESS}>
           
           </div>
@@ -127,13 +131,16 @@ window.initUserProfile = (container) => {
     const panelElearning = panel.querySelector(`[${DATA_ATTR_PROGRESS}]`);
     if (!panelElearning) return;
 
+    const landingPageItem = window.urlMap && window.urlMap.find((item) => item.type === 'landing_page');
+    console.log(landingPageItem)
+
     panelElearning.innerHTML = `
       <ul class="user-panel__progress">
         ${elearningProgress.map((item) => {
           const progress = Math.floor(100 / item.coursesTotal * item.coursesCompleted);
           return `
             <li class="user-panel__progress-item">
-              <div class="user-panel__topic-name">${item.name}</div>
+              <a href="${landingPageItem ? landingPageItem.url : '/learn/e-learning/'}#a-${window.helper.generateAnchor(item.name)}" class="user-panel__topic-name">${item.name}</a>
               <div class="user-panel__topic-progress-container">
               <div class="user-panel__topic-progress">
                 <div class="user-panel__topic-progress-bar" style="width:${progress}%"></div>
