@@ -7,6 +7,7 @@ const checkSendgrid = require('./sendgrid');
 const checkCosmosDb = require('./cosmosDb');
 const checkScorm = require('./scorm');
 const checkMissingObjectProperties = require('./missingObjectProperties');
+const checkLicenses = require('./licenses');
 
 const checkAll = async () => {
   const checkItems = [{
@@ -36,6 +37,9 @@ const checkAll = async () => {
   }, {
     name: 'Missing object properties',
     method: checkMissingObjectProperties
+  }, {
+    name: 'Licenses',
+    method: checkLicenses
   }];
   const resultItems = [];
 

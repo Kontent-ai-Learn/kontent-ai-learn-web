@@ -66,6 +66,10 @@ const check = (token) => {
     codename: 'missingObjectProperties',
     title: 'Missing object propeties',
     endpoint: '/learn/service/check/missing-object-property/'
+  }, {
+    codename: 'licenses',
+    title: 'Licenses',
+    endpoint: '/learn/service/check/licenses/'
   }];
 
   const buidlUI = () => {
