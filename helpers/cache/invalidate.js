@@ -28,6 +28,7 @@ const requestItemAndDeleteCacheKey = async (codename, type, KCDetails, res) => {
         depth: 4,
         resolveRichText: true,
         urlMap: urlMap,
+        waitForLoadingNewContent: true,
         ...KCDetails
     };
     if (!type) {

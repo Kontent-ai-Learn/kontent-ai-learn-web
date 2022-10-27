@@ -44,6 +44,7 @@ To start the application correctly, the following environment variables must be 
 Without the following variables, certain features will not work on the website.
 
 * `ALIAS_URL` - URL specifying there the app is available, can be different from `baseUrl`
+* `API_REFERENCES_HOST` - Required for the REST API references based on ReDoc
 * `APP_URL` - URL specifying a Kontent.ai application related to the current environment
 * `API2PDF_API_KEY` - API key for the [api2PDF](https://www.api2pdf.com/) service
 * `APPINSIGHTS_INSTRUMENTATIONKEY` - Azure Application Insights key (used for application monitoring)
@@ -61,16 +62,19 @@ Without the following variables, certain features will not work on the website.
 * `JIRA_PROJECT` - Jira Project codename (used for feedback form)
 * `JIRA_TOKEN` - Jira API key (used for feedback form)
 * `JIRA_USER` - User email for a Jira account (used for feedback form)
+* `KONTENT_LANGUAGE_CODENAME_DEFAULT` Default language codename of the Kontent.ai project (used by the Management API)
+* `KONTENT_MANAGEMENT_API_KEY` - Kontent.ai Management API key (used for manipulating content in the Kontent.ai project, ie. upserting Licensing page) 
 * `KONTENT_WEBHOOK_SECRET` - Kontent.ai webhook token (used for common content cache invalidation)
+* `LICENSES_ENDPOINT` - Source URL for content of the 3rd party licenses page
+* `LICENSES_CODENAME` - Codename of the content item representing the 3rd party licenses page
+* `NGROK` - NGROK tunnel URL (i.e. <https://91a2c81a7f1f.NGROK.io>) (useful for api2PDF service local development/testing)
+* `RECAPTCHA_V2_SECRET` - Google Recaptcha v2 secret API key (used for forms robot protection)
+* `RECAPTCHA_V2_SITE` - Google Recaptcha v2 site API key (used for forms robot protection)
 * `SCORM_APP_ID` - Scorm Cloud Application ID
 * `SCORM_SECRET_KEY`- Scorm Cloud Secret key
 * `SCORM_HOST`- E-learning Scorm Cloud host URL
 * `SCORM_USERNAME`- Scorm Cloud postback endpoint auth user name
 * `SCORM_USERPWD`- Scorm Cloud postback endpoint auth user password
-* `NGROK` - NGROK tunnel URL (i.e. <https://91a2c81a7f1f.NGROK.io>) (useful for api2PDF service local development/testing)
-* `RECAPTCHA_V2_SECRET` - Google Recaptcha v2 secret API key (used for forms robot protection)
-* `RECAPTCHA_V2_SITE` - Google Recaptcha v2 site API key (used for forms robot protection)
-* `API_REFERENCES_HOST` - Required for the REST API references based on ReDoc
 * `SEARCH_API_KEY` - Algolia search-only API key (used for site search)
 * `SEARCH_APP_ID` - Algolia application ID (used for site search)
 * `SEARCH_INDEX_NAME` - Index name in Algolia application (used for site search)
