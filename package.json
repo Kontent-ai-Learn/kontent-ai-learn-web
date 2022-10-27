@@ -39,6 +39,7 @@
         "@babel/preset-env": "^7.13.15",
         "@kentico/kontent-delivery": "^10.4.1",
         "@kentico/kontent-webhook-helper": "^1.1.0",
+        "@kontent-ai/management-sdk": "^3.4.0",
         "@kontent-ai/smart-link": "^3.0.0",
         "@sendgrid/mail": "^7.4.2",
         "@splidejs/splide": "^4.0.0",

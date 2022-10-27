@@ -4,7 +4,7 @@ const cache = require('memory-cache');
 const { signatureHelper } = require('@kentico/kontent-webhook-helper');
 const util = require('util');
 const asyncHandler = require('express-async-handler');
-const cacheInvalidate = require('../helpers/cache/invalidate');
+const { invalidate } = require('../helpers/cache/invalidate');
 const helper = require('../helpers/general/helper');
 
 const isValidSignature = (req, secret) => {
@@ -60,7 +60,7 @@ router.post('/', asyncHandler(async (req, res) => {
 }));
 
 router.post('/pool', asyncHandler(async (req, res) => {
-    await cacheInvalidate(req, res);
+    await invalidate(req, res);
     cache.del('webhook-payload-pool');
     return res.end();
 }));

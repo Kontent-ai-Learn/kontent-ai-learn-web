@@ -14,6 +14,7 @@ const getContent = require('../helpers/kontent/getContent');
 const jwtCheck = require('../helpers/services/jwt');
 const getUrlMap = require('../helpers/general/urlMap');
 const userProfile = require('../helpers/user/profile');
+const licensesUpdate = require('../helpers/licenses/update');
 
 router.post('/training-certification/detail/private', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
@@ -135,6 +136,13 @@ router.get('/redocly/data', async (req, res, next) => {
     platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
     urlMap: urlMap && urlMap.length ? urlMap : null
   });
+});
+
+router.post('/licenses-updated', async (req, res) => {
+  res = fastly.preventCaching(res);
+  const response = await licensesUpdate.createUpdate(res);
+  if (response && response.error) return res.status(400).send(response);
+  return res.end();
 });
 
 module.exports = router;

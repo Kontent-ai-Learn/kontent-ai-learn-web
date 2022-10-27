@@ -326,4 +326,7 @@ const invalidate = async (req, res) => {
     }
 };
 
-module.exports = invalidate;
+module.exports = {
+    invalidate,
+    requestItemAndDeleteCacheKey
+ };

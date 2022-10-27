@@ -132,7 +132,6 @@ window.initUserProfile = (container) => {
     if (!panelElearning) return;
 
     const landingPageItem = window.urlMap && window.urlMap.find((item) => item.type === 'landing_page');
-    console.log(landingPageItem)
 
     panelElearning.innerHTML = `
       <ul class="user-panel__progress">
