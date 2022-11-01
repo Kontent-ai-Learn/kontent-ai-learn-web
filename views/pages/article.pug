@@ -12,15 +12,15 @@ block content
                             .term-tooltip-content
                             .term-tooltip-close
                             .term-tooltip-arrow
-                    h1&attributes(smartLink?.elementCodename('title')) !{content.title.value}
+                    h1&attributes(smartLink?.elementCodename('title')) !{content.elements.title.value}
                     .article__notes
                         if (!hideAuthorLastModified)
                             time.article__date(datetime= dayjs.tz(content.system.lastModified).format('YYYY-MM-DD')) !{dayjs.tz(content.system.lastModified).format('MMMM D, YYYY')}
                             .article__author
-                                if (content.author.value && content.author.value.length)
-                                    each author, index in content.author.value
-                                        - let separator = ''; if (index < content.author.value.length - 2) {separator = ', ';} if (index === content.author.value.length - 2) {separator = ' and '}
-                                        span&attributes(smartLink?.itemId(content.system.id))&attributes(smartLink?.elementCodename('author')) !{author.name.value}!{separator}
+                                if (content.elements.author.linkedItems && content.elements.author.linkedItems.length)
+                                    each author, index in content.elements.author.linkedItems
+                                        - let separator = ''; if (index < content.elements.author.value.length - 2) {separator = ', ';} if (index === content.elements.author.value.length - 2) {separator = ' and '}
+                                        span&attributes(smartLink?.itemId(content.system.id))&attributes(smartLink?.elementCodename('author')) !{author.elements.name.value}!{separator}
                                 else
                                     span&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('article___no_author')) !{helper.getValue(UIMessages, 'article___no_author')}
                             if (readingTime)

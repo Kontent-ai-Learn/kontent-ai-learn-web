@@ -7,9 +7,9 @@ block content
           if (attempt.score !== null)
             h2 Score: !{attempt.score}%
             if (attempt.score >= attempt.test.score_to_pass)
-              | !{content.success_message.value}
+              | !{content.elements.success_message.value}
             else 
-              | !{content.failure_message.value}
+              | !{content.elements.failure_message.value}
             .certification-test.certification-test--results
               if (incorrect.length)
                 | !{helper.getValue(UIMessages, 'heading_for_incorrect_answers')}

@@ -5,7 +5,7 @@ const getContent = require('../kontent/getContent');
 const getFirstPlatformByConfig = async (preselectedPlatform, items, res) => {
     const platformsConfig = await platforms.getPlatformsConfig(res);
     let firstPlatform;
-    for (let i = 0; i < platformsConfig.value.length; i++) {
+    for (let i = 0; i < platformsConfig.linkedItems.length; i++) {
         for (let j = 0; j < items.length; j++) {
             let itemPlatform = items[j].codename;
 
@@ -13,7 +13,7 @@ const getFirstPlatformByConfig = async (preselectedPlatform, items, res) => {
                 itemPlatform = items[j].platform.value[0].codename;
             }
 
-            if (platformsConfig.value[i].platform.value[0].codename === itemPlatform) {
+            if (platformsConfig.linkedItems[i].elements.platform.value[0].codename === itemPlatform) {
                 firstPlatform = itemPlatform;
                 break;
             }
@@ -33,9 +33,9 @@ const getFirstPlatformByConfig = async (preselectedPlatform, items, res) => {
 
 const platforms = {
     getSelectedPlatform: (platformsConfig, cookiesPlatform) => {
-        let platform = platformsConfig ? platformsConfig.value.filter(item => item.system.codename === cookiesPlatform) : null;
+        let platform = platformsConfig ? platformsConfig.linkedItems.filter(item => item.system.codename === cookiesPlatform) : null;
         if (platform && platform.length) {
-            platform = platform[0].url.value
+            platform = platform[0].elements.url.value
         } else {
             platform = null;
         }
@@ -46,21 +46,21 @@ const platforms = {
             return getContent.platformsConfig(res);
         });
         return (platformsConfig && platformsConfig.length
-        ? platformsConfig[0].options
+        ? platformsConfig[0].elements.options
         : null);
     },
     getMultiplatformArticleContent: async (content, preselectedPlatform, urlMap, KCDetails, res) => {
-        const platformItem = content[0].children.value.filter(item => {
-            if (item.platform.value.length) {
-                return item.platform.value[0].codename === preselectedPlatform;
+        const platformItem = content[0].elements.children.linkedItems.filter(item => {
+            if (item.elements.platform.value.length) {
+                return item.elements.platform.value[0].codename === preselectedPlatform;
             }
             return false;
         });
 
-        const availablePlatforms = content[0].children;
+        const availablePlatforms = content[0].elements.children;
 
-        if (!platformItem.length && availablePlatforms.value.length) {
-            platformItem.push(availablePlatforms.value[0]);
+        if (!platformItem.length && availablePlatforms.linkedItems.length) {
+            platformItem.push(availablePlatforms.linkedItems[0]);
         }
 
         if (platformItem.length) {
@@ -87,10 +87,10 @@ const platforms = {
         let items;
         preselectedPlatform = req.cookies['KCDOCS.preselectedLanguage'];
 
-        if (content && content.children && content.children.value.length) {
-            items = content.children.value;
-        } else if (content && content.platform && content.platform.value.length) {
-            items = content.platform.value;
+        if (content && content.elements.children && content.elements.children.linkedItems.length) {
+            items = content.elements.children.linkedItems;
+        } else if (content && content.elements.platform && content.elements.platform.value.length) {
+            items = content.elements.platform.value;
         }
 
         if (items) {
@@ -101,27 +101,27 @@ const platforms = {
     },
     getAvailablePlatform: async (content, preselectedPlatform, res) => {
         let platformItems;
-        if (content && content.children) {
-            platformItems = content.children.value.filter(item => {
-                if (item.platform.value.length) {
-                    return item.platform.value[0].codename === preselectedPlatform;
+        if (content && content.elements.children) {
+            platformItems = content.elements.children.linkedItems.filter(item => {
+                if (item.elements.platform.value.length) {
+                    return item.elements.platform.value[0].codename === preselectedPlatform;
                 }
                 return false;
             });
 
             if (platformItems.length) {
-                preselectedPlatform = platformItems[0].platform.value[0].codename;
+                preselectedPlatform = platformItems[0].elements.platform.value[0].codename;
             } else {
-                preselectedPlatform = await getFirstPlatformByConfig(preselectedPlatform, content.children.value, res);
+                preselectedPlatform = await getFirstPlatformByConfig(preselectedPlatform, content.elements.children.linkedItems, res);
             }
         } else {
-            platformItems = content.platform.value.filter(item => item.codename === preselectedPlatform);
+            platformItems = content.elements.platform.value.filter(item => item.codename === preselectedPlatform);
 
             if (platformItems.length) {
                 preselectedPlatform = platformItems[0].codename;
             } else {
-                if (content.platform.value.length) {
-                    preselectedPlatform = content.platform.value[0].codename;
+                if (content.elements.platform.value.length) {
+                    preselectedPlatform = content.elements.platform.value[0].codename;
                 }
             }
         }
@@ -133,7 +133,7 @@ const platforms = {
         let preselectedPlatform = req.query.tech;
 
         if (preselectedPlatform) {
-            const tempPlatforms = platformsConfig ? platformsConfig.value.filter(item => item.url.value === preselectedPlatform) : null;
+            const tempPlatforms = platformsConfig ? platformsConfig.linkedItems.filter(item => item.elements.url.value === preselectedPlatform) : null;
             if (tempPlatforms && tempPlatforms.length) {
                 preselectedPlatform = tempPlatforms[0].system.codename;
                 cookiesPlatform = preselectedPlatform;
@@ -156,9 +156,9 @@ const platforms = {
         };
     },
     getPreselectedPlatformByConfig: (preselectedPlatform, platformsConfig) => {
-        preselectedPlatform = platformsConfig ? platformsConfig.value.filter(item => item.system.codename === preselectedPlatform) : null;
+        preselectedPlatform = platformsConfig ? platformsConfig.linkedItems.filter(item => item.system.codename === preselectedPlatform) : null;
         if (preselectedPlatform && preselectedPlatform.length) {
-            preselectedPlatform = preselectedPlatform[0].url.value;
+            preselectedPlatform = preselectedPlatform[0].elements.url.value;
         } else {
             preselectedPlatform = null;
         }
@@ -166,7 +166,7 @@ const platforms = {
     },
     getCanonicalUrl: (urlMap, content, preselectedPlatform) => {
         let canonicalUrl;
-        if (content && ((content.system.type === 'article' && content.platform.value.length > 1) || (content.system.type === 'multiplatform_article' && content.children.length && preselectedPlatform === content.children[0].platform.value[0].codename))) {
+        if (content && ((content.system.type === 'article' && content.elements.platform.value.length > 1) || (content.system.type === 'multiplatform_article' && content.elements.children.length && preselectedPlatform === content.elements.children.linkedItems[0].elements.platform.value[0].codename))) {
             canonicalUrl = urlMap.filter(item => item.codename === content.system.codename);
             canonicalUrl = canonicalUrl.length ? canonicalUrl[0].url : null;
         }

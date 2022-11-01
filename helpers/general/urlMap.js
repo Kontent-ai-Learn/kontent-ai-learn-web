@@ -1,6 +1,6 @@
-const { DeliveryClient } = require('@kentico/kontent-delivery');
-const { deliveryConfig } = require('../kontent/config');
+const KontentDelivery = require('@kontent-ai/delivery-sdk');
 const requestDelivery = require('../kontent/requestDelivery');
+const { deliveryConfig } = require('../kontent/config');
 const { replaceWhitespaceWithDash, sleep, removeLinkedItemsSelfReferences } = require('./helper');
 const ensureSingle = require('../cache/ensureSingle');
 const errorAppInsights = require('../error/appInsights');
@@ -56,10 +56,10 @@ const handleMultihandlePlatformArticles = (set) => {
     let queryString = '?tech=';
     const settings = { ...set };
 
-    if (settings.cachedPlatforms && settings.cachedPlatforms.length && settings.item.platform && settings.item.platform.value.length) {
-        const tempPlatform = settings.cachedPlatforms[0].options.value.filter(elem => settings.item.platform.value[0].codename === elem.platform.value[0].codename);
+    if (settings.cachedPlatforms && settings.cachedPlatforms.length && settings.item.elements.platform && settings.item.elements.platform.value.length) {
+        const tempPlatform = settings.cachedPlatforms[0].elements.options.linkedItems.filter(elem => settings.item.elements.platform.value[0].codename === elem.elements.platform.value[0].codename);
         if (tempPlatform.length) {
-            queryString += tempPlatform[0].url.value;
+            queryString += tempPlatform[0].elements.url.value;
         }
     }
 
@@ -79,9 +79,9 @@ const handleReferenceHash = (settings) => {
     let hash = '';
 
     if (settings.item.system.type === 'zapi__category') {
-        hash = `#tag/${replaceWhitespaceWithDash(settings.item.name.value)}`;
+        hash = `#tag/${replaceWhitespaceWithDash(settings.item.elements.name.value)}`;
     } else if (settings.item.system.type === 'zapi_path_operation') {
-        hash = `#operation/${settings.item.url.value}`;
+        hash = `#operation/${settings.item.elements.url.value}`;
     } else if (settings.item.system.type === 'zapi_security_scheme') {
         hash = '#section/Authentication';
     }
@@ -92,11 +92,11 @@ const handleReferenceHash = (settings) => {
         url: `/learn/${settings.url.join('/')}/${hash}`,
         type: settings.item.system.type,
         date: settings.item.system.lastModified,
-        visibility: settings.item.visibility && settings.item.visibility.value.length ? settings.item.visibility.value : null
+        visibility: settings.item.visibility && settings.item.elements.visibility.value.length ? settings.item.elements.visibility.value : null
     }));
 
-    if (settings.item.path_operations && settings.item.path_operations.value.length) {
-        const elem = settings.item.path_operations.value;
+    if (settings.item.elements.path_operations && settings.item.elements.path_operations.linkedItems.length) {
+        const elem = settings.item.elements.path_operations.linkedItems;
         for (let i = 0; i < elem.length; i++) {
             settings.item = elem[i];
             handleReferenceHash(settings);
@@ -107,14 +107,14 @@ const handleReferenceHash = (settings) => {
 };
 
 const handlePlatformArticle = (settings) => {
-    for (let i = 0; i < settings.item.platform.value.length; i++) {
-        const platform = settings.item.platform.value[i].codename;
+    for (let i = 0; i < settings.item.elements.platform.value.length; i++) {
+        const platform = settings.item.elements.platform.value[i].codename;
         let queryString = '?tech=';
 
         if (settings.cachedPlatforms && settings.cachedPlatforms.length && platform) {
-            const tempPlatform = settings.cachedPlatforms[0].options.value.filter(elem => platform === elem.platform.value[0].codename);
+            const tempPlatform = settings.cachedPlatforms[0].elements.options.linkedItems.filter(elem => platform === elem.elements.platform.value[0].codename);
             if (tempPlatform.length) {
-                queryString += tempPlatform[0].url.value;
+                queryString += tempPlatform[0].elements.url.value;
             }
         }
 
@@ -124,7 +124,7 @@ const handlePlatformArticle = (settings) => {
             url: `/learn/${settings.url.join('/')}/${queryString}`,
             type: settings.item.system.type,
             date: settings.item.system.lastModified,
-            visibility: settings.item.visibility && settings.item.visibility.value.length ? settings.item.visibility.value : null
+            visibility: settings.item.elements.visibility && settings.item.elements.visibility.value.length ? settings.item.elements.visibility.value : null
         }));
     }
 
@@ -133,47 +133,47 @@ const handlePlatformArticle = (settings) => {
 
 const handleNodes = (settings) => {
     const item = settings.item;
-    if (item._raw.system.workflow_step === 'archived' || item.system.type === 'navigation_link') {
+    if (item.system.workflowStep === 'archived' || item.system.type === 'navigation_link') {
         return settings.urlMap;
     }
 
-    if (item.url) {
-        settings.url.push(item.url.value);
+    if (item.elements.url) {
+        settings.url.push(item.elements.url.value);
     }
 
-    if (!(item.children && settings.isSitemap)) {
+    if (!(item.elements.children && settings.isSitemap)) {
         settings.urlMap.push(getMapItem({
             id: item.system.id,
             codename: item.system.codename,
             url: `/learn/${settings.url.join('/')}${settings.url.length ? '/' : ''}`,
             type: item.system.type,
             date: item.system.lastModified,
-            visibility: item.visibility && item.visibility.value.length ? item.visibility.value : null
+            visibility: item.elements.visibility && item.elements.visibility.value.length ? item.elements.visibility.value : null
         }));
     }
 
-    if (item.subpages) {
-        for (let i = 0; i < item.subpages.value.length; i++) {
-            settings.item = item.subpages.value[i];
+    if (item.elements.subpages) {
+        for (let i = 0; i < item.elements.subpages.linkedItems.length; i++) {
+            settings.item = item.elements.subpages.linkedItems[i];
             handleNodes(settings);
         }
-    } else if (item.children) {
-        for (let i = 0; i < item.children.value.length; i++) {
-            settings.item = item.children.value[i];
+    } else if (item.elements.children) {
+        for (let i = 0; i < item.elements.children.linkedItems.length; i++) {
+            settings.item = item.elements.children.linkedItems[i];
             handleMultihandlePlatformArticles(settings);
         }
-    } else if (item.platform && item.platform.value.length) {
+    } else if (item.elements.platform && item.elements.platform.value.length) {
         handlePlatformArticle(settings);
     } else {
-        if (item.categories && item.categories.value.length && !settings.isSitemap) {
-            for (let i = 0; i < item.categories.value.length; i++) {
-                settings.item = item.categories.value[i];
+        if (item.elements.categories && item.elements.categories.linkedItems.length && !settings.isSitemap) {
+            for (let i = 0; i < item.elements.categories.linkedItems.length; i++) {
+                settings.item = item.elements.categories.linkedItems[i];
                 handleReferenceHash(settings);
             }
         }
-        if (item.security && item.security.value.length && !settings.isSitemap) {
-            for (let i = 0; i < item.security.value.length; i++) {
-                settings.item = item.security.value[i];
+        if (item.elements.security && item.elements.security.linkedItems.length && !settings.isSitemap) {
+            for (let i = 0; i < item.elements.security.linkedItems.length; i++) {
+                settings.item = item.elements.security.linkedItems[i];
                 handleReferenceHash(settings);
             }
         }
@@ -213,7 +213,7 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
         }
     }
 
-    items.items = removeLinkedItemsSelfReferences(items.items);
+    items.items = removeLinkedItemsSelfReferences(items.data.items);
 
     return {
         items: items,
@@ -233,13 +233,13 @@ const handleUnusedItems = async (type, deliveryClient, urlMap) => {
                 }
             });
 
-            if (!isInUrlMap && item._raw.system.workflow_step !== 'archived') {
+            if (!isInUrlMap && item.system.workflowStep !== 'archived') {
                 urlMap.push(getMapItem({
                     id: item.system.id,
                     codename: item.system.codename,
-                    url: `/learn/other/${item.url.value}/`,
+                    url: `/learn/other/${item.elements.url.value}/`,
                     date: item.system.lastModified,
-                    visibility: item.visibility && item.visibility.value.length ? item.visibility.value : null,
+                    visibility: item.elements.visibility && item.elements.visibility.value.length ? item.elements.visibility.value : null,
                     type: type
                 }, fields));
             }
@@ -258,11 +258,11 @@ const handleContentType = async (deliveryClient, urlMap, codename, pathSegment, 
 
     if (items && items.items) {
         items.items.forEach((item) => {
-            if (!item._raw.system.workflow_step !== 'archived') {
+            if (!item.system.workflowStep !== 'archived') {
                 urlMap.push(getMapItem({
                     id: item.system.id,
                     codename: item.system.codename,
-                    url: `/learn/${pathSegment}/${item.url.value}/`,
+                    url: `/learn/${pathSegment}/${item.elements.url.value}/`,
                     date: item.system.lastModified,
                     visibility: exclude ? [{ codename: 'excluded_from_search' }] : null,
                     type: item.system.type
@@ -300,11 +300,11 @@ const handleLandingPage = async (deliveryClient, urlMap, codenames) => {
 
     for (let i = 0; i < lpItems.length; i++) {
         for (let j = 0; j < trainingItems.length; j++) {
-            if (!trainingItems[j]._raw.system.workflow_step !== 'archived') {
+            if (!trainingItems[j].system.workflowStep !== 'archived') {
                 urlMap.push(getMapItem({
                     id: trainingItems[j].system.id,
                     codename: trainingItems[j].system.codename,
-                    url: `${lpItems[i].url}${trainingItems[j].url.value}/`,
+                    url: `${lpItems[i].url}${trainingItems[j].elements.url.value}/`,
                     date: trainingItems[j].system.lastModified,
                     visibility: null,
                     type: trainingItems[j].system.type
@@ -318,7 +318,6 @@ const handleLandingPage = async (deliveryClient, urlMap, codenames) => {
 
 const getUrlMap = async (res, isSitemap) => {
     deliveryConfig.projectId = res.locals.projectid;
-    deliveryConfig.retryAttempts = 0;
 
     if (res.locals.previewapikey) {
         deliveryConfig.previewApiKey = res.locals.previewapikey;
@@ -327,12 +326,12 @@ const getUrlMap = async (res, isSitemap) => {
 
     if (res.locals.securedapikey) {
         deliveryConfig.secureApiKey = res.locals.securedapikey;
-        deliveryConfig.globalQueryConfig = {};
-        deliveryConfig.globalQueryConfig.useSecuredMode = true;
+        deliveryConfig.defaultQueryConfig = {};
+        deliveryConfig.defaultQueryConfig.useSecuredMode = true;
     }
 
     const cachedPlatforms = await getPlatforms(res);
-    const deliveryClient = new DeliveryClient(deliveryConfig);
+    const deliveryClient = KontentDelivery.createDeliveryClient(deliveryConfig);
 
     const { items, error } = await queryDeliveryType('homepage', 5, deliveryClient);
 

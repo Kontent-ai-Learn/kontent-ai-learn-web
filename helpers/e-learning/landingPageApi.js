@@ -30,7 +30,7 @@ const getCertificate = (registration, course) => {
   if (registration.status === 'COMPLETED') {
     return {
       url: `/learn/get-certified/course/${registration.registrationId}/certificate/`,
-      name: course.title.value,
+      name: course.elements.title.value,
       issued: dayjs.tz(registration.completedDate).format('YYYY/MM/DD'),
       expiration: null,
     };
@@ -83,7 +83,7 @@ const getProgress = (registration, UIMessages, res) => {
     }
   }
   return {
-    name: UIMessages[messageCodename].value,
+    name: UIMessages.elements[messageCodename].value,
     codename: messageCodename
   };
 };
@@ -140,7 +140,7 @@ const init = async (req, res) => {
   const lastAccessId = lastAccess?.[0]?.courseId.replace('dev_', '').replace('_preview', '');
 
   for (let i = 0; i < trainingCourses.length; i++) {
-    const isFree = isCodenameInMultipleChoice(trainingCourses[i].is_free.value, 'yes');
+    const isFree = isCodenameInMultipleChoice(trainingCourses[i].elements.is_free.value, 'yes');
     if (state.code === 3 && !isFree) continue;
     const registration = getScormRegistration(trainingCourses[i].system.id, userRegistartions);
     const url = getCourseUrl(registration, trainingCourses[i], urlMap);
@@ -181,7 +181,7 @@ const registration = async (req, res) => {
   const course = trainingCourses.find(item => item.system.id === courseId);
   let isFree = false;
   if (course) {
-    isFree = isCodenameInMultipleChoice(course.is_free.value, 'yes');
+    isFree = isCodenameInMultipleChoice(course.elements.is_free.value, 'yes');
   }
 
   const user = await elearningUser.getUser(req.user.email, res);

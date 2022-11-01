@@ -83,7 +83,7 @@ const createAttempt = async (body, user, survey, trainingCourse) => {
       codename: survey.items[0].system.codename,
       email: email,
       course_id: courseid,
-      course_title: trainingCourse?.title.value || '',
+      course_title: trainingCourse?.elements.title.value || '',
       username: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : email,
       start: new Date().toISOString(),
       end: null,

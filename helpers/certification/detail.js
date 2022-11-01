@@ -16,7 +16,7 @@ const getCertificateData = (attempt, certificationTest) => {
     url: `/learn/get-certified/exam/${attempt.id}/certificate/`,
     issued: dayjs.tz(attempt.end).format('YYYY/MM/DD'),
     expiration: dayjs.tz(attempt.certificate_expiration).format('YYYY/MM/DD'),
-    name: certificationTest.title.value
+    name: certificationTest.elements.title.value
   }
 };
 
@@ -80,7 +80,7 @@ const getCertificationInfo = async (user, certificationTest) => {
   return {
     id: certificationTest.system.id,
     label: 'Start exam',
-    url: `/learn/get-certified/${certificationTest.url.value}/`,
+    url: `/learn/get-certified/${certificationTest.elements.url.value}/`,
     target: '_self',
     attr: 'data-once',
   };

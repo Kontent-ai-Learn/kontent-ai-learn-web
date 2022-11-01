@@ -1,7 +1,6 @@
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
-const htmlparser2 = require('htmlparser2');
 const cheerio = require('cheerio');
 
 const dayjs = require('dayjs');
@@ -62,10 +61,10 @@ const resolveLinks = (data, urlMap) => {
         lowerCaseAttributeNames: false,
         lowerCaseTags: false,
         recognizeSelfClosing: false,
+        _useHtmlParser2: true,
     };
 
-    const dom = htmlparser2.parseDOM(data.data, parserOptions);
-    const $ = cheerio.load(dom);
+    const $ = cheerio.load(data.data, parserOptions);
     const links = $('a[href]');
 
     for (let i = 0; i < links.length; i++) {
@@ -172,10 +171,10 @@ const getData = async (req, res) => {
     cookiesPlatform = req.cookies['KCDOCS.preselectedLanguage'];
 
     if (content && content.length) {
-        if (content[0].system.type === 'navigation_item' && content[0].subpages.value.length) {
+        if (content[0].system.type === 'navigation_item' && content[0].elements.subpages.linkedItems.length) {
             return {
                 redirectCode: 301,
-                redirectUrl: `${pathUrl}${content[0].subpages.value[0].url.value}/${queryHash ? `?${queryHash}` : ''}`
+                redirectUrl: `${pathUrl}${content[0].elements.subpages.linkedItems[0].elements.url.value}/${queryHash ? `?${queryHash}` : ''}`
             }
         } else if (content[0].system.type === 'landing_page') {
             view = 'pages/landingPage';
@@ -202,11 +201,11 @@ const getData = async (req, res) => {
                 itemId: content[0].system.id || null,
                 detailCourse: detailCourse,
                 pathRoot: urlMapItem.url,
-                title: detailCourse ? detailCourse.title.value : content[0]?.page_title.value || '',
-                pageHeading: content[0]?.page_title.value || '',
-                description: detailCourse ? helper.stripTags(detailCourse.description.value).substring(0, 300) : '',
+                title: detailCourse ? detailCourse.elements.title.value : content[0]?.elements.page_title.value || '',
+                pageHeading: content[0]?.elements.page_title.value || '',
+                description: detailCourse ? helper.stripTags(detailCourse.elements.description.value).substring(0, 300) : '',
                 content: data,
-                navigation: home && home.length ? home[0].subpages.value : null,
+                navigation: home && home.length ? home[0].elements.subpages.linkedItems : null,
                 footer: footer && footer.length ? footer[0] : null,
                 UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
                 platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
@@ -226,8 +225,8 @@ const getData = async (req, res) => {
                 isPreview: KCDetails.isPreview,
                 isReference: true,
                 itemId: content[0].system.id || null,
-                title: content[0].title.value || '',
-                navigation: home && home.length ? home[0].subpages.value : null,
+                title: content[0].elements.title.value || '',
+                navigation: home && home.length ? home[0].elements.subpages.linkedItems : null,
                 footer: footer && footer.length ? footer[0] : null,
                 UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
                 platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
@@ -283,9 +282,9 @@ const getData = async (req, res) => {
     if (content && content.length) {
         const titleItems = [...articles, ...references];
 
-        introduction = content[0]?.introduction?.value;
-        body = content[0]?.content?.value;
-        nextSteps = content[0]?.next_steps?.value;
+        introduction = content[0]?.elements.introduction?.value;
+        body = content[0]?.elements.content?.value;
+        nextSteps = content[0]?.elements.next_steps?.value;
 
         if (introduction) {
             introduction = helper.addTitlesToLinks(introduction, urlMap, titleItems);
@@ -316,9 +315,9 @@ const getData = async (req, res) => {
     let containsTerminology;
     let releaseNoteContentType;
 
-    if (content && content.length && content[0].content) {
-        containsChangelog = helper.hasLinkedItemOfType(content[0].content, 'changelog');
-        containsTerminology = helper.hasLinkedItemOfType(content[0].content, 'terminology');
+    if (content && content.length && content[0].elements.content) {
+        containsChangelog = helper.hasLinkedItemOfType(content[0].elements.content, 'changelog');
+        containsTerminology = helper.hasLinkedItemOfType(content[0].elements.content, 'terminology');
 
         if (containsChangelog) {
             req.app.locals.changelogPath = helper.getPathWithoutQS(req.originalUrl);
@@ -341,21 +340,21 @@ const getData = async (req, res) => {
         dayjs: dayjs,
         postprocessMarkup: postprocessMarkup,
         urlMap: urlMap,
-        slug: content && content.length ? content[0].url.value : '',
+        slug: content && content.length ? content[0].elements.url.value : '',
         isPreview: KCDetails.isPreview,
         projectId: res.locals.projectid,
         language: res.locals.language,
         itemId: content && content.length ? content[0].system.id : null,
-        title: content && content.length ? content[0].title.value : '',
+        title: content && content.length ? content[0].elements.title.value : '',
         description: introduction ? helper.stripTags(introduction).substring(0, 300) : '',
-        platform: content && content.length && content[0].platform && content[0].platform.value.length ? await getContent.normalizePlatforms(content[0].platform.value, res) : null,
+        platform: content && content.length && content[0].elements.platform && content[0].elements.platform.value.length ? await getContent.normalizePlatforms(content[0].elements.platform.value, res) : null,
         availablePlatforms: await getContent.normalizePlatforms(availablePlatforms, res),
         selectedPlatform: platforms.getSelectedPlatform(platformsConfig, cookiesPlatform),
         canonicalUrl: canonicalUrl,
         introduction: introduction || '',
         nextSteps: nextSteps || '',
-        navigation: home && home.length ? home[0].subpages.value : [],
-        subNavigation: subNavigation && subNavigation.length ? subNavigation[0].subpages.value : [],
+        navigation: home && home.length ? home[0].elements.subpages.linkedItems : [],
+        subNavigation: subNavigation && subNavigation.length ? subNavigation[0].elements.subpages.linkedItems : [],
         content: content && content.length ? content[0] : null,
         body: body || '',
         footer: footer && footer.length ? footer[0] : null,
@@ -368,9 +367,9 @@ const getData = async (req, res) => {
         preselectedPlatform: preselectedPlatform,
         containsChangelog: containsChangelog,
         releaseNoteContentType: releaseNoteContentType,
-        hideAuthorLastModified: content && content.length && content[0].display_options ? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_metadata') : false,
-        hideFeedback: content && content.length && content[0].display_options? helper.isCodenameInMultipleChoice(content[0].display_options.value, 'hide_feedback') : false,
-        readingTime: content && content.length && content[0].content ? helper.getReadingTime(content[0].content.value) : null
+        hideAuthorLastModified: content && content.length && content[0].elements.display_options ? helper.isCodenameInMultipleChoice(content[0].elements.display_options.value, 'hide_metadata') : false,
+        hideFeedback: content && content.length && content[0].elements.display_options? helper.isCodenameInMultipleChoice(content[0].elements.display_options.value, 'hide_feedback') : false,
+        readingTime: content && content.length && content[0].elements.content ? helper.getReadingTime(content[0].elements.content.value) : null
     };
 };
 

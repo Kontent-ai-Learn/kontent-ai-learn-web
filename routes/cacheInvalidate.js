@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const cache = require('memory-cache');
-const { signatureHelper } = require('@kontent/webhook-helper');
+const { signatureHelper } = require('@kontent-ai/webhook-helper');
 const util = require('util');
 const asyncHandler = require('express-async-handler');
 const { invalidate } = require('../helpers/cache/invalidate');

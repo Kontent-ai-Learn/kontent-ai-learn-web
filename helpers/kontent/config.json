@@ -1,7 +1,7 @@
 {
   "deliveryConfig": {
-    "isDeveloperMode": false,
-    "typeResolvers": [],
-    "retryAttempts": 3
+    "retryStrategy": {
+      "retryAttempts": 3
+    }
   }
 }

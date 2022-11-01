@@ -34,7 +34,7 @@ router.get('/', asyncHandler(async (req, res, next) => {
     slug: req.params.slug,
     isPreview: siteIsPreview,
     language: res.locals.language,
-    navigation: home[0].subpages.value,
+    navigation: home[0].elements.subpages.linkedItems,
     footer: footer && footer.length ? footer[0] : null,
     UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
     platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,

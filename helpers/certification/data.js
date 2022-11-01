@@ -5,20 +5,20 @@ const { removeUnnecessaryWhitespace, removeNewLines, removeQuotes, stripTags } =
 const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) => {
   const questionsBuild = [];
 
-  for (let f = 0; f < certificationTest.question_groups.value.length; f++) {
+  for (let f = 0; f < certificationTest.elements.question_groups.linkedItems.length; f++) {
     questionsBuild.push({
       topic: {
-        id: certificationTest.question_groups.value[f].system.id,
-        codename: certificationTest.question_groups.value[f].system.codename,
-        name: certificationTest.question_groups.value[f].system.name
+        id: certificationTest.elements.question_groups.linkedItems[f].system.id,
+        codename: certificationTest.elements.question_groups.linkedItems[f].system.codename,
+        name: certificationTest.elements.question_groups.linkedItems[f].system.name
       },
       questions: []
     });
 
-    let questionsNumber = parseInt(certificationTest.question_groups.value[f].number_of_questions.value);
+    let questionsNumber = parseInt(certificationTest.elements.question_groups.linkedItems[f].elements.number_of_questions.value);
     if (isNaN(questionsNumber)) questionsNumber = 0;
 
-    const questions = certificationTest.question_groups.value[f].questions.value.map(a => { return { ...a } }); // Deep copy
+    const questions = certificationTest.elements.question_groups.linkedItems[f].elements.questions.linkedItems.map(a => { return { ...a } }); // Deep copy
 
     while (questions.length > questionsNumber) {
       const currentQuestionsNumber = questions.length;
@@ -30,20 +30,20 @@ const buildQuestionsObject = (certificationTest, certificationTestLinkedItems) =
       const question = {
         id: questions[i].system.id,
         codename: questions[i].system.codename,
-        name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(certificationTest.question_groups.value[f].questions.value[i].question.value)))).trim(),
-        html: questions[i].question.value,
+        name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(certificationTest.elements.question_groups.linkedItems[f].elements.questions.linkedItems[i].elements.question.value)))).trim(),
+        html: questions[i].elements.question.value,
         answers: []
       }
 
-      for (let j = 0; j < questions[i].answers.linkedItemCodenames.length; j++) {
-        const answer = certificationTestLinkedItems[questions[i].answers.linkedItemCodenames[j]];
+      for (let j = 0; j < questions[i].elements.answers.linkedItemCodenames.length; j++) {
+        const answer = certificationTestLinkedItems[questions[i].elements.answers.linkedItemCodenames[j]];
 
         question.answers.push({
           id: answer.system.id,
           codename: answer.system.codename,
-          name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(answer.answer.value)))).trim(),
-          html: answer.answer.value,
-          correct: !!answer.is_this_a_correct_answer_.value.length,
+          name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(answer.elements.answer.value)))).trim(),
+          html: answer.elements.answer.value,
+          correct: !!answer.elements.is_this_a_correct_answer_.value.length,
           answer: false
         })
       }
@@ -78,16 +78,16 @@ const getTest = async (codename, res) => {
 
   const questions = buildQuestionsObject(certificationTest, certificationTestLinkedItems);
   let testQuestionsNumber = 0;
-  certificationTest.question_groups.value.forEach(item => { testQuestionsNumber += item.number_of_questions.value });
+  certificationTest.elements.question_groups.linkedItems.forEach(item => { testQuestionsNumber += item.elements.number_of_questions.value });
 
   return {
     id: certificationTest.system.id,
     codename: codename,
-    title: certificationTest.title.value,
-    duration: parseInt(certificationTest.test_duration.value),
+    title: certificationTest.elements.title.value,
+    duration: parseInt(certificationTest.elements.test_duration.value),
     questions_count: testQuestionsNumber,
-    score_to_pass: certificationTest.score_to_pass.value,
-    certificate_validity: certificationTest.certificate_validity.value,
+    score_to_pass: certificationTest.elements.score_to_pass.value,
+    certificate_validity: certificationTest.elements.certificate_validity.value,
     questions: questions
    };
 };

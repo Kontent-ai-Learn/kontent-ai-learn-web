@@ -11,7 +11,7 @@ nav.navigation
                 each item in navigation
                     if (item.system.type !== 'navigation_link')
                         li.navigation__item
-                            a(href=`/learn/${item.url.value}/`, class=`navigation__link${req.originalUrl.startsWith(`/learn/${item.url.value}`) ? ' navigation__link--active' : ''}`) !{item.title.value}
+                            a(href=`/learn/${item.elements.url.value}/`, class=`navigation__link${req.originalUrl.startsWith(`/learn/${item.elements.url.value}`) ? ' navigation__link--active' : ''}`) !{item.elements.title.value}
         .navigation__right(data-search-target='')
             if isNotHome
                 .navigation__search-wrapper

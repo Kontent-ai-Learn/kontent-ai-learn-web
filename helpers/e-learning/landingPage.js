@@ -15,14 +15,14 @@ const getData = async (content, res) => {
     return await getContent.trainingTopicTaxonomyGroup(res);
   });
 
-  const promoted = trainingCourses.find((item) => item.system.codename === content.promoted_course.value[0].system.codename);
+  const promoted = trainingCourses.find((item) => item.system.codename === content.elements.promoted_course.linkedItems[0].system.codename);
   const topics = trainingTopicTaxonomyGroup.taxonomy.terms.map((topic) => {
     return {
       codename: topic.codename,
       name: topic.name,
       courses: courses
-                .filter((course) => isCodenameInMultipleChoice(course.personas___topics__training_topic.value, topic.codename))
-                .sort((a, b) => (a.title.value > b.title.value) ? 1 : ((b.title.value > a.title.value) ? -1 : 0))
+                .filter((course) => isCodenameInMultipleChoice(course.elements.personas___topics__training_topic.value, topic.codename))
+                .sort((a, b) => (a.elements.title.value > b.elements.title.value) ? 1 : ((b.elements.title.value > a.elements.title.value) ? -1 : 0))
     }
   });
 

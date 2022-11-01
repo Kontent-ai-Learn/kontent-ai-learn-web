@@ -18,7 +18,7 @@ const getMacrosValues = async (attempt, res) => {
   const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
     return await getContent.UIMessages(res);
   });
-  const productName = UIMessages[0].product_name.value;
+  const productName = UIMessages[0].elements.product_name.value;
   let title = attempt.test.title;
   if (title.startsWith(productName)) title = title.replace(productName, '').trim();
   return {
@@ -41,9 +41,9 @@ const getEmailInfo = async (attempt, codename, res) => {
 
   return {
     recipient: attempt.email,
-    sender_name: template.sender_name.value || 'Kontent.ai Learn',
-    subject: resolveMacros(template.subject.value, macros),
-    text: makeLinksAbsolute(getDomain(), resolveMacros(template.content.value, macros)),
+    sender_name: template.elements.sender_name.value || 'Kontent.ai Learn',
+    subject: resolveMacros(template.elements.subject.value, macros),
+    text: makeLinksAbsolute(getDomain(), resolveMacros(template.elements.content.value, macros)),
   };
 };
 
