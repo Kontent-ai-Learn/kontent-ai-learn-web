@@ -27,7 +27,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Europe/Prague');
 
-const getSmartLinkAttr = (config, id, type, codename) => {
+const getSmartLinkAttr = (config, id, type) => {
     if (!config.isPreview) return '';
 
     let smartLinkObj = null;
@@ -38,7 +38,7 @@ const getSmartLinkAttr = (config, id, type, codename) => {
     } else if (type === 'item') {
         smartLinkObj = config.isPreview ? smartLink.itemId(id) : null;
     } else if (type === 'undecided') {
-        smartLinkObj = config.isPreview ? smartLink.undecided(`${id}|${codename}`) : null;
+        smartLinkObj = config.isPreview ? smartLink.undecided(id) : null;
     }
     return smartLinkObj ? ` ${Object.keys(smartLinkObj)[0]}="${smartLinkObj[Object.keys(smartLinkObj)[0]]}"` : '';
 };
@@ -108,7 +108,7 @@ const getCalendarClassNames = (releaseDate) => {
 
 const getYoutubeTemplate = (cssClass, item, config) => {
     return `
-        ${config.isPreview ? `<div$${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        ${config.isPreview ? `<div$${getSmartLinkAttr(config, item.system.id, 'undecided')}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
         <div class="embed${cssClass}">
             <iframe class="lazy" width="560" height="315" data-src="https://www.youtube-nocookie.com/embed/${item.elements.id.value}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
             <noscript>
@@ -125,7 +125,7 @@ const getYoutubeTemplate = (cssClass, item, config) => {
 
 const getCodepenTemplate = (cssClass, item, config) => {
     return `
-        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>` : ''}
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided')}>` : ''}
         <div class="embed${cssClass}">
             <iframe class="lazy" height="265" scrolling="no" data-src="https://codepen.io/${item.elements.id.value.replace('/pen/', '/embed/')}/?height=265&amp;theme-id=0" frameborder="no" allowtransparency="true" allowfullscreen="true"${getSmartLinkAttr(config, 'id', 'element')}></iframe>
             <noscript>
@@ -142,7 +142,7 @@ const getCodepenTemplate = (cssClass, item, config) => {
 
 const getStackblitzTemplate = (cssClass, item, config) => {
     return `
-        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided')}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
         <div class="embed${cssClass}">
             <iframe class="lazy" data-src="https://stackblitz.com/edit/${item.elements.id.value}?embed=1"></iframe>
             <noscript>
@@ -159,7 +159,7 @@ const getStackblitzTemplate = (cssClass, item, config) => {
 
 const getCodesandboxTemplate = (cssClass, item, config) => {
     return `
-        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided')}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
         <div class="embed${cssClass}">
             <iframe class="lazy" data-src="https://codesandbox.io/embed/${item.elements.id.value}"></iframe>
             <noscript>
@@ -176,7 +176,7 @@ const getCodesandboxTemplate = (cssClass, item, config) => {
 
 const getNetlifyTemplate = (cssClass, item, config, netlifyId) => {
     return `
-        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided')}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
         <div class="embed${cssClass}">
             <iframe class="lazy lazy--exclude-dnt" data-src="https://${netlifyId[0]}.netlify.com/${netlifyId[1]}"></iframe>
             <noscript>
@@ -193,7 +193,7 @@ const getNetlifyTemplate = (cssClass, item, config, netlifyId) => {
 
 const getGiphyTemplate = (cssClass, item, config) => {
     return `
-        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided')}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
         <div class="embed embed--giphy${cssClass}">
             <iframe class="lazy" data-src="https://giphy.com/embed/${item.elements.id.value}"></iframe>
             <div class="embed__overlay" aria-hidden="true"></div>
@@ -213,7 +213,7 @@ const getGiphyTemplate = (cssClass, item, config) => {
 const getDiagramsnetTemplate = (cssClass, item, config, elemId) => {
     const zoomable = item.elements.zoomable.value.length && item.elements.zoomable.value[0].codename === 'true';
     return `
-        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
+        ${config.isPreview ? `<div${getSmartLinkAttr(config, item.system.id, 'undecided')}${getSmartLinkAttr(config, 'id', 'element')}>` : ''}
         <div class="embed embed--diagrams-net${cssClass}" id="embed-${elemId}">
             <iframe width="2000" height="1125" class="lazy" frameborder="0" data-src="https://viewer.diagrams.net?lightbox=1&nav=1#${item.elements.id.value}"></iframe>
             ${zoomable ? `<a data-lightbox-embed="embed-${elemId}" target="_blank" href="https://viewer.diagrams.net?lightbox=1&nav=1#${item.elements.id.value}" class="embed__overlay" aria-hidden="true" data-overlay-text="Zoom diagram"></a>` : '<div class="embed__overlay" aria-hidden="true"></div>'}     
@@ -290,7 +290,7 @@ const templates = {
         if (item.elements.items_to_show.value) itemsToShow = parseInt(item.elements.items_to_show.value);
 
         return `
-            <section class="presentation__section${missingTitle && missingDescription ? ' presentation__section--list-only' : ''}"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+            <section class="presentation__section${missingTitle && missingDescription ? ' presentation__section--list-only' : ''}"${getSmartLinkAttr(config, item.system.id, 'undecided')}>
                 ${!missingTitle ? `<h2 class="presentation__heading"${getSmartLinkAttr(config, 'title', 'element')}>${item.elements.title.value}</h2>` : ''}
                 ${!missingDescription ? `<span class="presentation__sub-heading"${getSmartLinkAttr(config, 'description', 'element')}>${item.elements.description.value}</span>` : ''}
                 <ul class="selection${listClass}" data-items-to-show="${!isNaN(itemsToShow) && itemsToShow > -1 ? itemsToShow : -1}"${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(item.elements.content.value, config)}>
@@ -325,7 +325,7 @@ const templates = {
         }
 
         return `
-            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided')}>
                 <div class="selection__link">
                     <a target="_${target}" class="selection__a" href="${resolvedUrl}"${resolvedUrl.indexOf('tech={tech}') > -1 ? ' rel="nofollow"' : ''}>
                         ${item.elements.title.value ? `<div class="sr-only">${item.elements.title.value}</div>` : ''}
@@ -366,7 +366,7 @@ const templates = {
         }
 
         return `
-            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided')}>
                 ${resolvedUrl ? `<a class="selection__link" href="${resolvedUrl}"${resolvedUrl.indexOf('tech={tech}') > -1 ? ' rel="nofollow"' : ''}>` : '<div class="selection__link">'}
                     <div class="selection__img-sizer">
                         <img class="selection__img lazy lazy--exclude-dnt" data-dpr data-lazy-onload loading="lazy" src='${placeholderSrc}' data-src="${imageSrc}"${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}>
@@ -381,7 +381,7 @@ const templates = {
     },
     callout: (item, config) => {
         return `
-            <div class="callout callout--${item.elements.type.value.length ? item.elements.type.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+            <div class="callout callout--${item.elements.type.value.length ? item.elements.type.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, 'undecided')}>
                 <div${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(item.elements.content.value, config)}>${item.elements.content.value}</div>
             </div>`;
     },
@@ -400,7 +400,7 @@ const templates = {
 
             if (item.elements.image.value[0].url.endsWith('.gif')) {
                 return `
-                    <figure${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+                    <figure${getSmartLinkAttr(config, item.system.id, 'undecided')}>
                         <div class="video-controls"${zoomable && !url ? ' data-lightbox-video' : ''}${url ? ` data-video-url="${url}"` : ''}>
                             <video class="article__image article__image--video lazy lazy--exclude-dnt ${attributes.cssClass}" preload="none" muted playsinline${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}>
                                 <source src="${item.elements.image.value[0].url}${attributes.transformationQueryString}" type="video/mp4">
@@ -414,7 +414,7 @@ const templates = {
             }
 
             return `
-                <figure${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+                <figure${getSmartLinkAttr(config, item.system.id, 'undecided')}>
                     ${openLinkTag}
                     <img class="article__image lazy lazy--exclude-dnt ${attributes.cssClass}" alt="${alt}" data-dpr data-lazy-onload loading="lazy" src="${item.elements.image.value[0].url}${attributes.transformationQueryString}"${imageWidth && imageHeight ? ` width="${imageWidth}" height="${imageHeight}"` : ''}${getSmartLinkAttr(config, 'image', 'element')}${zoomable && !url ? ' data-lightbox-image' : ''}>
                     ${closeLinkTag}
@@ -431,7 +431,7 @@ const templates = {
     },
     callToAction: (item, config) => {
         const action = item.elements.action.value.length ? item.elements.action.value[0].codename : null;
-        const smartLinkComponentAttr = getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename);
+        const smartLinkComponentAttr = getSmartLinkAttr(config, item.system.id, 'undecided');
         const smartLinkAttr = getSmartLinkAttr(config, 'text', 'element');
 
         if (action === 'show_intercom') {
@@ -473,11 +473,11 @@ const templates = {
         if (platforms.length) {
             value = `<div data-platform-chunk="${platforms.join('|')}"${getSmartLinkAttr(config, item.system.id, 'item')}${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(value, config)}>${value}</div>`;
         }
-        return `<div${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(value, config)}>${value}</div>`;
+        return `<div${getSmartLinkAttr(config, item.system.id, 'undecided')}${getSmartLinkAttr(config, 'content', 'element')}${getSmartLinkAttrInner(value, config)}>${value}</div>`;
     },
     homeLinkToExternalUrl: (item, config) => {
         return `
-            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>
+            <li class="selection__item"${getSmartLinkAttr(config, item.system.id, 'undecided')}>
                 <a class="selection__link" href="${item.elements.url.value}">
                     <div class="selection__img-sizer">
                         <img class="selection__img" src="${item.elements.image.value[0] ? `${item.elements.image.value[0].url}?w=290&fm=pjpg&auto=format` : 'https://plchldr.co/i/290x168?&amp;bg=ededed&amp;text=Image'}"${getSmartLinkAttr(config, 'image', 'element')}>
@@ -495,10 +495,10 @@ const templates = {
         });
         infoBar += '</ul><div class="infobar__copy"><div class="infobar__tooltip"></div></div></div>';
 
-        return `<pre class="line-numbers" data-platform-code="${item.elements.platform.value.length ? item.elements.platform.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, type || 'undecided', item.system.codename)}${getSmartLinkAttr(config, 'code', 'element')}>${infoBar}<div class="clean-code">${escapeHtml(item.elements.code.value)}</div><code class="${lang}">${escapeHtml(item.elements.code.value)}</code></pre>`;
+        return `<pre class="line-numbers" data-platform-code="${item.elements.platform.value.length ? item.elements.platform.value[0].codename : ''}"${getSmartLinkAttr(config, item.system.id, type || 'undecided')}${getSmartLinkAttr(config, 'code', 'element')}>${infoBar}<div class="clean-code">${escapeHtml(item.elements.code.value)}</div><code class="${lang}">${escapeHtml(item.elements.code.value)}</code></pre>`;
     },
     contentSwitcher: (item, config) => {
-        let switcher = `<div class="language-selector"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}><ul class="language-selector__list">`;
+        let switcher = `<div class="language-selector"${getSmartLinkAttr(config, item.system.id, 'undecided')}><ul class="language-selector__list">`;
 
         item.elements.children.forEach(item => {
             switcher += `<li class="language-selector__item"><a class="language-selector__link" href="" data-platform="${item.elements.platform.value.length ? item.elements.platform.value[0].codename : ''}">${item.elements.platform.value.length ? item.elements.platform.value[0].name : ''}</a></li>`
@@ -508,7 +508,7 @@ const templates = {
         return switcher;
     },
     codeSamples: (item, config) => {
-        let codeExamples = `<div class="code-samples"${getSmartLinkAttr(config, item.system.id, 'undecided', item.system.codename)}>`;
+        let codeExamples = `<div class="code-samples"${getSmartLinkAttr(config, item.system.id, 'undecided')}>`;
         item.elements.code_samples.linkedItems.forEach(item => {
             codeExamples += templates.codeSample(item, config, 'item');
         });

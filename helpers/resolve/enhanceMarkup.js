@@ -79,46 +79,18 @@ const createAnchors = ($) => {
     });
 };
 
-const tryGetKontentSmartLinkTypeInner = ($elem, codename) => {
-    const $innerDefinitionElem = $elem.parents('[data-kk-codenames]');
-    if (!$innerDefinitionElem.length) return;
-
-    const codenames = $innerDefinitionElem.attr('data-kk-codenames').split('|');
-    const rels = $innerDefinitionElem.attr('data-kk-rels').split('|');
-
-    const index = codenames.indexOf(codename);
-    const type = rels[index];
-
-    if (type === 'link') {
-        return 'item';
-    }
-
-    return 'component';
-};
-
-const kontentSmartLinksResolveUndecided = ($, resolvedData) => {
-    const $undecided = $('[data-kontent-undecided]');
-    $undecided.each(function() {
+const kontentSmartLinksResolveUndecided = ($) => {
+    const $rel = $('[data-rel]');
+    $rel.each(function() {
         const $that = $(this);
-        const attr = $that.attr('data-kontent-undecided').split('|');
-        const id = attr[0];
-        const codename = attr[1];
-        let type = '';
-
-        resolvedData.linkedItemCodenames.forEach((item) => {
-            if (item === codename) {
-                type = 'item';
-            }
-        });
-
-        if (!type) {
-            type = tryGetKontentSmartLinkTypeInner($that, codename);
-        }
-
+        const $undecided = $that.find('[data-kontent-undecided]').first();
+        if (!$undecided.length) return;
+        const id = $undecided.attr('data-kontent-undecided');
+        const type = $that.attr('data-rel') === 'link' ? 'item' : 'component';
         if (type) {
             const smartLinkAttr = `data-kontent-${type}-id`;
-            $that.attr(smartLinkAttr, id);
-            $that.removeAttr('data-kontent-undecided');
+            $undecided.attr(smartLinkAttr, id);
+            $undecided.removeAttr('data-kontent-undecided');
         }
     });
 };
@@ -147,6 +119,9 @@ const removeWrappingObjectTags = ($) => {
 
 const enhanceMarkup = (resolvedData, config) => {
     let text = resolvedData.value;
+    // Substitute object tag with div as Cheerio does not operate with the object tag
+    text = text.replace(/<object/g, '<div');
+    text = text.replace(/<\/object/g, '</div');
     text = resolveMacros(text);
     const $ = cheerio.load(text);
 
@@ -158,7 +133,7 @@ const enhanceMarkup = (resolvedData, config) => {
     createAnchors($);
     replaceTooltipSpaces($);
     removeMacroLinkProtocol($);
-    kontentSmartLinksResolveUndecided($, resolvedData);
+    kontentSmartLinksResolveUndecided($);
     kontentSmartLinksRemoveInnerDataAttributes($);
 
     const output = $.html();
