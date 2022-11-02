@@ -30,7 +30,7 @@
             left: -4px;
         }
 
-        &:after {
+        &::after {
             content: '';
             position: absolute;
             left: 8px;
@@ -57,7 +57,7 @@
         top: 41px;
     }
 
-    &:before {
+    &::before {
         content: '';
         background-image: url('/learn/img/ui/link.svg');
         background-size: 20px auto;
@@ -86,7 +86,7 @@
     &--active, &:hover, h2:hover &, h3:hover &, h4:hover & {
         display: inline-block;
 
-        &:before {
+        &::before {
             opacity: 1;
         }
     }
@@ -94,7 +94,7 @@
     &--active, &:hover {
         text-decoration: none !important;
 
-        &:before {
+        &::before {
             background-color: #e8e8e8;
         }
 

@@ -52,7 +52,7 @@ if (process.env['GTM_ID'])
 else 
     script function initGTM(){return false;}
 if isPreview
-    script(src=`/learn/js/kontentsmartlink.min.js?v=${deployVersion}`, defer='')
+    script (function(){if(new URLSearchParams(window.location.search).has('ksl-enabled')||window.self!==window.top){var script=document.createElement('script');script.src='/learn/js/kontentsmartlink.min.js?v=!{deployVersion}';document.getElementsByTagName('head')[0].appendChild(script);}})();
 script(src=`/learn/js/algolia.min.js?v=${deployVersion}`, defer='')
 script var ALGOLIA_INSIGHTS_SRC = "/learn/js/search-insights.min.js?v=!{deployVersion}";!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],i.async=1,i.src=n,c.parentNode.insertBefore(i,c)}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
 
