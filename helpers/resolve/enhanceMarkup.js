@@ -111,12 +111,6 @@ const kontentSmartLinksResolveUndecided = ($, resolvedData) => {
             }
         });
 
-        resolvedData.componentCodenames.forEach((item) => {
-            if (item === codename) {
-                type = 'component';
-            }
-        });
-
         if (!type) {
             type = tryGetKontentSmartLinkTypeInner($that, codename);
         }

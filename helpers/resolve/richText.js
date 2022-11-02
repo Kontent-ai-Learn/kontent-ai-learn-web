@@ -232,13 +232,13 @@ const getDiagramsnetTemplate = (cssClass, item, config, elemId) => {
 const getEmbeddedTemplate = (cssClass, item, config, netlifyId) => {
     const elemId = `${item.elements.provider.value[0].codename}-${Math.floor(Math.random() * 9999999) + 1}`;
     return {
-        youtube: getYoutubeTemplate(cssClass, item, config),
-        codepen: getCodepenTemplate(cssClass, item, config),
-        stackblitz: getStackblitzTemplate(cssClass, item, config),
-        codesandbox: getCodesandboxTemplate(cssClass, item, config),
-        netlify: getNetlifyTemplate(cssClass, item, config, netlifyId),
-        giphy: getGiphyTemplate(cssClass, item, config),
-        diagrams_net: getDiagramsnetTemplate(cssClass, item, config, elemId)
+        youtube: getYoutubeTemplate(cssClass, item, config).trim(),
+        codepen: getCodepenTemplate(cssClass, item, config).trim(),
+        stackblitz: getStackblitzTemplate(cssClass, item, config).trim(),
+        codesandbox: getCodesandboxTemplate(cssClass, item, config).trim(),
+        netlify: getNetlifyTemplate(cssClass, item, config, netlifyId).trim(),
+        giphy: getGiphyTemplate(cssClass, item, config).trim(),
+        diagrams_net: getDiagramsnetTemplate(cssClass, item, config, elemId).trim()
     }
 };
 
