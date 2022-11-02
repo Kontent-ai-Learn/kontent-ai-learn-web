@@ -1,4 +1,3 @@
-const cheerio = require('cheerio');
 const {
   removeNewLines,
   removeQuotes,
