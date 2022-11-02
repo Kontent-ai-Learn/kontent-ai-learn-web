@@ -69,7 +69,7 @@ const mergeCoursesWithProgress = (courses, registrations) => {
   const coursesWithProgress = [];
   courses.forEach((course) => {
     const courseWithProgress = {
-      topic: course.personas___topics__training_topic.value,
+      topic: course.elements.personas___topics__training_topic.value,
       progress: null
     };
     registrations.forEach((registration) => {

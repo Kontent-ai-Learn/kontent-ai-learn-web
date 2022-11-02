@@ -10,7 +10,7 @@ const getFirstPlatformByConfig = async (preselectedPlatform, items, res) => {
             let itemPlatform = items[j].codename;
 
             if (!itemPlatform) {
-                itemPlatform = items[j].platform.value[0].codename;
+                itemPlatform = items[j].elements.platform.value[0].codename;
             }
 
             if (platformsConfig.linkedItems[i].elements.platform.value[0].codename === itemPlatform) {
