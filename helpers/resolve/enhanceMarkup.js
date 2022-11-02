@@ -146,11 +146,17 @@ const removeMacroLinkProtocol = ($) => {
     });
 };
 
+const removeWrappingObjectTags = ($) => {
+    const $objectElems = $('object[type="application/kenticocloud"] > *');
+    $objectElems.unwrap();
+};
+
 const enhanceMarkup = (resolvedData, config) => {
-    let text = resolvedData.html;
+    let text = resolvedData.value;
     text = resolveMacros(text);
     const $ = cheerio.load(text);
 
+    removeWrappingObjectTags($);
     replaceNodeWithItsContent($, 'p.kc-linked-item-wrapper, p:empty');
     setWidthToImages($);
     processLinks($, config);

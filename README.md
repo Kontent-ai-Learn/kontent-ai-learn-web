@@ -8,7 +8,7 @@ Kontent.ai Learn is an educational portal that uses [Kontent.ai](https://kontent
 ## Overview
 
 1. The website is written in JavaScript.
-1. It uses [express.js](https://expressjs.com/) framework for server-side rendering and [Kontent.ai Delivery SDK](https://github.com/Kentico/kontent-delivery-sdk-js) for content retrieval from Kontent.ai project.
+1. It uses [express.js](https://expressjs.com/) framework for server-side rendering and [Kontent.ai Delivery SDK](https://github.com/kontent-ai/delivery-sdk-js) for content retrieval from Kontent.ai project.
 
 ## Setup
 

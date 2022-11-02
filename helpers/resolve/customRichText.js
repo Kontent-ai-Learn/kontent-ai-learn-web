@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const resolveRichText = require('./richText');
+const { templates } = require('./richText');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const isPreview = require('../kontent/isPreview');
@@ -23,7 +23,7 @@ const resolveChangelog = async ($, res) => {
     let html = '';
 
     for (let i = 0; i < releaseNotes.length; i++) {
-        html += resolveRichText.releaseNote(releaseNotes[i], getConfig(res));
+        html += templates.releaseNote(releaseNotes[i], getConfig(res));
     }
 
     $elem.html(html);
@@ -37,12 +37,12 @@ const resolveTerminology = async ($, res) => {
         return await getContent.termDefinitions(res);
     });
 
-    termDefinitions.sort((a, b) => a.term.value.localeCompare(b.term.value));
+    termDefinitions.sort((a, b) => a.elements.term.value.localeCompare(b.elements.term.value));
 
     let html = '';
 
     for (let i = 0; i < termDefinitions.length; i++) {
-        html += resolveRichText.termDefinition(termDefinitions[i], getConfig(res));
+        html += templates.termDefinition(termDefinitions[i], getConfig(res));
     }
 
     $elem.html(html);

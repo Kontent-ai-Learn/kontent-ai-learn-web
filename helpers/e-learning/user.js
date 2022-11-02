@@ -11,7 +11,7 @@ const getTrainingUser = async (email, res) => {
     return await getContent.traniningUser(res);
   });
 
-  return trainingUsers.find(item => item.email.value === email);
+  return trainingUsers.find(item => item.elements.email.value === email);
 };
 
 const userHasElearningAccess = async (user, res) => {
@@ -33,7 +33,7 @@ const userHasElearningAccess = async (user, res) => {
 
     for (let j = 0; j < userSubscriptions[i].activePackages.length; j++) {
       for (let k = 0; k < trainingSubscriptions.length; k++) {
-        if (userSubscriptions[i].activePackages[j].name.includes(trainingSubscriptions[k].subscription_service_package_code_name.value)) {
+        if (userSubscriptions[i].activePackages[j].name.includes(trainingSubscriptions[k].elements.subscription_service_package_code_name.value)) {
           return true;
         }
       }

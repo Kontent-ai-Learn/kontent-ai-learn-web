@@ -1,18 +1,18 @@
 - const pathUrl = req.originalUrl.split('?')[0];
 mixin navItem(nav)
     each item in nav
-        if ((item.visibility && !item.visibility.value.filter(val => val.codename === 'excluded_from_navigation').length) || !item.visibility)
+        if ((item.elements.visibility && !item.elements.visibility.value.filter(val => val.codename === 'excluded_from_navigation').length) || !item.elements.visibility)
             li.sub-navigation__item
                 - const urlItem = urlMap.find(val => val.codename === item.system.codename);
                 - const url = urlItem ? urlItem.url.split('?')[0] : '';
                 if (item.system.type === 'navigation_item')
-                    a(href=url, class=`sub-navigation__link sub-navigation__link--collapse${pathUrl.includes(url) ? ' sub-navigation__link--active sub-navigation__link--on-path' : ''}`) !{item.title.value}
+                    a(href=url, class=`sub-navigation__link sub-navigation__link--collapse${pathUrl.includes(url) ? ' sub-navigation__link--active sub-navigation__link--on-path' : ''}`) !{item.elements.title.value}
                     ul.sub-navigation
-                        +navItem(item.subpages.value)
+                        +navItem(item.elements.subpages.linkedItems)
                 else 
-                    - let techArticle = item.platform && item.platform.value && item.platform.value.length;
+                    - let techArticle = item.elements.platform && item.elements.platform.value && item.elements.platform.value.length;
                     - let tech = item.system.type === 'multiplatform_article' || (techArticle && selectedPlatform !== '{tech}');
-                    a(href=`${url}${tech ? '?tech=' + selectedPlatform : ''}`, class=`sub-navigation__link${pathUrl === url ? ' sub-navigation__link--active' : ''}`)&attributes(tech ? {'data-lang': ''} : {})&attributes(selectedPlatform === '{tech}' ? {'rel': 'nofollow'} : {}) !{item.short_title && item.short_title.value ? item.short_title.value : item.title.value}
+                    a(href=`${url}${tech ? '?tech=' + selectedPlatform : ''}`, class=`sub-navigation__link${pathUrl === url ? ' sub-navigation__link--active' : ''}`)&attributes(tech ? {'data-lang': ''} : {})&attributes(selectedPlatform === '{tech}' ? {'rel': 'nofollow'} : {}) !{item.elements.short_title && item.elements.short_title.value ? item.elements.short_title.value : item.elements.title.value}
 
 if !selectedPlatform 
     - selectedPlatform = '{tech}'

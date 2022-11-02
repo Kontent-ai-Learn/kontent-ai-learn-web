@@ -30,46 +30,30 @@ const evaluateAttempt = (body, attempt) => {
   return attempt;
 };
 
-const orderLinkedItemCodenames = (orderedMarkup) => {
-  const $ = cheerio.load(orderedMarkup);
-
-  const $items = $('object[data-codename]');
-  const itemCodenames = [];
-  $items.each(function () {
-    itemCodenames.push($(this).attr('data-codename'));
-  });
-
-  return itemCodenames;
-};
-
 const getQuestions = (survey) => {
   if (!survey.items.length) return null;
   const items = [];
-  const linkedItems = survey.linkedItems;
 
-  survey.items[0].survey_questions.linkedItemCodenames = orderLinkedItemCodenames(survey.items[0]._raw.elements.survey_questions.value)
-
-  for (let i = 0; i < survey.items[0].survey_questions.linkedItemCodenames.length; i++) {
-    const question = linkedItems[survey.items[0].survey_questions.linkedItemCodenames[i]];
+  for (let i = 0; i < survey.items[0].elements.survey_questions.linkedItems.length; i++) {
+    const question = survey.items[0].elements.survey_questions.linkedItems[i];
     const questionItem = {
       id: question.system.id,
       codename: question.system.codename,
-      name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(question.question.value)))).trim(),
-      html: question.question.value,
+      name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(question.elements.question.value)))).trim(),
+      html: question.elements.question.value,
       answers: [],
       type: question.system.type,
       text_answer: null
     };
 
-    if (question.answers) {
-      question.answers.linkedItemCodenames = orderLinkedItemCodenames(question._raw.elements.answers.value)
-      for (let j = 0; j < question.answers.linkedItemCodenames.length; j++) {
-        const answer = linkedItems[question.answers.linkedItemCodenames[j]];
+    if (question.elements.answers) {
+      for (let j = 0; j < question.elements.answers.linkedItems.length; j++) {
+        const answer = question.elements.answers.linkedItems[j];
         const answerItem = {
           id: answer.system.id,
           codename: answer.system.codename,
-          name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(answer.answer.value)))).trim(),
-          html: answer.answer.value,
+          name: removeUnnecessaryWhitespace(removeNewLines(removeQuotes(stripTags(answer.elements.answer.value)))).trim(),
+          html: answer.elements.answer.value,
           selected: false,
         }
 

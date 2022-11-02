@@ -86,6 +86,7 @@ const getPrismClassName = (item) => {
 };
 
 const stripTags = (text) => {
+    if (!text) return '';
     return text.replace(/<\/?[^>]+(>|$)/g, '');
 };
 
@@ -137,8 +138,8 @@ const sleep = (ms) => {
 };
 
 const hasLinkedItemOfType = (field, type) => {
-    for (const item of field.linkedItems_custom) {
-        if (item.type === type) {
+    for (const item of field.linkedItems) {
+        if (item.system.type === type) {
             return true;
         }
     }
@@ -208,7 +209,10 @@ const addTitlesToLinks = (content, urlMap, articles) => {
 
     $links.each(function () {
         const $that = $(this);
-        let url = $that.attr('href').split('#')[0].replace('https://docs.kontent.ai', '');
+        let url = $that.attr('href');
+        if (url) {
+            url = url.split('#')[0].replace('https://www.kontent.ai', '');
+        }
         let codename = '';
         let title = '';
 
@@ -219,7 +223,7 @@ const addTitlesToLinks = (content, urlMap, articles) => {
         }
 
         // Some multiplatform articles do not have represetation of their url with tech query string in urlMap
-        if (!codename) {
+        if (!codename && url) {
             url = url.split('?')[0];
 
             for (let i = 0; i < urlMap.length; i++) {
@@ -232,7 +236,7 @@ const addTitlesToLinks = (content, urlMap, articles) => {
         if (codename) {
             for (let i = 0; i < articles.length; i++) {
                 if (articles[i].system.codename === codename) {
-                    title = articles[i].title.value;
+                    title = articles[i].elements.title.value;
                 }
             }
             if (title) {
@@ -534,7 +538,7 @@ const getValue = (object, property) => {
     const key = 'missing-object-property';
 
     // Log missing property
-    if (typeof object[property] === 'undefined') {
+    if (typeof object.elements[property] === 'undefined') {
         logInCacheKey(key, { property: property, object: { codename: codename } }, 200, true);
         return value;
     }
@@ -550,7 +554,7 @@ const getValue = (object, property) => {
         cache.put(key, logs);
     }
 
-    value = object[property].value;
+    value = object.elements[property].value;
     return value;
 };
 

@@ -11,7 +11,7 @@ const cacheHandle = require('../helpers/cache/handle');
 
 router.get('/', asyncHandler(async (req, res, next) => {
   const home = await cacheHandle.ensureSingle(res, 'home', async () => {
-    return getContent.home(res);
+    return await getContent.home(res);
   });
 
   if (!home.length) {
@@ -19,10 +19,10 @@ router.get('/', asyncHandler(async (req, res, next) => {
   }
 
   const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
-    return getContent.footer(res);
+    return await getContent.footer(res);
   });
   const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
-    return getContent.UIMessages(res);
+    return await getContent.UIMessages(res);
   });
   const platformsConfigPairings = await getContent.platformsConfigPairings(res);
   const siteIsPreview = isPreview(res.locals.previewapikey);
@@ -35,12 +35,12 @@ router.get('/', asyncHandler(async (req, res, next) => {
     isPreview: siteIsPreview,
     language: res.locals.language,
     itemId: home[0].system.id,
-    title: home[0].title.value,
-    description: helper.stripTags(home[0].description.value).substring(0, 300),
-    navigation: home[0].subpages.value,
-    introNote: home[0].intro_note.value,
-    signposts: home[0].signposts.value,
-    support: home[0].support.value,
+    title: home[0].elements.title.value,
+    description: helper.stripTags(home[0].elements.description.value).substring(0, 300),
+    navigation: home[0].elements.subpages.linkedItems,
+    introNote: home[0].elements.intro_note.value,
+    signposts: home[0].elements.signposts.value,
+    support: home[0].elements.support.value,
     footer: footer && footer.length ? footer[0] : null,
     UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
     platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,

@@ -253,12 +253,12 @@ const getUrlMap = require('../general/urlMap');
         const pairings = [];
 
         if (cachedPlatforms && cachedPlatforms.length) {
-            cachedPlatforms[0].options.value.forEach((item) => {
+            cachedPlatforms[0].elements.options.linkedItems.forEach((item) => {
                 pairings.push({
-                    url: item.url.value,
-                    platform: item.platform.value[0].codename,
-                    title: item.title.value,
-                    icon: item.icon.value[0].url
+                    url: item.elements.url.value,
+                    platform: item.elements.platform.value[0].codename,
+                    title: item.elements.title.value,
+                    icon: item.elements.icon.value[0].url
                 });
             });
         }
@@ -283,23 +283,23 @@ const getUrlMap = require('../general/urlMap');
         }
 
         if (platforms && cachedPlatforms && cachedPlatforms.length) {
-            cachedPlatforms[0].options.value.forEach((item) => {
+            cachedPlatforms[0].elements.options.linkedItems.forEach((item) => {
                 const platform = {
-                    title: item.title.value,
-                    slug: item.url.value,
-                    codename: item.platform.value[0].codename,
-                    icon: item.icon.value.length ? `${item.icon.value[0].url}?w=20&fm=pjpg&auto=format` : ''
+                    title: item.elements.title.value,
+                    slug: item.elements.url.value,
+                    codename: item.elements.platform.value[0].codename,
+                    icon: item.elements.icon.value.length ? `${item.elements.icon.value[0].url}?w=20&fm=pjpg&auto=format` : ''
                 }
                 order.push(platform);
             });
 
-            if (platforms.value) {
-                platforms = platforms.value;
+            if (platforms.linkedItems) {
+                platforms = platforms.linkedItems;
             }
 
             order.forEach(orderItem => {
                 platforms.forEach(platformItem => {
-                    const codenameTemp = platformItem.platform && platformItem.platform.value.length ? platformItem.platform.value[0].codename : null;
+                    const codenameTemp = platformItem.elements && platformItem.elements.platform && platformItem.elements.platform.value.length ? platformItem.elements.platform.value[0].codename : null;
                     const codename = platformItem.codename || codenameTemp;
                     if (orderItem.codename === codename) {
                         result.push(orderItem);

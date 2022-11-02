@@ -11,10 +11,10 @@ const helper = require('../general/helper')
 
 const getCoursesInCurrentTopic = (currentCourse, allCourses) => {
   const data = [];
-  const currentCourseTopics = currentCourse.personas___topics__training_topic.value;
+  const currentCourseTopics = currentCourse.elements.personas___topics__training_topic.value;
   for (let i = 0; i < currentCourseTopics.length; i++) {
     const topicCourses = allCourses.filter((course) => {
-      return isCodenameInMultipleChoice(course.personas___topics__training_topic.value, currentCourseTopics[i].codename);
+      return isCodenameInMultipleChoice(course.elements.personas___topics__training_topic.value, currentCourseTopics[i].codename);
     });
     data.push(...topicCourses);
   }
@@ -52,15 +52,15 @@ const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages
     const currentRegistration = getScormRegistration(courses[i].system.id, userRegistrations);
     coursesRecommended.push({
       id: courses[i].system.id,
-      title: courses[i].title.value,
-      image: courses[i].thumbnail?.value?.[0]?.url,
-      personas: courses[i].personas___topics__training_persona.value,
-      comingSoon: isCodenameInMultipleChoice(courses[i].display_options ? courses[i].display_options.value : [], 'hide_cta_button'),
-      isFree: isCodenameInMultipleChoice(courses[i].is_free.value, 'yes'),
+      title: courses[i].elements.title.value,
+      image: courses[i].elements.thumbnail?.value?.[0]?.url,
+      personas: courses[i].elements.personas___topics__training_persona.value,
+      comingSoon: isCodenameInMultipleChoice(courses[i].elements.display_options ? courses[i].elements.display_options.value : [], 'hide_cta_button'),
+      isFree: isCodenameInMultipleChoice(courses[i].elements.is_free.value, 'yes'),
       freeLabel: helper.getValue(UIMessages, 'training___free_course_label'),
-      description: isNotEmptyRichText(courses[i].description.value) ? courses[i].description.value : '',
+      description: isNotEmptyRichText(courses[i].elements.description.value) ? courses[i].elements.description.value : '',
       detailsLabel: helper.getValue(UIMessages, 'training___view_details'),
-      duration: courses[i].duration.value,
+      duration: courses[i].elements.duration.value,
       url: getCourseUrl(currentRegistration, courses[i], urlMap),
       certificate: null,
       label: getLabel(currentRegistration, UIMessages, res),
@@ -78,11 +78,11 @@ const getSurveyCodename = async (currentCourse, allCourses, email, res) => {
   });
   if (!(landingPages && landingPages.length)) return null;
 
-  const LONG_CODENAME = landingPages[0].long_survey_for_micro_course.itemCodenames?.[0] || '';
-  const SHORT_CODENAME = landingPages[0].short_survey.itemCodenames?.[0] || '';
-  const LONG_BIG_CODENAME = landingPages[0].long_survey_for_big_course.itemCodenames?.[0] || '';
+  const LONG_CODENAME = landingPages[0].elements.long_survey_for_micro_course.itemCodenames?.[0] || '';
+  const SHORT_CODENAME = landingPages[0].elements.short_survey.itemCodenames?.[0] || '';
+  const LONG_BIG_CODENAME = landingPages[0].elements.long_survey_for_big_course.itemCodenames?.[0] || '';
 
-  if (currentCourse.pages.value.length > 1) {
+  if (currentCourse.elements.pages.linkedItems.length > 1) {
     return LONG_BIG_CODENAME;
   }
 
@@ -163,8 +163,8 @@ const init = async (req, res) => {
   let code, data;
 
   const content = {
-    title: JSON.stringify(survey.items[0].title.value),
-    introduction: JSON.stringify(survey.items[0].short_introduction.value, res)
+    title: JSON.stringify(survey.items[0].elements.title.value),
+    introduction: JSON.stringify(survey.items[0].elements.short_introduction.value, res)
   };
 
   if (attempt && attempt.resource) {
