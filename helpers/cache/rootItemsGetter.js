@@ -48,7 +48,7 @@ const getDirectParents = (codename, allItems) => {
 const checkIfItemIsParent = (item, codename) => {
     switch (item.system.type) {
         case 'code_samples':
-            return item.elements.code_samples.itemCodenames.includes(codename);
+            return item.elements.code_samples.value.includes(codename);
         case 'article':
             return item.elements.content.linkedItemCodenames.includes(codename) ||
                    item.elements.introduction.linkedItemCodenames.includes(codename);
@@ -60,12 +60,12 @@ const checkIfItemIsParent = (item, codename) => {
         case 'training_survey':
             return item.elements.survey_questions.linkedItemCodenames.includes(codename);
         case 'training_certification_test':
-            return item.elements.question_groups.itemCodenames.includes(codename) ||
+            return item.elements.question_groups.value.includes(codename) ||
                    item.elements.description.linkedItemCodenames.includes(codename) ||
                    item.elements.success_message.linkedItemCodenames.includes(codename) ||
                    item.elements.failure_message.linkedItemCodenames.includes(codename);
         case 'training_question_group':
-            return item.elements.questions.itemCodenames.includes(codename);
+            return item.elements.questions.value.includes(codename);
         case 'training_question_for_survey_and_test':
             return item.elements.answers.linkedItemCodenames.includes(codename);
         default:

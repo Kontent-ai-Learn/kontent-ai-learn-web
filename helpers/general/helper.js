@@ -470,27 +470,6 @@ const splitCarouselItems = (content) => {
     }
 };
 
-const removeLinkedItemsSelfReferences = (items, codenames = []) => {
-    for (const item of items) {
-        if (item.subpages) {
-            codenames.push(item.system.codename);
-            let found = false;
-            for (let i = 0; i < codenames.length; i++) {
-                if (item.subpages.itemCodenames.includes(codenames[i])) {
-                    item.subpages.value.length = 0;
-                    found = true;
-                    codenames.length = i;
-                }
-            }
-            if (!found) {
-                removeLinkedItemsSelfReferences(item.subpages.value, codenames);
-            }
-        }
-    }
-
-    return items;
-};
-
 const addTrailingSlashTo = (url) => !url.endsWith('/') && !url.includes('#') && !url.includes('?') ? `${url}/` : url;
 
 const injectHTMLAttr = (options) => {
@@ -590,7 +569,6 @@ module.exports = {
     logInCacheKey,
     makeLinksAbsolute,
     preserveQueryString,
-    removeLinkedItemsSelfReferences,
     removeLogItemCacheKey,
     removeNewLines,
     removePathLastSegments,

@@ -1,7 +1,7 @@
 const KontentDelivery = require('@kontent-ai/delivery-sdk');
 const requestDelivery = require('../kontent/requestDelivery');
 const { deliveryConfig } = require('../kontent/config');
-const { replaceWhitespaceWithDash, sleep, removeLinkedItemsSelfReferences } = require('./helper');
+const { replaceWhitespaceWithDash, sleep } = require('./helper');
 const ensureSingle = require('../cache/ensureSingle');
 const errorAppInsights = require('../error/appInsights');
 let fields = ['codename', 'url'];
@@ -213,8 +213,6 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
         }
     }
 
-    items.items = removeLinkedItemsSelfReferences(items.data.items);
-
     return {
         items: items,
         error: error
@@ -347,7 +345,7 @@ const getUrlMap = async (res, isSitemap) => {
     }
 
     let urlMap = handleNodes({
-        item: items.items[0],
+        item: items.data.items[0],
         isSitemap: isSitemap,
         url: [],
         urlMap: [],

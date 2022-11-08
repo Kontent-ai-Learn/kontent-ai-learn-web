@@ -1,6 +1,6 @@
 const KontentDelivery = require('@kontent-ai/delivery-sdk');
 const { deliveryConfig } = require('./config');
-const { sleep, removeLinkedItemsSelfReferences } = require('../general/helper');
+const { sleep } = require('../general/helper');
 const isPreview = require('./isPreview');
 const errorAppInsights = require('../error/appInsights');
 const { resolveRichText } = require('../resolve/richText');
@@ -89,18 +89,18 @@ const defineQuery = (deliveryConfig, config) => {
 
 const removeArchivedLinkedItems = (items) => {
     for (const item of items) {
-        for (const prop in item) {
-            if (Object.prototype.hasOwnProperty.call(item, prop) && item.system.type !== 'training_course2') {
-                if (item[prop] && item[prop].type === 'modular_content') {
-                    for (const modularItem of item[prop].value) {
+        for (const prop in item.elements) {
+            if (Object.prototype.hasOwnProperty.call(item.elements, prop) && item.system.type !== 'training_course2') {
+                if (item.elements[prop] && item.elements[prop].type === 'modular_content') {
+                    for (const modularItem of item.elements[prop].linkedItems) {
                         if (modularItem.system.workflowStep === 'archived') {
                             const codename = modularItem.system.codename;
-                            item[prop].rawData.value = item[prop].rawData.value.filter(value => value !== codename);
-                            item[prop].itemCodenames = item[prop].itemCodenames.filter(value => value !== codename);
+                            item.elements[prop].value = item.elements[prop].value.filter(value => value !== codename);
+                            item.elements[prop].linkedItems = item.elements[prop].linkedItems.filter(value => value.system.codename !== codename);
                         }
                     }
-                    item[prop].value = item[prop].value.filter(value => value.system.workflowStep !== 'archived');
-                    item[prop].value = removeArchivedLinkedItems(item[prop].value);
+                    item.elements[prop].linkedItems = item.elements[prop].linkedItems.filter(value => value.system.workflowStep !== 'archived');
+                    item.elements[prop].linkedItems = removeArchivedLinkedItems(item.elements[prop].linkedItems);
                 }
             }
         }
@@ -161,8 +161,6 @@ const requestDelivery = async (config) => {
         if (config.type === 'training_certification_test' || config.type === 'training_survey') {
             return response;
         }
-
-        response.items = removeLinkedItemsSelfReferences(response.items);
 
         if (isPreview(config.previewapikey)) {
             response.items = removeArchivedLinkedItems(response.items);

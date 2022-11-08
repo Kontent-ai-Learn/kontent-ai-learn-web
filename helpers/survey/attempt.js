@@ -78,9 +78,9 @@ const getSurveyCodename = async (currentCourse, allCourses, email, res) => {
   });
   if (!(landingPages && landingPages.length)) return null;
 
-  const LONG_CODENAME = landingPages[0].elements.long_survey_for_micro_course.itemCodenames?.[0] || '';
-  const SHORT_CODENAME = landingPages[0].elements.short_survey.itemCodenames?.[0] || '';
-  const LONG_BIG_CODENAME = landingPages[0].elements.long_survey_for_big_course.itemCodenames?.[0] || '';
+  const LONG_CODENAME = landingPages[0].elements.long_survey_for_micro_course.value?.[0] || '';
+  const SHORT_CODENAME = landingPages[0].elements.short_survey.value?.[0] || '';
+  const LONG_BIG_CODENAME = landingPages[0].elements.long_survey_for_big_course.value?.[0] || '';
 
   if (currentCourse.elements.pages.linkedItems.length > 1) {
     return LONG_BIG_CODENAME;
