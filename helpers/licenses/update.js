@@ -86,8 +86,6 @@ const getLicensesItemWorkflowStep = (item, steps) => {
 
 const createUpdate = async (res) => {
   const { createManagementClient } = require('@kontent-ai/management-sdk');
-  const { requestItemAndDeleteCacheKey } = require('../cache/invalidate');
-  const getContent = require('../kontent/getContent');
 
   const html = await getLicensesHtml();
   if (html.error) return html;
@@ -126,9 +124,6 @@ const createUpdate = async (res) => {
 
   const publishResponse = await publishLicensesItem(client);
   if (publishResponse.error) return publishResponse;
-
-  const KCDetails = getContent.KCDetails(res);
-  await requestItemAndDeleteCacheKey(process.env.LICENSES_CODENAME, 'article', KCDetails, res);
 
   return null;
 };
