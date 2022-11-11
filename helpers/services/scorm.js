@@ -94,6 +94,21 @@ const createRegistration = async (user, courseId, registrationId) => {
   return registration;
 };
 
+const updateLearner = async (learner) => {
+  if (!learner) return;
+
+  const url = `https://${process.env.SCORM_HOST}/api/v2/learner/${learner.id}/updateInfo`;
+
+  try {
+    await axios({
+      method: 'post',
+      url: url,
+      data: learner,
+      auth: settings.auth
+    });
+  } catch (error) {}
+};
+
 const getRegistrationData = async (registrationId) => {
   const url = `${settings.registrationsUrl}/${registrationId}`;
   let registrationData = {};
@@ -239,7 +254,8 @@ const scorm = {
     }
 
     return null;
-  }
+  },
+  updateLearner
 }
 
 module.exports = scorm;

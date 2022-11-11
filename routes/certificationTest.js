@@ -251,6 +251,16 @@ router.get('/course/:registrationId/certificate/pdf', asyncHandler(async (req, r
   const registrationData = await scorm.getRegistrationIdData(req.params.registrationId);
   if (!registrationData) return next();
 
+  if (!(registrationData.learner.firstName && registrationData.learner.lastName) && registrationData.learner.email) {
+    const elearningUser = require('../helpers/e-learning/user');
+    const user = await elearningUser.getUser(registrationData.learner.email, res);
+    if (user) {
+      if (user.firstName) registrationData.learner.firstName = user.firstName;
+      if (user.lastName) registrationData.learner.lastName = user.lastName;
+      await scorm.updateLearner(registrationData.learner);
+    }
+  }
+
   return res.render('certificate/course', {
     registrationData: registrationData,
     dayjs: dayjs,
