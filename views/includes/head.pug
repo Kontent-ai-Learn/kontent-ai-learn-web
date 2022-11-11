@@ -10,7 +10,7 @@ if description
     meta(property='og:description', content=description)
 meta(property='og:image', content=`${helper.getDomain()}/learn/img/kai-og.png`)
 if (process.env.IS_PRODUCTION !== 'false')
-    if ((content && content.elements.visibility && content.elements.visibility.value.filter(item => item.codename === 'excluded_from_search').length) || status === 404)
+    if ((content && content.elements && content.elements.visibility && content.elements.visibility.value.filter(item => item.codename === 'excluded_from_search').length) || status === 404)
         meta(name='robots', content='noindex,nofollow')
     else 
         meta(name='robots', content='index,follow')

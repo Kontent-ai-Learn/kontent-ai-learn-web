@@ -31,7 +31,7 @@ const auth0Callback = asyncHandler(async (req, res) => {
         slug: '',
         isPreview: siteIsPreview,
         language: res.locals.language,
-        navigation: home[0].subpages.value,
+        navigation: home[0].elements.subpages.linkedItems,
         itemId: null,
         title: 'Login processing...',
         content: '',

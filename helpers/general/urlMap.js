@@ -214,7 +214,7 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
     }
 
     return {
-        items: items,
+        items: items.data,
         error: error
     };
 };
@@ -345,7 +345,7 @@ const getUrlMap = async (res, isSitemap) => {
     }
 
     let urlMap = handleNodes({
-        item: items.data.items[0],
+        item: items.items[0],
         isSitemap: isSitemap,
         url: [],
         urlMap: [],
