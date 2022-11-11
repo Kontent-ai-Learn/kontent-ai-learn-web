@@ -58,14 +58,15 @@ const createRegistration = async (user, courseId, registrationId) => {
   const url = `${settings.registrationsUrl}`;
   let baseUrl = process.env.BASE_URL;
   if (process.env.NGROK) baseUrl = process.env.NGROK;
+  const email = user.email.toLowerCase();
   const data = {
     courseId: courseId,
     registrationId: registrationId,
     learner: {
-      id: user.email,
+      id: email,
       firstName: user.firstName,
       lastName: user.lastName,
-      email: user.email
+      email: email
     },
     postback: {
       url: `${baseUrl}/learn/api/scorm/postback/`,
@@ -86,7 +87,7 @@ const createRegistration = async (user, courseId, registrationId) => {
     });
   } catch (error) {
     registration.err = handleEmptyErrorResponse(error.response, url);
-    registration.err.userEmail = user.email;
+    registration.err.userEmail = email;
     registration.err.file = 'helpers/scorm.js';
     registration.err.method = 'createRegistration';
   }
