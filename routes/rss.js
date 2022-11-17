@@ -40,7 +40,7 @@ router.get('/changelog', asyncHandler(async (req, res) => {
         home: home[0],
         decode: decode,
         dayjs: dayjs,
-        title: changelog[0].title.value,
+        title: changelog[0].elements.title.value,
         releaseNotes: releaseNotes,
         domain: helper.getDomain(),
         path: path && path.length ? path[0].url : ''
