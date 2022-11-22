@@ -6,6 +6,7 @@ block content
     h1.landing-page__heading.utilities-dot(data-lp-title) !{pageHeading}
     .landing-page__auth(data-lp-auth)
     .landing-page__promoted(data-lp-promoted='loading')
+      h2.landing-page__subheading.landing-page__subheading--promoted(data-lp-lightbox-data='heading') !{helper.getValue(UIMessages, 'promoted_course_header___course_not_started')}
       .tile&attributes(smartLink?.itemId(content.promoted.system.id))
         .tile__img&attributes(smartLink?.elementCodename('thumbnail'))
           img(src=content.promoted.elements.thumbnail.value[0].url, data-lp-lightbox-data='image')

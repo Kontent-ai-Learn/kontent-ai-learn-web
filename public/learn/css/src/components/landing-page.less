@@ -61,6 +61,7 @@
     }
 
     &[data-lp-promoted='loading'] {
+      .landing-page__subheading,
       .tile__img,
       .tile__title,
       .tile__description,
@@ -100,6 +101,11 @@
         span:last-child {
           display: none;
         }
+      }
+
+      .landing-page__subheading {
+        padding-left: 0;
+        margin-left: 0;
       }
     }
 	}
@@ -163,6 +169,11 @@
 
     h2& .anchor-copy {
       text-decoration: none;
+    }
+    
+    &--promoted {
+      margin-bottom: .5em;
+      display: inline-block;
     }
 	}
 

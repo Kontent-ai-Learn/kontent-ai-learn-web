@@ -69,6 +69,7 @@ const landingPage = (() => {
 
     const elemPromoted = document.querySelector(`[data-lp-promoted]`);
     if (!elemPromoted) return;
+    const headingPromoted = elemPromoted.querySelector(`[data-lp-lightbox-data="heading"]`);
     const imagePromoted = elemPromoted.querySelector(`[data-lp-lightbox-data="image"]`);
     const titlePromoted = elemPromoted.querySelector(`[data-lp-lightbox-data="title"]`);
     const descriptionPromoted = elemPromoted.querySelector(`[data-lp-lightbox-data="description"]`);
@@ -84,6 +85,10 @@ const landingPage = (() => {
     descriptionPromoted.innerHTML = description.innerHTML;
     linkPromoted.setAttribute('href', link.getAttribute('href'));
     linkPromoted.setAttribute('data-lp-lightbox-invoke', item.id);
+
+    if (item.progress.codename.includes('incomplete')) {
+      headingPromoted.innerHTML = window.UIMessages.promotedCourseHeadingIncomplete;
+    }
   };
 
   const removeLoadingFromPromoted = () => {
