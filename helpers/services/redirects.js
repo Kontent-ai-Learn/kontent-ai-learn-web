@@ -27,14 +27,14 @@ const getRedirectUrls = async (res) => {
   const redirectMap = [];
 
   items.forEach(item => {
-    if (item.redirect_urls && item.redirect_urls.value) {
+    if (item.elements.redirect_urls && item.elements.redirect_urls.value) {
       const originalUrl = urlMap.filter(url => url.codename === item.system.codename);
 
       if (originalUrl.length) {
         redirectMap.push({
           id: item.system.id,
           originalUrl: helper.addTrailingSlashTo(originalUrl[0].url),
-          redirectUrls: helper.getRedirectUrls(item.redirect_urls).map(item => helper.addTrailingSlashTo(item))
+          redirectUrls: helper.getRedirectUrls(item.elements.redirect_urls).map(item => helper.addTrailingSlashTo(item))
         });
       }
     }
@@ -53,15 +53,15 @@ const getRedirectRules = async (res) => {
   const redirectMap = [];
 
   for (let i = 0; i < redirectRules.length; i++) {
-    const to = redirectRules[i].redirect_to.value;
+    const to = redirectRules[i].elements.redirect_to.value;
     const redirectTo = [];
 
     if (!redirectRules[i].processed) {
       for (let j = 0; j < redirectRules.length; j++) {
-        if (to === redirectRules[j].redirect_to.value) {
+        if (to === redirectRules[j].elements.redirect_to.value) {
           redirectTo.push({
             id: redirectRules[j].system.id,
-            url: helper.addTrailingSlashTo(redirectRules[j].redirect_from.value)
+            url: helper.addTrailingSlashTo(redirectRules[j].elements.redirect_from.value)
           });
           redirectRules[j].processed = true;
         }

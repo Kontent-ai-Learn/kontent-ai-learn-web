@@ -95,9 +95,9 @@ const purgeRedirectRule = async (codename, res) => {
 
   for (let i = 0; i < redirectRules.length; i++) {
     if (redirectRules[i].system.codename === codename) {
-      await axiosPurge(validDomain, redirectRules[i].redirect_from.value);
-      if (!isAbsoluteUrl(redirectRules[i].redirect_to.value)) {
-        await axiosPurge(validDomain, redirectRules[i].redirect_to.value);
+      await axiosPurge(validDomain, redirectRules[i].elements.redirect_from.value);
+      if (!isAbsoluteUrl(redirectRules[i].elements.redirect_to.value)) {
+        await axiosPurge(validDomain, redirectRules[i].elements.redirect_to.value);
       }
     }
   }

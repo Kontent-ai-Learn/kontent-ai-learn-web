@@ -13,8 +13,8 @@ const requestItemAndDeleteCacheKey = async (codename, type, KCDetails, res) => {
     const originalItem = cacheHandle.get(codename, KCDetails);
 
     if (originalItem && originalItem.length) {
-        if (originalItem[0].redirect_urls) {
-            await fastly.purgeToRedirectUrls(originalItem[0].redirect_urls, res);
+        if (originalItem[0].elements.redirect_urls) {
+            await fastly.purgeToRedirectUrls(originalItem[0].elements.redirect_urls, res);
         }
 
         cacheHandle.remove(codename, KCDetails);
@@ -47,8 +47,8 @@ const requestItemAndDeleteCacheKey = async (codename, type, KCDetails, res) => {
             newItem = newItem.items;
         }
 
-        if (newItem[0].redirect_urls) {
-            await fastly.purgeToRedirectUrls(newItem[0].redirect_urls, res);
+        if (newItem[0].elements.redirect_urls) {
+            await fastly.purgeToRedirectUrls(newItem[0].elements.redirect_urls, res);
         }
     }
 

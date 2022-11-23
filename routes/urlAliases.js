@@ -30,7 +30,7 @@ const urlAliases = async (req, res, next) => {
     let redirectUrl = [];
 
     items.forEach((item) => {
-        const aliases = helper.getRedirectUrls(item.redirect_urls);
+        const aliases = helper.getRedirectUrls(item.elements.redirect_urls);
 
         aliases.forEach(alias => {
             alias = alias.trim().toLowerCase();

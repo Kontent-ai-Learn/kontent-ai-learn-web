@@ -13,10 +13,10 @@ router.get('*', async (req, res, next) => {
 
     if (rules) {
         for (let i = 0; i < rules.length; i++) {
-            if (rules[i].redirect_to && rules[i].redirect_to.value && rules[i].redirect_from && rules[i].redirect_from.value) {
-                const normalizedRedirectFrom = `/learn${helper.addTrailingSlashTo(rules[i].redirect_from.value)}`;
+            if (rules[i].elements.redirect_to && rules[i].elements.redirect_to.value && rules[i].elements.redirect_from && rules[i].elements.redirect_from.value) {
+                const normalizedRedirectFrom = `/learn${helper.addTrailingSlashTo(rules[i].elements.redirect_from.value)}`;
                 if (normalizedRedirectFrom === normalizedUrlPath) {
-                    const url = rules[i].redirect_to.value.includes('://') ? rules[i].redirect_to.value : `/learn${helper.addTrailingSlashTo(rules[i].redirect_to.value)}`;
+                    const url = rules[i].elements.redirect_to.value.includes('://') ? rules[i].elements.redirect_to.value : `/learn${helper.addTrailingSlashTo(rules[i].elements.redirect_to.value)}`;
                     return res.redirect(301, url);
                 }
             }
