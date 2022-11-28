@@ -130,7 +130,7 @@ router.get('/redocly/data', async (req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type');
 
   return res.send({
-    navigation: home[0].elements.subpages.linkedItems.map(item => { return { codename:  item.system.codename, title: item.elements.title.value }}),
+    navigation: home[0].elements.subpages.linkedItems.map(item => { return { codename: item.system.codename, title: item.elements.title.value } }),
     footer: footer && footer.length ? footer[0] : null,
     UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
     platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
