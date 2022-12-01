@@ -116,10 +116,6 @@ router.get('/redocly/data', async (req, res, next) => {
   const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
     return getContent.footer(res);
   });
-  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
-    return getContent.UIMessages(res);
-  });
-  const platformsConfigPairings = await getContent.platformsConfigPairings(res);
 
   const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
     return await getUrlMap(res);
@@ -132,8 +128,6 @@ router.get('/redocly/data', async (req, res, next) => {
   return res.send({
     navigation: home[0].elements.subpages.linkedItems.map(item => { return { codename: item.system.codename, title: item.elements.title.value } }),
     footer: footer && footer.length ? footer[0] : null,
-    UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
-    platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
     urlMap: urlMap && urlMap.length ? urlMap : null
   });
 });
