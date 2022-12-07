@@ -8,6 +8,7 @@ const checkCosmosDb = require('./cosmosDb');
 const checkScorm = require('./scorm');
 const checkMissingObjectProperties = require('./missingObjectProperties');
 const checkLicenses = require('./licenses');
+const checkRedoclyGithub = require('./redoclyGithub');
 
 const checkAll = async () => {
   const checkItems = [{
@@ -40,6 +41,9 @@ const checkAll = async () => {
   }, {
     name: 'Licenses',
     method: checkLicenses
+  }, {
+    name: 'Redocly - Github',
+    method: checkRedoclyGithub
   }];
   const resultItems = [];
 

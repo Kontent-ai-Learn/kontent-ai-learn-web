@@ -2,7 +2,6 @@ const express = require('express');
 
 const basicAuth = require('express-basic-auth');
 const router = express.Router();
-const cacheHandle = require('../helpers/cache/handle');
 const certificationAttempt = require('../helpers/certification/attempt');
 const certificationDetail = require('../helpers/certification/detail');
 const certificationEmail = require('../helpers/certification/email');
@@ -10,9 +9,7 @@ const elearningLandingPageApi = require('../helpers/e-learning/landingPageApi');
 const elearningReporting = require('../helpers/e-learning/reporting');
 const elearningProgress = require('../helpers/e-learning/progress');
 const fastly = require('../helpers/services/fastly');
-const getContent = require('../helpers/kontent/getContent');
 const jwtCheck = require('../helpers/services/jwt');
-const getUrlMap = require('../helpers/general/urlMap');
 const userProfile = require('../helpers/user/profile');
 const licensesUpdate = require('../helpers/licenses/update');
 
@@ -102,34 +99,6 @@ router.post('/scorm/postback', basicAuth((() => {
   success = await elearningReporting.addRecord(req.body);
   success = await elearningProgress.setRecord(req.body);
   return res.status(success ? 200 : 400).end();
-});
-
-router.get('/redocly/data', async (req, res, next) => {
-  const home = await cacheHandle.ensureSingle(res, 'home', async () => {
-    return getContent.home(res);
-  });
-
-  if (!home.length) {
-    return next();
-  }
-
-  const footer = await cacheHandle.ensureSingle(res, 'footer', async () => {
-    return getContent.footer(res);
-  });
-
-  const urlMap = await cacheHandle.ensureSingle(res, 'urlMap', async () => {
-    return await getUrlMap(res);
-  });
-
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-
-  return res.send({
-    navigation: home[0].elements.subpages.linkedItems.map(item => { return { codename: item.system.codename, title: item.elements.title.value } }),
-    footer: footer && footer.length ? footer[0] : null,
-    urlMap: urlMap && urlMap.length ? urlMap : null
-  });
 });
 
 router.post('/licenses-updated', async (req, res) => {

@@ -70,6 +70,10 @@ const check = (token) => {
     codename: 'licenses',
     title: 'Licenses',
     endpoint: '/learn/service/check/licenses/'
+  }, {
+    codename: 'redoclyGithub',
+    title: 'Redocly - Github',
+    endpoint: '/learn/service/check/redocly-github/'
   }];
 
   const buidlUI = () => {

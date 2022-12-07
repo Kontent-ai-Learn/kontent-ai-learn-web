@@ -5,6 +5,7 @@ const { signatureHelper } = require('@kontent-ai/webhook-helper');
 const util = require('util');
 const asyncHandler = require('express-async-handler');
 const { invalidate } = require('../helpers/cache/invalidate');
+const redocly = require('../helpers/services/redocly');
 const helper = require('../helpers/general/helper');
 
 const isValidSignature = (req, secret) => {
@@ -62,6 +63,7 @@ router.post('/', asyncHandler(async (req, res) => {
 router.post('/pool', asyncHandler(async (req, res) => {
     await invalidate(req, res);
     cache.del('webhook-payload-pool');
+    await redocly.sync(res);
     return res.end();
 }));
 
