@@ -55,6 +55,12 @@ Without the following variables, certain features will not work on the website.
 * `COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT` - CosmosDB database - Certifications container name
 * `COSMOSDB_CONTAINER_PROFILE` - CosmosDB database - Profile container name
 * `COSMOSDB_CONTAINER_REPORTING` - CosmosDB database - Reporting (Scorm postback payloads) container name
+* `GITHUB_REDOCLY_ACCESS_TOKEN` - Used for syncing site data to Redocly repository
+* `GITHUB_REDOCLY_EMAIL` - Used for syncing site data to Redocly repository
+* `GITHUB_REDOCLY_OWNER` - Used for syncing site data to Redocly repository
+* `GITHUB_REDOCLY_REPOSITORY` - Used for syncing site data to Redocly repository
+* `GITHUB_REDOCLY_USERNAME` - Used for syncing site data to Redocly repository
+* `GITHUB_REDOCLY_BRANCH` - Used for syncing site data to Redocly repository
 * `GTM_ID` - Google Tag Manager ID (used for analytics)
 * `INTERCOM_ID` - Intercom account ID (used for support chat)
 * `IS_PRODUCTION` - Flag that determines whether to show a red warning banner
