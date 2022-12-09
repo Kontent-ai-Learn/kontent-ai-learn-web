@@ -42,7 +42,7 @@ const createUpdate = async (email, body, res) => {
         patchBody.operations.push({
           op: 'add',
           path: `/${key}`,
-          value: body[key]
+          value: body[key] || ''
         });
       });
 

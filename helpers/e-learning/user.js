@@ -99,6 +99,8 @@ const getUser = async (email, res) => {
     if (user?.data) user = user.data;
   }
 
+  if (user.error_id) return user;
+
   await userProfile.createUpdate(email, {
     firstName: user.firstName,
     lastName: user.lastName,
