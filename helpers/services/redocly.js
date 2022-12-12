@@ -22,10 +22,18 @@ const sync = async (res) => {
     return await getUrlMap(res);
   });
 
+  const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
+    return getContent.UIMessages(res);
+  });
+
+  const platformsConfigPairings = await getContent.platformsConfigPairings(res);
+
   const redoclyData = {
     navigation: home[0].elements.subpages.linkedItems.map(item => { return { codename: item.system.codename, title: item.elements.title.value } }),
     footer: footer && footer.length ? footer[0] : null,
-    urlMap: urlMap && urlMap.length ? urlMap : null
+    urlMap: urlMap && urlMap.length ? urlMap : null,
+    UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
+    platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
   };
 
   const shouldSync = !(JSON.stringify(redoclyDataExisting) === JSON.stringify(redoclyData));
