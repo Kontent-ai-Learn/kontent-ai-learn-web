@@ -15,7 +15,7 @@ const getTrainingUser = async (email, res) => {
 };
 
 const userHasElearningAccess = async (user, res) => {
-  if (user.email.endsWith('@kentico.com') || user.email.endsWith('@kontent.ai') || user.isTrainigUser) {
+  if (user.email.endsWith('@kontent.ai') || user.isTrainigUser) {
     return true;
   }
 
@@ -61,7 +61,7 @@ const getSubscriptionServiceUser = async (email) => {
       }
     });
   } catch (error) {
-    if (email.endsWith('@kentico.com') || email.endsWith('@kontent.ai')) return null;
+    if (email.endsWith('@kontent.ai')) return null;
     if (!error.response) {
       error.response = {
         data: {

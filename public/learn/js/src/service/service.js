@@ -10,7 +10,7 @@ const ensureAuth0Login = async () => {
 
   try {
     const user = await auth0.client.getIdTokenClaims();
-    if (user.email.endsWith('@kentico.com') || user.email.endsWith('@kontent.ai') || user.email.endsWith('@milanlund.com')) return user;
+    if (user.email.endsWith('@kontent.ai') || user.email.endsWith('@milanlund.com')) return user;
   } catch (err) {}
 
   localStorage.setItem('auth0ReturnUrl', window.location.href);
