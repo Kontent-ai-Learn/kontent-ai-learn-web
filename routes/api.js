@@ -10,6 +10,7 @@ const elearningReporting = require('../helpers/e-learning/reporting');
 const elearningProgress = require('../helpers/e-learning/progress');
 const fastly = require('../helpers/services/fastly');
 const jwtCheck = require('../helpers/services/jwt');
+const redocly = require('../helpers/services/redocly');
 const userProfile = require('../helpers/user/profile');
 const licensesUpdate = require('../helpers/licenses/update');
 
@@ -105,6 +106,12 @@ router.post('/licenses-updated', async (req, res) => {
   res = fastly.preventCaching(res);
   const response = await licensesUpdate.createUpdate(res);
   if (response && response.error) return res.status(400).send(response);
+  return res.end();
+});
+
+router.post('/redocly/sync', async (req, res) => {
+  res = fastly.preventCaching(res);
+  await redocly.sync(res);
   return res.end();
 });
 

@@ -1,4 +1,5 @@
 const { Octokit } = require('octokit');
+const axios = require('axios');
 
 const createOrUpdateFileAsync = async (data) => {
   const octokit = new Octokit({
@@ -62,6 +63,10 @@ const createOrUpdateFileAsync = async (data) => {
   }
 };
 
-const github = { createOrUpdateFileAsync };
+const requestRedoclySync = async () => {
+  await axios.post(`${process.env.BASE_URL}/learn/api/redocly/sync/`, {});
+};
+
+const github = { createOrUpdateFileAsync, requestRedoclySync };
 
 module.exports = github;

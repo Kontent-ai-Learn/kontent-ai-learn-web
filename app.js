@@ -17,6 +17,7 @@ const { handleKCKeys, getProjectLanguage } = require('./helpers/general/app');
 const cacheHandle = require('./helpers/cache/handle');
 const isPreview = require('./helpers/kontent/isPreview');
 const fastly = require('./helpers/services/fastly');
+const github = require('./helpers/services/github');
 const serviceCheckAll = require('./helpers/serviceCheck/all');
 const certificationEmail = require('./helpers/certification/email');
 
@@ -127,6 +128,10 @@ if (!isPreview(process.env.KONTENT_PREVIEW_API_KEY)) {
     await cacheHandle.pool();
     await certificationEmail.handleExpirationNotifications();
   }, 300000);
+} else {
+  setIntervalAsync(async () => {
+    await github.requestRedoclySync();
+}, 300000);
 }
 
 // catch 404 and forward to error handler
