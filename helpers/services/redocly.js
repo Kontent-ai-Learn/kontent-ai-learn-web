@@ -1,11 +1,23 @@
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
+const isPreview = require('../kontent/isPreview');
 const getUrlMap = require('../general/urlMap');
 const github = require('./github');
 
 const sync = async (res) => {
+  let prefix = '';
+  let suffix = '';
+
+  if (process.env.IS_DEVELOPMENT === 'true') {
+    prefix = 'dev_'
+  }
+
+  if (isPreview(res.locals.previewapikey)) {
+    suffix = '_preview';
+  }
+
   const CACHE_KEY = 'redoclyData';
-  const FILE_PATH = 'siteData.json';
+  const FILE_PATH = `${prefix}siteData${suffix}.json`;
 
   const KCDetails = getContent.KCDetails(res);
   const redoclyDataExisting = cacheHandle.get(CACHE_KEY, KCDetails);
