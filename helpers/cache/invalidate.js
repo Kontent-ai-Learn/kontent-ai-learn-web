@@ -249,11 +249,6 @@ const invalidateReleaseNotes = async (itemsByTypes, KCDetails, res) => {
 const invalidateAPISpecifications = async (itemsByTypes, KCDetails, res) => {
     if (itemsByTypes.apiSpecifications.length) {
         await invalidateGeneral(itemsByTypes, KCDetails, res, 'apiSpecifications');
-        await deleteSpecificKeys(KCDetails, itemsByTypes.apiSpecifications, res);
-    }
-
-    if (itemsByTypes.home.length) {
-        await cacheHandle.apiReferences(res, true);
     }
 };
 

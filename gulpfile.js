@@ -125,35 +125,6 @@ const jsTasks = [{
     fileName: 'app.js'
   }
 }, {
-  name: 'js-reference',
-  config: {
-    src: [
-      'public/learn/js/src/app/polyfills.js',
-      'public/learn/js/src/app/helper.js',
-      'public/learn/js/src/app/landing-page/api.js',
-      'public/learn/js/src/app/dropdown.js',
-      'public/learn/js/src/app/dpr.js',
-      'public/learn/js/src/app/data-toggle.js',
-      'public/learn/js/src/app/intercom.js',
-      ...prismFiles,
-      'public/learn/js/src/app/user-panel.js',
-      'node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js',
-      'public/learn/js/src/app/auth0.js',
-      'public/learn/js/src/app/preview-warning.js',
-      'public/learn/js/src/app/icon-tooltip.js',
-      'public/learn/js/src/app/api-reference.js',
-      'public/learn/js/src/app/button.js',
-      'public/learn/js/src/app/code-sample.js',
-      'public/learn/js/src/app/instantsearch.js',
-      'public/learn/js/src/app/video.js',
-      'node_modules/basiclightbox/dist/basicLightbox.min.js',
-      'public/learn/js/src/app/lightbox.js',
-      'public/learn/js/src/app/kontent-smart-link.js',
-      'public/learn/js/src/app/trigger-on-url-map.js'
-    ],
-    fileName: 'apireference.js'
-  }
-}, {
   name: 'js-changelog',
   config: {
     src: [
@@ -319,34 +290,6 @@ const cssTasks = [{
     fileName: 'app.less'
   }
 }, {
-  name: 'css-reference',
-  config: {
-    src: [
-      'public/learn/css/src/general/reset.less',
-      'public/learn/css/src/general/fonts.less',
-      'public/learn/css/src/general/kentico-icons.less',
-      'public/learn/css/src/general/utilities.less',
-      'public/learn/css/src/components/footer.less',
-      'public/learn/css/src/components/data-toggle.less',
-      'public/learn/css/src/components/api-reference.less',
-      'public/learn/css/src/components/navigation.less',
-      'public/learn/css/src/components/suggestion.less',
-      'public/learn/css/src/components/basic-lightbox.less',
-      'public/learn/css/src/components/callout.less',
-      'public/learn/css/src/components/icon.less',
-      'public/learn/css/src/components/prism-reference.less',
-      'public/learn/css/src/components/preview-warning.less',
-      'public/learn/css/src/components/info-line.less',
-      'public/learn/css/src/components/autocomplete.less',
-      'public/learn/css/src/components/video-controls.less',
-      'public/learn/css/src/components/dropdown.less',
-      'public/learn/css/src/components/toc.less',
-      'public/learn/css/src/components/user-panel.less',
-      'public/learn/css/src/general/print.less'
-    ],
-    fileName: 'apireference.less'
-  }
-}, {
   name: 'css-service',
   config: {
     src: [
@@ -371,9 +314,9 @@ gulp.task('reload', (done) => {
   done();
 });
 
-gulp.task('build-js-app', gulp.parallel(['js-app', 'js-reference']));
+gulp.task('build-js-app', gulp.parallel(['js-app']));
 gulp.task('build-js-filter', gulp.parallel(['js-changelog', 'js-landing-page']));
-gulp.task('build-css', gulp.parallel(['css-app', 'css-reference', 'css-service']));
+gulp.task('build-css', gulp.parallel(['css-app', 'css-service']));
 
 gulp.task('watch', (done) => {
   gulp.watch('public/learn/js/src/app/**/*.js', gulp.series(['build-js-app', 'reload']));
@@ -394,7 +337,7 @@ gulp.task('browser-sync', (done) => {
 gulp.task('observe', async () => {
   return nodemon({
     script: 'server.js',
-    ignore: ['helpers/redoc-cli/*.json', 'public/learn/**', 'gulpfile.js']
+    ignore: ['public/learn/**', 'gulpfile.js']
   }).on('start', () => {
       if (!nodemonStarted) {
         nodemonStarted = true;

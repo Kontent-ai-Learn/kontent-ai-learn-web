@@ -1,4 +1,3 @@
-const axios = require('axios');
 const cache = require('memory-cache');
 const cheerio = require('cheerio');
 
@@ -144,33 +143,6 @@ const hasLinkedItemOfType = (field, type) => {
         }
     }
     return false;
-};
-
-const getReferenceFiles = async (codename, saveToCache, KCDetails, methodName) => {
-    let data;
-    const baseUrl = process.env.API_REFERENCES_HOST;
-    const time = (new Date()).toISOString();
-
-    try {
-        data = await axios.get(`${baseUrl}/api/ProviderStarter?api=${codename}&isPreview=${KCDetails.isPreview ? 'true' : 'false'}&source=${KCDetails.host}&method=${methodName}&t=${time}`);
-        /* data = {};
-        data.data = await readFileAsync('./helpers/delivery_api.html', 'utf8'); */
-    } catch (err) {
-        console.error(err)
-        try {
-            if (baseUrl) {
-                data = await axios.get(`https://${KCDetails.isPreview ? 'kcddev' : 'kcdmaster'}.blob.core.windows.net/api-reference-pages/${codename}${KCDetails.isPreview ? '-preview' : ''}.html`);
-            }
-        } catch (err) {
-            data = {};
-            data.data = '';
-        }
-    }
-
-    if (saveToCache) {
-        cache.put(`reDocReference_${codename}_${KCDetails.projectid}`, data);
-    }
-    return data;
 };
 
 const getDomain = () => {
@@ -557,7 +529,6 @@ module.exports = {
     getPrismClassName,
     getReadingTime,
     getRedirectUrls,
-    getReferenceFiles,
     getUniqueUrls,
     getValidationMessages,
     getValue,

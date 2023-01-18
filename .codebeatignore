@@ -1,4 +1,3 @@
 /public/**/*.min.js
 /public/js/src/bin/*.js
 /public/js/src/vendor/*.js
-/helpers/redoc-cli/index.js

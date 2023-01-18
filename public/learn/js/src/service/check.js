@@ -42,10 +42,6 @@ const check = (token) => {
     title: 'Subscription service',
     endpoint: '/learn/service/check/subscription-service/',
   }, {
-    codename: 'apiReferences',
-    title: 'API References',
-    endpoint: '/learn/service/check/api-references/',
-  }, {
     codename: 'scorm',
     title: 'Scorm',
     endpoint: '/learn/service/check/scorm/',

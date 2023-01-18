@@ -44,7 +44,6 @@ To start the application correctly, the following environment variables must be 
 Without the following variables, certain features will not work on the website.
 
 * `ALIAS_URL` - URL specifying there the app is available, can be different from `baseUrl`
-* `API_REFERENCES_HOST` - Required for the REST API references based on ReDoc
 * `APP_URL` - URL specifying a Kontent.ai application related to the current environment
 * `API2PDF_API_KEY` - API key for the [api2PDF](https://www.api2pdf.com/) service
 * `APPINSIGHTS_INSTRUMENTATIONKEY` - Azure Application Insights key (used for application monitoring)

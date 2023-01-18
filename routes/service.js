@@ -10,7 +10,6 @@ const { cacheKeys, cacheKeyDetail, cacheKeyInvalidate } = require('../helpers/se
 const checkKKProject = require('../helpers/serviceCheck/kkProject');
 const checkAlgolia = require('../helpers/serviceCheck/algolia');
 const checkSubscriptionService = require('../helpers/serviceCheck/subscriptionService');
-const checkApiReferences = require('../helpers/serviceCheck/apiReferences');
 const checkScorm = require('../helpers/serviceCheck/scorm');
 const checkAuth0 = require('../helpers/serviceCheck/auth0');
 const checkSendgrid = require('../helpers/serviceCheck/sendgrid');
@@ -59,9 +58,6 @@ router.post('*', jwtCheck, async (req, res) => {
           break;
         case 'subscription-service':
           response = await checkSubscriptionService();
-          break;
-        case 'api-references':
-          response = await checkApiReferences();
           break;
         case 'scorm':
           response = await checkScorm();

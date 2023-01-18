@@ -2,7 +2,7 @@ const cache = require('memory-cache');
 const axios = require('axios');
 const util = require('util');
 const getContent = require('../kontent/getContent');
-const { getReferenceFiles, logInCacheKey } = require('../general/helper');
+const { logInCacheKey } = require('../general/helper');
 const getUrlMap = require('../general/urlMap');
 const github = require('../services/github');
 
@@ -70,9 +70,6 @@ const cacheKeys = [{
         name: 'navigationItems',
         method: getContent.navigationItems
     }, {
-        name: 'apiSpecifications',
-        method: getContent.references
-    }, {
         name: 'releaseNotes',
         method: getContent.releaseNotes
     }, {
@@ -134,26 +131,6 @@ const ensureSingle = async (res, keyName, method) => {
     return get(keyName, KCDetails);
 };
 
-const apiReferences = async (res, forceCacheRevalidate) => {
-    const KCDetails = getContent.KCDetails(res);
-    const provideReferences = async (apiCodename, KCDetails) => {
-        await getReferenceFiles(apiCodename, true, KCDetails, 'apiReferences');
-    };
-    const keys = cache.keys();
-    let references;
-    if ((!(keys.filter(item => item.indexOf('reDocReference_') > -1).length) || !!forceCacheRevalidate) && !KCDetails.isPreview) {
-        references = await evaluateSingle(res, 'apiSpecifications', async () => {
-            return getContent.references(res);
-        });
-
-        if (references && references.length) {
-            for (const value of references) {
-                provideReferences(value.system.codename, KCDetails);
-            }
-        }
-    }
-};
-
 const pool = async () => {
     const log = {
         timestamp: (new Date()).toISOString(),
@@ -176,7 +153,6 @@ const pool = async () => {
 module.exports = {
     evaluateCommon,
     evaluateSingle,
-    apiReferences,
     get,
     put,
     remove,

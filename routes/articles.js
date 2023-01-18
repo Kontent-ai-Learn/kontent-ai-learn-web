@@ -1,7 +1,6 @@
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
-const cheerio = require('cheerio');
 
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
@@ -46,65 +45,6 @@ const getItemContent = async (item, urlMap, res) => {
     });
 
     return content;
-};
-
-const getRedocReference = async (apiCodename, res, KCDetails) => {
-    return await cacheHandle.evaluateSingle(res, `reDocReference_${apiCodename}`, async () => {
-        return await helper.getReferenceFiles(apiCodename, false, KCDetails, 'getRedocReference');
-    });
-};
-
-const resolveLinks = (data, urlMap) => {
-    // Resolve links in DOM
-    const parserOptions = {
-        decodeEntities: true,
-        lowerCaseAttributeNames: false,
-        lowerCaseTags: false,
-        recognizeSelfClosing: false,
-        _useHtmlParser2: true,
-    };
-
-    const $ = cheerio.load(data.data, parserOptions);
-    const links = $('a[href]');
-
-    for (let i = 0; i < links.length; i++) {
-        const link = $(links[i]);
-
-        if (link.attr('href').indexOf('/link-to/') > -1) {
-            const urlParts = link.attr('href').split('/');
-            const codename = urlParts[urlParts.length - 1];
-
-            for (let i = 0; i < urlMap.length; i++) {
-                if (urlMap[i].codename === codename) {
-                    link.attr('href', urlMap[i].url);
-                }
-            }
-        }
-    }
-
-    data.data = $.root().html().trim();
-
-    // Resolve links in Markdown
-    // eslint-disable-next-line no-useless-escape
-    const regexLink = /(\]\()([a-zA-Z0-9-._~:\/?#\[\]@!\$&'\+,;=]*)(\))/g;
-    data.data = data.data.replace(regexLink, (match, $1, $2, $3) => {
-        let url = $2;
-
-        if ($2.indexOf('/link-to/') > -1) {
-            const urlParts = $2.split('/');
-            const codename = urlParts[urlParts.length - 1];
-
-            for (let i = 0; i < urlMap.length; i++) {
-                if (urlMap[i].codename === codename) {
-                    url = urlMap[i].url;
-                }
-            }
-        }
-
-        return $1 + url + $3;
-    });
-
-    return data;
 };
 
 const getData = async (req, res) => {
@@ -210,28 +150,6 @@ const getData = async (req, res) => {
                 UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
                 platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
                 helper: helper,
-                view: view
-            };
-        } else if (content[0].system.type === 'zapi_specification') {
-            view = 'pages/redoc';
-            let contentReference = await getRedocReference(content[0].system.codename, res, KCDetails);
-            contentReference = resolveLinks(contentReference, urlMap);
-
-            return {
-                req: req,
-                res: res,
-                postprocessMarkup: postprocessMarkup,
-                slug: slug,
-                isPreview: KCDetails.isPreview,
-                isReference: true,
-                itemId: content[0].system.id || null,
-                title: content[0].elements.title.value || '',
-                navigation: home && home.length ? home[0].elements.subpages.linkedItems : null,
-                footer: footer && footer.length ? footer[0] : null,
-                UIMessages: UIMessages && UIMessages.length ? UIMessages[0] : null,
-                platformsConfig: platformsConfigPairings && platformsConfigPairings.length ? platformsConfigPairings : null,
-                helper: helper,
-                content: contentReference,
                 view: view
             };
         } else if (content[0].system.type === 'multiplatform_article' || content[0].system.type === 'article') {

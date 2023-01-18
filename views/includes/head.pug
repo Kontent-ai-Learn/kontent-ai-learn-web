@@ -22,10 +22,7 @@ link(rel='preload' as='font' href='/learn/fonts/WorkSans-Bold.woff2' type='font/
 link(rel='preload' as='font' href='/learn/fonts/WorkSans-Bold.woff' type='font/woff' crossorigin='anonymous')
 if (containsChangelog)
     link(rel='stylesheet', href=`/learn/css/air-datepicker.css?v=${deployVersion}`)
-if (isReference)
-    link(rel='stylesheet', href=`/learn/css/apireference.min.css?v=${deployVersion}`)
-else 
-    link(rel='stylesheet', href=`/learn/css/app.min.css?v=${deployVersion}`)
+link(rel='stylesheet', href=`/learn/css/app.min.css?v=${deployVersion}`)
 if (req.query.pdf)
     link(rel='stylesheet', href=`/learn/css/pdf.css?v=${deployVersion}`)
 script var auth0Config = {domain:"#{process.env['AUTH0_DOMAIN']}",clientID:"#{process.env['AUTH0_CLIENT_ID']}",logoutUrl:"#{process.env['AUTH0_LOGOUT_URL']}"};var appUrl="#{process.env['APP_URL']}";
@@ -56,10 +53,7 @@ if isPreview
 script(src=`/learn/js/algolia.min.js?v=${deployVersion}`, defer='')
 script var ALGOLIA_INSIGHTS_SRC = "/learn/js/search-insights.min.js?v=!{deployVersion}";!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],i.async=1,i.src=n,c.parentNode.insertBefore(i,c)}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
 
-if (isReference)
-    script(src=`/learn/js/apireference.min.js?v=${deployVersion}`, defer='', onload='initGTM()')
-else
-    script(src=`/learn/js/app.min.js?v=${deployVersion}`, defer='', onload='initGTM()')
+script(src=`/learn/js/app.min.js?v=${deployVersion}`, defer='', onload='initGTM()')
 if (containsChangelog)
     script(src=`/learn/js/changelog.min.js?v=${deployVersion}`, defer='')
 if (containsTrainingCourse)

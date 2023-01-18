@@ -6,7 +6,6 @@ const home = require('./home');
 const rss = require('./rss');
 
 const urlAliases = require('./urlAliases');
-const referenceUpdated = require('./referenceUpdated');
 const linkUrls = require('./linkUrls');
 const cacheInvalidate = require('./cacheInvalidate');
 const form = require('./form');
@@ -26,9 +25,6 @@ router.use('/api', express.json({
   type: '*/*'
 }), api);
 router.use('/link-to', linkUrls);
-router.use('/reference-updated', express.json({
-  type: '*/*'
-}), referenceUpdated);
 router.use('/cache-invalidate', express.text({
   type: '*/*'
 }), cacheInvalidate);
@@ -46,7 +42,6 @@ router.use('/', asyncHandler(async (req, res, next) => {
     res.locals.UIMessages = UIMessages[0];
   }
 
-  await cacheHandle.apiReferences(res);
   const exists = await pageExists(req, res, next);
 
   if (!exists) {
