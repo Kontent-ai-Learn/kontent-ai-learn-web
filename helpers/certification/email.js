@@ -92,7 +92,7 @@ const handleExpirations = async (res) => {
 };
 
 const handleExpirationNotifications = async () => {
-  await axios.post(`${process.env.BASE_URL}/learn/api/e-learning/expiration-notifications`, {});
+  await axios.post(`${process.env.BASE_URL}/learn/api/e-learning/expiration-notifications/`, {});
 };
 
 module.exports = {

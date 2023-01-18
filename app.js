@@ -11,14 +11,12 @@ const slashes = require('connect-slashes');
 const consola = require('consola');
 
 const { setIntervalAsync } = require('set-interval-async/dynamic');
-const asyncHandler = require('express-async-handler');
 
 const { handleKCKeys, getProjectLanguage } = require('./helpers/general/app');
 const cacheHandle = require('./helpers/cache/handle');
 const isPreview = require('./helpers/kontent/isPreview');
 const fastly = require('./helpers/services/fastly');
 const github = require('./helpers/services/github');
-const serviceCheckAll = require('./helpers/serviceCheck/all');
 const certificationEmail = require('./helpers/certification/email');
 
 const siteRouter = require('./routes/siteRouter');
@@ -93,32 +91,6 @@ app.use(slashes(true));
 
 app.use('/learn/callback', auth0Callback);
 app.use('/learn/service', service);
-
-if (process.env.IS_PRODUCTION === 'false') {
-  app.use('/learn', asyncHandler(async (req, res, next) => {
-    if (app.get('serviceCheckError') || !app.get('serviceCheckInitialialDone')) {
-      const serviceCheckResults = await serviceCheckAll();
-      let errored = false;
-
-      for (let i = 0; i < serviceCheckResults.length; i++) {
-        if (!serviceCheckResults[i].result.isSuccess) {
-          errored = true;
-        }
-      }
-
-      app.set('serviceCheckError', errored);
-      app.set('serviceCheckInitialialDone', true);
-
-      if (errored) {
-        if (appInsights && appInsights.defaultClient) {
-          appInsights.defaultClient.trackTrace({ message: `SERVICE_CHECK_ERROR: ${JSON.stringify(serviceCheckResults)}` });
-        }
-        // return res.redirect(303, `${process.env.BASE_URL}/learn/service/check/`);
-      }
-    }
-    next();
-  }));
-}
 
 app.use('/learn', siteRouter);
 app.use('/', (req, res) => res.redirect(301, '/learn/'));
