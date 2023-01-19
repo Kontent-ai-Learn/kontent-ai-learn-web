@@ -106,6 +106,8 @@ const init = async (req, res) => {
   if (!req?.user?.email) return { message: 'User is not authenticated.' };
   const user = await elearningUser.getUser(req.user.email, res);
 
+  state.userAccessLevel = Object.keys(user.accessLevel).filter(key => user.accessLevel[key]);
+
   if (user.code) {
     if (user.code === 'CR404') {
       state.code = 1; // User is not available in Subscription service
@@ -117,7 +119,7 @@ const init = async (req, res) => {
     return state;
   }
 
-  if (!await elearningUser.userHasElearningAccess(user, res)) {
+  if (!(user.accessLevel.partner || user.accessLevel.client || user.accessLevel.employee)) {
     state.code = 3; // User has not e-learning access
     state.message = helper.getValue(UIMessages, 'training___no_subscription_info');
   }
@@ -140,7 +142,8 @@ const init = async (req, res) => {
   const lastAccessId = lastAccess?.[0]?.courseId.replace('dev_', '').replace('_preview', '');
 
   for (let i = 0; i < trainingCourses.length; i++) {
-    const isFree = isCodenameInMultipleChoice(trainingCourses[i].elements.is_free.value, 'yes');
+    if (!elearningUser.isCourseAvailable(user, trainingCourses[i])) continue;
+    const isFree = isCodenameInMultipleChoice(trainingCourses[i].elements.access.value, 'free');
     if (state.code === 3 && !isFree) continue;
     const registration = getScormRegistration(trainingCourses[i].system.id, userRegistartions);
     const url = getCourseUrl(registration, trainingCourses[i], urlMap);
@@ -181,12 +184,12 @@ const registration = async (req, res) => {
   const course = trainingCourses.find(item => item.system.id === courseId);
   let isFree = false;
   if (course) {
-    isFree = isCodenameInMultipleChoice(course.elements.is_free.value, 'yes');
+    isFree = isCodenameInMultipleChoice(course.elements.access.value, 'free');
   }
 
   const user = await elearningUser.getUser(req.user.email, res);
   if (user.code) return null;
-  const hasAccess = await elearningUser.userHasElearningAccess(user, res);
+  const hasAccess = user.accessLevel.partner || user.accessLevel.client || user.accessLevel.employee;
   if (!(hasAccess || isFree)) return null;
 
   const link = await scorm.createRegistrationLink(user, courseId, res);

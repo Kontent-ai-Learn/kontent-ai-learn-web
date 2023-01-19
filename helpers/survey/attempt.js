@@ -56,7 +56,7 @@ const getNextCourses = (currentCourse, allCourses, userRegistrations, UIMessages
       image: courses[i].elements.thumbnail?.value?.[0]?.url,
       personas: courses[i].elements.personas___topics__training_persona.value,
       comingSoon: isCodenameInMultipleChoice(courses[i].elements.display_options ? courses[i].elements.display_options.value : [], 'hide_cta_button'),
-      isFree: isCodenameInMultipleChoice(courses[i].elements.is_free.value, 'yes'),
+      isFree: isCodenameInMultipleChoice(courses[i].elements.access.value, 'free'),
       freeLabel: helper.getValue(UIMessages, 'training___free_course_label'),
       description: isNotEmptyRichText(courses[i].elements.description.value) ? courses[i].elements.description.value : '',
       detailsLabel: helper.getValue(UIMessages, 'training___view_details'),

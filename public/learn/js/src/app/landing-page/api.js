@@ -130,7 +130,7 @@ const landingPage = (() => {
     }
 
     return `
-      ${window.userProfile && (courseItem || examItem) ? `<div class="card__toc"><label class="toc" for="toc"><input id="toc" type="checkbox" class="toc__checkbox" data-lp-toc${window.userProfile.toc ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.toc)}</div></label></div>`: ''}
+      ${window.userProfile && (courseItem || examItem) ? `<div class="card__toc" data-lp-toc><label class="toc" for="toc"><input id="toc" type="checkbox" class="toc__checkbox" ${window.userProfile.toc ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.toc)}</div></label></div>`: ''}
       <div class="card__actions-container">
         <div class="card__actions">
           ${!window.user ? `<span onclick="auth0.login()" class="button"><span>${window.UIMessages.signIn}</span><span></span></span>` : ''}
@@ -151,7 +151,7 @@ const landingPage = (() => {
 
   const handleToc = (profile, email, token) => {
     if (profile.toc) {
-      const tocElems = document.querySelectorAll('[data-lp-toc]');
+      const tocElems = document.querySelectorAll('[data-lp-toc] input[type="checkbox"]');
       for (let i = 0; i < tocElems.length; i++) {
         tocElems[i].checked = true;
       }
@@ -164,7 +164,8 @@ const landingPage = (() => {
     });
 
     document.querySelector('body').addEventListener('click', async (e) => {
-      const item = e.target.closest('[data-lp-toc]');
+      const tocElem = e.target.closest('[data-lp-toc]');
+      const item = tocElem ? tocElem.querySelector('input[type="checkbox"]') : null;
       if (item) {
         if (!!item.checked) {
           const tooltips = document.querySelectorAll('[data-lp-disabled="true"][lp-disabled-tooltip][lp-disabled-tooltip-active="true"]');
@@ -217,6 +218,11 @@ const landingPage = (() => {
     return null;
   };
 
+  const setAccessLevel = (accessLevel, container) => {
+    if (!container || !Array.isArray(accessLevel)) return;
+    container.setAttribute('data-access-level', accessLevel.join(' '));
+  };
+
   const getInfo = async () => {
     const container = document.querySelector('[data-lp]');
     if (!container) return;
@@ -226,6 +232,7 @@ const landingPage = (() => {
     if (window.userElearningData) {
       addCetificateLinks(window.userElearningData);
       addPromoted(window.userElearningData.courses.find(item => item.promoted));
+      setAccessLevel(window.userElearningData.userAccessLevel, container);
     }
     removeLoadingFromPromoted();
     const event = new Event('userElearningDataEvent');

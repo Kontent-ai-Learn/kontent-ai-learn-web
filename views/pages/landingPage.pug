@@ -12,9 +12,9 @@ block content
           img(src=content.promoted.elements.thumbnail.value[0].url, data-lp-lightbox-data='image')
         .tile__content
           h2.tile__title(data-lp-lightbox-data='title')&attributes(smartLink?.elementCodename('title')) !{content.promoted.elements.title.value}
-            - const isFree = content.promoted.elements.is_free ? helper.isCodenameInMultipleChoice(content.promoted.elements.is_free.value, 'yes') : false;
+            - const isFree = content.promoted.elements.access ? helper.isCodenameInMultipleChoice(content.promoted.elements.access.value, 'free') : false;
             if (isFree)
-              span.tile__tag.tile__tag--green&attributes(smartLink?.elementCodename('is_free')) !{helper.getValue(UIMessages, 'training___free_course_label')}
+              span.tile__tag.tile__tag--green&attributes(smartLink?.elementCodename('access')) !{helper.getValue(UIMessages, 'training___free_course_label')}
           .tile__description(data-lp-lightbox-data='description')&attributes(smartLink?.elementCodename('description'))
             if helper.isNotEmptyRichText(content.promoted.elements.description.value)
               | !{postprocessMarkup(content.promoted.elements.description.value, res)}
@@ -30,7 +30,7 @@ block content
     .landing-page__items(data-lp-filter-container)
       each topic in content.topics
         if (topic.courses.length)
-          .landing-page__courses-group
+          .landing-page__courses-group(data-access=(topic.accessLevel.length ? topic.accessLevel.join(' ') : 'all'))
             - const anchor = helper.generateAnchor(topic.name)
             h2.landing-page__subheading(id=`a-${anchor}`) 
               a.anchor-copy(href=`#a-${anchor}`, aria-hidden='true')
@@ -39,8 +39,8 @@ block content
               .splide__track
                 ul.splide__list
                   each course in topic.courses
-                    li.splide__slide(data-lp-filter-item)
-                      - const comingSoon = helper.isCodenameInMultipleChoice(course.display_options ? course.display_options.value : [], 'hide_cta_button');
+                    li.splide__slide(data-lp-filter-item, data-access=(course.accessLevel.length ? course.accessLevel.join(' ') : 'all'))
+                      - const comingSoon = helper.isCodenameInMultipleChoice(course.elements.display_options ? course.elements.display_options.value : [], 'hide_cta_button');
                       .card(data-lp-lightbox, data-lp-item=course.system.id)&attributes(smartLink?.itemId(course.system.id))&attributes((detailCourse && detailCourse.system.codename) === course.system.codename ? { 'data-lp-lightbox-autoinvoke' : '' } : {})&attributes(comingSoon ? { 'data-lp-comingsoon' : '' } : '')
                         a.card__link(href=`${pathRoot}${course.elements.url.value}/`, data-lp-link)
                         .card__img&attributes(smartLink?.elementCodename('thumbnail'))
@@ -54,9 +54,9 @@ block content
                                   li.card__tag(data-lp-persona=persona.codename) !{persona.name}
                             h3.card__title(data-lp-lightbox-data='title')&attributes(smartLink?.elementCodename('title')) 
                               span.card__title-text !{course.elements.title.value}
-                              - const isFree = course.elements.is_free ? helper.isCodenameInMultipleChoice(course.elements.is_free.value, 'yes') : false;
+                              - const isFree = course.elements.access ? helper.isCodenameInMultipleChoice(course.elements.access.value, 'free') : false;
                               if (isFree)
-                                span(data-lp-lightbox-data='free').card__tag.card__tag--green&attributes(smartLink?.elementCodename('is_free')) !{helper.getValue(UIMessages, 'training___free_course_label')}
+                                span(data-lp-lightbox-data='free').card__tag.card__tag--green&attributes(smartLink?.elementCodename('access')) !{helper.getValue(UIMessages, 'training___free_course_label')}
                             .card__description(data-lp-lightbox-data='description')
                               if (course.elements.description && helper.isNotEmptyRichText(course.elements.description.value))
                                 | !{postprocessMarkup(course.elements.description.value, res)}

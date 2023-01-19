@@ -219,10 +219,13 @@ const queryDeliveryType = async(type, depth, deliveryClient) => {
     };
 };
 
-const handleUnusedItems = async (type, deliveryClient, urlMap) => {
+const handleUnusedItems = async (type, deliveryClient, urlMap, isSitemap) => {
     const { items, error } = await queryDeliveryType(type, 1, deliveryClient);
 
     if (items && items.items) {
+        if (isSitemap) {
+            items.items = items.items.filter(item => item.elements.access && (item.elements.access.value[0].codename === 'free' || item.elements.access.value[0].codename === 'clients_partners_employees'))
+        }
         items.items.forEach((item) => {
             let isInUrlMap = false;
             urlMap.forEach((mapItem) => {
@@ -276,7 +279,7 @@ const handleContentType = async (deliveryClient, urlMap, codename, pathSegment, 
     return urlMap;
 };
 
-const handleLandingPage = async (deliveryClient, urlMap, codenames) => {
+const handleLandingPage = async (deliveryClient, urlMap, codenames, isSitemap) => {
     const lpItems = [];
     const trainingItems = [];
     for (let i = 0; i < urlMap.length; i++) {
@@ -288,6 +291,9 @@ const handleLandingPage = async (deliveryClient, urlMap, codenames) => {
     for await (const codename of codenames) {
         const { items, error } = await queryDeliveryType(codename, 1, deliveryClient);
         if (items && items.items) {
+            if (isSitemap) {
+                items.items = items.items.filter(item => item.elements.access && (item.elements.access.value[0].codename === 'free' || item.elements.access.value[0].codename === 'clients_partners_employees'))
+            }
             trainingItems.push(...items.items);
         }
 
@@ -351,9 +357,9 @@ const getUrlMap = async (res, isSitemap) => {
         urlMap: [],
         cachedPlatforms: cachedPlatforms
     });
-    urlMap = await handleLandingPage(deliveryClient, urlMap, ['training_certification_test', 'training_course2']);
+    urlMap = await handleLandingPage(deliveryClient, urlMap, ['training_certification_test', 'training_course2'], isSitemap);
     urlMap = await handleUnusedItems('article', deliveryClient, urlMap);
-    urlMap = await handleUnusedItems('training_course2', deliveryClient, urlMap);
+    urlMap = await handleUnusedItems('training_course2', deliveryClient, urlMap, isSitemap);
     urlMap = await handleContentType(deliveryClient, urlMap, 'training_certification_test', 'get-certified', true);
 
     return urlMap;

@@ -288,3 +288,22 @@
 		background-position: 0% 50%;
 	}
 }
+
+[data-access*='employee'],
+[data-access*='partner']  {
+  display: none !important;
+}
+
+[data-access-level*='partner'] [data-access*='partner'],
+[data-access-level*='employee'] [data-access*='employee'] {
+  display: block !important;
+
+  &[data-lp-filter-item] {
+    display: list-item !important;
+  }
+
+  &[style="display: none;"],
+  &.landing-page__courses-group--hide {
+    display: none !important;
+  }
+};

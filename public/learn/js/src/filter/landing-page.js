@@ -5,13 +5,34 @@
     for (let i = 0; i < tags.length; i++) {
       const name = tags[i].innerText;
       const codename = tags[i].getAttribute('data-lp-persona');
-      const existingItem = personas.find(item => item.codename === codename);
-      if (existingItem) continue;
-      personas.push({
-        name: name,
-        codename: codename
-      });
+      let accessLevel = [];
+      const accessLevelElem = tags[i].closest('[data-access]');
+      if (accessLevelElem) {
+        accessLevel = accessLevelElem.getAttribute('data-access').split(' ');
+      }
+
+      let isExistingPersona = false;
+      for (let j = 0; j < personas.length; j++) {
+        if (personas[j].codename === codename) {
+          isExistingPersona = true;
+          accessLevel.forEach((level) => personas[j].accessLevel.add(level));
+        }
+      }
+
+      if (!isExistingPersona) {
+        personas.push({
+          name: name,
+          codename: codename,
+          accessLevel: new Set(accessLevel)
+        });
+      }
     }
+
+    personas.forEach((persona) => {
+      const accessLevel = Array.from(persona.accessLevel);
+      persona.accessLevel = accessLevel.includes('all') ? ['all'] : accessLevel;
+    });
+
     return personas;
   };
 
@@ -55,6 +76,10 @@
       } else {
         item.setAttribute('data-filter', `.f-${data[i].codename}`);
         item.innerHTML = data[i].name; 
+      }
+
+      if (data[i].accessLevel) {
+        item.setAttribute('data-access', data[i].accessLevel.join(' '));
       }
 
       list.appendChild(item);

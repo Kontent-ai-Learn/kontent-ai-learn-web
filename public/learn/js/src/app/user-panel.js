@@ -94,7 +94,7 @@ window.initUserProfile = (container) => {
       </div>
       <div class="user-panel__row">
         <div class="user-panel__column">
-          <label class="toc" for="toc"><input id="toc" type="checkbox" class="toc__checkbox" ${DATA_ATTR_TERMS}${window.userProfile.toc ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.toc)}</div></label>
+          <label class="toc" for="tocUserPanel"><input id="tocUserPanel" type="checkbox" class="toc__checkbox" ${DATA_ATTR_TERMS}${window.userProfile.toc ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.toc)}</div></label>
           <label class="toc" for="ux"><input id="ux" type="checkbox" class="toc__checkbox" ${DATA_ATTR_UX}${window.userProfile.ux ? ' checked="checked"' : ''}><div class="toc__label">${window.helper.decodeHTMLEntities(window.UIMessages.contactByUx)}</div></label>
         </div>
       </div>

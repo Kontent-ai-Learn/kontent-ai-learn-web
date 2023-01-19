@@ -3,7 +3,6 @@ const errorEmail = require('../error/email');
 const errorAppInsights = require('../error/appInsights');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
-const { isCodenameInMultipleChoice } = require('../general/helper');
 const userProfile = require('../user/profile');
 
 const getTrainingUser = async (email, res) => {
@@ -14,11 +13,10 @@ const getTrainingUser = async (email, res) => {
   return trainingUsers.find(item => item.elements.email.value === email);
 };
 
-const userHasElearningAccess = async (user, res) => {
-  if (user.email.endsWith('@kontent.ai') || user.isTrainigUser) {
+const isClient = async (user, res) => {
+  if (user.isTrainigUser) {
     return true;
   }
-
   const userSubscriptions = user?.customerSuccessSubscriptions;
   if (!userSubscriptions) return false;
 
@@ -27,10 +25,6 @@ const userHasElearningAccess = async (user, res) => {
   });
 
   for (let i = 0; i < userSubscriptions.length; i++) {
-    if (userSubscriptions[i].isPartner || userSubscriptions[i].isMvp) {
-      return true;
-    }
-
     for (let j = 0; j < userSubscriptions[i].activePackages.length; j++) {
       for (let k = 0; k < trainingSubscriptions.length; k++) {
         if (userSubscriptions[i].activePackages[j].name.includes(trainingSubscriptions[k].elements.subscription_service_package_code_name.value)) {
@@ -42,11 +36,45 @@ const userHasElearningAccess = async (user, res) => {
   return false;
 };
 
-const isCourseAvailable = async (user, content, res) => {
+const isPartner = (user) => {
+  const userSubscriptions = user?.customerSuccessSubscriptions;
+  if (!userSubscriptions) return false;
+
+  for (let i = 0; i < userSubscriptions.length; i++) {
+    if (userSubscriptions[i].isPartner || userSubscriptions[i].isMvp) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const isEmployee = (user) => {
+  if (user.email && (user.email.endsWith('@kontent.ai') || user.email.endsWith('@milanlund.com'))) {
+    return true;
+  }
+
+  return false;
+};
+
+const isCourseAvailable = (user, content) => {
   if (!user || user.error_id) return false;
-  const isFreeCourse = content?.elements?.is_free ? isCodenameInMultipleChoice(content.elements.is_free.value, 'yes') : false;
-  if (isFreeCourse) return true;
-  return await userHasElearningAccess(user, res);
+
+  const courseAccessLevel = content?.elements?.access.value[0].codename;
+  switch (courseAccessLevel) {
+    case 'free':
+      return true;
+    case 'clients_partners_employees':
+      if (user.accessLevel.partner || user.accessLevel.employee || user.accessLevel.client) return true;
+      return true;
+    case 'partners_employees':
+      if (user.accessLevel.partner || user.accessLevel.employee) return true;
+      return false;
+    case 'employees':
+      if (user.accessLevel.employee) return true;
+      return false;
+    default:
+      return false;
+  }
 };
 
 const getSubscriptionServiceUser = async (email) => {
@@ -84,6 +112,18 @@ const getSubscriptionServiceUser = async (email) => {
   }
 };
 
+const getAccessLevel = async (user, res) => {
+  const userIsPartner = isPartner(user);
+  const userIsClient = await isClient(user, res);
+  const userIsEmployee = isEmployee(user);
+
+  return {
+    partner: userIsPartner,
+    client: userIsClient,
+    employee: userIsEmployee
+  }
+};
+
 const getUser = async (email, res) => {
   if (!email) return null;
   const trainingUser = await getTrainingUser(email, res);
@@ -99,6 +139,8 @@ const getUser = async (email, res) => {
     if (user?.data) user = user.data;
   }
 
+  user.accessLevel = await getAccessLevel(user, res);
+
   if (user.error_id) return user;
 
   await userProfile.createUpdate(email, {
@@ -109,12 +151,12 @@ const getUser = async (email, res) => {
   if (user.email) return user;
 
   return {
-    email: email
+    email: email,
+    accessLevel: user.accessLevel
   };
 };
 
 module.exports = {
   getUser,
   isCourseAvailable,
-  userHasElearningAccess,
 };

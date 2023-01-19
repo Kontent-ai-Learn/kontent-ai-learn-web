@@ -3,6 +3,7 @@ const errorAppInsights = require('../error/appInsights');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const elearningRegistration = require('../e-learning/registration');
+const { getUser } = require('../e-learning/user');
 const { isCodenameInMultipleChoice } = require('../general/helper');
 
 const registrationIdExistsInDb = async (db, id) => {
@@ -83,12 +84,35 @@ const mergeCoursesWithProgress = (courses, registrations) => {
   return coursesWithProgress;
 };
 
+const filterCorsesByUserAccesLevel = (courses, userAccessLevel) => {
+  return courses.filter((course) => {
+    const courseAccessLevel = course.elements.access.value[0].codename;
+    switch (courseAccessLevel) {
+      case 'free':
+      case 'clients_partners_employees':
+        return true;
+      case 'partners_employees':
+        if (userAccessLevel.partner || userAccessLevel.employee) return true;
+        return false;
+      case 'employees':
+        if (userAccessLevel.employee) return true;
+        return false;
+      default:
+        return false;
+    }
+  });
+};
+
 const getUserProgress = async (req, res) => {
   if (!(req.user && req.user.email)) return { error: 'User not sign in.' };
 
-  const courses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+  const user = await getUser(req.user.email, res);
+
+  let courses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
     return await getContent.trainingCourse(res);
   });
+
+  courses = filterCorsesByUserAccesLevel(courses, user.accessLevel)
 
   const trainingTopicTaxonomyGroup = await cacheHandle.evaluateSingle(res, 'trainingTopicTaxonomyGroup', async () => {
     return await getContent.trainingTopicTaxonomyGroup(res);

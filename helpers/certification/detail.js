@@ -91,11 +91,15 @@ const getPrivate = async (UIMessages, certificationTest, req, res) => {
   const data = {};
   const user = await elearningUser.getUser(req?.user?.email, res);
 
+  if (!user) {
+    return { general: null, production: null };
+  }
+
   if (user.code) {
     data.renderGeneralMessage = true;
     data.textUIMessageCodename = user.code === 'CR404' ? 'sign_in_error_subscription_missing_text' : 'sign_in_error_text';
     data.renderAs = 'plaintext';
-  } else if (!(await elearningUser.isCourseAvailable(user, certificationTest, res))) {
+  } else if (!(user.accessLevel.partner || user.accessLevel.client || user.accessLevel.employee)) {
     data.renderGeneralMessage = true;
     data.textUIMessageCodename = 'training___no_subscription_info';
     data.renderAs = 'plaintext';

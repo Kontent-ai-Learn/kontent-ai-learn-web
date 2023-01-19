@@ -22,8 +22,40 @@ const getData = async (content, res) => {
       name: topic.name,
       courses: courses
                 .filter((course) => isCodenameInMultipleChoice(course.elements.personas___topics__training_topic.value, topic.codename))
-                .sort((a, b) => (a.elements.title.value > b.elements.title.value) ? 1 : ((b.elements.title.value > a.elements.title.value) ? -1 : 0))
+                .sort((a, b) => (a.elements.title.value > b.elements.title.value) ? 1 : ((b.elements.title.value > a.elements.title.value) ? -1 : 0)),
+      accessLevel: []
     }
+  });
+
+  topics.forEach((topic) => {
+    const accessTopic = new Set();
+
+    topic.courses.forEach((course) => {
+      course.accessLevel = [];
+      if (typeof course.elements.access === 'undefined') return;
+      const accessCourse = new Set();
+      switch (course.elements.access.value[0].codename) {
+        case 'free':
+        case 'clients_partners_employees':
+          accessCourse.add('all');
+          break;
+        case 'partners_employees':
+          accessCourse.add('partner');
+          accessCourse.add('employee');
+          break;
+        case 'employees':
+          accessCourse.add('employee');
+          break;
+        default:
+          break;
+      }
+
+      course.accessLevel = Array.from(accessCourse);
+      course.accessLevel.forEach((access) => accessTopic.add(access));
+    });
+
+    topic.accessLevel = Array.from(accessTopic);
+    if (topic.accessLevel.includes('all')) topic.accessLevel = ['all'];
   });
 
   const data = {

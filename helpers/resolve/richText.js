@@ -659,7 +659,7 @@ const templates = {
         const urlMapItem = config.urlMap.find(elem => elem.codename === item.system.codename);
         let url = '#';
         if (urlMapItem) url = urlMapItem.url;
-        const isFree = item.elements.is_free ? isCodenameInMultipleChoice(item.elements.is_free.value, 'yes') : false;
+        const isFree = item.elements.access ? isCodenameInMultipleChoice(item.elements.access.value, 'free') : false;
         return `<div class="tile tile--article"${getSmartLinkAttr(config, item.system.id, 'item')}>
                     ${item.elements.thumbnail && item.elements.thumbnail.value.length
                         ? `

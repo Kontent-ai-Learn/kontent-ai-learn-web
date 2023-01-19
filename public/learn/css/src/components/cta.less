@@ -45,4 +45,27 @@
         }
     }
 
+    .anchor-copy {
+        &::before {
+            opacity: 0;
+        }
+
+        @media (pointer: coarse) {
+            &::before {
+                opacity: 0;
+            }
+        }
+    }
+
+    h2:hover .anchor-copy, h3:hover .anchor-copy, h4:hover .anchor-copy {
+        &::before {
+            opacity: 0;
+        }
+
+        @media (pointer: coarse) {
+            &::before {
+                opacity: 0;
+            }
+        }
+    }
 }
