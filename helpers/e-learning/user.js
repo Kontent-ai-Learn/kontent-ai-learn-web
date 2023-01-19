@@ -131,8 +131,8 @@ const getUser = async (email, res) => {
 
   if (trainingUser) {
     user.email = email;
-    user.firstName = trainingUser.first_name.value;
-    user.lastName = trainingUser.last_name.value;
+    user.firstName = trainingUser.elements.first_name.value;
+    user.lastName = trainingUser.elements.last_name.value;
     user.isTrainigUser = true;
   } else {
     user = await getSubscriptionServiceUser(email);
