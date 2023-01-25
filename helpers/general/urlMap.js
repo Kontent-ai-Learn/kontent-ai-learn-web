@@ -164,11 +164,15 @@ const handleNodes = (settings) => {
         }
     } else if (item.elements.platform && item.elements.platform.value.length) {
         handlePlatformArticle(settings);
-    } else {
-        if (item.elements.categories && item.elements.categories.linkedItems.length && !settings.isSitemap) {
-            for (let i = 0; i < item.elements.categories.linkedItems.length; i++) {
-                settings.item = item.elements.categories.linkedItems[i];
-                handleReferenceHash(settings);
+    } else if (item.system.type === 'zapi_specification') {
+        if (item.elements.content && item.elements.content.linkedItems.length && !settings.isSitemap) {
+            for (let i = 0; i < item.elements.content.linkedItems.length; i++) {
+                if (item.elements.content.linkedItems[i].system.type === 'zapi_section_group') {
+                    for (let j = 0; j < item.elements.content.linkedItems[i].elements.sections.linkedItems.length; j++) {
+                        settings.item = item.elements.content.linkedItems[i].elements.sections.linkedItems[j];
+                        handleReferenceHash(settings);
+                    }
+                }
             }
         }
         if (item.elements.security && item.elements.security.linkedItems.length && !settings.isSitemap) {
