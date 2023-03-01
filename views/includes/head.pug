@@ -8,7 +8,7 @@ if description
     - description = description.trim().replace(/\s+/g, ' ').replace(/"/g, '&quot;')
     meta(name='description', content=description)
     meta(property='og:description', content=description)
-meta(property='og:image', content=`${helper.getDomain()}/learn/img/kai-og.png`)
+meta(property='og:image', content=`${helper.getDomain()}/learn/img/kai-og.jpg`)
 if (process.env.IS_PRODUCTION !== 'false')
     if ((content && content.elements && content.elements.visibility && content.elements.visibility.value.filter(item => item.codename === 'excluded_from_search').length) || status === 404)
         meta(name='robots', content='noindex,nofollow')
