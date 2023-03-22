@@ -143,5 +143,8 @@ const prefillEmailAddressInForms = () => {
     if (typeof certificationTestResults !== 'undefined') {
         await certificationTestResults.getInfo();
     }
+    if (typeof subscriptionReport !== 'undefined') {
+        await subscriptionReport.getInfo();
+    }
     auth0.eventListeners();
 })();

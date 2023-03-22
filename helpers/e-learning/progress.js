@@ -3,8 +3,17 @@ const errorAppInsights = require('../error/appInsights');
 const cacheHandle = require('../cache/handle');
 const getContent = require('../kontent/getContent');
 const elearningRegistration = require('../e-learning/registration');
+const certificationDatabase = require('../certification/database');
 const { getUser } = require('../e-learning/user');
 const { isCodenameInMultipleChoice } = require('../general/helper');
+
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Europe/Prague');
 
 const registrationIdExistsInDb = async (db, id) => {
   const query = {
@@ -70,12 +79,16 @@ const mergeCoursesWithProgress = (courses, registrations) => {
   const coursesWithProgress = [];
   courses.forEach((course) => {
     const courseWithProgress = {
+      title: course.elements.title.value,
       topic: course.elements.personas___topics__training_topic.value,
       progress: null
     };
     registrations.forEach((registration) => {
       if (course.system.id === registration.courseId.replace('dev_', '').replace('_preview', '')) {
-        courseWithProgress.progress = registration.status
+        courseWithProgress.progress = registration.status;
+        if (registration.completedDate) {
+          courseWithProgress.completedDate = dayjs.tz(registration.completedDate).format('MMMM D, YYYY');
+        }
       }
     });
     coursesWithProgress.push(courseWithProgress);
@@ -137,10 +150,53 @@ const getUserProgress = async (req, res) => {
     };
   });
 
-  return topics.filter((course) => course !== null);
+  return {
+    topics: topics.filter((topic) => topic),
+    isAdmin: !!user.subscriptionServiceAdmin
+  }
 };
+
+const getSubscriptionReport = async (user, res) => {
+  if (!user.subscriptionServiceAdmin) return null;
+
+  const courses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
+    return await getContent.trainingCourse(res);
+  });
+
+  await Promise.all(user.subscriptionServiceAdmin.map(async (item) => {
+    const userRegistrations = await elearningRegistration.getUserRegistrations(item.email, res);
+    const coursesWithProgress = mergeCoursesWithProgress(courses, userRegistrations).filter(item => item.progress);
+    item.courses = coursesWithProgress;
+  }));
+
+  const certificationTests = await cacheHandle.evaluateSingle(res, 'trainingCertificationTests', async () => {
+    return await getContent.certificationTest(res);
+  });
+
+  await Promise.all(user.subscriptionServiceAdmin.map(async (item) => {
+    item.certifications = [];
+
+    for await (const test of certificationTests.items) {
+      const attempt = await certificationDatabase.getLatestAttempt({
+        email: item?.email,
+        codename: test.system.codename
+      });
+      if (attempt) {
+        item.certifications.push({
+          title: attempt.test.title,
+          email: attempt.email,
+          expiration: attempt.certificate_expiration ? dayjs.tz(attempt.certificate_expiration).format('MMMM D, YYYY') : null,
+          date: dayjs.tz(attempt.start).format('MMMM D, YYYY')
+        })
+      }
+    }
+  }));
+
+  return user.subscriptionServiceAdmin;
+}
 
 module.exports = {
   getUserProgress,
-  setRecord
+  setRecord,
+  getSubscriptionReport
 };

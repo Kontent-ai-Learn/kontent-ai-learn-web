@@ -1,0 +1,111 @@
+.report {
+    &__title {
+        font-size: 1.75em;
+        padding: 0 0 .375em;
+        line-height: 1.125em;
+        font-weight: 700;
+
+        @media screen and (min-width: 480px) {
+            font-size: 2em;
+        }
+
+        @media screen and (min-width: 768px) {
+            font-size: 2.5em;
+        }
+
+        & + p {
+            padding: .75em 0 1em;
+        }
+    }
+
+    &__container {
+
+    }
+
+    [data-report-loading] {
+        margin: 3em auto;
+        width: 280px;
+        text-align: center;
+        line-height: 1.375em;
+        font-size: .875em;
+
+        &::before {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 12px;
+            border-radius: 8px 20px 20px 20px;
+            background-color: #e8e8e9;
+            background: linear-gradient(45deg, #bbb, #eee, #bbb, #eee);
+            background-size: 400% 400%;
+            animation: gradientLoading 6s ease infinite;
+            z-index: 5000;
+            margin: 0 0 .75em;
+        }
+
+        &::after {
+            content: attr(data-report-loading);
+        }
+    }
+
+   [data-report-noaccess]:not([data-report-loading]) {
+        &::after {
+            content: attr(data-report-noaccess);
+        }
+   }
+
+    table {
+        border-top: .125em solid #E8E8E8;
+        border-left: .125em solid #E8E8E8;
+        border-radius: .75em;
+        max-width: 100vw;
+        background-color: #fff;
+        margin: 0;
+        border-collapse: separate;
+
+        tbody {
+            td {
+                border-bottom: .125em solid #E8E8E8;
+                border-right: .125em solid #E8E8E8;
+                padding: .75em;
+                box-sizing: border-box;
+                min-width: 7em;
+                max-width: 15em;
+                text-align: left;
+            }
+
+            tr {
+                &:last-child {
+                    td {
+                        &:first-child {
+                            border-radius: 0 0 0 .75em;
+                        }
+    
+                        &:last-child {
+                            border-radius: 0 0 .75em 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        th {
+            background-color: #f3f3f3;
+            border-bottom: .125em solid #E8E8E8;
+            border-right: .125em solid #E8E8E8;
+            padding: .75em;
+            box-sizing: border-box;
+            min-width: 7em;
+            max-width: 15em;
+            text-align: left;
+
+            &:first-child {
+                border-radius: .75em 0 0 0;
+            }
+
+            &:last-child {
+                border-radius: 0 .75em 0 0;
+            }
+        }
+    }
+}

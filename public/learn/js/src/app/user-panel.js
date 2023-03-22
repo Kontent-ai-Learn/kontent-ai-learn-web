@@ -135,7 +135,7 @@ window.initUserProfile = (container) => {
 
     panelElearning.innerHTML = `
       <ul class="user-panel__progress">
-        ${elearningProgress.map((item) => {
+        ${elearningProgress.topics.map((item) => {
           const progress = Math.floor(100 / item.coursesTotal * item.coursesCompleted);
           return `
             <li class="user-panel__progress-item">
@@ -151,6 +151,10 @@ window.initUserProfile = (container) => {
         }).join('')}
       </ul>
     `;
+
+    if (elearningProgress.isAdmin) {
+      panelElearning.innerHTML += `<div class="user-panel__subscription-report"><a class="call-to-action" href="/learn/subscription-report/"><span>${window.UIMessages.seeReportButton}</span><span></span></a></div>`;
+    }
 
     panelElearning.setAttribute(DATA_ATTR_CONTENT, '');
   };

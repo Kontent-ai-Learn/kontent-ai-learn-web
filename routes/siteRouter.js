@@ -16,6 +16,7 @@ const articles = require('./articles');
 const api = require('./api');
 const survey = require('./survey');
 const certificationTest = require('./certificationTest');
+const subscriptionReport = require('./subscriptionReport');
 const getContent = require('../helpers/kontent/getContent');
 const cacheHandle = require('../helpers/cache/handle');
 const { pageExists } = require('../helpers/general/app');
@@ -55,6 +56,7 @@ router.use('/pdf', generatePDF);
 router.get('/urlmap', urlMap);
 router.use('/survey', survey);
 router.use('/get-certified', certificationTest);
+router.use('/subscription-report', subscriptionReport);
 router.use('/', home, articles);
 
 // Check aliases on whitelisted url paths that do not match any routing above

@@ -1,7 +1,7 @@
 const cosmos = require('../services/cosmos');
 const errorAppInsights = require('../error/appInsights');
 
-const get = async (email, res, getOnlyFromDb) => {
+const get = async (email) => {
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_PROFILE);
     const query = {
@@ -16,11 +16,6 @@ const get = async (email, res, getOnlyFromDb) => {
     if (resources.length) return resources[0];
   } catch (error) {
     errorAppInsights.log('COSMOSDB_ERROR', error);
-  }
-
-  if (!getOnlyFromDb) {
-    const elearningUser = require('../e-learning/user');
-    return await elearningUser.getUser(email, res);
   }
 };
 

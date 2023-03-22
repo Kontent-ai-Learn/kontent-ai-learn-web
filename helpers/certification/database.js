@@ -33,6 +33,33 @@ const successfullAttemptExists = async (body, timespan = 0) => {
   return attempt;
 };
 
+const getLatestAttempt = async (body) => {
+  const { codename, email } = body;
+  let attempt = null;
+
+  try {
+    const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
+    const query = {
+        query: 'SELECT * FROM c WHERE LOWER(c.email) = @email AND c.test.codename = @codename ORDER BY c.start DESC OFFSET 0 LIMIT 1',
+        parameters: [{
+          name: '@email',
+          value: email.toLowerCase()
+        }, {
+          name: '@codename',
+          value: codename
+        }]
+    };
+
+    const { resources } = await db.items.query(query).fetchAll();
+    if (resources && resources.length) {
+      attempt = resources[0];
+    }
+  } catch (error) {
+    errorAppInsights.log('COSMOSDB_ERROR', error);
+  }
+  return attempt;
+};
+
 const updateAttempt = async (attempt) => {
   try {
     const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);
@@ -170,5 +197,6 @@ module.exports = {
   getAttempt,
   getExpirationAttempts,
   checkCreateAttempt,
-  checkAttemptInPastDay
+  checkAttemptInPastDay,
+  getLatestAttempt
 };

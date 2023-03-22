@@ -103,12 +103,49 @@ const getSubscriptionServiceUser = async (email) => {
 
     errorEmail.send({
       recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
-      subject: 'Unable to obtain user form Subscription Service',
+      subject: 'Unable to obtain user from Subscription Service',
       content: error.response.data
     });
     errorAppInsights.log('SUBSCRIPTION_SERVICE_ERROR', error);
 
     return error.response.data;
+  }
+};
+
+const getSubscriptionServiceAdmin = async (email) => {
+  const url = `${process.env.SUBSCRIPTION_SERVICE_ADMIN_URL}${email}/`;
+
+  try {
+    const adminData = await axios({
+      method: 'get',
+      url: url,
+      headers: {
+        Authorization: `Bearer ${process.env.SUBSCRIPTION_SERVICE_BEARER}`
+      }
+    });
+    if (adminData.status === 204) return null;
+    if (adminData.data) return adminData.data;
+    return null;
+  } catch (error) {
+    if (!error.response) {
+      error.response = {
+        data: {
+          message: `Invalid request to ${url}`
+        }
+      };
+    }
+    if (typeof error.response.data === 'string') {
+      error.response.data = { message: error.response.data };
+    }
+
+    errorEmail.send({
+      recipient: process.env.SENDGRID_EMAIL_ADDRESS_TO,
+      subject: 'Unable to obtain admin from Subscription Service',
+      content: error.response.data
+    });
+    errorAppInsights.log('SUBSCRIPTION_SERVICE_ADMIN_ERROR', error);
+
+    return null;
   }
 };
 
@@ -128,6 +165,7 @@ const getUser = async (email, res) => {
   if (!email) return null;
   const trainingUser = await getTrainingUser(email, res);
   let user = {};
+  user.subscriptionServiceAdmin = null;
 
   if (trainingUser) {
     user.email = email;
@@ -139,13 +177,20 @@ const getUser = async (email, res) => {
     if (user?.data) user = user.data;
   }
 
+  user.subscriptionServiceAdmin = await getSubscriptionServiceAdmin(email);
+
+  // remove @kontent.ai subscription users for non-kontent.ai admin user
+  if (user.subscriptionServiceAdmin && !user.email.endsWith('@kontent.ai')) {
+    user.subscriptionServiceAdmin = user.subscriptionServiceAdmin.filter(item => !item.email.endsWith('@kontent.ai'));
+  }
+
   user.accessLevel = await getAccessLevel(user, res);
 
   if (user.error_id) return user;
 
   await userProfile.createUpdate(email, {
     firstName: user.firstName,
-    lastName: user.lastName,
+    lastName: user.lastName
   }, res);
 
   if (user.email) return user;

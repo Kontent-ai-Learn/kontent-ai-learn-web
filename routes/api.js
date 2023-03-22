@@ -8,6 +8,7 @@ const certificationEmail = require('../helpers/certification/email');
 const elearningLandingPageApi = require('../helpers/e-learning/landingPageApi');
 const elearningReporting = require('../helpers/e-learning/reporting');
 const elearningProgress = require('../helpers/e-learning/progress');
+const elearningUser = require('../helpers/e-learning/user');
 const fastly = require('../helpers/services/fastly');
 const jwtCheck = require('../helpers/services/jwt');
 const redocly = require('../helpers/services/redocly');
@@ -78,7 +79,7 @@ router.get('/e-learning/progress', jwtCheck, async (req, res) => {
 
 router.get('/user/profile', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
-  const data = await userProfile.get(req?.user.email, res);
+  const data = await userProfile.get(req?.user.email);
   return res.send(data);
 });
 
@@ -86,6 +87,14 @@ router.post('/user/profile', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
   const data = await userProfile.createUpdate(req?.user.email, req.body, res);
   return res.send(data);
+});
+
+router.post('/subscription-report', jwtCheck, async (req, res) => {
+  res = fastly.preventCaching(res);
+  const data = await elearningUser.getUser(req?.user.email, res);
+  if (!data.subscriptionServiceAdmin) return res.send(null);
+  const report = await elearningProgress.getSubscriptionReport(data, res);
+  return res.send(report);
 });
 
 router.post('/scorm/postback', basicAuth((() => {

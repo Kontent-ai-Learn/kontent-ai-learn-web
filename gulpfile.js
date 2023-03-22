@@ -153,6 +153,14 @@ const jsTasks = [{
     fileName: 'landing-page.js'
   }
 }, {
+  name: 'js-subscription-report',
+  config: {
+    src: [
+      'public/learn/js/src/app/subscription-report.js',
+    ],
+    fileName: 'subscription-report.js'
+  }
+}, {
   name: 'js-service',
   config: {
     src: [
@@ -285,6 +293,7 @@ const cssTasks = [{
       'public/learn/css/src/components/release-note.less',
       'public/learn/css/src/components/calendar.less',
       'public/learn/css/src/components/user-panel.less',
+      'public/learn/css/src/components/report.less',
       'public/learn/css/src/general/print.less',
     ],
     fileName: 'app.less'
@@ -314,12 +323,12 @@ gulp.task('reload', (done) => {
   done();
 });
 
-gulp.task('build-js-app', gulp.parallel(['js-app']));
+gulp.task('build-js-app', gulp.parallel(['js-app', 'js-subscription-report']));
 gulp.task('build-js-filter', gulp.parallel(['js-changelog', 'js-landing-page']));
 gulp.task('build-css', gulp.parallel(['css-app', 'css-service']));
 
 gulp.task('watch', (done) => {
-  gulp.watch('public/learn/js/src/app/**/*.js', gulp.series(['build-js-app', 'reload']));
+  gulp.watch('public/learn/js/src/app/**/*.js', gulp.series(['build-js-app', 'js-subscription-report', 'reload']));
   gulp.watch('public/learn/js/src/filter/**/*.js', gulp.series(['build-js-filter', 'reload']));
   gulp.watch('public/learn/js/src/service/**/*.js', gulp.series(['js-service', 'reload']));
   gulp.watch('public/learn/css/src/**/*.less', gulp.series(['build-css', 'reload']));
