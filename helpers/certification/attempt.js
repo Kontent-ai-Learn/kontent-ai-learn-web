@@ -3,7 +3,7 @@ const certificationData = require('./data');
 
 const init = async (body, res) => {
   const elearningUser = require('../e-learning/user');
-  const user = await elearningUser.getUser(body.email, res);
+  const user = await elearningUser.getUser(body.email, false, res);
   if (user.error_id || !(user.accessLevel.client || user.accessLevel.partner || user.accessLevel.employee)) {
     return {
       code: 401,

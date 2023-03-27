@@ -35,68 +35,120 @@ const subscriptionReport = (() => {
         if (!container) return;
 
         const subscriptions = [];
+        const filterState = {
+            subscriptions: [],
+            courses: {
+                prop: null,
+                type: null,
+                direction: null
+            },
+            certifications: {
+                prop: null,
+                type: null,
+                direction: null
+            }
+        };
+
         data.forEach((item) => {
-            item.subscriptionIds.forEach((sub) => {
-                if (!subscriptions.includes(sub)) {
+            item.subscriptions.forEach((sub) => {
+                if (!subscriptions.some((subItem) => sub.id === subItem.id)) {
                     subscriptions.push(sub);
+                    filterState.subscriptions.push(sub.id);
                 }
             });
         });
 
         container.innerHTML = `
-            <filedset>
+            <filedset class="report__filter">
                 <legend>${window.UIMessages.pickSubscription}</legend>
                 ${subscriptions.map((item) => {
-                    return `<input type="checkbox" id="${item}" name="${item}" value="${item}" checked><label for="${item}">${item}</label>`;
+                    return `<div class="report__filter-row"><input type="checkbox" id="${item.id}" name="${item.id}" value="${item.id}" checked><label for="${item.id}">${item.name}</label></div>`;
                 }).join('')}
             </filedset>
         `;
+
+        return filterState;
     };
 
     const formatProgress = (progress) => {
         switch (progress.toLowerCase()) {
             case 'incomplete':
-                return 'In-progress';
+                return 'In progress';
             case 'completed':
                 return 'Completed';
             default:
                 return progress;
         }
-    }
+    };
 
-    const renderCourses = (data) => {
-        const container = document.querySelector('[data-report-courses]');
-        if (!container) return;
+    const sortBy = (data, prop, type, direction) => {
+        data.sort((a, b) => {
+            if (type === 'date') { 
+                a[prop] = a[prop] ? new Date(a[prop]).getTime() : 0;
+                b[prop] = b[prop] ? new Date(b[prop]).getTime() : 0;
+            }
 
-        const courses = [];
+            if (direction === 'desc') {
+                if (a[prop] > b[prop]) return -1;
+                if (a[prop] < b[prop]) return 1;
+                return 0;
+            }
+
+            if (direction === 'asc') {
+                if (a[prop] < b[prop]) return -1;
+                if (a[prop] > b[prop]) return 1;
+                return 0;
+            }
+
+            return 0;
+        });
+        return data;
+    };
+
+    const getStateDefaultSubscriptions = (data) => {
+        let courses = [];
         data.forEach((user) => {
             user.courses.forEach((course) => {
                 courses.push({
+                    subscriptions: user.subscriptions.map(item => item.id),
                     email: user.email,
+                    userName: [user.firstName, user.lastName].filter(item => item).join(' '),
                     title: course.title,
                     progress: formatProgress(course.progress),
                     completedDate: course.completedDate || null,
+                    completedDateFormatted: course.completedDateFormatted || null,
                     topic: course.topic.map(item => item.name).sort().join(', '),
                 })
-            });
+            }); 
         });
 
-        courses.sort((a, b) => {
-            if (a.topic < b.topic) return -1;
-            if (a.topic > b.topic) return 1;
-            return 0;
-        });
+        courses = sortBy(courses, 'topic', 'string', 'asc');
+
+        return courses;
+    };
+
+    const setThDirection = (table, prop) => {
+        if (window.stateFilter[table].prop === prop) {
+            return `data-direction="${window.stateFilter[table].direction}"`;
+        }
+        return '';
+    };
+
+    const renderCourses = (courses) => {
+        const container = document.querySelector('[data-report-courses]');
+        if (!container) return;
 
         container.innerHTML = `
-            <h2>${window.UIMessages.coursesReportTitle}</h2>
+            <h2 class="report__heading">${window.UIMessages.coursesReportTitle}</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Topic name</th>
-                        <th>Course name</th>
-                        <th>User name</th>
-                        <th>Completion</th>
-                        <th>Completion date</th>
+                        <th class="narrow" data-prop="topic" ${setThDirection('courses', 'topic')}>Topic name</th>
+                        <th data-prop="title" ${setThDirection('courses', 'title')}>Course name</th>
+                        <th data-prop="username" ${setThDirection('courses', 'username')}>User name</th>
+                        <th data-prop="email" ${setThDirection('courses', 'email')}>User email</th>
+                        <th class="narrow" data-prop="progress" ${setThDirection('courses', 'progress')}>Completion</th>
+                        <th class="narrow" data-type="date" data-prop="completedDate" ${setThDirection('courses', 'completedDate')}>Completion date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,83 +156,180 @@ const subscriptionReport = (() => {
                         return `
 
                             <tr>
-                                <td>${item.topic}</td>
+                                <td class="narrow">${item.topic}</td>
                                 <td>${item.title}</td>
+                                <td>${item.userName}</td>
                                 <td>${item.email}</td>
-                                <td>${item.progress}</td>   
-                                <td>${item.completedDate || ''}</td>
+                                <td class="narrow">${item.progress}</td>   
+                                <td class="narrow">${item.completedDateFormatted || ''}</td>
                             </tr>
                             `;
                     }).join('')}
                 </tbody>
             </table>
-            <p>${window.UIMessages.numberOfCompletions} ${courses.filter(item => item.completedDate).length}.</p>
+            <p class="report__note">${window.UIMessages.numberOfCompletions} ${courses.filter(item => item.completedDate).length}</p>
         `;
     };
-
-    const renderCertifications = (data) => {
-        const container = document.querySelector('[data-report-certifications]');
-        if (!container) return;
-
-        const certifications = [];
+    
+    const getStateDefaultCertifications = (data) => {
+        let certifications = [];
         data.forEach((user) => {
             user.certifications.forEach((certification) => {
                 certifications.push({
+                    subscriptions: user.subscriptions.map(item => item.id),
                     email: user.email,
+                    userName: [user.firstName, user.lastName].filter(item => item).join(' '),
                     title: certification.title,
+                    passed: !!certification.expiration ? 'Passed' : 'Failed',
                     date: certification.date || null,
+                    dateFormatted: certification.dateFormatted || null,
                     expiration: certification.expiration || null,
+                    expirationFormatted: certification.expirationFormatted || null,
                 })
             });
         });
 
-        certifications.sort((a, b) => {
-            if (a.title < b.title) return -1;
-            if (a.title > b.title) return 1;
-            return 0;
-        });
+        certifications = sortBy(certifications, 'title','string', 'asc');
+
+        return certifications;
+    };
+
+    const renderCertifications = (certifications) => {
+        const container = document.querySelector('[data-report-certifications]');
+        if (!container) return;
 
         container.innerHTML = `
-            <h2>${window.UIMessages.certificationsReportTitle}</h2>
+            <h2 class="report__heading">${window.UIMessages.certificationsReportTitle}</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Certification name</th>
-                        <th>User name</th>
-                        <th>Success</th>
-                        <th>Attempt date</th>
-                        <th>Expiration date</th>
+                        <th data-prop="title" ${setThDirection('certifications', 'title')}>Certification name</th>
+                        <th data-prop="username" ${setThDirection('certifications', 'username')}>User name</th>
+                        <th data-prop="email" ${setThDirection('certifications', 'email')}>User email</th>
+                        <th class="narrow" data-prop="passed" ${setThDirection('certifications', 'passed')}>Success</th>
+                        <th class="narrow" data-type="date" data-prop="date" ${setThDirection('certifications', 'date')}>Attempt date</th>
+                        <th class="narrow" data-type="date" data-prop="expiration" ${setThDirection('certifications', 'expiration')}>Expiration date</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${certifications.map((item) => {
                         return `
-
                             <tr>
                                 <td>${item.title}</td>
+                                <td>${item.userName}</td>
                                 <td>${item.email}</td>
-                                <td>${!!item.expiration ? 'Passed' : 'Failed'}</td>
-                                <td>${item.date || ''}</td>   
-                                <td>${item.expiration || ''}</td>
+                                <td class="narrow">${item.passed}</td>
+                                <td class="narrow">${item.dateFormatted || ''}</td>   
+                                <td class="narrow">${item.expirationFormatted || ''}</td>
                             </tr>
                             `;
                     }).join('')}
                 </tbody>
             </table>
-            <p>${window.UIMessages.numberOfCompletions} ${certifications.filter(item => item.expiration).length}.</p>
+            <p class="report__note">${window.UIMessages.numberOfCompletions} ${certifications.filter(item => item.expiration).length}</p>
         `;
     };
+
+    const updateStateBysubscriptions = () => {
+        const container = document.querySelector('[data-report-subscriptions]');
+        if (!container) return;
+
+        container.addEventListener('change', (e) => {
+            const { target } = e;
+            if (target.type !== 'checkbox') return;
+
+            if (target.checked) {
+                if (!window.stateFilter.subscriptions.includes(target.value)) {
+                    window.stateFilter.subscriptions.push(target.value);
+                }
+            } else {
+                window.stateFilter.subscriptions = stateFilter.subscriptions.filter((item) => item !== target.value);
+            }
+
+            const event = new Event('reportFilterUpdated');
+            document.querySelector('body').dispatchEvent(event);
+        });
+    };
+
+    const getDirection = (target) => {
+        const direction = target.getAttribute('data-direction');
+        let result = 'desc';
+        if (direction === 'desc' || !direction) {
+            result = 'asc';
+        }
+
+        return result;
+    };
+
+
+    const updateStateByTable = (containerSelector) => {
+        const container = document.querySelector(containerSelector);
+        if (!container) return;
+
+        let prop = 'courses';
+
+        if (containerSelector.includes('certifications')) {
+            prop = 'certifications';
+        }
+
+        container.addEventListener('click', (e) => {
+            const { target } = e;
+            if (target.tagName !== 'TH') return;
+
+            window.stateFilter[prop].type = 'string';
+            if (target.getAttribute('data-type') === 'date') {
+                window.stateFilter[prop].type = 'date';
+            }
+            window.stateFilter[prop].prop = target.getAttribute('data-prop');
+            window.stateFilter[prop].direction = getDirection(target);
+
+            const event = new Event('reportFilterUpdated');
+            document.querySelector('body').dispatchEvent(event);
+        });
+    };
+
+    const rerenderByFilter = (stateCourses, stateCertifications) => {
+        document.querySelector('body').addEventListener('reportFilterUpdated', () => {
+            let stateCoursesFiltered = stateCourses.filter((item) => {
+                return item.subscriptions.some((sub) => window.stateFilter.subscriptions.includes(sub));
+            });
+
+            stateCoursesFiltered = sortBy(stateCoursesFiltered, window.stateFilter.courses.prop, window.stateFilter.courses.type, window.stateFilter.courses.direction);
+
+            renderCourses(stateCoursesFiltered);
+
+            let stateCertificationsFiltered = stateCertifications.filter((item) => {
+                return item.subscriptions.some((sub) => window.stateFilter.subscriptions.includes(sub));
+            });
+
+            stateCertificationsFiltered = sortBy(stateCertificationsFiltered, window.stateFilter.certifications.prop, window.stateFilter.certifications.type, window.stateFilter.certifications.direction);
+
+            renderCertifications(stateCertificationsFiltered);
+        });
+    }
 
     const getInfo = async () => {
         const container = document.querySelector('[data-report]');
         if (!container) return;
         const token = window.user ? window.user.__raw : null;
         subscriptionAdminReport = await requestInfo(token);
-        if (subscriptionAdminReport) {
+        if (subscriptionAdminReport && subscriptionAdminReport.length) {
             removeLoading();
-            renderSubscriptionsFilter(subscriptionAdminReport);
-            renderCourses(subscriptionAdminReport);
-            renderCertifications(subscriptionAdminReport);
+
+            window.stateFilter = renderSubscriptionsFilter(subscriptionAdminReport);
+
+            const stateDefaultCourses = getStateDefaultSubscriptions(subscriptionAdminReport);
+            renderCourses(stateDefaultCourses);
+
+            const stateDefaultCertifications = getStateDefaultCertifications(subscriptionAdminReport);
+            renderCertifications(stateDefaultCertifications);
+
+            updateStateBysubscriptions();
+            updateStateByTable('[data-report-courses]');
+            updateStateByTable('[data-report-certifications]');
+
+            rerenderByFilter(stateDefaultCourses, stateDefaultCertifications);
+
         } else {
             addNoAccess();
         }

@@ -89,7 +89,7 @@ const getCertificationInfo = async (user, certificationTest) => {
 const getPrivate = async (UIMessages, certificationTest, req, res) => {
   const elearningUser = require('../e-learning/user');
   const data = {};
-  const user = await elearningUser.getUser(req?.user?.email, res);
+  const user = await elearningUser.getUser(req?.user?.email, false, res);
 
   if (!user) {
     return { general: null, production: null };

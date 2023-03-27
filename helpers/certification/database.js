@@ -134,7 +134,7 @@ const checkCreateAttempt = async (body, res) => {
   if (!(attemptInPastDay && attemptInPastDay.length)) {
     const certificationTestData = await certificationData.getTest(codename, res);
 
-    const user = await elearningUser.getUser(email, res);
+    const user = await elearningUser.getUser(email, false, res);
 
     try {
       const db = await cosmos.initDatabase(process.env.COSMOSDB_CONTAINER_CERTIFICATION_ATTEMPT);

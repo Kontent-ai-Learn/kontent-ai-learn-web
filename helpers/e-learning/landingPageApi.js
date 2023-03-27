@@ -104,7 +104,7 @@ const init = async (req, res) => {
   };
 
   if (!req?.user?.email) return { message: 'User is not authenticated.' };
-  const user = await elearningUser.getUser(req.user.email, res);
+  const user = await elearningUser.getUser(req.user.email, false, res);
 
   state.userAccessLevel = Object.keys(user.accessLevel).filter(key => user.accessLevel[key]);
 
@@ -187,7 +187,7 @@ const registration = async (req, res) => {
     isFree = isCodenameInMultipleChoice(course.elements.access.value, 'free');
   }
 
-  const user = await elearningUser.getUser(req.user.email, res);
+  const user = await elearningUser.getUser(req.user.email, false, res);
   if (user.code) return null;
   const hasAccess = user.accessLevel.partner || user.accessLevel.client || user.accessLevel.employee;
   if (!(hasAccess || isFree)) return null;

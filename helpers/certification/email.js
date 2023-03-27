@@ -14,7 +14,7 @@ const resolveMacros = (text, macros) => {
 
 const getMacrosValues = async (attempt, res) => {
   const elearningUser = require('../e-learning/user');
-  const user = await elearningUser.getUser(attempt.email, res);
+  const user = await elearningUser.getUser(attempt.email, false, res);
   const UIMessages = await cacheHandle.ensureSingle(res, 'UIMessages', async () => {
     return await getContent.UIMessages(res);
   });

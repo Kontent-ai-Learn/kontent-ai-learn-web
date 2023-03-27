@@ -78,7 +78,7 @@ const handleNavigationUI = () => {
     if (window.user) {
         navigation.classList.add('navigation--auth');
         navAuth.innerHTML = `
-            <a href="${url}" class="navigation__link navigation__link--auth" target="_vlank">${window.UIMessages.goToProductButton}</a>
+            <a href="${url}" class="navigation__link navigation__link--auth" target="_blank">${window.UIMessages.goToProductButton}</a>
             <a href="#" class="navigation__link navigation__link--auth navigation__link--user" data-user-profile-toggle><span class="sr-only">User profile</span></a>
         `;
         window.initUserProfile(navAuth);

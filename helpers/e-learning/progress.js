@@ -87,7 +87,8 @@ const mergeCoursesWithProgress = (courses, registrations) => {
       if (course.system.id === registration.courseId.replace('dev_', '').replace('_preview', '')) {
         courseWithProgress.progress = registration.status;
         if (registration.completedDate) {
-          courseWithProgress.completedDate = dayjs.tz(registration.completedDate).format('MMMM D, YYYY');
+          courseWithProgress.completedDate = registration.completedDate;
+          courseWithProgress.completedDateFormatted = dayjs.tz(registration.completedDate).format('MMMM D, YYYY');
         }
       }
     });
@@ -119,7 +120,7 @@ const filterCorsesByUserAccesLevel = (courses, userAccessLevel) => {
 const getUserProgress = async (req, res) => {
   if (!(req.user && req.user.email)) return { error: 'User not sign in.' };
 
-  const user = await getUser(req.user.email, res);
+  const user = await getUser(req.user.email, false, res);
 
   let courses = await cacheHandle.evaluateSingle(res, 'trainingCourses', async () => {
     return await getContent.trainingCourse(res);
@@ -152,7 +153,7 @@ const getUserProgress = async (req, res) => {
 
   return {
     topics: topics.filter((topic) => topic),
-    isAdmin: !!user.subscriptionServiceAdmin
+    isAdmin: !!user.subscriptionServiceAdmin && user.subscriptionServiceAdmin.length
   }
 };
 
@@ -185,8 +186,10 @@ const getSubscriptionReport = async (user, res) => {
         item.certifications.push({
           title: attempt.test.title,
           email: attempt.email,
-          expiration: attempt.certificate_expiration ? dayjs.tz(attempt.certificate_expiration).format('MMMM D, YYYY') : null,
-          date: dayjs.tz(attempt.start).format('MMMM D, YYYY')
+          expiration: attempt.certificate_expiration ? attempt.certificate_expiration : null,
+          expirationFormatted: attempt.certificate_expiration ? dayjs.tz(attempt.certificate_expiration).format('MMMM D, YYYY') : null,
+          date: attempt.start,
+          dateFormatted: dayjs.tz(attempt.start).format('MMMM D, YYYY')
         })
       }
     }

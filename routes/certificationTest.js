@@ -253,7 +253,7 @@ router.get('/course/:registrationId/certificate/pdf', asyncHandler(async (req, r
 
   if (!(registrationData.learner.firstName && registrationData.learner.lastName) && registrationData.learner.email) {
     const elearningUser = require('../helpers/e-learning/user');
-    const user = await elearningUser.getUser(registrationData.learner.email, res);
+    const user = await elearningUser.getUser(registrationData.learner.email, false, res);
     if (user) {
       if (user.firstName) registrationData.learner.firstName = user.firstName;
       if (user.lastName) registrationData.learner.lastName = user.lastName;

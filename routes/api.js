@@ -91,7 +91,7 @@ router.post('/user/profile', jwtCheck, async (req, res) => {
 
 router.post('/subscription-report', jwtCheck, async (req, res) => {
   res = fastly.preventCaching(res);
-  const data = await elearningUser.getUser(req?.user.email, res);
+  const data = await elearningUser.getUser(req?.user.email, true, res);
   if (!data.subscriptionServiceAdmin) return res.send(null);
   const report = await elearningProgress.getSubscriptionReport(data, res);
   return res.send(report);
