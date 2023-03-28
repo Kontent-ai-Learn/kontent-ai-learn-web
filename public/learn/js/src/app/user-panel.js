@@ -150,11 +150,8 @@ window.initUserProfile = (container) => {
           `;
         }).join('')}
       </ul>
+      <div class="user-panel__subscription-report"><a class="call-to-action" href="/learn/subscription-report/"><span>${window.UIMessages.seeReportButton}</span><span></span></a></div>
     `;
-
-    if (elearningProgress.isAdmin) {
-      panelElearning.innerHTML += `<div class="user-panel__subscription-report"><a class="call-to-action" href="/learn/subscription-report/"><span>${window.UIMessages.seeReportButton}</span><span></span></a></div>`;
-    }
 
     panelElearning.setAttribute(DATA_ATTR_CONTENT, '');
   };

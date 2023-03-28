@@ -48,12 +48,6 @@
         }
     }
 
-   [data-report-noaccess]:not([data-report-loading]) {
-        &::after {
-            content: attr(data-report-noaccess);
-        }
-   }
-
     table {
         border-top: .125em solid #E8E8E8;
         border-left: .125em solid #E8E8E8;
@@ -126,7 +120,7 @@
                     }
                 }
 
-                &[data-direction="desc"] {
+                &[data-direction="asc"] {
                     &::after {
                         border-width: 0 6px 12px 6px;
                         border-color: transparent transparent #7e7b7b transparent;
@@ -217,5 +211,11 @@
 
     &__note {
         padding: .75em 0 1.5em;
+    }
+
+    &__no-access {
+        p {
+            padding: 0 0 1em;
+        }
     }
 }

@@ -3,7 +3,7 @@ block content
     main(id='main').report
         h1.report__title&attributes(smartLink?.itemId(UIMessages.system.id))&attributes(smartLink?.elementCodename('subscription_report_title')) !{helper.getValue(UIMessages, 'subscription_report_title')}
         .report__container(data-report)
-            div(data-report-loading=helper.escapeQuotes(helper.removeNewLines(helper.getValue(UIMessages, 'admin_loading'))), data-report-noaccess=helper.escapeQuotes(helper.removeNewLines(helper.getValue(UIMessages, 'no_access'))))
+            div(data-report-loading=helper.escapeQuotes(helper.removeNewLines(helper.getValue(UIMessages, 'admin_loading'))))
             div(data-report-subscriptions)
             div.table(data-report-courses)
             div.table(data-report-certifications)

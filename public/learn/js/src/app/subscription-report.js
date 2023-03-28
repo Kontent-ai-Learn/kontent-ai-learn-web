@@ -9,6 +9,7 @@ const subscriptionReport = (() => {
           fetchOptions.headers = { Authorization: `Bearer ${token}` };
           try {
             const result = await fetch(`/learn/api/subscription-report/`, fetchOptions);
+            if (result.status === 204) return null;
             return await result.json();
           } catch (error) {
             console.error(error);
@@ -24,10 +25,24 @@ const subscriptionReport = (() => {
         elem.parentNode.removeChild(elem);
     };
 
-    const addNoAccess = () => {
-        const elem = document.querySelector('[data-report-loading][data-report-noaccess]');
+    const addNoAccess = (message, addSignInLink) => {
+        const elem = document.querySelector('[data-report]');
         if (!elem) return;
-        elem.removeAttribute('data-report-loading');
+        removeLoading();
+
+        if (addSignInLink) {
+            const link = document.createElement('a');
+            link.classList.add('call-to-action');
+            link.setAttribute('href', `${window.appUrl || 'https://app.kontent.ai'}/sign-in`);
+            link.setAttribute('target', '_blank');
+            link.innerHTML = `<span>${window.UIMessages.signIn}</span><span></span>`;
+            elem.prepend(link);
+        }
+
+        const item = document.createElement('div');
+        item.classList.add('report__no-access');
+        item.innerHTML = `<p>${message}</p>`;
+        elem.prepend(item);
     };
 
     const renderSubscriptionsFilter = (data) => {
@@ -38,15 +53,15 @@ const subscriptionReport = (() => {
         const filterState = {
             subscriptions: [],
             courses: {
-                prop: null,
-                type: null,
-                direction: null
+                prop: 'userName',
+                type: 'string',
+                direction: 'asc'
             },
             certifications: {
-                prop: null,
-                type: null,
-                direction: null
-            }
+                prop: 'userName',
+                type: 'string',
+                direction: 'asc'
+            },
         };
 
         data.forEach((item) => {
@@ -122,7 +137,7 @@ const subscriptionReport = (() => {
             }); 
         });
 
-        courses = sortBy(courses, 'topic', 'string', 'asc');
+        courses = sortBy(courses, 'userName', 'string', 'asc');
 
         return courses;
     };
@@ -189,7 +204,7 @@ const subscriptionReport = (() => {
             });
         });
 
-        certifications = sortBy(certifications, 'title','string', 'asc');
+        certifications = sortBy(certifications, 'userName', 'string', 'asc');
 
         return certifications;
     };
@@ -312,7 +327,23 @@ const subscriptionReport = (() => {
         const container = document.querySelector('[data-report]');
         if (!container) return;
         const token = window.user ? window.user.__raw : null;
+        if (!token) {
+            addNoAccess(window.UIMessages.notSignedIn, true);
+            return;
+        }
+
         subscriptionAdminReport = await requestInfo(token);
+
+        if (subscriptionAdminReport === null) {
+            addNoAccess(window.UIMessages.noAccess);
+            return
+        }
+
+        if (subscriptionAdminReport && !subscriptionAdminReport.length) {
+            addNoAccess(window.UIMessages.noElearningPackage);
+            return;
+        }
+
         if (subscriptionAdminReport && subscriptionAdminReport.length) {
             removeLoading();
 
@@ -329,9 +360,6 @@ const subscriptionReport = (() => {
             updateStateByTable('[data-report-certifications]');
 
             rerenderByFilter(stateDefaultCourses, stateDefaultCertifications);
-
-        } else {
-            addNoAccess();
         }
     };
 

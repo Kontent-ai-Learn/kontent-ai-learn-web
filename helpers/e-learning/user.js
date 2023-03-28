@@ -130,7 +130,7 @@ const getSubscriptionServiceAdmin = async (email, subscriptions, includeAdminUse
         await Promise.all(adminData.data.map(async (admin) => {
           admin.subscriptions = [];
           admin.subscriptionIds.forEach(subscriptionId => {
-            const subscription = subscriptions.find(sub => sub.subscriptionId === subscriptionId);
+            const subscription = subscriptions.find(sub => sub.subscriptionId === subscriptionId && (sub.isMvp || sub.isPartner || sub.activePackages.length));
             if (subscription) {
               admin.subscriptions.push({ id: subscription.subscriptionId, name: subscription.subscriptionName });
             }
