@@ -145,7 +145,7 @@ const subscriptionReport = (() => {
                     <tr>
                         <th class="narrow" data-prop="topic" ${setThDirection('courses', 'topic')}>Topic name</th>
                         <th data-prop="title" ${setThDirection('courses', 'title')}>Course name</th>
-                        <th data-prop="username" ${setThDirection('courses', 'username')}>User name</th>
+                        <th data-prop="userName" ${setThDirection('courses', 'userName')}>User name</th>
                         <th data-prop="email" ${setThDirection('courses', 'email')}>User email</th>
                         <th class="narrow" data-prop="progress" ${setThDirection('courses', 'progress')}>Completion</th>
                         <th class="narrow" data-type="date" data-prop="completedDate" ${setThDirection('courses', 'completedDate')}>Completion date</th>
@@ -204,7 +204,7 @@ const subscriptionReport = (() => {
                 <thead>
                     <tr>
                         <th data-prop="title" ${setThDirection('certifications', 'title')}>Certification name</th>
-                        <th data-prop="username" ${setThDirection('certifications', 'username')}>User name</th>
+                        <th data-prop="userName" ${setThDirection('certifications', 'userName')}>User name</th>
                         <th data-prop="email" ${setThDirection('certifications', 'email')}>User email</th>
                         <th class="narrow" data-prop="passed" ${setThDirection('certifications', 'passed')}>Success</th>
                         <th class="narrow" data-type="date" data-prop="date" ${setThDirection('certifications', 'date')}>Attempt date</th>
