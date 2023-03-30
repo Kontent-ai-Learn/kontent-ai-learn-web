@@ -182,7 +182,7 @@ const getSubscriptionReport = async (user, res) => {
         email: item?.email,
         codename: test.system.codename
       });
-      if (attempt) {
+      if (attempt && !dayjs.tz(dayjs.tz()).isAfter(dayjs.tz(attempt.certificate_expiration))) {
         item.certifications.push({
           title: attempt.test.title,
           email: attempt.email,
