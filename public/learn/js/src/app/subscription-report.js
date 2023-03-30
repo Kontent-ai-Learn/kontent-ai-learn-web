@@ -185,6 +185,16 @@ const subscriptionReport = (() => {
             <p class="report__note">${window.UIMessages.numberOfCompletions} ${courses.filter(item => item.completedDate).length}</p>
         `;
     };
+
+    const getCertificationPassed = (certification) => {
+        if (!!certification.expiration) {
+            if (certification.hasExpired){
+                return 'Expired';
+            }
+            return 'Passed';
+        }
+        return 'Failed';
+    };
     
     const getStateDefaultCertifications = (data) => {
         let certifications = [];
@@ -195,11 +205,12 @@ const subscriptionReport = (() => {
                     email: user.email,
                     userName: [user.firstName, user.lastName].filter(item => item).join(' '),
                     title: certification.title,
-                    passed: !!certification.expiration ? 'Passed' : 'Failed',
+                    passed: getCertificationPassed(certification),
                     date: certification.date || null,
                     dateFormatted: certification.dateFormatted || null,
                     expiration: certification.expiration || null,
                     expirationFormatted: certification.expirationFormatted || null,
+                    hasExpired: certification.hasExpired,
                 })
             });
         });
@@ -241,7 +252,7 @@ const subscriptionReport = (() => {
                     }).join('')}
                 </tbody>
             </table>
-            <p class="report__note">${window.UIMessages.numberOfCompletions} ${certifications.filter(item => item.expiration).length}</p>
+            <p class="report__note">${window.UIMessages.numberOfCompletions} ${certifications.filter(item => !!(item.expiration && !item.hasExpired)).length}</p>
         `;
     };
 
@@ -275,7 +286,6 @@ const subscriptionReport = (() => {
 
         return result;
     };
-
 
     const updateStateByTable = (containerSelector) => {
         const container = document.querySelector(containerSelector);
