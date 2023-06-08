@@ -98,11 +98,11 @@ app.use('/', (req, res) => res.redirect(301, '/learn/'));
 if (!isPreview(process.env.KONTENT_PREVIEW_API_KEY)) {
   setIntervalAsync(async () => {
     await cacheHandle.pool();
-    await certificationEmail.handleExpirationNotifications();
+    //await certificationEmail.handleExpirationNotifications();
   }, 300000);
 } else {
   setIntervalAsync(async () => {
-    await github.requestRedoclySync();
+   //await github.requestRedoclySync();
 }, 300000);
 }
 
