@@ -4,7 +4,7 @@ const util = require('util');
 const getContent = require('../kontent/getContent');
 const { logInCacheKey } = require('../general/helper');
 const getUrlMap = require('../general/urlMap');
-const github = require('../services/github');
+// const github = require('../services/github');
 
 const deleteCachePreviewCheck = (keyName, KCDetails, isPreviewRequest) => {
     if (isPreviewRequest && cache.get(`${keyName}_${KCDetails.projectid}`)) {
@@ -142,7 +142,7 @@ const pool = async () => {
     try {
         const response = await axios.post(`${process.env.BASE_URL}/learn/cache-invalidate/pool/`, {});
         log.url = response && response.config ? response.config.url : '';
-        await github.requestRedoclySync();
+        // await github.requestRedoclySync();
     } catch (error) {
         log.error = error && error.response ? error.response.data : '';
     }

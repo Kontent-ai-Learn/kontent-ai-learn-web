@@ -11,7 +11,7 @@ const elearningProgress = require('../helpers/e-learning/progress');
 const elearningUser = require('../helpers/e-learning/user');
 const fastly = require('../helpers/services/fastly');
 const jwtCheck = require('../helpers/services/jwt');
-const redocly = require('../helpers/services/redocly');
+// const redocly = require('../helpers/services/redocly');
 const userProfile = require('../helpers/user/profile');
 const licensesUpdate = require('../helpers/licenses/update');
 
@@ -120,7 +120,7 @@ router.post('/licenses-updated', async (req, res) => {
 
 router.post('/redocly/sync', async (req, res) => {
   res = fastly.preventCaching(res);
-  await redocly.sync(res);
+  // await redocly.sync(res);
   return res.end();
 });
 

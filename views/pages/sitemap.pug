@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 urlset(xmlns='http://www.sitemaps.org/schemas/sitemap/0.9', xmlns:xhtml='http://www.w3.org/1999/xhtml')
-    each item in urlMap
+    //-each item in urlMap
         - var isExcluded = false;
         - if (item.visibility && item.visibility.length && item.visibility.filter(elem => elem.codename === 'excluded_from_search').length) { isExcluded = true }
         if (!isExcluded)
