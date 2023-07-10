@@ -16,8 +16,8 @@ const { handleKCKeys, getProjectLanguage } = require('./helpers/general/app');
 const cacheHandle = require('./helpers/cache/handle');
 const isPreview = require('./helpers/kontent/isPreview');
 const fastly = require('./helpers/services/fastly');
-const github = require('./helpers/services/github');
-const certificationEmail = require('./helpers/certification/email');
+// const github = require('./helpers/services/github');
+// const certificationEmail = require('./helpers/certification/email');
 
 const siteRouter = require('./routes/siteRouter');
 const error = require('./routes/error');
@@ -98,11 +98,11 @@ app.use('/', (req, res) => res.redirect(301, '/learn/'));
 if (!isPreview(process.env.KONTENT_PREVIEW_API_KEY)) {
   setIntervalAsync(async () => {
     await cacheHandle.pool();
-    //await certificationEmail.handleExpirationNotifications();
+    // await certificationEmail.handleExpirationNotifications();
   }, 300000);
 } else {
   setIntervalAsync(async () => {
-   //await github.requestRedoclySync();
+   // await github.requestRedoclySync();
 }, 300000);
 }
 
